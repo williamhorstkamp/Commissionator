@@ -1,0 +1,52 @@
+V1: Contact type, commissioner, contact
+-insert contact type
+-delete contact type
+-rename contact type
+-insert commissioner
+-delete commissioner
+-rename commissioner
+-insert contact
+-delete contact
+-edit contact entry
+-edit contact type
+
+V2: Product, piece, commission
+-insert product
+-delete product
+-set product price
+-set product name
+-insert piece
+-delete piece
+-set piece description
+-insert commission
+-delete commission
+-set commission pay due date
+-set commission paid date
+
+V3: payment method, payment
+-insert payment method
+-delete payment method
+-rename payment method
+-insert payment
+-set payment method
+-set payment date
+-set payment amount
+-set payment to commission
+
+V4:Product and piece options
+-insert product option
+-delete product option
+
+V5:references, events to product and piece
+-insert reference
+-delete reference
+-set reference type
+-set reference to piece
+-insert event type
+-set event type to product
+-insert piece event
+-set piece event type
+-set piece event start date
+-set piece event end date
+
+V6:sales, deals

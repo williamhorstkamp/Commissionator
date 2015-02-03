@@ -69,11 +69,41 @@ namespace Commissionator {
         void insertCommissioner(const char *comName);
 
         /**
+         *  Deletes a commissioner with a given id
+         *
+         *  @param id - int containing the id of the commissioner to delete
+         */
+        void deleteCommissioner(const int id);
+
+        /**
+         *  Renames a commissioner with a given id and name
+         *
+         *  @param id - int containing the id of the commissioner to rename
+         *  @param comName - C string containing the new name of the commissioner
+         */
+        void renameCommissioner(const int id, const char *comName);
+
+        /**
          *  Inserts a contact type into the database with a given name.
          *
          *  @param typeName - C String containing the name of the type
          */
         void insertContactType(const char *typeName);
+
+        /**
+        *  Deletes a contact type with a given id
+        *
+        *  @param id - int containing the id of the contact to delete
+        */
+        void deleteContactType(const int id);
+
+        /**
+         *  Renames a contact type with a given id and name
+         *
+         *  @param id - int containing the id of the contact name to rename
+         *  @param typeName - C string containing the new name of the contact name
+         */
+        void renameContactType(const int id, const char *typeName);
 
         /**
          *  Inserts a contact into the database given contact name, contact
@@ -83,6 +113,30 @@ namespace Commissionator {
          *  @param typeName - C String containing the name of the type
          *  @param entry - C string containg the contact entry
          */
-        void insertContact(const char *comName, const char *typeName, const char *entry);
+        void insertContact(const char *comName, const char *typeName,
+            const char *entry);
+        
+        /**
+         *  Deletes a contact with a given id
+         *
+         *  @param id - int containing the id of the contact to delete
+         */
+        void deleteContact(const int id);
+
+        /**
+         *  Edits the type of a contact
+         *
+         *  @param contactId - int containing the id of the contact to edit
+         *  @param typeId - int containing the id of the type to change to  
+         */
+        void editContactType(const int contactId, const int typeId);
+
+        /**
+         *  Edits the type of a contact
+         *
+         *  @param id - int containing the id of the contact to edit
+         *  @param entry - C string containing the new entry
+         */
+        void editContactEntry(const int id, const char *entry);
     };
 }
