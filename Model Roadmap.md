@@ -14,8 +14,7 @@ A short description of what this version of the model will add over the previous
 - [ ] a list of functions to be added  
   
   
-###V1: Contact type, Commissioner, Contact tables. Struct to use as return type for
-functions requesting more than one column or row.
+###V1: Contact type, Commissioner, Contact tables. Struct to use as return type for functions requesting more than one column or row.
 - [x] insert contact type
 - [x] delete contact type
 - [x] rename contact type
