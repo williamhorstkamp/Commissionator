@@ -21,6 +21,12 @@
     <ClCompile Include="src\StatementHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Test.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ComModel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\SQLiteException.h">
@@ -35,7 +41,7 @@
     <ClInclude Include="include\ValueHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ComModel.h">
+    <ClInclude Include="include\ComModel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

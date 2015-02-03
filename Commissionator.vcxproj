@@ -68,11 +68,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\ComModel.cpp" />
     <ClCompile Include="src\SQLiteHandler.cpp" />
     <ClCompile Include="src\StatementHandler.cpp" />
+    <ClCompile Include="Test.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ComModel.h" />
+    <ClInclude Include="include\ComModel.h" />
     <ClInclude Include="include\SQLiteException.h" />
     <ClInclude Include="include\SQLiteHandler.h" />
     <ClInclude Include="include\StatementHandler.h" />
