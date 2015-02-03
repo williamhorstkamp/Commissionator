@@ -2,42 +2,60 @@ V1: Contact type, commissioner, contact
 -insert contact type
 -delete contact type
 -rename contact type
+-get list of types
+-get type by id
 -insert commissioner
 -delete commissioner
 -rename commissioner
+-get list if commissioners
+-get commissioner by id
 -insert contact
 -delete contact
 -edit contact entry
 -edit contact type
+-get list of contacts by commissioner
+-get contact by id
 
 V2: Product, piece, commission
 -insert product
 -delete product
 -set product price
 -set product name
+-get list of products
+-get product by id
 -insert piece
 -delete piece
 -set piece description
+-get piece list
+-get piece by description
 -insert commission
 -delete commission
 -set commission pay due date
 -set commission paid date
+-get commission list
+-get commission by id
 
 V3: payment method, payment
 -insert payment method
 -delete payment method
 -rename payment method
+-get payment method list
+-get payment method by id
 -insert payment
 -set payment method
 -set payment date
 -set payment amount
 -set payment to commission
+-get payment list
+-get payment by id
 
 V4:Product and piece options
+//unfinished
 -insert product option
 -delete product option
 
 V5:references, events to product and piece
+//unfinished
 -insert reference
 -delete reference
 -set reference type
@@ -50,3 +68,4 @@ V5:references, events to product and piece
 -set piece event end date
 
 V6:sales, deals
+//unfinished
