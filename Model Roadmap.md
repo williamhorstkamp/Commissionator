@@ -15,20 +15,20 @@ A short description of what this version of the model will add over the previous
   
 ###V1: Contact type, Commissioner, Contact tables. Struct to use as return type for
 functions requesting more than one column or row.
-- [ ] insert contact type
-- [ ] delete contact type
-- [ ] rename contact type
+- [x] insert contact type
+- [x] delete contact type
+- [x] rename contact type
 - [ ] get list of types
 - [ ] get type by id
-- [ ] insert commissioner
-- [ ] delete commissioner
-- [ ] rename commissioner
+- [x] insert commissioner
+- [x] delete commissioner
+- [x] rename commissioner
 - [ ] get list of commissioners
 - [ ] get commissioner by id
-- [ ] insert contact
-- [ ] delete contact
-- [ ] edit contact entry
-- [ ] edit contact type
+- [x] insert contact
+- [x] delete contact
+- [x] edit contact entry
+- [x] edit contact type
 - [ ] get list of contacts by commissioner
 - [ ] get contact by id
 
