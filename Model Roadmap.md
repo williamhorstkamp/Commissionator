@@ -10,6 +10,7 @@ This document is not finalized
   
 ###Version Number: New Features
 A short description of what this version of the model will add over the previous one.  
+- [x] a function that has been added to the branch 
 - [ ] a list of functions to be added  
   
   
