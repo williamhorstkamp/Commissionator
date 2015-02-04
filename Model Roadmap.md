@@ -18,19 +18,19 @@ A short description of what this version of the model will add over the previous
 - [x] insert contact type
 - [x] delete contact type
 - [x] rename contact type
-- [ ] get list of types
-- [ ] get type by id
+- [x] get list of types
+- [x] get type by id
 - [x] insert commissioner
 - [x] delete commissioner
 - [x] rename commissioner
-- [ ] get list of commissioners
-- [ ] get commissioner by id
+- [x] get list of commissioners
+- [x] get commissioner by id
 - [x] insert contact
 - [x] delete contact
 - [x] edit contact entry
 - [x] edit contact type
-- [ ] get list of contacts by commissioner
-- [ ] get contact by id
+- [x] get list of contacts by commissioner
+- [x] get contact by id
 
 ###V2: Product, Commission, Piece tables.
 - [ ] insert product
