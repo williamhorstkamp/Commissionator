@@ -41,6 +41,25 @@ namespace Commissionator {
             "CREATE TABLE IF NOT EXISTS Commissioner("
             "id	INTEGER PRIMARY KEY AUTOINCREMENT,"
             "name	TEXT NOT NULL"
+            ");"
+            "CREATE TABLE IF NOT EXISTS Product("
+            "id	INTEGER PRIMARY KEY AUTOINCREMENT,"
+            "name	TEXT NOT NULL,"
+            "price	REAL NOT NULL"
+            ");"
+            "CREATE TABLE IF NOT EXISTS Piece("
+            "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+            "description    TEXT,"
+            "commissionId   INTEGER NOT NULL,"
+            "productId  INTEGER NOT NULL,"
+            "FOREIGN KEY(commissionerID) REFERENCES Commission(id),"
+            "FOREIGN KEY(productId) REFERENCES Product(id)"
+            ");"
+            "CREATE TABLE IF NOT EXISTS Commission("
+            "id	INTEGER PRIMARY KEY AUTOINCREMENT,"
+            "createDate	TEXT NOT NULL,"
+            "dueDate TEXT,"
+            "paidDate	TEXT"
             ");";
             SQL->rawExec(stmt);
     }
@@ -81,6 +100,41 @@ namespace Commissionator {
             "WHERE Contact.id = (?)");
         SQL->prepareStatement("getContact",
             "SELECT commissioner, type, entry FROM Contact WHERE id = (?)");
+        SQL->prepareStatement("insertProduct",
+            "INSERT INTO Product(name, price) values (?, ?)");
+        SQL->prepareStatement("deleteProduct",
+            "DELETE FROM Product WHERE id = (?)");
+        SQL->prepareStatement("setProductPrice",
+            "UPDATE Product SET price = (?) WHERE id = (?)");
+        SQL->prepareStatement("setProductName",
+            "UPDATE Product SET name = (?) WHERE id = (?)");
+        SQL->prepareStatement("getProducts",
+            "SELECT id, name, price FROM Product");
+        SQL->prepareStatement("getProduct",
+            "SELECT name, price FROM Product WHERE id = (?)");
+        SQL->prepareStatement("insertPiece",
+            "INSERT INTO Piece(commissionerId, productId, description) values (?, ?, ?)");
+        SQL->prepareStatement("deletePiece",
+            "DELETE FROM Piece WHERE id = (?)");
+        SQL->prepareStatement("setPieceDescription",
+            "UPDATE Piece SET description = (?) WHERE id = (?)");
+        SQL->prepareStatement("getPieces",
+            "SELECT id, commissionerId, productId, description FROM Piece");
+        SQL->prepareStatement("searchPieces",
+            "SELECT id, commissionId, productId, description FROM Piece "
+            "WHERE description LIKE %(?)%");
+        SQL->prepareStatement("insertCommission",
+            "INSERT Into Commission(createDate, dueDate) values (?, ?)");
+        SQL->prepareStatement("deleteCommission",
+            "DELETE FROM Commission WHERE id = (?)");
+        SQL->prepareStatement("setCommissionDueDate",
+            "UPDATE Commission SET dueDate = (?)");
+        SQL->prepareStatement("setCommissionPaidDate",
+            "UPDATE Commission SET paidDate = (?)");
+        SQL->prepareStatement("getCommissions",
+            "SELECT id, createDate, dueDate, paidDate FROM Commission");
+        SQL->prepareStatement("getCommission",
+            "SELECT createDate, dueDate, paidDate FROM Commission WHERE id = (?)");
     }
 
     void ComModel::insertCommissioner(const char *comName) {

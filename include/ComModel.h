@@ -209,5 +209,43 @@ namespace Commissionator {
          *      Contact(commissioner), Contact(type), Contact(entry)
          */
         const std::tuple<int, int, std::string> getContact(const int id);
+
+        void insertProduct(const char *name, const double price);
+
+        void deleteProduct(const int id);
+
+        void setProductPrice(const int id, const double price);
+
+        void setProductName(const int id, const char * name);
+
+        const std::vector<std::tuple<int, std::string, double>> getProducts();
+
+        const std::tuple<std::string, std::string> getProduct(const int id);
+
+        void insertPiece(const int commissionerId, const int productId,
+            const char *description);
+
+        void deletePiece(const int id);
+
+        void setPieceDescription(const int id, const char *description);
+
+        const std::vector < std::tuple<int, int, int, std::string>> getPieces();
+
+        const std::vector<std::tuple<int, int, int, std::string>> searchPiece(
+            const char *description);
+
+        void insertCommission(const char *createDate, const char *dueDate);
+
+        void deleteCommission(const int id);
+
+        void setCommissionDueDate(const int id, const char *dueDate);
+
+        void setCommissionPaidDate(const int id, const char *paidDate);
+
+        const std::vector<std::tuple<int, std::string, 
+            std::string, std::string>>getCommissions();
+
+        const std::tuple<std::string, std::string, std::string>getCommission(
+            const int id);
     };
 }
