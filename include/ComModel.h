@@ -1,4 +1,8 @@
 #include "SQLiteHandler.h"
+#include <string>
+#include <vector>
+#include <tuple>
+
 using namespace SQLiter;
 
 namespace Commissionator {
@@ -84,6 +88,27 @@ namespace Commissionator {
         void renameCommissioner(const int id, const char *comName);
 
         /**
+         *  Returns a vector of tuples containing the data for all the
+         *  commissioners stored in the database.
+         *
+         *  @return - A vector of <int, string> tuples. Each tuple represents
+         *      one of the commissioners stored in the database.
+         *      Order of the returned values is:
+         *      Commissioner(id), Commissioner(name)
+         */
+        const std::vector<std::tuple<int, std::string>> getCommissioners();
+
+        /**
+         *  Returns the name of a commissioner given its id.
+         *
+         *  @param id - int representing Commissioner(id)
+         *
+         *  @return - String containing Commissioner(name) for 
+         *      Commissioner(id) = id
+         */
+        const std::string getCommissioner(const int id);
+
+        /**
          *  Inserts a contact type into the database with a given name.
          *
          *  @param typeName - C String containing the name of the type
@@ -106,6 +131,27 @@ namespace Commissionator {
         void renameContactType(const int id, const char *typeName);
 
         /**
+         *  Returns a vector of tuples containing the data for all the
+         *  contactTypes stored in the database.
+         *
+         *  @return - A vector of <int, string> tuples. Each tuple represents
+         *      one of the contact types stored in the database.
+         *      Order of the returned values is:
+         *      ContactType(id), ContactType(type)
+         */
+        const std::vector<std::tuple<int, std::string>> getContactTypes();
+
+        /**
+         *  Returns the type of a contact type given its id.
+         *
+         *  @param id - int representing ContactType(id)
+         *
+         *  @return - String containing ContactType(id) for
+         *      ContactType(id) = id
+         */
+        const std::string getContactType(const int id);
+
+        /**
          *  Inserts a contact into the database given contact name, contact
          *  type, and the entry.
          *
@@ -113,7 +159,7 @@ namespace Commissionator {
          *  @param typeName - C String containing the name of the type
          *  @param entry - C string containg the contact entry
          */
-        void insertContact(const char *comName, const char *typeName,
+        void insertContact(const int comId, const int typeId,
             const char *entry);
         
         /**
@@ -138,5 +184,30 @@ namespace Commissionator {
          *  @param entry - C string containing the new entry
          */
         void editContactEntry(const int id, const char *entry);
+
+        /**
+         *  Returns a vector of tuples containing the data for all the
+         *  contacts stored in the database for a certain commissioner.
+         *
+         *  @param comId - int representing Commissioner(id)
+         *
+         *  @return - A vector of <int, int, string> tuples. Each tuple represents
+         *      one of the contacts stored in the database for the commissioner.
+         *      Order of the returned values is:
+         *      Contact(commissioner), Contact(type), Contact(entry)
+         */
+        const std::vector<std::tuple<int, int, std::string>> getContacts(const int comId);
+
+        /**
+         *  Returns a tuple containing the data for the contact with the given
+         *  id.
+         *
+         *  @param id - int representing Contact(id)
+         *
+         *  @return -  A <int, int, string> tuple.
+         *      Order of the returned values is:
+         *      Contact(commissioner), Contact(type), Contact(entry)
+         */
+        const std::tuple<int, int, std::string> getContact(const int id);
     };
 }
