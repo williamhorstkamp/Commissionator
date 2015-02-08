@@ -33,23 +33,25 @@ A short description of what this version of the model will add over the previous
 - [x] get contact by id
 
 ###V2: Product, Commission, Piece tables.
-- [ ] insert product
-- [ ] delete product
-- [ ] set product price
-- [ ] set product name
-- [ ] get list of products
-- [ ] get product by id
-- [ ] insert piece
-- [ ] delete piece
-- [ ] set piece description
-- [ ] get piece list
-- [ ] get piece by description
-- [ ] insert commission
-- [ ] delete commission
-- [ ] set commission pay due date
-- [ ] set commission paid date
-- [ ] get commission list
-- [ ] get commission by id
+- [x] insert product
+- [x] delete product
+- [x] set product price
+- [x] set product name
+- [x] get list of products
+- [x] get product by id
+- [x] insert piece with description
+- [x] insert piece without description
+- [x] delete piece
+- [x] delete piece by commission id
+- [x] set piece description
+- [x] get piece list
+- [x] get piece by description
+- [x] insert commission
+- [x] delete commission
+- [x] set commission pay due date
+- [x] set commission paid date
+- [x] get commission list
+- [x] get commission by id
 
 ###V3: Payment Method, Payment tables.
 - [ ] insert payment method
@@ -98,9 +100,10 @@ A short description of what this version of the model will add over the previous
 - [ ] set piece event end date
 - [ ] get piece events by piece id
 
-###V6:Sales, Deals
+###V6:Sales, Deals, Price override
 //unfinished
 - [ ] insert sale
 - [ ] delete sale
 - [ ] alter sale start date
 - [ ] alter sale end date
+- [ ] override/alter the price of a given commission
