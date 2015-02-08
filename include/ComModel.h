@@ -45,12 +45,12 @@ namespace Commissionator {
         ~ComModel();
 
         /**
-         *  Creates a database at the given file location/name. Then builds
-         *  the schema within with build and prepare.
+         *  Creates a database at the given file location/name. Then saves the
+         *  contents of the SQL to disk.
          *
          *  @param fileName - C String containing file location and name
          */
-        void create(const char *fileName);
+        void save(const std::string fileName);
 
         /**
          *  Opens a database at the given file location/name. Then prepares
@@ -58,7 +58,7 @@ namespace Commissionator {
          *
          *  @param fileName - C String containing file location and name
          */
-        void open(const char *fileName);
+        void open(const std::string fileName);
 
         /**
          *  Closes the database.
@@ -70,7 +70,7 @@ namespace Commissionator {
          *
          *  @param comName - C String containing the name of the commissioner
          */
-        void insertCommissioner(const char *comName);
+        void insertCommissioner(const std::string comName);
 
         /**
          *  Deletes a commissioner with a given id
@@ -83,9 +83,10 @@ namespace Commissionator {
          *  Renames a commissioner with a given id and name
          *
          *  @param id - int containing the id of the commissioner to rename
-         *  @param comName - C string containing the new name of the commissioner
+         *  @param comName - C string containing the new name of the
+         *      commissioner
          */
-        void renameCommissioner(const int id, const char *comName);
+        void setCommissionerName(const int id, const std::string comName);
 
         /**
          *  Returns a vector of tuples containing the data for all the
@@ -96,7 +97,7 @@ namespace Commissionator {
          *      Order of the returned values is:
          *      Commissioner(id), Commissioner(name)
          */
-        const std::vector<std::tuple<int, std::string>> getCommissioners();
+        const std::vector<const std::tuple<const int, const std::string>> getCommissioners();
 
         /**
          *  Returns the name of a commissioner given its id.
@@ -113,7 +114,7 @@ namespace Commissionator {
          *
          *  @param typeName - C String containing the name of the type
          */
-        void insertContactType(const char *typeName);
+        void insertContactType(const std::string typeName);
 
         /**
         *  Deletes a contact type with a given id
@@ -126,9 +127,10 @@ namespace Commissionator {
          *  Renames a contact type with a given id and name
          *
          *  @param id - int containing the id of the contact name to rename
-         *  @param typeName - C string containing the new name of the contact name
+         *  @param typeName - C string containing the new name of the contact 
+         *      name
          */
-        void renameContactType(const int id, const char *typeName);
+        void setContactTypeName(const int id, const std::string typeName);
 
         /**
          *  Returns a vector of tuples containing the data for all the
@@ -139,7 +141,7 @@ namespace Commissionator {
          *      Order of the returned values is:
          *      ContactType(id), ContactType(type)
          */
-        const std::vector<std::tuple<int, std::string>> getContactTypes();
+        const std::vector<const std::tuple<const int, const std::string>> getContactTypes();
 
         /**
          *  Returns the type of a contact type given its id.
@@ -160,7 +162,7 @@ namespace Commissionator {
          *  @param entry - C string containg the contact entry
          */
         void insertContact(const int comId, const int typeId,
-            const char *entry);
+            const std::string entry);
         
         /**
          *  Deletes a contact with a given id
@@ -175,7 +177,7 @@ namespace Commissionator {
          *  @param contactId - int containing the id of the contact to edit
          *  @param typeId - int containing the id of the type to change to  
          */
-        void editContactType(const int contactId, const int typeId);
+        void setContactType(const int contactId, const int typeId);
 
         /**
          *  Edits the type of a contact
@@ -183,7 +185,7 @@ namespace Commissionator {
          *  @param id - int containing the id of the contact to edit
          *  @param entry - C string containing the new entry
          */
-        void editContactEntry(const int id, const char *entry);
+        void setContactEntry(const int id, const std::string entry);
 
         /**
          *  Returns a vector of tuples containing the data for all the
@@ -191,12 +193,14 @@ namespace Commissionator {
          *
          *  @param comId - int representing Commissioner(id)
          *
-         *  @return - A vector of <int, int, string> tuples. Each tuple represents
-         *      one of the contacts stored in the database for the commissioner.
+         *  @return - A vector of <int, int, string> tuples. Each tuple 
+         *      represents one of the contacts stored in the database for the
+         *      commissioner.
          *      Order of the returned values is:
          *      Contact(commissioner), Contact(type), Contact(entry)
          */
-        const std::vector<std::tuple<int, int, std::string>> getContacts(const int comId);
+        const std::vector<const std::tuple<const int, const int, const std::string>> getContacts(
+            const int comId);
 
         /**
          *  Returns a tuple containing the data for the contact with the given
@@ -208,6 +212,197 @@ namespace Commissionator {
          *      Order of the returned values is:
          *      Contact(commissioner), Contact(type), Contact(entry)
          */
-        const std::tuple<int, int, std::string> getContact(const int id);
+        const std::tuple<const int, const int, const std::string> getContact(const int id);
+
+        /**
+         *  Inserts a product into the database with a given name and price.
+         *
+         *  @param name - C String containing the name of thep product
+         *  @param price - double representing the price of the product
+         */
+        void insertProduct(const std::string name, const double price);
+
+        /**
+         *  Deletes a product given its id by first reassinging all instances
+         *  of that product to the generic product (0), then deleting it from
+         *  the database.
+         *
+         *  @param id - id of the product to delete
+         */
+        void deleteProduct(const int id);
+
+        /**
+         *  Changes the price of a product given its id.
+         *
+         *  @param id - id of the product to alter
+         *  @param price - double representing new price of the product
+         */
+        void setProductPrice(const int id, const double price);
+
+        /**
+         *  Changes the name of a product given its id.
+         *
+         *  @param id - id of the product to alter
+         *  @param name - C string containing the new name of the product
+         */
+        void setProductName(const int id, const std::string  name);
+
+        /**
+         *  Returns a vector of tuples containing the data for all the
+         *  products stored in the database.
+         *
+         *  @return - A vector of <int, string, double> tuples. Each tuple 
+         *      represents one of the products stored in the database.
+         *      Order of the returned values is:
+         *      Product(id), Product(name), Product(price)
+         */
+        const std::vector<const std::tuple<const int, const std::string, const double>> getProducts();
+
+        /**
+        *  Returns a tuple containing the data for the product with the given
+        *  id.
+        *
+        *  @param id - int representing the product id.
+        *
+        *  @return -  A <string, double> tuple.
+        *      Order of the returned values is:
+        *      Product(name), Product(price)
+        */
+        const std::tuple<const std::string, const double> getProduct(const int id);
+
+        /**
+         *  Inserts a piece into the database as part of a given commission,
+         *  as a specific product, and with an optional description.
+         *
+         *  @param commissionId - the id of the commission that we are tying
+         *      the piece to.
+         *  @param productId - the id of the product that the peice is a unit
+         *      of.
+         *  @param description - C string containing product description
+         */
+        void insertPiece(const int commissionId, const int productId,
+            const std::string description);
+
+        /**
+        *  Inserts a piece into the database as part of a given commission,
+        *  and as a specific product.
+        *
+        *  @param commissionId - the id of the commission that we are tying
+        *      the piece to.
+        *  @param productId - the id of the product that the peice is a unit
+        *      of.
+        */
+        void insertPiece(const int commissionId, const int productId);
+
+        /**
+         *  Deletes a piece given its id.
+         *
+         *  @param id - id of the piece to delete
+         */
+        void deletePiece(const int id);
+
+        /**
+        *  Deletes a piece given its commission id.
+        *
+        *  @param id - id of the piece to delete
+        */
+        void deletePieceByCommission(const int id);
+
+
+        /**
+         *  Changes the description of a piece given its id.
+         *
+         *  @param id - id of the product to alter
+         *  @param description - C string containing new description
+         */
+        void setPieceDescription(const int id, const std::string description);
+
+        /**
+         *  Returns a vector of tuples containing the data for all the
+         *  pieces stored in the database.
+         *
+         *  @return - A vector of <int, int, int, string> tuples. Each tuple
+         *      represents one of the pieces stored in the database.
+         *      Order of the returned values is:
+         *      Piece(id), Piece(commissionId), Piece(productId), 
+         *      Piece(description)
+         */
+        const std::vector <const std::tuple<const int, const int, const int, const std::string>> getPieces();
+
+        /**
+         *  Returns a vector of tuples containing the data for all the
+         *  pieces stored in the database with contains description string.
+         *
+         *  @return - A vector of <int, int, int, string> tuples. Each tuple
+         *      represents one of the pieces stored in the database.
+         *      Order of the returned values is:
+         *      Piece(id), Piece(commissionId), Piece(productId),
+         *      Piece(description)
+         */
+        const std::vector<const std::tuple<const int, const int, const int, const std::string>> searchPieces(
+            const std::string description);
+
+        /**
+         *  Inserts a commission into the database with a given creation date
+         *  and due date.
+         *
+         *  @param createDate - C string containing creation date in the form
+         *      of YYYY-MM-DD
+         *  @param dueDate - C string containing creation date in the form
+         *      of YYYY-MM-DD
+         */
+        void insertCommission(const std::string createDate, const std::string dueDate);
+
+        /**
+         *  Deletes a commission with a given id.
+         *
+         *  @param id - id representing the commission to delete
+         */
+        void deleteCommission(const int id);
+
+        /**
+         *  Changes the due date of a commission given its id
+         *
+         *  @param id - id of the commission to alter
+         *  @param description - C string containing new due date in the form
+         *      of YYYY-MM-DD
+         */
+        void setCommissionDueDate(const int id, const std::string dueDate);
+
+        /**
+        *  Changes the paid date of a commission given its id
+        *
+        *  @param id - id of the commission to alter
+        *  @param description - C string containing new paid date in the form
+        *      of YYYY-MM-DD
+        */
+        void setCommissionPaidDate(const int id, const std::string paidDate);
+
+        /**
+         *  Returns a vector of tuples containing the data for all the
+         *  pieces stored in the database.
+         *
+         *  @return - A vector of <int, string, string, string> tuples. Each 
+         *      tuple represents one of the pieces stored in the database.
+         *      Order of the returned values is:
+         *      Commission(id), Commission(createDate), Commission(dueDate), 
+         *      Commission(paidDate)
+         */
+        const std::vector<const std::tuple<const int, const std::string, 
+            const std::string, const std::string>>getCommissions();
+
+        /**
+         *  Returns a tuple containing the data for the commission with the 
+         *  given id.
+         *
+         *  @param id - int representing the commission id.
+         *
+         *  @return -  A <string, string, string> tuple.
+         *      Order of the returned values is:
+         *      Commission(createDate), Commission(dueDate), 
+         *      Commission(paidDate)
+         */
+        const std::tuple<const std::string, const std::string, const std::string>getCommission(
+            const int id);
     };
 }

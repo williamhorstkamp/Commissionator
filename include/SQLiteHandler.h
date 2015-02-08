@@ -3,7 +3,7 @@
  *  Provides a portable SQLite3 interface to be used with the StatementHandler
  *
  *  @author William Horstkamp
- *  @version 0.8
+ *  @version .9
  */
 #include <sqlite3.h>
 #include <string>
@@ -65,7 +65,7 @@ namespace SQLiter {
          *
          *  @return - SQLiteHandler object managing the database referenced
          */
-        SQLiteHandler(const char *location);
+        SQLiteHandler(const std::string location);
 
         /**
          *  Default destructor destroys prepared statements and resets the
@@ -74,18 +74,22 @@ namespace SQLiter {
         ~SQLiteHandler();
 
         /**
-         *  Creates a new SQLite3 database at a given path and opens it, if a
-         *  nullptr is given instead of a name, the datase will be place in memory
+         *  Creates a new SQLite3 database at a given path and opens it.
          *
          *  @param location - Location on disk to create the SQLite3 database.
          *      Any file extension may be used as SQLite3 does not have a default
          *      extension.
-         *      If nullptr is entered instead of a pointer to a location on disk,
-         *      the database will instead be created solely in memory
          *
          *  @return - SQLiteHandler object managing the database referenced
          */
-        void createDatabase(const char *location);
+        void createDatabase(const std::string location);
+
+        /**
+         *  Creates a new SQLite3 database in memory.
+         *
+         *  @return - SQLiteHandler object managing the database referenced
+         */
+        void createDatabase();
 
         /**
          *  Open the database file at a given path
@@ -94,7 +98,7 @@ namespace SQLiter {
          *
          *  @return - SQLiteHandler object managing the database referenced
          */
-        void openDatabase(const char *location);
+        void openDatabase(const std::string location);
 
         /**
          *  Closes the active SQLite3 database
@@ -111,7 +115,23 @@ namespace SQLiter {
         *
         *  @return -SQLiteHandler object managing the database referenced
         */
-        void forceOpenDatabase(const char *location);
+        void forceOpenDatabase(const std::string location);
+
+        /**
+         *  Loads a file from the disk into the open database.
+         *
+         *  @param location - C string representing the location on disk of the
+         *      file
+         */
+        void load(const std::string location);
+
+        /**
+         *  Saves a file to the disk from the open database.
+         *
+         *  @param location - C string representing the location on disk of the
+         *      file
+         */
+        void save(const std::string location);
 
         /**
          *  Inline helper function checks if a file exists or not using stat()
@@ -120,9 +140,9 @@ namespace SQLiter {
          *
          *  @return - Boolean representing whether the file exists or not
          */
-        inline bool fileExists(const char *location) {
+        inline bool fileExists(const std::string location) {
             struct stat st;
-            return (stat(location, &st) == 0);
+            return (stat(location.c_str(), &st) == 0);
         }
 
         /**
@@ -136,7 +156,7 @@ namespace SQLiter {
          *
          *  @return - Pointer to the newly created StatementHandler.
          */
-        StatementHandler *prepareStatement(const char *key, const char *stmtStr);
+        StatementHandler *prepareStatement(const std::string key, const std::string stmtStr);
 
         /**
          *  Returns a pointer to a StatementHandler given its key.
@@ -146,14 +166,14 @@ namespace SQLiter {
          *
          *  @return - Pointer to the statement's StatementHandler
          */
-        StatementHandler *getStatement(const char *key);
+        StatementHandler *getStatement(const std::string key);
 
         /**
          *  Deletes a prepared statement given its key.
          *
          *  @param key - C String containing the key to the Statement to delete
          */
-        void destroyStatement(const char *key);
+        void destroyStatement(const std::string key);
 
         /**
          *  Destroys all prepared statements by clearing the statement map.
@@ -171,7 +191,7 @@ namespace SQLiter {
          *
          *  @return - Number of rows modified
          */
-        int rawExec(const char *stmtStr);
+        int rawExec(const std::string stmtStr);
 
         /**
          *  Checks to make sure the result code returned by an SQLite3 function
@@ -194,7 +214,7 @@ namespace SQLiter {
          *  @param xFunc - Function that is called on the input given by SQLite
          *  @param xDestroy - Destructor for pApp
          */
-        void scalarFunction(const char *name, int nArg, void *pApp,
+        void scalarFunction(const std::string name, int nArg, void *pApp,
             void(*xFunc)(sqlite3_context*, int, sqlite3_value**),
             void(*xDestroy)(void*));
 
@@ -209,7 +229,7 @@ namespace SQLiter {
          *  @param xFinal - Function to finalize aggregate
          *  @param xDestroy - Destructor for pApp
          */
-        void aggregateFunction(const char *name, int nArg, void *pApp,
+        void aggregateFunction(const std::string name, int nArg, void *pApp,
             void(*xStep)(sqlite3_context*, int, sqlite3_value**),
             void(*xFinal)(sqlite3_context*),
             void(*xDestroy)(void*));
@@ -220,7 +240,7 @@ namespace SQLiter {
          *  @param name - Pointer to null terminated c string containing function
          *      name to delete
          */
-        void deleteFunction(const char *name);
+        void deleteFunction(const std::string name);
 
         /**
          *  Returns the number of changes in the last INSERT, UPDATE, or DELETE
@@ -255,6 +275,6 @@ namespace SQLiter {
          *  @return - Pointer to null terminated C String containing the last
          *      result message generated by the database connection.
          */
-        const char *errorMsg();
+        const std::string errorMsg();
     };
 }
