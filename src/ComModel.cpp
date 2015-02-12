@@ -10,6 +10,7 @@ namespace Commissionator {
    }
 
     ComModel::~ComModel() {
+        close();
         delete SQL;
     }
 
@@ -51,20 +52,23 @@ namespace Commissionator {
             "CREATE TABLE IF NOT EXISTS Piece("
             "id INTEGER PRIMARY KEY AUTOINCREMENT,"
             "description    TEXT,"
-            "commissionId   INTEGER NOT NULL,"
-            "productId  INTEGER NOT NULL,"
-            "FOREIGN KEY(commissionId) REFERENCES Commission(id),"
-            "FOREIGN KEY(productId) REFERENCES Product(id)"
+            "commission   INTEGER NOT NULL,"
+            "product  INTEGER NOT NULL,"
+            "FOREIGN KEY(commission) REFERENCES Commission(id),"
+            "FOREIGN KEY(product) REFERENCES Product(id)"
             ");"
             "CREATE TABLE IF NOT EXISTS Commission("
             "id	INTEGER PRIMARY KEY AUTOINCREMENT,"
             "createDate	TEXT NOT NULL,"
-            "dueDate TEXT,"
-            "paidDate	TEXT"
+            "dueDate TEXT NOT NULL, "
+            "paidDate	TEXT,"
+            "commissioner INTEGER NOT NULL,"
+            "FOREIGN KEY(commissioner) REFERENCES Commissioner(id)"
             ");";
             SQL->rawExec(stmt);
             SQL->rawExec("PRAGMA foreign_keys = ON;");
-            SQL->rawExec("INSERT INTO Product(id, name, price) VALUES (0, 'generic', 0)");
+            SQL->rawExec("INSERT INTO Product(id, name, price) VALUES (0, 'Generic', 0)");
+            SQL->rawExec("INSERT INTO Commissioner(id, name) VALUES (0, 'None')");
     }
 
     void ComModel::prepare() {
@@ -115,34 +119,36 @@ namespace Commissionator {
         SQL->prepareStatement("getProduct",
             "SELECT name, price FROM Product WHERE id = (?)");
         SQL->prepareStatement("insertPieceWithDescription",
-            "INSERT INTO Piece(commissionId, productId, description) values (?, ?, ?)");
+            "INSERT INTO Piece(commission, product, description) values (?, ?, ?)");
         SQL->prepareStatement("insertPieceWithoutDescription",
-            "INSERT INTO Piece(commissionId, productId) values (?, ?)");
+            "INSERT INTO Piece(commission, product) values (?, ?)");
         SQL->prepareStatement("deletePiece",
             "DELETE FROM Piece WHERE id = (?)");
         SQL->prepareStatement("deletePieceByCommission",
-            "DELETE FROM Piece WHERE commissionId = (?)");
+            "DELETE FROM Piece WHERE commission = (?)");
         SQL->prepareStatement("setPieceDescription",
             "UPDATE Piece SET description = (?) WHERE id = (?)");
         SQL->prepareStatement("getPieces",
-            "SELECT id, commissionId, productId, description FROM Piece");
+            "SELECT id, commission, product, description FROM Piece");
         SQL->prepareStatement("searchPieces",
-            "SELECT id, commissionId, productId, description FROM Piece "
+            "SELECT id, commission, product, description FROM Piece "
             "WHERE description LIKE (?)");
         SQL->prepareStatement("setPiecesToGeneric",
-            "UPDATE Piece SET productId = 0 WHERE productId = (?)");
+            "UPDATE Piece SET product = 0 WHERE product = (?)");
         SQL->prepareStatement("insertCommission",
-            "INSERT INTO Commission(createDate, dueDate) VALUES (?, ?)");
+            "INSERT INTO Commission(createDate, dueDate, commissioner) VALUES (?, ?, ?)");
         SQL->prepareStatement("deleteCommission",
             "DELETE FROM Commission WHERE id = (?)");
         SQL->prepareStatement("setCommissionDueDate",
-            "UPDATE Commission SET dueDate = (?)");
+            "UPDATE Commission SET dueDate = (?) WHERE id = (?)");
         SQL->prepareStatement("setCommissionPaidDate",
-            "UPDATE Commission SET paidDate = (?)");
+            "UPDATE Commission SET paidDate = (?) WHERE id = (?)");
+        SQL->prepareStatement("setCommissionToNone",
+            "UPDATE Commission SET commissioner = 0 WHERE commissioner = (?)");
         SQL->prepareStatement("getCommissions",
-            "SELECT id, createDate, dueDate, paidDate FROM Commission");
+            "SELECT id, createDate, dueDate, paidDate, commissioner FROM Commission");
         SQL->prepareStatement("getCommission",
-            "SELECT createDate, dueDate, paidDate FROM Commission WHERE id = (?)");
+            "SELECT createDate, dueDate, paidDate, commissioner FROM Commission WHERE id = (?)");
     }
 
     void ComModel::insertCommissioner(const std::string comName) {
@@ -153,10 +159,16 @@ namespace Commissionator {
     }
 
     void ComModel::deleteCommissioner(const int id) {
-        StatementHandler *stmt = SQL->getStatement("deleteCommissioner");
-        stmt->bind(1, id);
-        stmt->step();
-        stmt->reset();
+        if (id != 0) {  //id of 'None' commissioner
+            StatementHandler *stmt = SQL->getStatement("setCommissionToNone");
+            stmt->bind(1, id);
+            stmt->step();
+            stmt->reset();
+            stmt = SQL->getStatement("deleteCommissioner");
+            stmt->bind(1, id);
+            stmt->step();
+            stmt->reset();
+        }
     }
 
     void ComModel::setCommissionerName(const int id, const std::string comName) {
@@ -297,14 +309,16 @@ namespace Commissionator {
     }
 
     void ComModel::deleteProduct(const int id) {
-        StatementHandler *stmt = SQL->getStatement("setPiecesToGeneric");
-        stmt->bind(1, id);
-        stmt->step();
-        stmt->reset();
-        stmt = SQL->getStatement("deleteProduct");
-        stmt->bind(1, id);
-        stmt->step();
-        stmt->reset();
+        if (id != 0) {  //HERESY! A magic number? SQL value of generic product - deleting it would be bad
+            StatementHandler *stmt = SQL->getStatement("setPiecesToGeneric");
+            stmt->bind(1, id);
+            stmt->step();
+            stmt->reset();
+            stmt = SQL->getStatement("deleteProduct");
+            stmt->bind(1, id);
+            stmt->step();
+            stmt->reset();
+        }
     }
 
     void ComModel::setProductPrice(const int id, const double price) {
@@ -416,10 +430,11 @@ namespace Commissionator {
     }
 
 
-    void ComModel::insertCommission(const std::string createDate, const std::string dueDate) {
+    void ComModel::insertCommission(const int commissioner, const std::string createDate, const std::string dueDate) {
         StatementHandler *stmt = SQL->getStatement("insertCommission");
         stmt->bind(1, createDate);
         stmt->bind(2, dueDate);
+        stmt->bind(3, commissioner);
         stmt->step();
         stmt->reset();
     }
@@ -447,28 +462,29 @@ namespace Commissionator {
         stmt->reset();
     }
 
-    const std::vector<const std::tuple<const int, const std::string,
+    const std::vector<const std::tuple<const int, const int, const std::string,
         const std::string, const std::string >> ComModel::getCommissions() {
-        std::vector<const std::tuple<const int, const std::string, const std::string,
-            const std::string >> commissions;
+        std::vector<const std::tuple<const int, const int, const std::string,
+            const std::string, const std::string >> commissions;
         StatementHandler *stmt = SQL->getStatement("getCommissions");
         while (stmt->step()) {
             commissions.push_back(
-                std::tuple<int, std::string, std::string, std::string>(
-                stmt->getInt(0), stmt->getString(1), stmt->getString(2),
-                stmt->getString(3)));
+                std::tuple<int, int, std::string, std::string, std::string>(
+                stmt->getInt(0), stmt->getInt(4), stmt->getString(1), 
+                stmt->getString(2), stmt->getString(3)));
         }
         stmt->reset();
         return commissions;
     }
 
-    const std::tuple<const std::string, const std::string, const std::string> ComModel::
-        getCommission(const int id) {
+    const std::tuple<const int, const std::string, const std::string, 
+        const std::string> ComModel::getCommission(const int id) {
         StatementHandler *stmt = SQL->getStatement("getCommission");
         stmt->bind(1, id);
         stmt->step();
-        std::tuple<std::string, std::string, std::string> commission(
-            stmt->getString(0), stmt->getString(1), stmt->getString(2));
+        std::tuple<int, std::string, std::string, std::string> commission(
+            stmt->getInt(3), stmt->getString(0), stmt->getString(1), 
+            stmt->getString(2));
         stmt->reset();
         return commission;
     }

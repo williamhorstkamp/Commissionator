@@ -5,7 +5,6 @@
  *  with the bonus of providing a convenient interface
  *
  *  @author William Horstkamp
- *  @version 0.8
  */
 
 /**
@@ -81,6 +80,8 @@ namespace SQLiter {
     const std::string StatementHandler::getString(const int column) {
         if (getType(column) == SQLITE_TEXT) {
             return std::string((const char*)sqlite3_column_text(stmt.get(), column));
+        } else if (getType(column) == SQLITE_NULL) {
+            return "";
         } throw SQLiteException("Column doesn't contain a string");
     }
 

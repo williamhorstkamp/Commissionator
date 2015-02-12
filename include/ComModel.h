@@ -73,7 +73,8 @@ namespace Commissionator {
         void insertCommissioner(const std::string comName);
 
         /**
-         *  Deletes a commissioner with a given id
+         *  Deletes a commissioner with a given id. Can not delete the 'None'
+         *  commissioner (0)
          *
          *  @param id - int containing the id of the commissioner to delete
          */
@@ -225,7 +226,7 @@ namespace Commissionator {
         /**
          *  Deletes a product given its id by first reassinging all instances
          *  of that product to the generic product (0), then deleting it from
-         *  the database.
+         *  the database. Can not delete the Generic product (0).
          *
          *  @param id - id of the product to delete
          */
@@ -346,12 +347,14 @@ namespace Commissionator {
          *  Inserts a commission into the database with a given creation date
          *  and due date.
          *
+         *  @param commissioner - int representing id of commissioner of the 
+         *      commission
          *  @param createDate - C string containing creation date in the form
          *      of YYYY-MM-DD
          *  @param dueDate - C string containing creation date in the form
          *      of YYYY-MM-DD
          */
-        void insertCommission(const std::string createDate, const std::string dueDate);
+        void insertCommission(int commissioner, const std::string createDate, const std::string dueDate);
 
         /**
          *  Deletes a commission with a given id.
@@ -385,10 +388,10 @@ namespace Commissionator {
          *  @return - A vector of <int, string, string, string> tuples. Each 
          *      tuple represents one of the pieces stored in the database.
          *      Order of the returned values is:
-         *      Commission(id), Commission(createDate), Commission(dueDate), 
-         *      Commission(paidDate)
+         *      Commission(id), Commission(commissioner), Commission(createDate), 
+         *      Commission(dueDate), Commission(paidDate)
          */
-        const std::vector<const std::tuple<const int, const std::string, 
+        const std::vector<const std::tuple<const int, const int, const std::string, 
             const std::string, const std::string>>getCommissions();
 
         /**
@@ -399,10 +402,10 @@ namespace Commissionator {
          *
          *  @return -  A <string, string, string> tuple.
          *      Order of the returned values is:
-         *      Commission(createDate), Commission(dueDate), 
-         *      Commission(paidDate)
+         *      Commissioner(commissioner), Commission(createDate), 
+         *      Commission(dueDate), Commission(paidDate)
          */
-        const std::tuple<const std::string, const std::string, const std::string>getCommission(
+        const std::tuple<const int, const std::string, const std::string, const std::string>getCommission(
             const int id);
     };
 }
