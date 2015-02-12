@@ -10,8 +10,9 @@ document and track their progress on a piece from start to finish, and even keep
   
 ## Design Doodads
 The program is being designed in an MVC-style and is written in C++11/14. The model will utilize SQLiter, an SQLite3 wrapper for C++11, to create
-and manage a database containing all the of store's information. The interface will be created in qt after the model is finished and tested. The target release platforms are
-Windows, OSX, and GNU/Linux. Finally, the controller will be created to bridge the two sides together.  
+and manage a database containing all the of store's information. The interface will be created in qt after the model is finished and tested.  Finally, the controller will be created to bridge the two sides together.   
+The target release platforms are
+Windows, OSX, and GNU/Linux.
   
 ## Development and Testing process
 Each version will first have its header and documentation written, 
