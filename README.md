@@ -14,9 +14,8 @@ and manage a database containing all the of store's information. The interface w
 Windows, OSX, and GNU/Linux. Finally, the controller will be created to bridge the two sides together.  
   
 ## Testing
-The first two versions of the model were designed and written before their tests, however subsequent versions will first have their header and documentation written, 
-then the tests will be written in google test, followed by finally writing, and then testing the source code. This will be repeated until all features of the Model Roadmap 
-are complete, at which point development will move on to the interface.  
+Each version will first have its header and documentation written, 
+then the tests will be written in google test, followed by finally writing, and then testing the source code. This will be repeated until all features of the Model Roadmap are complete, at which point development will move on to the interface. The roadmap will be followed for the most part for the initial test cases, however some additional features may pop up from time to time as new issues are discovered or new features are thought up and implemented.
   
 ##Copyright Stuff
 Copyright (c) 2015 William Horstkamp  
