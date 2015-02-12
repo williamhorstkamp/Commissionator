@@ -13,7 +13,7 @@ The program is being designed in an MVC-style and is written in C++11/14. The mo
 and manage a database containing all the of store's information. The interface will be created in qt after the model is finished and tested. The target release platforms are
 Windows, OSX, and GNU/Linux. Finally, the controller will be created to bridge the two sides together.  
   
-## Testing
+## Development and Testing process
 Each version will first have its header and documentation written, 
 then the tests will be written in google test, followed by finally writing, and then testing the source code. This will be repeated until all features of the Model Roadmap are complete, at which point development will move on to the interface. The roadmap will be followed for the most part for the initial test cases, however some additional features may pop up from time to time as new issues are discovered or new features are thought up and implemented.
   
