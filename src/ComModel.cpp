@@ -163,6 +163,34 @@ namespace Commissionator {
             "SELECT id, createDate, dueDate, paidDate, commissioner FROM Commission");
         SQL->prepareStatement("getCommission",
             "SELECT createDate, dueDate, paidDate, commissioner FROM Commission WHERE id = (?)");
+        SQL->prepareStatement("insertPaymentMethod",
+            "INSERT INTO PaymentMethod(name) VALUES (?)");
+        SQL->prepareStatement("deletePaymentMethod",
+            "DELETE FROM PaymentMethod WHERE id = (?)");
+        SQL->prepareStatement("setPaymentMethodName",
+            "UPDATE PaymentMethod SET name = (?) WHERE id = (?)");
+        SQL->prepareStatement("getPaymentMethods",
+            "SELECT id, name FROM PaymentMethods");
+        SQL->prepareStatement("getPaymentMethod",
+            "SELECT name FROM PaymentMethod WHERE id = (?)");
+        SQL->prepareStatement("insertPaymentWithNote",
+            "INSERT INTO Payment(commissioner, method, date, fee, note) VALUES (?, ?, ?, ?, ?)");
+        SQL->prepareStatement("insertPaymentWithoutNote",
+            "INSERT INTO Payment(commissioner, method, date, fee) VALUES (?, ?, ?, ?)");
+        SQL->prepareStatement("setPaymentMethod",
+            "UPDATE Payment SET method = (?) WHERE id = (?)");
+        SQL->prepareStatement("setPaymentDate",
+            "UPDATE Payment SET date = (?) WHERE id = (?)");
+        SQL->prepareStatement("setPaymentAmount",
+            "UPDATE Payment SET fee = (?) WHERE id = (?)");
+        SQL->prepareStatement("setPaymentCommissioner",
+            "UPDATE Payment SET commissioner = (?) WHERE id = (?)");
+        SQL->prepareStatement("getPayments",
+            "SELECT id, commissioner, method, date, fee, note FROM Payment");
+        SQL->prepareStatement("getPaymentById",
+            "SELECT commissioner, method, date, fee, note FROM Payment WHERE id = (?)");
+        SQL->prepareStatement("getPaymentByCommissioner",
+            "SELECT id, method, date, fee, note FROM Payment WHERE commissioner = (?)");
     }
 
     void ComModel::insertCommissioner(const std::string comName) {
