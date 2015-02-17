@@ -64,6 +64,20 @@ namespace Commissionator {
             "paidDate	TEXT,"
             "commissioner INTEGER NOT NULL,"
             "FOREIGN KEY(commissioner) REFERENCES Commissioner(id)"
+            ");"
+            "CREATE TABLE IF NOT EXISTS PaymentMethod("
+            "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+            "name	TEXT NOT NULL"
+            ");"
+            "CREATE TABLE IF NOT EXISTS Payment("
+            "id	INTEGER PRIMARY KEY AUTOINCREMENT,"
+            "commissioner	INTEGER NOT NULL,"
+            "method	INTEGER NOT NULL,"
+            "date	TEXT NOT NULL,"
+            "fee	INTEGER NOT NULL,"
+            "note   TEXT,"
+            "FOREIGN KEY(commissioner) REFERENCES Commissioner(id),"
+            "FOREIGN KEY(method) REFERENCES PaymentMethod(id)"
             ");";
             SQL->rawExec(stmt);
             SQL->rawExec("PRAGMA foreign_keys = ON;");
