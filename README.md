@@ -15,8 +15,8 @@ The target release platforms are
 Windows, OSX, and GNU/Linux.
   
 ## Development and Testing process
-Each version will first have its header and documentation written, 
-then the tests will be written in google test, followed by finally writing, and then testing the source code. This will be repeated until all features of the Model Roadmap are complete, at which point development will move on to the interface. The roadmap will be followed for the most part for the initial test cases, however some additional features may pop up from time to time as new issues are discovered or new features are thought up and implemented.
+Each version will first have its SQL written, then the C++ header and documentation, 
+the tests will be written in google test, followed by finally writing, and then testing the source code. This will be repeated until all features of the Model Roadmap are complete, at which point development will move on to the interface. The roadmap will be followed for the most part for the initial test cases, however some additional features may pop up from time to time as new issues are discovered or new features are thought up and implemented.
   
 ##Copyright Stuff
 Copyright (c) 2015 William Horstkamp  
