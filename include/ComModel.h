@@ -98,7 +98,8 @@ namespace Commissionator {
          *      Order of the returned values is:
          *      Commissioner(id), Commissioner(name)
          */
-        const std::vector<const std::tuple<const int, const std::string>> getCommissioners();
+        const std::vector<const std::tuple<const int, const std::string>> 
+            getCommissioners();
 
         /**
          *  Returns the name of a commissioner given its id.
@@ -142,7 +143,8 @@ namespace Commissionator {
          *      Order of the returned values is:
          *      ContactType(id), ContactType(type)
          */
-        const std::vector<const std::tuple<const int, const std::string>> getContactTypes();
+        const std::vector<const std::tuple<const int, const std::string>> 
+            getContactTypes();
 
         /**
          *  Returns the type of a contact type given its id.
@@ -200,8 +202,8 @@ namespace Commissionator {
          *      Order of the returned values is:
          *      Contact(commissioner), Contact(type), Contact(entry)
          */
-        const std::vector<const std::tuple<const int, const int, const std::string>> getContacts(
-            const int comId);
+        const std::vector<const std::tuple<const int, const int, 
+            const std::string>> getContacts(const int comId);
 
         /**
          *  Returns a tuple containing the data for the contact with the given
@@ -213,7 +215,8 @@ namespace Commissionator {
          *      Order of the returned values is:
          *      Contact(commissioner), Contact(type), Contact(entry)
          */
-        const std::tuple<const int, const int, const std::string> getContact(const int id);
+        const std::tuple<const int, const int, const std::string> 
+            getContact(const int id);
 
         /**
          *  Inserts a product into the database with a given name and price.
@@ -257,7 +260,8 @@ namespace Commissionator {
          *      Order of the returned values is:
          *      Product(id), Product(name), Product(price)
          */
-        const std::vector<const std::tuple<const int, const std::string, const double>> getProducts();
+        const std::vector<const std::tuple<const int, const std::string, 
+            const double>> getProducts();
 
         /**
         *  Returns a tuple containing the data for the product with the given
@@ -328,7 +332,22 @@ namespace Commissionator {
          *      Piece(id), Piece(commissionId), Piece(productId), 
          *      Piece(description)
          */
-        const std::vector <const std::tuple<const int, const int, const int, const std::string>> getPieces();
+        const std::vector <const std::tuple<const int, const int, const int, 
+            const std::string>> getPieces();
+
+        /**
+         *  Returns a tuple containing the data for the piece with the
+         *  given id.
+         *
+         *  @param paymentId - int representing the payment id
+         *
+         *  @return - A <int, int, string> tuple.
+         *      Order of the returned values is:
+         *      Piece(commissionId), Piece(productId),
+         *      Piece(description)
+         */
+        const std::tuple<const int, const int, const std::string> 
+            getPiece(const int id);
 
         /**
          *  Returns a vector of tuples containing the data for all the
@@ -340,8 +359,8 @@ namespace Commissionator {
          *      Piece(id), Piece(commissionId), Piece(productId),
          *      Piece(description)
          */
-        const std::vector<const std::tuple<const int, const int, const int, const std::string>> searchPieces(
-            const std::string description);
+        const std::vector<const std::tuple<const int, const int, const int, 
+            const std::string>> searchPieces(const std::string description);
 
         /**
          *  Inserts a commission into the database with a given creation date
@@ -354,7 +373,8 @@ namespace Commissionator {
          *  @param dueDate - C string containing creation date in the form
          *      of YYYY-MM-DD
          */
-        void insertCommission(int commissioner, const std::string createDate, const std::string dueDate);
+        void insertCommission(int commissioner, const std::string createDate, 
+            const std::string dueDate);
 
         /**
          *  Deletes a commission with a given id.
@@ -391,8 +411,9 @@ namespace Commissionator {
          *      Commission(id), Commission(commissioner), Commission(createDate), 
          *      Commission(dueDate), Commission(paidDate)
          */
-        const std::vector<const std::tuple<const int, const int, const std::string, 
-            const std::string, const std::string>>getCommissions();
+        const std::vector<const std::tuple<const int, const int, 
+            const std::string, const std::string, 
+            const std::string>>getCommissions();
 
         /**
          *  Returns a tuple containing the data for the commission with the 
@@ -405,7 +426,155 @@ namespace Commissionator {
          *      Commissioner(commissioner), Commission(createDate), 
          *      Commission(dueDate), Commission(paidDate)
          */
-        const std::tuple<const int, const std::string, const std::string, const std::string>getCommission(
-            const int id);
+        const std::tuple<const int, const std::string, const std::string, 
+            const std::string>getCommission(const int id);
+
+        /**
+         *  Inserts a payment method with given name
+         *
+         *  @param name - String containing the name of the new payment method
+         */
+        void insertPaymentMethod(const std::string name);
+
+        /**
+         *  Deletes a payment method with given id
+         *
+         *  @param id - int containing the id of the payment method to delete
+         */
+        void deletePaymentMethod(const int id);
+
+        /**
+         *  Sets the name of the payment method identified by id
+         *
+         *  @param id - int containing the id of the payment method to edit
+         *  @param name - String containing the name of the payment method
+         */
+        void setPaymentMethodName(const int id, const std::string name);
+
+        /**
+         *  Returns a vector of tuples containing the data for all the
+         *  payment methods stored in the database.
+         *
+         *  @return - A vector of <int, string> tuples. Each
+         *      tuple represents one of the payment methods stored in the 
+         *      database.
+         *      Order of the returned values is:
+         *      PaymentMethod(id), PaymentMethod(name)
+         */
+        const std::vector<const std::tuple<const int, const std::string>> 
+            getPaymentMethods();
+
+        /**
+         *  Returns the name of the payment method given id
+         *
+         *  @param id - id of the payment method
+         *
+         *  @return - String containing the name of the payment method
+         */
+        const std::string getPaymentMethod(const int id);
+
+        /**
+         *  Inserts a payment with given commissioner, payment method, date,
+         *  payment amount, and note.
+         *
+         *  @param commissionerId - int representing id of the commissioner
+         *  @param commissionerId - int representing id of the payment method
+         *  @param date - String containing the date the payment was made
+         *  @param amount - int representing the dollar amount the payment was 
+         *      for
+         *  @param note - String containing a note about the payment
+         */
+        void insertPayment(const int commissionerId, const int paymentMethodId,
+            const std::string date, const double amount, const std::string note);
+
+        /**
+         *  Inserts a payment with given commissioner, payment method, date,
+         *  and payment amount.
+         *
+         *  @param commissionerId - int representing id of the commissioner
+         *  @param commissionerId - int representing id of the payment method
+         *  @param date - String containing the date the payment was made
+         *  @param amount - int representing the dollar amount the payment was
+         *      for
+         */
+        void insertPayment(const int commissionerId, const int paymentMethodId,
+            const std::string date, const double amount);
+
+        /**
+         *  Sets the method of the payment identified by id
+         *
+         *  @param paymentId - int containing the id of the payment to edit
+         *  @param methodId - int containing the id of the  method to change to
+         */
+        void setPaymentMethod(const int paymentId, const int methodId);
+
+        /**
+         *  Sets the date of the payment identified by id
+         *
+         *  @param paymentId - int containing the id of the payment to edit
+         *  @param date - String containing the new date of the payment
+         */
+        void setPaymentDate(const int paymentId, const std::string date);
+
+        /**
+         *  Sets the payment amount of the payment identified by id
+         *
+         *  @param paymentId - int containing the id of the payment to edit
+         *  @param methodId - int containing the value to change amount to
+         */
+        void setPaymentAmount(const int paymentId, const double amount);
+
+        /**
+         *  Sets the commissioner of the payment identified by id
+         *
+         *  @param paymentId - int containing the id of the payment to edit
+         *  @param methodId - int containing the id of the commissioner to 
+         *      change to
+         */
+        void setPaymentCommissioner(const int paymentId, 
+            const int commissionerId);
+
+        /**
+         *  Returns a vector of tuples containing the data for all the
+         *  payments stored in the database.
+         *
+         *  @return - A vector of <int, int, int, string, int, string> tuples. 
+         *      Each tuple represents one of the payments stored in the 
+         *      database.
+         *      Order of the returned values is:
+         *      Payment(id), Payment(commissioner), Payment(method), 
+         *      Payment(date), Payment(fee), Payment(note)
+         */
+        const std::vector<const std::tuple<const int, const int, const int, 
+            const std::string, const double, const std::string>> getPayments();
+
+        /**
+         *  Returns a tuple containing the data for the payment with the
+         *  given id.
+         *
+         *  @param paymentId - int representing the payment id
+         *
+         *  @return - A <int, int, string, int, string> tuple.
+         *      Order of the returned values is:
+         *      Payment(commissioner), Payment(method),
+         *      Payment(date), Payment(fee), Payment(note)
+         */
+        const std::tuple<const int, const int, const std::string, 
+            const double, const std::string> getPaymentById(const int paymentId);
+
+        /**
+         *  Returns a vector of tuples containing the data for all the
+         *  payments stored in the database for the given commissioner.
+         *
+         *  @return - A vector of <int, int, string, int, string> tuples.
+         *      Each tuple represents one of the payments stored in the
+         *      database.
+         *      Order of the returned values is:
+         *      Payment(id), Payment(method), Payment(date), Payment(fee), 
+         *      Payment(note)
+         */
+        const std::vector<const std::tuple<const int, const int,
+            const std::string, const double, const std::string >>
+            getPaymentsByCommissioner(const int commissionerId);
     };
 }

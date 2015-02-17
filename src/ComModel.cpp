@@ -64,6 +64,20 @@ namespace Commissionator {
             "paidDate	TEXT,"
             "commissioner INTEGER NOT NULL,"
             "FOREIGN KEY(commissioner) REFERENCES Commissioner(id)"
+            ");"
+            "CREATE TABLE IF NOT EXISTS PaymentMethod("
+            "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+            "name	TEXT NOT NULL"
+            ");"
+            "CREATE TABLE IF NOT EXISTS Payment("
+            "id	INTEGER PRIMARY KEY AUTOINCREMENT,"
+            "commissioner	INTEGER NOT NULL,"
+            "method	INTEGER NOT NULL,"
+            "date	TEXT NOT NULL,"
+            "fee	REAL NOT NULL,"
+            "note   TEXT,"
+            "FOREIGN KEY(commissioner) REFERENCES Commissioner(id),"
+            "FOREIGN KEY(method) REFERENCES PaymentMethod(id)"
             ");";
             SQL->rawExec(stmt);
             SQL->rawExec("PRAGMA foreign_keys = ON;");
@@ -130,6 +144,8 @@ namespace Commissionator {
             "UPDATE Piece SET description = (?) WHERE id = (?)");
         SQL->prepareStatement("getPieces",
             "SELECT id, commission, product, description FROM Piece");
+        SQL->prepareStatement("getPiece",
+            "SELECT commission, product, description FROM Piece WHERE id = (?)");
         SQL->prepareStatement("searchPieces",
             "SELECT id, commission, product, description FROM Piece "
             "WHERE description LIKE (?)");
@@ -149,6 +165,34 @@ namespace Commissionator {
             "SELECT id, createDate, dueDate, paidDate, commissioner FROM Commission");
         SQL->prepareStatement("getCommission",
             "SELECT createDate, dueDate, paidDate, commissioner FROM Commission WHERE id = (?)");
+        SQL->prepareStatement("insertPaymentMethod",
+            "INSERT INTO PaymentMethod(name) VALUES (?)");
+        SQL->prepareStatement("deletePaymentMethod",
+            "DELETE FROM PaymentMethod WHERE id = (?)");
+        SQL->prepareStatement("setPaymentMethodName",
+            "UPDATE PaymentMethod SET name = (?) WHERE id = (?)");
+        SQL->prepareStatement("getPaymentMethods",
+            "SELECT id, name FROM PaymentMethod");
+        SQL->prepareStatement("getPaymentMethod",
+            "SELECT name FROM PaymentMethod WHERE id = (?)");
+        SQL->prepareStatement("insertPaymentWithNote",
+            "INSERT INTO Payment(commissioner, method, date, fee, note) VALUES (?, ?, ?, ?, ?)");
+        SQL->prepareStatement("insertPaymentWithoutNote",
+            "INSERT INTO Payment(commissioner, method, date, fee) VALUES (?, ?, ?, ?)");
+        SQL->prepareStatement("setPaymentMethod",
+            "UPDATE Payment SET method = (?) WHERE id = (?)");
+        SQL->prepareStatement("setPaymentDate",
+            "UPDATE Payment SET date = (?) WHERE id = (?)");
+        SQL->prepareStatement("setPaymentAmount",
+            "UPDATE Payment SET fee = (?) WHERE id = (?)");
+        SQL->prepareStatement("setPaymentCommissioner",
+            "UPDATE Payment SET commissioner = (?) WHERE id = (?)");
+        SQL->prepareStatement("getPayments",
+            "SELECT id, commissioner, method, date, fee, note FROM Payment");
+        SQL->prepareStatement("getPaymentById",
+            "SELECT commissioner, method, date, fee, note FROM Payment WHERE id = (?)");
+        SQL->prepareStatement("getPaymentsByCommissioner",
+            "SELECT id, method, date, fee, note FROM Payment WHERE commissioner = (?)");
     }
 
     void ComModel::insertCommissioner(const std::string comName) {
@@ -414,6 +458,16 @@ namespace Commissionator {
         return pieces;
     }
 
+    const std::tuple<const int, const int, const std::string>
+        ComModel::getPiece(const int id) {
+        StatementHandler *stmt = SQL->getStatement("getPiece");
+        stmt->bind(1, id);
+        stmt->step();
+        std::tuple<int, int, std::string> piece(stmt->getInt(0), stmt->getInt(1), stmt->getString(2));
+        stmt->reset();
+        return piece;
+    }
+
     const std::vector<const std::tuple<const int, const int, const int, const std::string>> ComModel::
         searchPieces(const std::string description) {
         std::vector<const std::tuple<const int, const int, const int, const std::string>> pieces;
@@ -487,5 +541,153 @@ namespace Commissionator {
             stmt->getString(2));
         stmt->reset();
         return commission;
+    }
+
+    void ComModel::insertPaymentMethod(const std::string name) {
+        StatementHandler *stmt = SQL->getStatement("insertPaymentMethod");
+        stmt->bind(1, name);
+        stmt->step();
+        stmt->reset();
+    }
+
+    void ComModel::deletePaymentMethod(const int id) {
+        StatementHandler *stmt = SQL->getStatement("deletePaymentMethod");
+        stmt->bind(1, id);
+        stmt->step();
+        stmt->reset();
+    }
+
+    void ComModel::setPaymentMethodName(const int id, const std::string name) {
+        StatementHandler *stmt = SQL->getStatement("setPaymentMethodName");
+        stmt->bind(1, name);
+        stmt->bind(2, id);
+        stmt->step();
+        stmt->reset();
+    }
+
+    const std::vector <const std::tuple<const int, const std::string> >
+        ComModel::getPaymentMethods() {
+        std::vector<const std::tuple<const int, const std::string>> payments;
+        StatementHandler *stmt = SQL->getStatement("getPaymentMethods");
+        while (stmt->step()) {
+            payments.push_back(
+                std::tuple<const int, const std::string>(
+                stmt->getInt(0), stmt->getString(1)));
+        }
+        stmt->reset();
+        return payments;
+    }
+
+    const std::string ComModel::getPaymentMethod(const int id) {
+        StatementHandler *stmt = SQL->getStatement("getPaymentMethod");
+        stmt->bind(1, id);
+        stmt->step();
+        std::string name = stmt->getString(0);
+        stmt->reset();
+        return name;
+    }
+
+    void ComModel::insertPayment(const int commissionerId, const int paymentMethodId,
+        const std::string date, const double amount, const std::string note) {
+        StatementHandler *stmt = SQL->getStatement("insertPaymentWithNote");
+        stmt->bind(1, commissionerId);
+        stmt->bind(2, paymentMethodId);
+        stmt->bind(3, date);
+        stmt->bind(4, amount);
+        stmt->bind(5, note);
+        stmt->step();
+        stmt->reset();
+    }
+
+    void ComModel::insertPayment(const int commissionerId, 
+        const int paymentMethodId, const std::string date, const double amount) {
+        StatementHandler *stmt = SQL->getStatement("insertPaymentWithoutNote");
+        stmt->bind(1, commissionerId);
+        stmt->bind(2, paymentMethodId);
+        stmt->bind(3, date);
+        stmt->bind(4, amount);
+        stmt->step();
+        stmt->reset();
+    }
+
+    void ComModel::setPaymentMethod(const int paymentId, const int methodId) {
+        StatementHandler *stmt = SQL->getStatement("setPaymentMethod");
+        stmt->bind(1, methodId);
+        stmt->bind(2, paymentId);
+        stmt->step();
+        stmt->reset();
+    }
+
+    void ComModel::setPaymentDate(const int paymentId, const std::string date) {
+        StatementHandler *stmt = SQL->getStatement("setPaymentDate");
+        stmt->bind(1, date);
+        stmt->bind(2, paymentId);
+        stmt->step();
+        stmt->reset();
+    }
+
+    void ComModel::setPaymentAmount(const int paymentId, const double amount) {
+        StatementHandler *stmt = SQL->getStatement("setPaymentAmount");
+        stmt->bind(1,amount);
+        stmt->bind(2, paymentId);
+        stmt->step();
+        stmt->reset();
+    }
+
+    void ComModel::setPaymentCommissioner(const int paymentId, 
+        const int commissionerId) {
+        StatementHandler *stmt = SQL->getStatement("setPaymentCommissioner");
+        stmt->bind(1, commissionerId);
+        stmt->bind(2, paymentId);
+        stmt->step();
+        stmt->reset();
+    }
+
+    const std::vector <const std::tuple<const int, const int, const int,
+        const std::string, const double, const std::string>>
+        ComModel::getPayments() {
+        std::vector<const std::tuple<const int, const int, const int,
+            const std::string, const double, const std::string >> payments;
+        StatementHandler *stmt = SQL->getStatement("getPayments");
+        while (stmt->step()) {
+            payments.push_back(
+                std::tuple<const int, const int, const int,
+                const std::string, const double, const std::string>(
+                stmt->getInt(0), stmt->getInt(1), stmt->getInt(2),
+                stmt->getString(3), stmt->getDouble(4), stmt->getString(5)));
+        }
+        stmt->reset();
+        return payments;
+    }
+
+    const std::tuple<const int, const int, const std::string, const double, 
+        const std::string> ComModel::getPaymentById(const int paymentId) {
+        StatementHandler *stmt = SQL->getStatement("getPaymentById");
+        stmt->bind(1, paymentId);
+        stmt->step();
+        const std::tuple<const int, const int,
+                const std::string, const double, const std::string> payment(
+                stmt->getInt(0), stmt->getInt(1),
+                stmt->getString(2), stmt->getDouble(3), stmt->getString(4));
+        stmt->reset();
+        return payment;
+    }
+
+    const std::vector<const std::tuple<const int, const int,
+        const std::string, const double, const std::string >>
+        ComModel::getPaymentsByCommissioner(const int commissionerId) {
+        std::vector<const std::tuple<const int, const int,
+            const std::string, const double, const std::string >> payments;
+        StatementHandler *stmt = SQL->getStatement("getPaymentsByCommissioner");
+        stmt->bind(1, commissionerId);
+        while (stmt->step()) {
+            payments.push_back(
+                std::tuple<const int, const int,
+                const std::string, const double, const std::string>(
+                stmt->getInt(0), stmt->getInt(1), stmt->getString(2),
+                stmt->getDouble(3), stmt->getString(4)));
+        }
+        stmt->reset();
+        return payments;
     }
 }
