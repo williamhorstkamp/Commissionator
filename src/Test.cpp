@@ -428,7 +428,7 @@ TEST(V3Test, getPayments) {
         "02/02/2001", 15, "note stuff"));
     paymentList.push_back(std::tuple < const int, const int, const int,
         const std::string, const double, const std::string >(3, 1, 2,
-        "02/02/2050", 15, "more note stuff"));
+        "02/02/2050", 500.05, "more note stuff"));
     EXPECT_EQ(paymentList, com->getPayments());
     paymentList.clear();
     std::tuple <const int, const int,
@@ -522,7 +522,7 @@ TEST(V3Test, setPaymentCommissioner) {
     com->setPaymentCommissioner(1, 2);
     paymentList.push_back(std::tuple < const int, const int, const int,
         const std::string, const double, const std::string >(1, 2, 1,
-        "01/01/2001", 20, ""));
+        "01/01/2001", 10, ""));
     EXPECT_EQ(paymentList, com->getPayments());
     paymentList.clear();
 
@@ -545,7 +545,7 @@ TEST(V3Test, getPaymentsByCommissioner) {
         "01/01/2001", 10, ""));
     paymentList.push_back(std::tuple <const int, const int,
         const std::string, const double, const std::string >(3, 2,
-        "02/02/2050", 15, "more note stuff"));
+        "02/02/2050", 500.05, "more note stuff"));
     EXPECT_EQ(paymentList, com->getPaymentsByCommissioner(1));
     paymentList.clear();
 

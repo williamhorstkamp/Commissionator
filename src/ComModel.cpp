@@ -172,7 +172,7 @@ namespace Commissionator {
         SQL->prepareStatement("setPaymentMethodName",
             "UPDATE PaymentMethod SET name = (?) WHERE id = (?)");
         SQL->prepareStatement("getPaymentMethods",
-            "SELECT id, name FROM PaymentMethods");
+            "SELECT id, name FROM PaymentMethod");
         SQL->prepareStatement("getPaymentMethod",
             "SELECT name FROM PaymentMethod WHERE id = (?)");
         SQL->prepareStatement("insertPaymentWithNote",
@@ -191,7 +191,7 @@ namespace Commissionator {
             "SELECT id, commissioner, method, date, fee, note FROM Payment");
         SQL->prepareStatement("getPaymentById",
             "SELECT commissioner, method, date, fee, note FROM Payment WHERE id = (?)");
-        SQL->prepareStatement("getPaymentByCommissioner",
+        SQL->prepareStatement("getPaymentsByCommissioner",
             "SELECT id, method, date, fee, note FROM Payment WHERE commissioner = (?)");
     }
 
