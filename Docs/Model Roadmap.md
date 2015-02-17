@@ -106,3 +106,7 @@ A short description of what this version of the model will add over the previous
 - [ ] alter sale start date
 - [ ] alter sale end date
 - [ ] override/alter the price of a given commission
+
+###V7:Bits and pieces
+- [ ] update system
+- [ ] date sanitization
