@@ -74,7 +74,7 @@ namespace Commissionator {
             "commissioner	INTEGER NOT NULL,"
             "method	INTEGER NOT NULL,"
             "date	TEXT NOT NULL,"
-            "fee	INTEGER NOT NULL,"
+            "fee	REAL NOT NULL,"
             "note   TEXT,"
             "FOREIGN KEY(commissioner) REFERENCES Commissioner(id),"
             "FOREIGN KEY(method) REFERENCES PaymentMethod(id)"
@@ -144,6 +144,8 @@ namespace Commissionator {
             "UPDATE Piece SET description = (?) WHERE id = (?)");
         SQL->prepareStatement("getPieces",
             "SELECT id, commission, product, description FROM Piece");
+        SQL->prepareStatement("getPiece",
+            "SELECT commission, product, description FROM Piece WHERE id = (?)");
         SQL->prepareStatement("searchPieces",
             "SELECT id, commission, product, description FROM Piece "
             "WHERE description LIKE (?)");
@@ -454,6 +456,16 @@ namespace Commissionator {
         }
         stmt->reset();
         return pieces;
+    }
+
+    const std::tuple<const int, const int, const std::string>
+        ComModel::getPiece(const int id) {
+        StatementHandler *stmt = SQL->getStatement("getPiece");
+        stmt->bind(1, id);
+        stmt->step();
+        std::tuple<int, int, std::string> piece(stmt->getInt(0), stmt->getInt(1), stmt->getString(2));
+        stmt->reset();
+        return piece;
     }
 
     const std::vector<const std::tuple<const int, const int, const int, const std::string>> ComModel::

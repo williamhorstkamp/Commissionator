@@ -336,6 +336,20 @@ namespace Commissionator {
             const std::string>> getPieces();
 
         /**
+         *  Returns a tuple containing the data for the piece with the
+         *  given id.
+         *
+         *  @param paymentId - int representing the payment id
+         *
+         *  @return - A <int, int, string> tuple.
+         *      Order of the returned values is:
+         *      Piece(commissionId), Piece(productId),
+         *      Piece(description)
+         */
+        const std::tuple<const int, const int, const std::string> 
+            getPiece(const int id);
+
+        /**
          *  Returns a vector of tuples containing the data for all the
          *  pieces stored in the database with contains description string.
          *
@@ -471,7 +485,7 @@ namespace Commissionator {
          *  @param note - String containing a note about the payment
          */
         void insertPayment(const int commissionerId, const int paymentMethodId,
-            const std::string date, const int amount, const std::string note);
+            const std::string date, const double amount, const std::string note);
 
         /**
          *  Inserts a payment with given commissioner, payment method, date,
@@ -484,7 +498,7 @@ namespace Commissionator {
          *      for
          */
         void insertPayment(const int commissionerId, const int paymentMethodId,
-            const std::string date, const int amount);
+            const std::string date, const double amount);
 
         /**
          *  Sets the method of the payment identified by id
@@ -508,7 +522,7 @@ namespace Commissionator {
          *  @param paymentId - int containing the id of the payment to edit
          *  @param methodId - int containing the value to change amount to
          */
-        void setPaymentAmount(const int paymentId, const int amount);
+        void setPaymentAmount(const int paymentId, const double amount);
 
         /**
          *  Sets the commissioner of the payment identified by id
@@ -532,7 +546,7 @@ namespace Commissionator {
          *      Payment(date), Payment(fee), Payment(note)
          */
         const std::vector<const std::tuple<const int, const int, const int, 
-            const std::string, const int, const std::string>> getPayments();
+            const std::string, const double, const std::string>> getPayments();
 
         /**
          *  Returns a tuple containing the data for the payment with the
@@ -545,8 +559,8 @@ namespace Commissionator {
          *      Payment(commissioner), Payment(method),
          *      Payment(date), Payment(fee), Payment(note)
          */
-        const const std::tuple<const int, const int, const std::string, 
-            const int, const std::string> getPaymentById(const int paymentId);
+        const std::tuple<const int, const int, const std::string, 
+            const double, const std::string> getPaymentById(const int paymentId);
 
         /**
          *  Returns a vector of tuples containing the data for all the
@@ -560,7 +574,7 @@ namespace Commissionator {
          *      Payment(note)
          */
         const std::vector<const std::tuple<const int, const int,
-            const std::string, const int, const std::string >>
-            getPaymentByCommissioner(const int commissionerId);
+            const std::string, const double, const std::string >>
+            getPaymentsByCommissioner(const int commissionerId);
     };
 }

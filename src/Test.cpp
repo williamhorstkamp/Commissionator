@@ -269,7 +269,7 @@ TEST(V2Test, setCommissionDueDate) {
     delete com;
 }
 
-TEST(V2Test, setCommissioPaidDate) {
+TEST(V2Test, setCommissionPaidDate) {
     ComModel *com = new ComModel();
     com->insertCommissioner("testCommissioner");
     com->insertCommission(1, "01/01/2001", "05/05/2005");
@@ -292,6 +292,8 @@ TEST(V2Test, getPieces) {
     pieList.push_back(std::tuple<const int, const int, const int, const std::string>(1, 1, 1, ""));
     pieList.push_back(std::tuple<const int, const int, const int, const std::string>(2, 1, 2, "testPiece2"));
     EXPECT_EQ(pieList, com->getPieces());
+    std::tuple<const int, const int, const std::string>piece(1, 1, "");
+    EXPECT_EQ(piece, com->getPiece(1));
     pieList.clear();
 
     delete com;
@@ -326,6 +328,8 @@ TEST(V2Test, deletePiece){
     pieList.clear();
     com->deletePiece(1);
     EXPECT_EQ(pieList, com->getPieces());
+
+    delete com;
 }
 
 TEST(V2Test, deletePieceByCommission){
@@ -340,6 +344,8 @@ TEST(V2Test, deletePieceByCommission){
     pieList.clear();
     com->deletePieceByCommission(1);
     EXPECT_EQ(pieList, com->getPieces());
+
+    delete com;
 }
 
 TEST(V2Test, setPieceDescription) {
@@ -355,6 +361,195 @@ TEST(V2Test, setPieceDescription) {
     pieList.push_back(std::tuple<const int, const int, const int, const std::string>(1, 1, 1, "test"));
     com->setPieceDescription(1, "test");
     EXPECT_EQ(pieList, com->getPieces());
+    pieList.clear();
+
+    delete com;
+}
+
+TEST(V3Test, getPaymentMethods) {
+    ComModel *com = new ComModel();
+    com->insertPaymentMethod("testPaymentMethod");
+    com->insertPaymentMethod("testPaymentMethod2");
+    std::vector<const std::tuple<const int, const std::string>> methodList;
+    methodList.push_back(std::tuple<const int, const std::string>(1, "testPaymentMethod"));
+    methodList.push_back(std::tuple<const int, const std::string>(2, "testPaymentMethod2"));
+    EXPECT_EQ(methodList, com->getPaymentMethods());
+    EXPECT_EQ("testPaymentMethod", com->getPaymentMethod(1));
+    EXPECT_EQ("testPaymentMethod2", com->getPaymentMethod(2));
+    methodList.clear();
+
+    delete com;
+}
+
+TEST(V3Test, deletePaymentMethod) {
+    ComModel *com = new ComModel();
+    com->insertPaymentMethod("testPaymentMethod");
+    std::vector<const std::tuple<const int, const std::string>> methodList;
+    methodList.push_back(std::tuple<const int, const std::string>(1, "testPaymentMethod"));
+    EXPECT_EQ(methodList, com->getPaymentMethods());
+    methodList.clear();
+    com->deletePaymentMethod(1);
+    EXPECT_EQ(methodList, com->getPaymentMethods());
+
+    delete com;
+}
+
+TEST(V3Test, setPaymentMethodName) {
+    ComModel *com = new ComModel();
+    com->insertPaymentMethod("testPaymentMethod");
+    std::vector<const std::tuple<const int, const std::string>> methodList;
+    methodList.push_back(std::tuple<const int, const std::string>(1, "testPaymentMethod"));
+    EXPECT_EQ(methodList, com->getPaymentMethods());
+    methodList.clear();
+    methodList.push_back(std::tuple<const int, const std::string>(1, "testPaymentMethod2"));
+    com->setPaymentMethodName(1, "testPaymentMethod2");
+    EXPECT_EQ(methodList, com->getPaymentMethods());
+    methodList.clear();
+
+    delete com;
+}
+
+TEST(V3Test, getPayments) {
+    ComModel *com = new ComModel();
+    com->insertPaymentMethod("testPaymentMethod");
+    com->insertPaymentMethod("testPaymentMethod2");
+    com->insertCommissioner("testCommissioner");
+    com->insertCommissioner("testCommissioner2");
+    com->insertPayment(1, 1, "01/01/2001", 10);
+    com->insertPayment(2, 2, "02/02/2001", 15, "note stuff");
+    com->insertPayment(1, 2, "02/02/2050", 500.05, "more note stuff");
+    std::vector < const std::tuple < const int, const int, const int,
+        const std::string, const double, const std::string >> paymentList;
+    paymentList.push_back(std::tuple < const int, const int, const int,
+        const std::string, const double, const std::string >(1, 1, 1, 
+        "01/01/2001", 10, ""));
+    paymentList.push_back(std::tuple < const int, const int, const int,
+        const std::string, const double, const std::string >(2, 2, 2, 
+        "02/02/2001", 15, "note stuff"));
+    paymentList.push_back(std::tuple < const int, const int, const int,
+        const std::string, const double, const std::string >(3, 1, 2,
+        "02/02/2050", 15, "more note stuff"));
+    EXPECT_EQ(paymentList, com->getPayments());
+    paymentList.clear();
+    std::tuple <const int, const int,
+        const std::string, const double, const std::string > payment(1, 1,
+        "01/01/2001", 10, "");
+    EXPECT_EQ(payment, com->getPaymentById(1));
+
+    delete com;
+}
+
+TEST(V3Test, setPaymentMethod) {
+    ComModel *com = new ComModel();
+    com->insertPaymentMethod("testPaymentMethod");
+    com->insertPaymentMethod("testPaymentMethod2");
+    com->insertCommissioner("testCommissioner");
+    com->insertPayment(1, 1, "01/01/2001", 10);
+    std::vector < const std::tuple < const int, const int, const int,
+        const std::string, const double, const std::string >> paymentList;
+    paymentList.push_back(std::tuple < const int, const int, const int,
+        const std::string, const double, const std::string >(1, 1, 1,
+        "01/01/2001", 10, ""));
+    EXPECT_EQ(paymentList, com->getPayments());
+    paymentList.clear();
+    com->setPaymentMethod(1, 2);
+    paymentList.push_back(std::tuple < const int, const int, const int,
+        const std::string, const double, const std::string >(1, 1, 2,
+        "01/01/2001", 10, ""));
+    EXPECT_EQ(paymentList, com->getPayments());
+    paymentList.clear();
+
+    delete com;
+}
+
+TEST(V3Test, setPaymentDate) {
+    ComModel *com = new ComModel();
+    com->insertPaymentMethod("testPaymentMethod");
+    com->insertCommissioner("testCommissioner");
+    com->insertPayment(1, 1, "01/01/2001", 10);
+    std::vector < const std::tuple < const int, const int, const int,
+        const std::string, const double, const std::string >> paymentList;
+    paymentList.push_back(std::tuple < const int, const int, const int,
+        const std::string, const double, const std::string >(1, 1, 1,
+        "01/01/2001", 10, ""));
+    EXPECT_EQ(paymentList, com->getPayments());
+    paymentList.clear();
+    com->setPaymentDate(1, "02/02/2002");
+    paymentList.push_back(std::tuple < const int, const int, const int,
+        const std::string, const double, const std::string >(1, 1, 1,
+        "02/02/2002", 10, ""));
+    EXPECT_EQ(paymentList, com->getPayments());
+    paymentList.clear();
+
+    delete com;
+}
+
+TEST(V3Test, setPaymentAmount) {
+    ComModel *com = new ComModel();
+    com->insertPaymentMethod("testPaymentMethod");
+    com->insertCommissioner("testCommissioner");
+    com->insertPayment(1, 1, "01/01/2001", 10);
+    std::vector < const std::tuple < const int, const int, const int,
+        const std::string, const double, const std::string >> paymentList;
+    paymentList.push_back(std::tuple < const int, const int, const int,
+        const std::string, const double, const std::string >(1, 1, 1,
+        "01/01/2001", 10, ""));
+    EXPECT_EQ(paymentList, com->getPayments());
+    paymentList.clear();
+    com->setPaymentAmount(1, 20);
+    paymentList.push_back(std::tuple < const int, const int, const int,
+        const std::string, const double, const std::string >(1, 1, 1,
+        "01/01/2001", 20, ""));
+    EXPECT_EQ(paymentList, com->getPayments());
+    paymentList.clear();
+
+    delete com;
+}
+
+TEST(V3Test, setPaymentCommissioner) {
+    ComModel *com = new ComModel();
+    com->insertPaymentMethod("testPaymentMethod");
+    com->insertCommissioner("testCommissioner");
+    com->insertCommissioner("testCommissioner2");
+    com->insertPayment(1, 1, "01/01/2001", 10);
+    std::vector < const std::tuple < const int, const int, const int,
+        const std::string, const double, const std::string >> paymentList;
+    paymentList.push_back(std::tuple < const int, const int, const int,
+        const std::string, const double, const std::string >(1, 1, 1,
+        "01/01/2001", 10, ""));
+    EXPECT_EQ(paymentList, com->getPayments());
+    paymentList.clear();
+    com->setPaymentCommissioner(1, 2);
+    paymentList.push_back(std::tuple < const int, const int, const int,
+        const std::string, const double, const std::string >(1, 2, 1,
+        "01/01/2001", 20, ""));
+    EXPECT_EQ(paymentList, com->getPayments());
+    paymentList.clear();
+
+    delete com;
+}
+
+TEST(V3Test, getPaymentsByCommissioner) {
+    ComModel *com = new ComModel();
+    com->insertPaymentMethod("testPaymentMethod");
+    com->insertPaymentMethod("testPaymentMethod2");
+    com->insertCommissioner("testCommissioner");
+    com->insertCommissioner("testCommissioner2");
+    com->insertPayment(1, 1, "01/01/2001", 10);
+    com->insertPayment(2, 2, "02/02/2001", 15, "note stuff");
+    com->insertPayment(1, 2, "02/02/2050", 500.05, "more note stuff");
+    std::vector < const std::tuple <const int, const int,
+        const std::string, const double, const std::string >> paymentList;
+    paymentList.push_back(std::tuple <const int, const int,
+        const std::string, const double, const std::string >(1, 1,
+        "01/01/2001", 10, ""));
+    paymentList.push_back(std::tuple <const int, const int,
+        const std::string, const double, const std::string >(3, 2,
+        "02/02/2050", 15, "more note stuff"));
+    EXPECT_EQ(paymentList, com->getPaymentsByCommissioner(1));
+    paymentList.clear();
+
+    delete com;
 }
 
 int main(int argc, char **argv) {
