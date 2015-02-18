@@ -78,7 +78,7 @@ A short description of what this version of the model will add over the previous
 - [ ] delete piece option
 - [ ] set piece option field
 - [ ] get piece options by piece
-- [ ] get piece option by id
+- [ ] get piece option by product option and piece
   
 ###V5:References, Product Event, Piece Event
 - [ ] insert reference
