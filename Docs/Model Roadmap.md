@@ -65,7 +65,7 @@ A short description of what this version of the model will add over the previous
 - [x] set payment to commission
 - [x] get payment list
 - [x] get payment by id
-- 
+
 ###V4:Product Options, Piece Options
 - [ ] insert product option
 - [ ] delete product option
