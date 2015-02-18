@@ -75,7 +75,7 @@ A short description of what this version of the model will add over the previous
 - [ ] get list of product options for a product id
 - [ ] get product option by id
 - [ ] insert piece option
-- [ ] delete peice option
+- [ ] delete piece option
 - [ ] set piece option field
 - [ ] get piece options by piece
 - [ ] get piece option by id
