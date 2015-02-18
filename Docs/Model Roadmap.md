@@ -53,19 +53,19 @@ A short description of what this version of the model will add over the previous
 - [x] get commission by id
   
 ###V3: Payment Method, Payment tables.
-- [ ] insert payment method
-- [ ] delete payment method
-- [ ] rename payment method
-- [ ] get payment method list
-- [ ] get payment method by id
-- [ ] insert payment
-- [ ] set payment method
-- [ ] set payment date
-- [ ] set payment amount
-- [ ] set payment to commission
-- [ ] get payment list
-- [ ] get payment by id
-  
+- [x] insert payment method
+- [x] delete payment method
+- [x] rename payment method
+- [x] get payment method list
+- [x] get payment method by id
+- [x] insert payment
+- [x] set payment method
+- [x] set payment date
+- [x] set payment amount
+- [x] set payment to commission
+- [x] get payment list
+- [x] get payment by id
+- 
 ###V4:Product Options, Piece Options
 - [ ] insert product option
 - [ ] delete product option
