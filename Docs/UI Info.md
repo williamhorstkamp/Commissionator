@@ -40,5 +40,7 @@ The hotbar exists as a series of shortcuts to facilitate quicker useage of the p
 ###Open Record  
 ###Save Record  
 Works as Save As if never saved, works as Save is saved previously  
+###Print Record  
+Prints your saved data in a sensible format  
 ###Context Sensitive  
 Includes a button for a new entry for the 'selected datatype' as well as anything else that may be sensible for the current frames  
