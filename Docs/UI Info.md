@@ -40,7 +40,11 @@ The hotbar exists as a series of shortcuts to facilitate quicker useage of the p
 ###Open Record  
 ###Save Record  
 Works as Save As if never saved, works as Save is saved previously  
-###Print Record  
-Prints your saved data in a sensible format  
 ###Context Sensitive  
 Includes a button for a new entry for the 'selected datatype' as well as anything else that may be sensible for the current frames  
+  
+##Left Panel  
+The left panel displays a list of the entries for the selected datatype. Also includes fields for both insertion and searching of records. Click an entry will display corresponding data in the right panel, clicking the X on any entry will delete it.  
+  
+##Right Panel  
+The right panel displays data for the currently selected entry and allows you to manipulate it. In contrast to the left panel, the right panel will change form depending on the selected datatype to best display the information for that entry. Examples would include displaying thumbnails for all the references for a piece or listing contact info and commission/payment history for a selected commissioner.  
