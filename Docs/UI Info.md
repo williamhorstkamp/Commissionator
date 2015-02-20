@@ -17,7 +17,6 @@ Exit
 ####Using this tab will allow you to create a new entry of the selected record type. Clicking New followed by an option from the dropdown menu will present the user with a pop-up window asking for both necessary and optional information.  
 Commissioner  
 Commission  
-Piece  
 Product  
 Sale  
 Payment  
