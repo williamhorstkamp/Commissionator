@@ -5,7 +5,7 @@ For it to make sense, you should also look at the Main UI image.
 ##Toolbar  
   
 ###File  
-####These functions are for program and record manipulation  
+####This tab is for creating, saving, and opening of records as well as program control.  
 New Record  
 Open Record  
 Save Record  
@@ -14,7 +14,7 @@ Print Record
 Exit  
   
 ###New  
-####These functions create new instances of a datatype with use of a popup window  
+####Using this tab will allow you to create a new entry of the selected record type. Clicking New followed by an option from the dropdown menu will present the user with a pop-up window asking for both necessary and optional information.  
 Commissioner  
 Commission  
 Piece  
@@ -23,7 +23,7 @@ Sale
 Payment  
   
 ###Manage  
-####These functions are for editing existing data of a datatype. Selecting something in this menu will make that datatype the "selected datatype" on the main UI  
+####Use this tab to select which set of records to view. Clicking manage followed by one of these options from the dropdown will display corresponding entries.  
 Commissioner  
 Commission  
 Piece  
