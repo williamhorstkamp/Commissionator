@@ -8,6 +8,7 @@ For it to make sense, you should also look at the Main UI image.
 ####This tab is for creating, saving, and opening of records as well as program control.  
 New Record  
 Open Record  
+Recently Opened  
 Save Record  
 Save As Record  
 Print Record  
