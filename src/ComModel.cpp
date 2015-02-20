@@ -51,7 +51,7 @@ namespace Commissionator {
             ");"
             "CREATE TABLE IF NOT EXISTS Piece("
             "id INTEGER PRIMARY KEY AUTOINCREMENT,"
-            "description    TEXT,"
+            "description    TEXT NOT NULL,"
             "commission   INTEGER NOT NULL,"
             "product  INTEGER NOT NULL,"
             "FOREIGN KEY(commission) REFERENCES Commission(id),"
@@ -61,7 +61,7 @@ namespace Commissionator {
             "id	INTEGER PRIMARY KEY AUTOINCREMENT,"
             "createDate	TEXT NOT NULL,"
             "dueDate TEXT NOT NULL, "
-            "paidDate	TEXT,"
+            "paidDate	TEXT NOT NULL,"
             "commissioner INTEGER NOT NULL,"
             "FOREIGN KEY(commissioner) REFERENCES Commissioner(id)"
             ");"
@@ -75,10 +75,27 @@ namespace Commissionator {
             "method	INTEGER NOT NULL,"
             "date	TEXT NOT NULL,"
             "fee	REAL NOT NULL,"
-            "note   TEXT,"
+            "note   TEXT NOT NULL,"
             "FOREIGN KEY(commissioner) REFERENCES Commissioner(id),"
             "FOREIGN KEY(method) REFERENCES PaymentMethod(id)"
-            ");";
+            ");"
+            /**
+            "CREATE TABLE IF NOT EXISTS ProductOption("
+            "id	INTEGER PRIMARY KEY AUTOINCREMENT,"
+            "name	TEXT NOT NULL,"
+            "price	REAL NOT NULL,"
+            "isInt	BOOL NOT NULL,"
+            "product	INTEGER NOT NULL,"
+            "FOREIGN KEY(product) REFERENCES Product(id)"
+            ");"
+            "CREATE TABLE IF NOT EXISTS PieceOption("
+            "field	TEXT NOT NULL,"
+            "piece	INTEGER NOT NULL,"
+            "option	INTEGER NOT NULL,"
+            "FOREIGN KEY(piece) REFERENCES Piece(id),"
+            "FOREIGN KEY(option) REFERENCES ProductOption(id)"
+            ");"
+            */;
             SQL->rawExec(stmt);
             SQL->rawExec("PRAGMA foreign_keys = ON;");
             SQL->rawExec("INSERT INTO Product(id, name, price) VALUES (0, 'Generic', 0)");
@@ -115,9 +132,7 @@ namespace Commissionator {
         SQL->prepareStatement("setContactEntry",
             "UPDATE Contact SET entry = (?) WHERE id = (?)");
         SQL->prepareStatement("getContacts",
-            "SELECT Contact.id, Contact.type, Contact.entry FROM Contact JOIN "
-            "Commissioner ON Contact.commissioner = Commissioner.id "
-            "WHERE Contact.id = (?)");
+            "SELECT id, type, entry FROM Contact WHERE commissioner = (?)");
         SQL->prepareStatement("getContact",
             "SELECT commissioner, type, entry FROM Contact WHERE id = (?)");
         SQL->prepareStatement("insertProduct",
@@ -193,6 +208,34 @@ namespace Commissionator {
             "SELECT commissioner, method, date, fee, note FROM Payment WHERE id = (?)");
         SQL->prepareStatement("getPaymentsByCommissioner",
             "SELECT id, method, date, fee, note FROM Payment WHERE commissioner = (?)");
+        /**
+        SQL->prepareStatement("insertProductOption",
+            "INSERT INTO ProductOption(name, price, isInt, product) VALUES (?, ?, ?, ?)");
+        SQL->prepareStatement("deleteProductOption",
+            "DELETE FROM ProductOption WHERE id = (?)");
+        SQL->prepareStatement("setProductOptionName",
+            "UPDATE ProductOption SET name = (?) WHERE id = (?)");
+        SQL->prepareStatement("setProductOptionPrice",
+            "UPDATE ProductOption SET price = (?) WHERE id = (?)");
+        SQL->prepareStatement("setProductOptionType",
+            "UPDATE ProductOption SET isInt = NOT isInt WHERE id = (?)");
+        SQL->prepareStatement("getProductOptions",
+            "SELECT id, name, price, isInt FROM ProductOption WHERE product = (?)");
+        SQL->prepareStatement("getProductOption",
+            "SELECT name, price, isInt, product FROM ProductOption WHERE id = (?)");
+        SQL->prepareStatement("insertPieceOption",
+            "INSERT INTO PieceOption(piece, option, field) VALUES (?, ?, ?)");
+        SQL->prepareStatement("deletePieceOption",
+            "DELETE FROM PieceOption WHERE id = (?)");
+        SQL->prepareStatement("setPieceOptionField",
+            "UPDATE PieceOption SET field = (?)");
+        SQL->prepareStatement("setPieceOptionPiece",
+            "UPDATE PieceOption SET Piece = (?)");
+        SQL->prepareStatement("getPieceOptions",
+            "SELECT ProductOption.id, ProductOption.name, ProductOption.price, ProductOption.isInt, PieceOption.field FROM PieceOption INNER JOIN ProductOption ON PieceOption.option = ProductOption.id WHERE ProductOption.product = (?)");
+        SQL->prepareStatement("getPieceOption",
+            "SELECT field FROM PieceOption WHERE piece = (?) and option = (?)");
+            */
     }
 
     void ComModel::insertCommissioner(const std::string comName) {
