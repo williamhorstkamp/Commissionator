@@ -41,7 +41,7 @@ The hotbar exists as a series of shortcuts to facilitate quicker useage of the p
 ###Save Record  
 Works as Save As if never saved, works as Save is saved previously  
 ###Context Sensitive  
-Includes a button for a new entry for the 'selected datatype' as well as anything else that may be sensible for the current frames  
+Includes a series of buttons for a new entry for the 'selected datatype' as well as anything else that may be sensible for the current left and right panels.
   
 ##Left Panel  
 The left panel displays a list of the entries for the selected datatype. Also includes fields for both insertion and searching of records. Click an entry will display corresponding data in the right panel, clicking the X on any entry will delete it.  
