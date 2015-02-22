@@ -13,6 +13,7 @@ A short description of what this version of the model will add over the previous
 ###V1: QT Project, MainWindow basic format, menu  
 - [x] MainWindow loaded into application producing blank window  
 - [x] Menu  
+- [x] Status Bar  
   
 ###V2: Standard Toolbar, Resources  
 - [ ] Load resources  
@@ -20,7 +21,7 @@ A short description of what this version of the model will add over the previous
   
 ###V3: Loading Two subwindows
 - [ ] Testing subwindows  
-- [ ] Load subwindows  
+- [ ] Load subwindows, one on each the left and right panel  
   
 ###V4: Rotate between three subwindows  
 - [ ] Third testing subwindow
