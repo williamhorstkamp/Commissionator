@@ -11,8 +11,8 @@ A short description of what this version of the model will add over the previous
 - [ ] a list of functions to be added  
   
 ###V1: QT Project, MainWindow basic format, menu  
-- [ ] MainWindow loaded into application producing blank window  
-- [ ] Menu  
+- [x] MainWindow loaded into application producing blank window  
+- [x] Menu  
   
 ###V2: Standard Toolbar, Resources  
 - [ ] Load resources  
