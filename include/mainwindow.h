@@ -12,6 +12,8 @@ namespace Commissionator {
     private:
         void createMenus();
         void createActions();
+        void createStatusBar();
+
         QMenu *fileMenu;
         QMenu *newMenu;
         QMenu *manageMenu;

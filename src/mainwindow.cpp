@@ -5,6 +5,7 @@ namespace Commissionator{
     MainWindow::MainWindow() {
         createActions();
         createMenus();
+        createStatusBar();
     }
 
     void MainWindow::createMenus() {
@@ -98,5 +99,9 @@ namespace Commissionator{
 
         aboutAct = new QAction(tr("&About Commissionator"), this);
         aboutAct->setStatusTip(tr("View important version and legal information about this program"));
+    }
+
+    void MainWindow::createStatusBar() {
+        statusBar()->showMessage(tr("Ready"));
     }
 }
