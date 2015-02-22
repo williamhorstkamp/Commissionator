@@ -1,3 +1,8 @@
-Commissionator.opensdf
-Commissionator.sdf
-Commissionator.v12.suo
+*.exe
+*.sdf
+*.log
+*.obj
+*.ilk
+*.tlog
+*.pdb
+*.idb

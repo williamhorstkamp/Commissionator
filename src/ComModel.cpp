@@ -147,10 +147,8 @@ namespace Commissionator {
             "SELECT id, name, price FROM Product");
         SQL->prepareStatement("getProduct",
             "SELECT name, price FROM Product WHERE id = (?)");
-        SQL->prepareStatement("insertPieceWithDescription",
+        SQL->prepareStatement("insertPiece",
             "INSERT INTO Piece(commission, product, description) values (?, ?, ?)");
-        SQL->prepareStatement("insertPieceWithoutDescription",
-            "INSERT INTO Piece(commission, product) values (?, ?)");
         SQL->prepareStatement("deletePiece",
             "DELETE FROM Piece WHERE id = (?)");
         SQL->prepareStatement("deletePieceByCommission",
@@ -167,14 +165,14 @@ namespace Commissionator {
         SQL->prepareStatement("setPiecesToGeneric",
             "UPDATE Piece SET product = 0 WHERE product = (?)");
         SQL->prepareStatement("insertCommission",
-            "INSERT INTO Commission(createDate, dueDate, commissioner) VALUES (?, ?, ?)");
+            "INSERT INTO Commission(createDate, dueDate, commissioner, paidDate) VALUES (?, ?, ?, '')");
         SQL->prepareStatement("deleteCommission",
             "DELETE FROM Commission WHERE id = (?)");
         SQL->prepareStatement("setCommissionDueDate",
             "UPDATE Commission SET dueDate = (?) WHERE id = (?)");
         SQL->prepareStatement("setCommissionPaidDate",
             "UPDATE Commission SET paidDate = (?) WHERE id = (?)");
-        SQL->prepareStatement("setCommissionToNone",
+        SQL->prepareStatement("setCommissionerToNone",
             "UPDATE Commission SET commissioner = 0 WHERE commissioner = (?)");
         SQL->prepareStatement("getCommissions",
             "SELECT id, createDate, dueDate, paidDate, commissioner FROM Commission");
@@ -190,10 +188,8 @@ namespace Commissionator {
             "SELECT id, name FROM PaymentMethod");
         SQL->prepareStatement("getPaymentMethod",
             "SELECT name FROM PaymentMethod WHERE id = (?)");
-        SQL->prepareStatement("insertPaymentWithNote",
+        SQL->prepareStatement("insertPayment",
             "INSERT INTO Payment(commissioner, method, date, fee, note) VALUES (?, ?, ?, ?, ?)");
-        SQL->prepareStatement("insertPaymentWithoutNote",
-            "INSERT INTO Payment(commissioner, method, date, fee) VALUES (?, ?, ?, ?)");
         SQL->prepareStatement("setPaymentMethod",
             "UPDATE Payment SET method = (?) WHERE id = (?)");
         SQL->prepareStatement("setPaymentDate",
@@ -247,7 +243,7 @@ namespace Commissionator {
 
     void ComModel::deleteCommissioner(const int id) {
         if (id != 0) {  //id of 'None' commissioner
-            StatementHandler *stmt = SQL->getStatement("setCommissionToNone");
+            StatementHandler *stmt = SQL->getStatement("setCommissionerToNone");
             stmt->bind(1, id);
             stmt->step();
             stmt->reset();
@@ -449,7 +445,7 @@ namespace Commissionator {
 
     void ComModel::insertPiece(const int commissionId, const int productId,
         const std::string description ) {
-        StatementHandler *stmt = SQL->getStatement("insertPieceWithDescription");
+        StatementHandler *stmt = SQL->getStatement("insertPiece");
         stmt->bind(1, commissionId);
         stmt->bind(2, productId);
         stmt->bind(3, description);
@@ -458,9 +454,10 @@ namespace Commissionator {
     }
 
     void ComModel::insertPiece(const int commissionId, const int productId) {
-        StatementHandler *stmt = SQL->getStatement("insertPieceWithoutDescription");
+        StatementHandler *stmt = SQL->getStatement("insertPiece");
         stmt->bind(1, commissionId);
         stmt->bind(2, productId);
+        stmt->bind(3, "");
         stmt->step();
         stmt->reset();
     }
@@ -632,7 +629,7 @@ namespace Commissionator {
 
     void ComModel::insertPayment(const int commissionerId, const int paymentMethodId,
         const std::string date, const double amount, const std::string note) {
-        StatementHandler *stmt = SQL->getStatement("insertPaymentWithNote");
+        StatementHandler *stmt = SQL->getStatement("insertPayment");
         stmt->bind(1, commissionerId);
         stmt->bind(2, paymentMethodId);
         stmt->bind(3, date);
@@ -644,11 +641,12 @@ namespace Commissionator {
 
     void ComModel::insertPayment(const int commissionerId, 
         const int paymentMethodId, const std::string date, const double amount) {
-        StatementHandler *stmt = SQL->getStatement("insertPaymentWithoutNote");
+        StatementHandler *stmt = SQL->getStatement("insertPayment");
         stmt->bind(1, commissionerId);
         stmt->bind(2, paymentMethodId);
         stmt->bind(3, date);
         stmt->bind(4, amount);
+        stmt->bind(5, "");
         stmt->step();
         stmt->reset();
     }

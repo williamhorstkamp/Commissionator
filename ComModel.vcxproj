@@ -13,6 +13,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{06ADEBC3-E836-4A57-9582-23F22FCAE5FB}</ProjectGuid>
     <RootNamespace>Commissionator</RootNamespace>
+    <ProjectName>ComModel</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -76,9 +77,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\ComModel.cpp" />
+    <ClCompile Include="src\ComModelTest.cpp" />
     <ClCompile Include="src\SQLiteHandler.cpp" />
     <ClCompile Include="src\StatementHandler.cpp" />
-    <ClCompile Include="src\Test.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\ComModel.h" />

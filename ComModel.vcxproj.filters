@@ -24,7 +24,7 @@
     <ClCompile Include="src\ComModel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Test.cpp">
+    <ClCompile Include="src\ComModelTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
