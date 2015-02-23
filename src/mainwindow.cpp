@@ -6,6 +6,12 @@ namespace Commissionator{
         createActions();
         createMenus();
         createStatusBar();
+        main = new MainLayout();
+        window = new QWidget();
+        window->setLayout(main);
+        setCentralWidget(window);
+        
+        
     }
 
     void MainWindow::createMenus() {

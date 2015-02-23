@@ -15,20 +15,20 @@ A short description of what this version of the model will add over the previous
 - [x] Menu  
 - [x] Status Bar  
   
-###V2: Standard Toolbar, Resources  
+###V2: Loading Two subwindows  
+- [x] Testing subwindows  
+- [x] Load subwindows, one on each the left and right panel  
+  
+###V3: Rotate between three subwindows  
+- [ ] Third testing subwindow
+- [ ] Control which subwindow shows up in the left panel via the manage menu   
+   
+###V4: Standard Toolbar, Resources  
 - [ ] Load resources  
 - [ ] Toolbar with buttons  
-  
-###V3: Loading Two subwindows
-- [ ] Testing subwindows  
-- [ ] Load subwindows, one on each the left and right panel  
-  
-###V4: Rotate between three subwindows  
-- [ ] Third testing subwindow
-- [ ] Control which subwindow shows up in the left panel via the manage menu  
   
 ###V5: Right window changes based on selection in left  
 - [ ] Create updated subwindows for testing  
 - [ ] Implement left window changing right window and left window being able to be rotated still  
-
+  
 ###TBA: Begin designing the specific windows to match V3 model

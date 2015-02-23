@@ -2,6 +2,7 @@
 #define MAINWINDOW
 
 #include <QMainWindow>
+#include "TestLayouts.h"
 
 namespace Commissionator {
 
@@ -14,6 +15,7 @@ namespace Commissionator {
         void createActions();
         void createStatusBar();
 
+        QWidget *window;
         QMenu *fileMenu;
         QMenu *newMenu;
         QMenu *manageMenu;
@@ -39,10 +41,12 @@ namespace Commissionator {
         QAction *managePaymentAct;
         QAction *aboutAct;
         QAction *helpAct;
+
+        MainLayout *main;
+        
     };
 
 
 }
 
 #endif // MAINWINDOW
-
