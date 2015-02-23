@@ -5,32 +5,29 @@
 #include <qlayout.h>
 namespace Commissionator {
 
-    class LeftPanel :public QVBoxLayout {
+    class LeftPanel :public QWidget {
+    private:
+        QVBoxLayout *layout;
     public:
         LeftPanel() {
-            addWidget(new QLabel("This is where things go"));
-            addWidget(new QLabel("Here is a thing"));
-            addWidget(new QLabel("And another thing is here"));
-            addWidget(new QLabel("here is yet one more thing"));
+            layout = new QVBoxLayout();
+            layout->addWidget(new QLabel("This is where things go"));
+            layout->addWidget(new QLabel("Here is a thing"));
+            layout->addWidget(new QLabel("And another thing is here"));
+            layout->addWidget(new QLabel("here is yet one more thing"));
+            setLayout(layout);
         }
     };
 
-    class RightPanel :public QHBoxLayout {
+    class RightPanel :public QWidget {
+    private:
+        QHBoxLayout *layout;
     public:
         RightPanel() {
-            addWidget(new QLabel("These things are horizontal"));
-            addWidget(new QLabel("This probably looks awful"));
-        }
-    };
-
-    class MainLayout :public QHBoxLayout {
-    public:
-        LeftPanel *left = new LeftPanel();
-        RightPanel *right = new RightPanel();
-
-        MainLayout() {
-            addLayout(left);
-            addLayout(right);
+            layout = new QHBoxLayout();
+            layout->addWidget(new QLabel("These things are horizontal"));
+            layout->addWidget(new QLabel("This probably looks awful"));
+            setLayout(layout);
         }
     };
 }

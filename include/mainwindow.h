@@ -16,6 +16,10 @@ namespace Commissionator {
         void createStatusBar();
 
         QWidget *window;
+        QWidget *leftWindow;
+        QWidget *rightWindow;
+        QHBoxLayout *layout;
+
         QMenu *fileMenu;
         QMenu *newMenu;
         QMenu *manageMenu;
@@ -41,9 +45,6 @@ namespace Commissionator {
         QAction *managePaymentAct;
         QAction *aboutAct;
         QAction *helpAct;
-
-        MainLayout *main;
-        
     };
 
 

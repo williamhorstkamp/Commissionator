@@ -6,12 +6,14 @@ namespace Commissionator{
         createActions();
         createMenus();
         createStatusBar();
-        main = new MainLayout();
+        layout = new QHBoxLayout();
         window = new QWidget();
-        window->setLayout(main);
+        leftWindow = new LeftPanel();
+        rightWindow = new RightPanel();
+        layout->addWidget(leftWindow);
+        layout->addWidget(rightWindow);
+        window->setLayout(layout);
         setCentralWidget(window);
-        
-        
     }
 
     void MainWindow::createMenus() {
