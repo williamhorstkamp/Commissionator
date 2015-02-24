@@ -1,0 +1,25 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Commission.png</file>
+        <file>Commissioner.png</file>
+        <file>CommissionerPlus.png</file>
+        <file>CommissionPlus.png</file>
+        <file>Deal-Plus.png</file>
+        <file>Delete.png</file>
+        <file>Help.png</file>
+        <file>NewFile.png</file>
+        <file>OpenFile.png</file>
+        <file>Payment.png</file>
+        <file>PaymentPlus.png</file>
+        <file>PaymentTypePlus.png</file>
+        <file>Piece.png</file>
+        <file>PiecePlus.png</file>
+        <file>ProductPlus.png</file>
+        <file>ReferencePlus.png</file>
+        <file>Sale.png</file>
+        <file>SalePlus.png</file>
+        <file>SaveAsFile.png</file>
+        <file>SaveFile.png</file>
+        <file>Storefront.png</file>
+    </qresource>
+</RCC>

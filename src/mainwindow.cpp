@@ -6,6 +6,7 @@ namespace Commissionator{
         createActions();
         createMenus();
         createStatusBar();
+        createToolBar();
         layout = new QHBoxLayout();
         window = new QWidget();
         leftPanel = new QStackedWidget();
@@ -44,10 +45,10 @@ namespace Commissionator{
         newMenu->addAction(newPaymentAct);
 
         manageMenu = menuBar()->addMenu(tr("&Manage"));
+        manageMenu->addAction(manageStorefrontAct);
         manageMenu->addAction(manageCommissionerAct);
         manageMenu->addAction(manageCommissionAct);
         manageMenu->addAction(managePieceAct);
-        manageMenu->addAction(manageProductAct);
         manageMenu->addAction(manageSaleAct);
         manageMenu->addAction(managePaymentAct);
 
@@ -59,18 +60,19 @@ namespace Commissionator{
     }
 
     void MainWindow::createActions() {
-        newAct = new QAction(tr("&New"), this);
+        newAct = new QAction(QIcon(":/NewFile.png"), tr("&New"), this);
         newAct->setStatusTip(tr("Create a new set of records"));
-        connect(newAct, SIGNAL(triggered()), this, SLOT(page1()));
+        
 
-        openAct = new QAction(tr("&Open"), this);
+        openAct = new QAction(QIcon(":/OpenFile.png"), tr("&Open"), this);
         openAct->setStatusTip(tr("Open a set of records"));
         connect(openAct, SIGNAL(triggered()), this, SLOT(page2()));
 
-        saveAct = new QAction(tr("&Save"), this);
+        saveAct = new QAction(QIcon(":/SaveFile.png"), tr("&Save"), this);
         saveAct->setStatusTip(tr("Save the current set of records"));
+        connect(saveAct, SIGNAL(triggered()), this, SLOT(page1()));
 
-        saveAsAct = new QAction(tr("&Save As"), this);
+        saveAsAct = new QAction(QIcon(":/SaveAsFile.png"), tr("&Save As"), this);
         saveAsAct->setStatusTip(tr("Save the current set of records as a new file"));
 
         printRecordAct = new QAction(tr("&Print Records"), this);
@@ -79,41 +81,41 @@ namespace Commissionator{
         exitAct = new QAction(tr("&Exit"), this);
         exitAct->setStatusTip(tr("Exits the program"));
         connect(exitAct, SIGNAL(triggered()), this, SLOT(close()));
-
-        newCommissionerAct = new QAction(tr("&Commissioner"), this);
+        
+        newCommissionerAct = new QAction(QIcon(":/CommissionerPlus.png"), tr("&Commissioner"), this);
         newCommissionerAct->setStatusTip(tr("Create a new commissioner"));
 
-        newCommissionAct = new QAction(tr("&Commission"), this);
+        newCommissionAct = new QAction(QIcon(":/CommissionPlus.png"), tr("&Commission"), this);
         newCommissionAct->setStatusTip(tr("Create a new commission"));
 
-        newProductAct = new QAction(tr("&Product"), this);
+        newProductAct = new QAction(QIcon(":/ProductPlus.png"), tr("&Product"), this);
         newProductAct->setStatusTip(tr("Create a new product"));
 
-        newSaleAct = new QAction(tr("&Sale"), this);
+        newSaleAct = new QAction(QIcon(":/SalePlus.png"), tr("&Sale"), this);
         newSaleAct->setStatusTip(tr("Create a new sale"));
 
-        newPaymentAct = new QAction(tr("&Payment"), this);
+        newPaymentAct = new QAction(QIcon(":/PaymentPlus.png"), tr("&Payment"), this);
         newPaymentAct->setStatusTip(tr("Create a new payment"));
 
-        manageCommissionerAct = new QAction(tr("&Commissioner"), this);
+        manageStorefrontAct = new QAction(QIcon(":/Storefront.png"), tr("&Storefront"), this);
+        manageStorefrontAct->setStatusTip(tr("Manage existing products"));
+
+        manageCommissionerAct = new QAction(QIcon(":/Commissioner.png"), tr("&Commissioner"), this);
         manageCommissionerAct->setStatusTip(tr("Manage existing commissioners"));
 
-        manageCommissionAct = new QAction(tr("&Commission"), this);
+        manageCommissionAct = new QAction(QIcon(":/Commission.png"), tr("&Commission"), this);
         manageCommissionAct->setStatusTip(tr("Manage existing commissions"));
 
-        managePieceAct = new QAction(tr("&Piece"), this);
+        managePieceAct = new QAction(QIcon(":/Piece.png"), tr("&Piece"), this);
         managePieceAct->setStatusTip(tr("Manage existing pieces"));
 
-        manageProductAct = new QAction(tr("&Product"), this);
-        manageProductAct->setStatusTip(tr("Manage existing products"));
-
-        manageSaleAct = new QAction(tr("&Sale"), this);
+        manageSaleAct = new QAction(QIcon(":/Sale.png"), tr("&Sale"), this);
         manageSaleAct->setStatusTip(tr("Manage existing sales"));
 
-        managePaymentAct = new QAction(tr("&Payment"), this);
+        managePaymentAct = new QAction(QIcon(":/Payment.png"), tr("&Payment"), this);
         managePaymentAct->setStatusTip(tr("Manage existing payments"));
 
-        helpAct = new QAction(tr("&Help"), this);
+        helpAct = new QAction(QIcon(":/Help.png"), tr("&Help"), this);
         helpAct->setStatusTip(tr("Get help about Commissionator"));
 
         aboutAct = new QAction(tr("&About Commissionator"), this);
@@ -122,6 +124,12 @@ namespace Commissionator{
 
     void MainWindow::createStatusBar() {
         statusBar()->showMessage(tr("Ready"));
+    }
+
+    void MainWindow::createToolBar() {
+        mainToolBar = addToolBar(tr("Main"));
+        mainToolBar->addAction(openAct);
+        mainToolBar->addAction(saveAct);
     }
 
     void MainWindow::page1() {

@@ -32,6 +32,11 @@
       <Extensions>cpp;moc</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{D9D6E242-F8AF-46E4-B9FD-80ECBC20BA3E}</UniqueIdentifier>
+      <Extensions>qrc;*</Extensions>
+      <ParseFiles>false</ParseFiles>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\uimain.cpp">
@@ -49,10 +54,81 @@
     <ClCompile Include="src\mainwindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GeneratedFiles\qrc_commissionator.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="include\mainwindow.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
+    <CustomBuild Include="Resources\commissionator.qrc">
+      <Filter>Resource Files</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resources\Commission.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\Commissioner.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\CommissionerPlus.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\CommissionPlus.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\Deal-Plus.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\Delete.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\Help.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\NewFile.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\OpenFile.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\Payment.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\PaymentPlus.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\PaymentTypePlus.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\Piece.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\PiecePlus.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\ProductPlus.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\ReferencePlus.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\Sale.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\SalePlus.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\SaveAsFile.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\SaveFile.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\Storefront.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>
