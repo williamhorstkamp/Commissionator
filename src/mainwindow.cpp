@@ -6,6 +6,22 @@ namespace Commissionator{
         createActions();
         createMenus();
         createStatusBar();
+        layout = new QHBoxLayout();
+        window = new QWidget();
+        leftPanel = new QStackedWidget();
+        rightPanel = new QStackedWidget();
+        lp1 = new LeftPanel();
+        lp2 = new LeftPanel2();
+        rp1 = new RightPanel();
+        rp2 = new RightPanel2();
+        leftPanel->addWidget(lp1);
+        leftPanel->addWidget(lp2);
+        rightPanel->addWidget(rp1);
+        rightPanel->addWidget(rp2);
+        layout->addWidget(leftPanel);
+        layout->addWidget(rightPanel);
+        window->setLayout(layout);
+        setCentralWidget(window);
     }
 
     void MainWindow::createMenus() {
@@ -45,9 +61,11 @@ namespace Commissionator{
     void MainWindow::createActions() {
         newAct = new QAction(tr("&New"), this);
         newAct->setStatusTip(tr("Create a new set of records"));
+        connect(newAct, SIGNAL(triggered()), this, SLOT(page1()));
 
         openAct = new QAction(tr("&Open"), this);
         openAct->setStatusTip(tr("Open a set of records"));
+        connect(openAct, SIGNAL(triggered()), this, SLOT(page2()));
 
         saveAct = new QAction(tr("&Save"), this);
         saveAct->setStatusTip(tr("Save the current set of records"));
@@ -60,6 +78,7 @@ namespace Commissionator{
 
         exitAct = new QAction(tr("&Exit"), this);
         exitAct->setStatusTip(tr("Exits the program"));
+        connect(exitAct, SIGNAL(triggered()), this, SLOT(close()));
 
         newCommissionerAct = new QAction(tr("&Commissioner"), this);
         newCommissionerAct->setStatusTip(tr("Create a new commissioner"));
@@ -103,5 +122,15 @@ namespace Commissionator{
 
     void MainWindow::createStatusBar() {
         statusBar()->showMessage(tr("Ready"));
+    }
+
+    void MainWindow::page1() {
+        leftPanel->setCurrentWidget(lp1);
+        rightPanel->setCurrentWidget(rp1);
+    }
+
+    void MainWindow::page2() {
+        leftPanel->setCurrentWidget(lp2);
+        rightPanel->setCurrentWidget(rp2);
     }
 }

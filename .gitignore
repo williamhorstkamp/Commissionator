@@ -1,8 +1,11 @@
 *.exe
 *.sdf
+*.opensdf
 *.log
 *.obj
 *.ilk
 *.tlog
 *.pdb
 *.idb
+*.TMP
+Commissionator.v12.suo
