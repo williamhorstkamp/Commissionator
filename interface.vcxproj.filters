@@ -34,6 +34,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\mainwindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="src\uimain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -43,12 +46,11 @@
     <ClCompile Include="GeneratedFiles\Release\moc_mainwindow.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="include\TestLayouts.h">
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\TestLayouts.h">
       <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\mainwindow.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="include\mainwindow.h">
