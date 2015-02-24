@@ -2,13 +2,21 @@
 #define MAINWINDOW
 
 #include <QMainWindow>
+#include <QStackedWidget>
 #include "TestLayouts.h"
 
 namespace Commissionator {
 
     class MainWindow:public QMainWindow {
+
+        Q_OBJECT
+
     public:
         MainWindow();
+
+    public slots:
+        void page1();
+        void page2();
 
     private:
         void createMenus();
@@ -16,9 +24,14 @@ namespace Commissionator {
         void createStatusBar();
 
         QWidget *window;
-        QWidget *leftWindow;
-        QWidget *rightWindow;
         QHBoxLayout *layout;
+        QStackedWidget *leftPanel;
+        QStackedWidget *rightPanel;
+
+        LeftPanel *lp1;
+        LeftPanel2 *lp2;
+        RightPanel *rp1;
+        RightPanel2 *rp2;
 
         QMenu *fileMenu;
         QMenu *newMenu;

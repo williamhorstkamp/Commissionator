@@ -19,6 +19,18 @@ namespace Commissionator {
         }
     };
 
+    class LeftPanel2 :public QWidget {
+    private:
+        QHBoxLayout *layout;
+    public:
+        LeftPanel2() {
+            layout = new QHBoxLayout();
+            layout->addWidget(new QLabel("Who another horizontal one?"));
+            layout->addWidget(new QLabel("this has to look hilariously bad"));
+            setLayout(layout);
+        }
+    };
+
     class RightPanel :public QWidget {
     private:
         QHBoxLayout *layout;
@@ -27,6 +39,18 @@ namespace Commissionator {
             layout = new QHBoxLayout();
             layout->addWidget(new QLabel("These things are horizontal"));
             layout->addWidget(new QLabel("This probably looks awful"));
+            setLayout(layout);
+        }
+    };
+
+    class RightPanel2 :public QWidget {
+    private:
+        QHBoxLayout *layout;
+    public:
+        RightPanel2() {
+            layout = new QHBoxLayout();
+            layout->addWidget(new QLabel("Woah, stuff"));
+            layout->addWidget(new QLabel("New testing stuff"));
             setLayout(layout);
         }
     };

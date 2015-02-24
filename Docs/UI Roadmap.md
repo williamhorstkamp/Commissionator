@@ -20,8 +20,8 @@ A short description of what this version of the model will add over the previous
 - [x] Load subwindows, one on each the left and right panel  
   
 ###V3: Rotate between three subwindows  
-- [ ] Third testing subwindow
-- [ ] Control which subwindow shows up in the left panel via the manage menu   
+- [x] Third/fourth testing subwindow
+- [x] Control which subwindow shows up in the panels via the manage menu   
    
 ###V4: Standard Toolbar, Resources  
 - [ ] Load resources  
