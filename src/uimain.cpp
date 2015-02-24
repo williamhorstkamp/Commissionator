@@ -4,7 +4,7 @@
 using namespace Commissionator;
 
 int main(int argc, char *argv[]) {
-    //Q_INIT_RESOURCE(commissionator);
+    Q_INIT_RESOURCE(commissionator);
     QApplication app(argc, argv);
     app.setOrganizationName("William Horstkamp");
     app.setApplicationName("Commissionator");

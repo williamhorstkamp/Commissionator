@@ -15,20 +15,22 @@ A short description of what this version of the model will add over the previous
 - [x] Menu  
 - [x] Status Bar  
   
-###V2: Loading Two subwindows  
-- [x] Testing subwindows  
-- [x] Load subwindows, one on each the left and right panel  
+###V2: Loading Two panels  
+- [x] Testing panels  
+- [x] Load two panels, one on each the left and right panel  
   
-###V3: Rotate between three subwindows  
-- [x] Third/fourth testing subwindow
-- [x] Control which subwindow shows up in the panels via the manage menu   
+###V3: Rotate between multiple panels  
+- [x] Third/fourth testing panels
+- [x] Control which panel shows up via the manage menu   
    
 ###V4: Standard Toolbar, Resources  
-- [ ] Load resources  
-- [ ] Toolbar with buttons  
+- [x] Load resources  
+- [x] Toolbar with buttons  
   
-###V5: Right window changes based on selection in left  
-- [ ] Create updated subwindows for testing  
-- [ ] Implement left window changing right window and left window being able to be rotated still  
+###V5: Right panel changes based on selection in left  
+- [ ] Create updated panel for testing  
+- [ ] Implement left panel changing right panel and panel being able to be rotated still via menu  
   
-###TBA: Begin designing the specific windows to match V3 model
+###V6: Context sensitive toolbar changes with panel changes
+  
+###TBA: Begin designing the specific panels to match V3 model

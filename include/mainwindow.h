@@ -22,6 +22,7 @@ namespace Commissionator {
         void createMenus();
         void createActions();
         void createStatusBar();
+        void createToolBar();
 
         QWidget *window;
         QHBoxLayout *layout;
@@ -37,8 +38,8 @@ namespace Commissionator {
         QMenu *newMenu;
         QMenu *manageMenu;
         QMenu *helpMenu;
-        //QToolBar *standardToolBar;
-        //QToolBar *contextToolBar;
+        QToolBar *mainToolBar;
+        QToolBar *contextToolBar;
         QAction *newAct;
         QAction *openAct;
         QAction *saveAct;
@@ -50,10 +51,10 @@ namespace Commissionator {
         QAction *newProductAct;
         QAction *newSaleAct;
         QAction *newPaymentAct;
+        QAction *manageStorefrontAct;
         QAction *manageCommissionerAct;
         QAction *manageCommissionAct;
         QAction *managePieceAct;
-        QAction *manageProductAct;
         QAction *manageSaleAct;
         QAction *managePaymentAct;
         QAction *aboutAct;
