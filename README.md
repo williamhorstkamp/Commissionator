@@ -17,7 +17,10 @@ Windows, OSX, and GNU/Linux.
 ## Who is this for?  
 Commissionator is designed first for a group of artists who requested it, but also more broadly for anyone who needs a straightforward program for Windows, Mac, or Linux that will provide them the split functionality of address book and point-of-sale storefront specifically for use with online transactions. This functionality will be especially useful for keeping track of payments that can be made in a number of ways or contacts that may be held from a number of websites. An example would be if you sold commission based artwork on multiple sites at once (Etsy, DeviantArt, etc) and accepted multiple forms of payment (PayPal, BitCoin, etc) but wanted a single place to keep track of commission and payment history, as well as document commissioners who may be purchasing from you from several channels. The program will also contain functionality for things like price overriding and sales (50% off a specific product, buy 2 get 1 free, etc), as well keeping track of the different types of products you sell, if they have any optional features that may effect the price, and even keep track of references you find for your commissioned pieces.  
   
-## Development and Testing process
+## Development and Testing process  
+  
+The program is written in C++ and uses SQLite as a saving and organizational format. It uses a small wrapper (SQLiter) that I wrote that makes SQLite easier to work with in C++11. Finally QT will be used for UI work to allow the program to be multiplatform from the get-go.  
+ 
 Up to V3: Each version will first have its SQL written, then the C++ header and documentation, 
 the tests will be written in Google Test, followed by finally writing, and then testing the source code. This will be repeated until all features of the Model Roadmap are complete, at which point development will move on to the interface.  
   
