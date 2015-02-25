@@ -19,7 +19,7 @@ Commissionator is designed first for a group of artists who requested it, but al
   
 ## Development and Testing process  
   
-The program is written in C++ and uses SQLite as a saving and organizational format. It uses a small wrapper (SQLiter) that I wrote that makes SQLite easier to work with in C++11. Finally QT will be used for UI work to allow the program to be multiplatform from the get-go.  
+The program is written in C++ and uses SQLite as a saving and organizational format. It uses a small wrapper (SQLiter) that I wrote that makes SQLite easier to work with in C++11. Finally QT will be used for UI work to allow the program to be multiplatform from the get-go. The entire program is being written in MSVS2013 with the Qt plugin, and will later be tested on Linux and Mac.  
  
 Up to V3: Each version will first have its SQL written, then the C++ header and documentation, 
 the tests will be written in Google Test, followed by finally writing, and then testing the source code. This will be repeated until all features of the Model Roadmap are complete, at which point development will move on to the interface.  
