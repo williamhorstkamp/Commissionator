@@ -1,22 +1,36 @@
 #ifndef TESTLAYOUTS
 #define TESTLAYOUTS
 
-#include <qlabel.h>
-#include <qlayout.h>
+#include <QLabel>
+#include <QLayout>
+#include <QStandardItemModel>
+#include <QTableView>
+#include <QtSql\QSqlDatabase>
+#include <QtSql\QSqlQuery>
+#include <QSQLQueryModel>
+
 namespace Commissionator {
 
     class LeftPanel :public QWidget {
+
+        Q_OBJECT
+
     private:
         QVBoxLayout *layout;
+        QTableView *view;
     public:
-        LeftPanel() {
+        LeftPanel(QSqlQueryModel *model) {
             layout = new QVBoxLayout();
-            layout->addWidget(new QLabel("This is where things go"));
-            layout->addWidget(new QLabel("Here is a thing"));
-            layout->addWidget(new QLabel("And another thing is here"));
-            layout->addWidget(new QLabel("here is yet one more thing"));
+            view = new QTableView(); 
+            view->setModel(model);
+            view->setSelectionBehavior(QAbstractItemView::SelectRows);
+            layout->addWidget(new QLabel("This should be a table"));
+            layout->addWidget(view);
             setLayout(layout);
+            connect(view, &QTableView::clicked, this, &LeftPanel::tableClicked);
         }
+    signals:
+        void tableClicked(const QModelIndex &index);
     };
 
     class LeftPanel2 :public QWidget {
@@ -32,13 +46,21 @@ namespace Commissionator {
     };
 
     class RightPanel :public QWidget {
+
+        Q_OBJECT
+
+    public slots:
+        void slotTableClicked(const QModelIndex &index) {
+            label->setText(index.model()->data(index.model()->index(index.row(), 1)).toString());
+        }
     private:
         QHBoxLayout *layout;
+        QLabel *label;
     public:
         RightPanel() {
             layout = new QHBoxLayout();
-            layout->addWidget(new QLabel("These things are horizontal"));
-            layout->addWidget(new QLabel("This probably looks awful"));
+            label = new QLabel("This probably looks awful");
+            layout->addWidget(label);
             setLayout(layout);
         }
     };

@@ -1,5 +1,6 @@
 #include <QtWidgets>
 #include "mainwindow.h"
+#include <QSqlQueryModel>
 
 namespace Commissionator{
     MainWindow::MainWindow() {
@@ -7,22 +8,8 @@ namespace Commissionator{
         createMenus();
         createStatusBar();
         createToolBar();
-        layout = new QHBoxLayout();
-        window = new QWidget();
-        leftPanel = new QStackedWidget();
-        rightPanel = new QStackedWidget();
-        lp1 = new LeftPanel();
-        lp2 = new LeftPanel2();
-        rp1 = new RightPanel();
-        rp2 = new RightPanel2();
-        leftPanel->addWidget(lp1);
-        leftPanel->addWidget(lp2);
-        rightPanel->addWidget(rp1);
-        rightPanel->addWidget(rp2);
-        layout->addWidget(leftPanel);
-        layout->addWidget(rightPanel);
-        window->setLayout(layout);
-        setCentralWidget(window);
+        createModel();
+        createPanels();
     }
 
     void MainWindow::createMenus() {
@@ -66,11 +53,11 @@ namespace Commissionator{
 
         openAct = new QAction(QIcon(":/OpenFile.png"), tr("&Open"), this);
         openAct->setStatusTip(tr("Open a set of records"));
-        connect(openAct, SIGNAL(triggered()), this, SLOT(page2()));
+        connect(openAct, &QAction::triggered, this, &MainWindow::page2);
 
         saveAct = new QAction(QIcon(":/SaveFile.png"), tr("&Save"), this);
         saveAct->setStatusTip(tr("Save the current set of records"));
-        connect(saveAct, SIGNAL(triggered()), this, SLOT(page1()));
+        connect(saveAct, &QAction::triggered, this, &MainWindow::page1);
 
         saveAsAct = new QAction(QIcon(":/SaveAsFile.png"), tr("&Save As"), this);
         saveAsAct->setStatusTip(tr("Save the current set of records as a new file"));
@@ -130,6 +117,37 @@ namespace Commissionator{
         mainToolBar = addToolBar(tr("Main"));
         mainToolBar->addAction(openAct);
         mainToolBar->addAction(saveAct);
+    }
+
+    void MainWindow::createModel() {
+        model = new TestModel();
+    }
+
+    void MainWindow::createPanels() {
+        layout = new QHBoxLayout();
+        window = new QWidget();
+        leftPanel = new QStackedWidget();
+        rightPanel = new QStackedWidget();
+        lp1 = new LeftPanel(model->getModel());
+        lp2 = new LeftPanel2();
+        rp1 = new RightPanel();
+        rp2 = new RightPanel2();
+        leftPanel->addWidget(lp1);
+        leftPanel->addWidget(lp2);
+        rightPanel->addWidget(rp1);
+        rightPanel->addWidget(rp2);
+
+        QFrame *line = new QFrame();
+        line->setFrameShape(QFrame::VLine);
+        line->setFrameShadow(QFrame::Sunken);
+
+        connect(lp1, &LeftPanel::tableClicked, rp1, &RightPanel::slotTableClicked);
+
+        layout->addWidget(leftPanel);
+        layout->addWidget(line);
+        layout->addWidget(rightPanel);
+        window->setLayout(layout);
+        setCentralWidget(window);
     }
 
     void MainWindow::page1() {
