@@ -54,12 +54,6 @@
     <ClCompile Include="GeneratedFiles\qrc_commissionator.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_TestLayouts.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_TestLayouts.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="include\mainwindow.h">
@@ -69,9 +63,6 @@
       <Filter>Resource Files</Filter>
     </CustomBuild>
     <CustomBuild Include="include\TestLayouts.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="include\TestModel.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>

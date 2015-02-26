@@ -4,7 +4,6 @@
 #include <QMainWindow>
 #include <QStackedWidget>
 #include "TestLayouts.h"
-#include "TestModel.h"
 
 namespace Commissionator {
 
@@ -24,15 +23,12 @@ namespace Commissionator {
         void createActions();
         void createStatusBar();
         void createToolBar();
-        void createModel();
         void createPanels();
 
         QWidget *window;
         QHBoxLayout *layout;
         QStackedWidget *leftPanel;
         QStackedWidget *rightPanel;
-
-        TestModel *model;
 
         LeftPanel *lp1;
         LeftPanel2 *lp2;

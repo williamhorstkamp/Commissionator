@@ -13,24 +13,30 @@ namespace Commissionator {
 
     class LeftPanel :public QWidget {
 
-        Q_OBJECT
-
     private:
         QVBoxLayout *layout;
-        QTableView *view;
     public:
-        LeftPanel(QSqlQueryModel *model) {
+        LeftPanel() {
             layout = new QVBoxLayout();
-            view = new QTableView(); 
+            QSqlDatabase db;
+            db = QSqlDatabase::addDatabase("QSQLITE");
+            db.setDatabaseName(":memory:");
+            db.open();
+            db.exec("CREATE TABLE test (stuff INTEGER PRIMARY KEY, thing TEXT);");
+            db.exec("INSERT INTO test (stuff, thing) VALUES (1, ' a thing');");
+            db.exec("INSERT INTO test (stuff, thing) VALUES (2, 'just a ting');");
+            db.exec("INSERT INTO test (stuff, thing) VALUES (3, 'one more row');");
+            QSqlQueryModel *model = new QSqlQueryModel();
+            model->setQuery("SELECT * FROM test");
+            model->setHeaderData(0, Qt::Horizontal, QObject::tr("Index"));
+            model->setHeaderData(1, Qt::Horizontal, QObject::tr("Thing?"));
+            QTableView *view = new QTableView();
             view->setModel(model);
             view->setSelectionBehavior(QAbstractItemView::SelectRows);
             layout->addWidget(new QLabel("This should be a table"));
             layout->addWidget(view);
             setLayout(layout);
-            connect(view, &QTableView::clicked, this, &LeftPanel::tableClicked);
         }
-    signals:
-        void tableClicked(const QModelIndex &index);
     };
 
     class LeftPanel2 :public QWidget {
@@ -46,21 +52,13 @@ namespace Commissionator {
     };
 
     class RightPanel :public QWidget {
-
-        Q_OBJECT
-
-    public slots:
-        void slotTableClicked(const QModelIndex &index) {
-            label->setText(index.model()->data(index.model()->index(index.row(), 1)).toString());
-        }
     private:
         QHBoxLayout *layout;
-        QLabel *label;
     public:
         RightPanel() {
             layout = new QHBoxLayout();
-            label = new QLabel("This probably looks awful");
-            layout->addWidget(label);
+            layout->addWidget(new QLabel("These things are horizontal"));
+            layout->addWidget(new QLabel("This probably looks awful"));
             setLayout(layout);
         }
     };
