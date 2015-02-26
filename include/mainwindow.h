@@ -23,6 +23,7 @@ namespace Commissionator {
         void createActions();
         void createStatusBar();
         void createToolBar();
+        void createPanels();
 
         QWidget *window;
         QHBoxLayout *layout;

@@ -1,5 +1,6 @@
 #include <QApplication>
 #include "mainwindow.h"
+#include "TestLayouts.h"
 
 using namespace Commissionator;
 
@@ -10,5 +11,6 @@ int main(int argc, char *argv[]) {
     app.setApplicationName("Commissionator");
     MainWindow mainWindow;
     mainWindow.show();
+    
     return app.exec();
 }

@@ -7,22 +7,7 @@ namespace Commissionator{
         createMenus();
         createStatusBar();
         createToolBar();
-        layout = new QHBoxLayout();
-        window = new QWidget();
-        leftPanel = new QStackedWidget();
-        rightPanel = new QStackedWidget();
-        lp1 = new LeftPanel();
-        lp2 = new LeftPanel2();
-        rp1 = new RightPanel();
-        rp2 = new RightPanel2();
-        leftPanel->addWidget(lp1);
-        leftPanel->addWidget(lp2);
-        rightPanel->addWidget(rp1);
-        rightPanel->addWidget(rp2);
-        layout->addWidget(leftPanel);
-        layout->addWidget(rightPanel);
-        window->setLayout(layout);
-        setCentralWidget(window);
+        createPanels();
     }
 
     void MainWindow::createMenus() {
@@ -130,6 +115,31 @@ namespace Commissionator{
         mainToolBar = addToolBar(tr("Main"));
         mainToolBar->addAction(openAct);
         mainToolBar->addAction(saveAct);
+    }
+
+    void MainWindow::createPanels() {
+        layout = new QHBoxLayout();
+        window = new QWidget();
+        leftPanel = new QStackedWidget();
+        rightPanel = new QStackedWidget();
+        lp1 = new LeftPanel();
+        lp2 = new LeftPanel2();
+        rp1 = new RightPanel();
+        rp2 = new RightPanel2();
+        leftPanel->addWidget(lp1);
+        leftPanel->addWidget(lp2);
+        rightPanel->addWidget(rp1);
+        rightPanel->addWidget(rp2);
+
+        QFrame *line = new QFrame();
+        line->setFrameShape(QFrame::VLine);
+        line->setFrameShadow(QFrame::Sunken);
+
+        layout->addWidget(leftPanel);
+        layout->addWidget(line);
+        layout->addWidget(rightPanel);
+        window->setLayout(layout);
+        setCentralWidget(window);
     }
 
     void MainWindow::page1() {

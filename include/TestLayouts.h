@@ -1,20 +1,40 @@
 #ifndef TESTLAYOUTS
 #define TESTLAYOUTS
 
-#include <qlabel.h>
-#include <qlayout.h>
+#include <QLabel>
+#include <QLayout>
+#include <QStandardItemModel>
+#include <QTableView>
+#include <QtSql\QSqlDatabase>
+#include <QtSql\QSqlQuery>
+#include <QSQLQueryModel>
+
 namespace Commissionator {
 
     class LeftPanel :public QWidget {
+
     private:
         QVBoxLayout *layout;
     public:
         LeftPanel() {
             layout = new QVBoxLayout();
-            layout->addWidget(new QLabel("This is where things go"));
-            layout->addWidget(new QLabel("Here is a thing"));
-            layout->addWidget(new QLabel("And another thing is here"));
-            layout->addWidget(new QLabel("here is yet one more thing"));
+            QSqlDatabase db;
+            db = QSqlDatabase::addDatabase("QSQLITE");
+            db.setDatabaseName(":memory:");
+            db.open();
+            db.exec("CREATE TABLE test (stuff INTEGER PRIMARY KEY, thing TEXT);");
+            db.exec("INSERT INTO test (stuff, thing) VALUES (1, ' a thing');");
+            db.exec("INSERT INTO test (stuff, thing) VALUES (2, 'just a ting');");
+            db.exec("INSERT INTO test (stuff, thing) VALUES (3, 'one more row');");
+            QSqlQueryModel *model = new QSqlQueryModel();
+            model->setQuery("SELECT * FROM test");
+            model->setHeaderData(0, Qt::Horizontal, QObject::tr("Index"));
+            model->setHeaderData(1, Qt::Horizontal, QObject::tr("Thing?"));
+            QTableView *view = new QTableView();
+            view->setModel(model);
+            view->setSelectionBehavior(QAbstractItemView::SelectRows);
+            layout->addWidget(new QLabel("This should be a table"));
+            layout->addWidget(view);
             setLayout(layout);
         }
     };
