@@ -28,9 +28,13 @@ A short description of what this version of the model will add over the previous
 - [x] Toolbar with buttons  
   
 ###V5: Right panel changes based on selection in left  
-- [ ] Create updated panel for testing  
-- [ ] Implement left panel changing right panel and panel being able to be rotated still via menu  
+- [x] Create updated panel for testing  
+- [x] Implement left panel changing right panel and panel being able to be rotated still via menu  
   
-###V6: Context sensitive toolbar changes with panel changes
+###V6: Clicking left panel causes query in right  
+- [x] Model updated  
+- [x] Using column from left table as key to a query for right panel  
+  
+###V7: Context sensitive toolbar changes with panel changes
   
 ###TBA: Begin designing the specific panels to match V3 model
