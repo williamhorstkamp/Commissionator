@@ -8,6 +8,7 @@
 #include <QtSql\QSqlDatabase>
 #include <QtSql\QSqlQuery>
 #include <QSQLQueryModel>
+#include <QListView>
 
 namespace Commissionator {
 
@@ -49,18 +50,16 @@ namespace Commissionator {
 
         Q_OBJECT
 
-    public slots:
-        void slotTableClicked(const QModelIndex &index) {
-            label->setText(index.model()->data(index.model()->index(index.row(), 1)).toString());
-        }
     private:
         QHBoxLayout *layout;
-        QLabel *label;
+        QListView *view;
     public:
-        RightPanel() {
+        RightPanel(QSqlQueryModel *model) {
             layout = new QHBoxLayout();
-            label = new QLabel("This probably looks awful");
-            layout->addWidget(label);
+            view = new QListView();
+            view->setModel(model);
+            layout->addWidget(new QLabel("Here is some data:"));
+            layout->addWidget(view);
             setLayout(layout);
         }
     };

@@ -128,9 +128,9 @@ namespace Commissionator{
         window = new QWidget();
         leftPanel = new QStackedWidget();
         rightPanel = new QStackedWidget();
-        lp1 = new LeftPanel(model->getModel());
+        lp1 = new LeftPanel(model->getLeftModel());
         lp2 = new LeftPanel2();
-        rp1 = new RightPanel();
+        rp1 = new RightPanel(model->getRightModel());
         rp2 = new RightPanel2();
         leftPanel->addWidget(lp1);
         leftPanel->addWidget(lp2);
@@ -141,7 +141,7 @@ namespace Commissionator{
         line->setFrameShape(QFrame::VLine);
         line->setFrameShadow(QFrame::Sunken);
 
-        connect(lp1, &LeftPanel::tableClicked, rp1, &RightPanel::slotTableClicked);
+        connect(lp1, &LeftPanel::tableClicked, model, &TestModel::updateRight);
 
         layout->addWidget(leftPanel);
         layout->addWidget(line);
