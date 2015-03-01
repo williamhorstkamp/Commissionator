@@ -23,9 +23,10 @@ namespace Commissionator {
         void createMenus();
         void createActions();
         void createStatusBar();
-        void createToolBar();
+        void createToolBars();
         void createModel();
         void createPanels();
+        void swapContextToolBar(QToolBar *newBar);
 
         QWidget *window;
         QHBoxLayout *layout;
@@ -43,8 +44,12 @@ namespace Commissionator {
         QMenu *newMenu;
         QMenu *manageMenu;
         QMenu *helpMenu;
+
         QToolBar *mainToolBar;
         QToolBar *contextToolBar;
+        QToolBar *panelToolBar1;
+        QToolBar *panelToolBar2;
+
         QAction *newAct;
         QAction *openAct;
         QAction *saveAct;

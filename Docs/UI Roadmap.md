@@ -36,5 +36,8 @@ A short description of what this version of the model will add over the previous
 - [x] Using column from left table as key to a query for right panel  
   
 ###V7: Context sensitive toolbar changes with panel changes
+- [x] New toolbars for testing
+- [x] Helper function to make swapping toolbars easy
+- [x] Swapable toolbars
   
 ###TBA: Begin designing the specific panels to match V3 model

@@ -7,7 +7,7 @@ namespace Commissionator{
         createActions();
         createMenus();
         createStatusBar();
-        createToolBar();
+        createToolBars();
         createModel();
         createPanels();
     }
@@ -113,10 +113,16 @@ namespace Commissionator{
         statusBar()->showMessage(tr("Ready"));
     }
 
-    void MainWindow::createToolBar() {
+    void MainWindow::createToolBars() {
         mainToolBar = addToolBar(tr("Main"));
         mainToolBar->addAction(openAct);
         mainToolBar->addAction(saveAct);
+        panelToolBar1 = addToolBar(tr("Panel1"));
+        panelToolBar1->addAction(newCommissionAct);
+        contextToolBar = panelToolBar1;
+        panelToolBar2 = addToolBar(tr("Panel2"));
+        panelToolBar2->addAction(newCommissionerAct);
+        panelToolBar2->setVisible(FALSE);
     }
 
     void MainWindow::createModel() {
@@ -153,10 +159,18 @@ namespace Commissionator{
     void MainWindow::page1() {
         leftPanel->setCurrentWidget(lp1);
         rightPanel->setCurrentWidget(rp1);
+        swapContextToolBar(panelToolBar1);
     }
 
     void MainWindow::page2() {
         leftPanel->setCurrentWidget(lp2);
         rightPanel->setCurrentWidget(rp2);
+        swapContextToolBar(panelToolBar2);
+    }
+
+    void MainWindow::swapContextToolBar(QToolBar *newBar) {
+        contextToolBar->setVisible(FALSE);
+        contextToolBar = newBar;
+        contextToolBar->setVisible(TRUE);
     }
 }
