@@ -9,9 +9,9 @@ It will allow sellers to index the type of products they sell, store information
 document and track their progress on a piece from start to finish, and even keep track of payments and earnings.  
   
 ## Design Doodads
-The program is being designed in an MVC-style and is written in C++11/14. The model will utilize SQLiter, an SQLite3 wrapper for C++11, to create
-and manage a database containing all the of store's information. The interface will be created in qt after the model is finished and tested.  Finally, the controller will be created to bridge the two sides together.   
-The target release platforms are
+The program is designed in MV style and is written in C++11/14. The model will utilize SQLite through the Qt standard database systems to more easily connect to the Qt UI elements and remove the need to use a controller in the first place.  
+The interface will be written in Qt before/alongside the model. The development process is outlined in "V4 and after" below.  
+The target platforms are  
 Windows, OSX, and GNU/Linux.  
   
 ## Who is this for?  
@@ -19,14 +19,14 @@ Commissionator is designed first for a group of artists who requested it, but al
   
 ## Development and Testing process  
   
-The program is written in C++ and uses SQLite as a saving and organizational format. It uses a small wrapper (SQLiter) that I wrote that makes SQLite easier to work with in C++11. Finally QT will be used for UI work to allow the program to be multiplatform from the get-go. The entire program is being written in MSVS2013 with the Qt plugin, and will later be tested on Linux and Mac.  
+The program is written in C++ and uses SQLite as a saving and organizational format. QT will be used for UI and database work to allow the program to be multiplatform from the get-go. The entire program is being written in MSVS2013 with the Qt plugin, and will later be tested on Linux and Mac.  
  
 Up to V3: Each version will first have its SQL written, then the C++ header and documentation, 
 the tests will be written in Google Test, followed by finally writing, and then testing the source code. This will be repeated until all features of the Model Roadmap are complete, at which point development will move on to the interface.  
   
-V3: First the model for this version will be finished, first by writing the SQL, then the C++ header and docs, then tests in Google Test, followed by writing source and testing it. After this is done, the UI will be created to reflect the program up to version 3. Finally the controller will be written to bridge the two parts.  
+V3: First the model for this version will be finished, first by writing the SQL, then the C++ header and docs, then tests in Google Test, followed by writing source and testing it. After this is done, the UI will be created to reflect the program up to version 3.  
   
-V4 and after: First changes to the UI will be made to reflect the new version, this UI may then be shown to the client(s), who will request adjustments to be made. After the UI is deemed satisfactory, the model will be updated to the new version, and finally the controller will be updated, finishing that version.  
+V4 and after: First changes to the UI will be made to reflect the new version (if necissary), this UI may then be shown to the client(s), who will request adjustments to be made. After the UI is deemed satisfactory the model will be updated to the new version, finishing that version.  
   
 ##Copyright Stuff
 Copyright (c) 2015 William Horstkamp  

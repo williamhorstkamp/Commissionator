@@ -1,6 +1,6 @@
 #Model Roadmap
 This is a short roadmap for how the ComModel class is going to develop.
-The Commissionator Model, or ComModel, is the model in Commissionator's MVC
+The Commissionator Model, or ComModel, is the model in Commissionator's MV
 design, and as such it needs to provide a set of functions for easily modifying
 and accessing the SQLite database.
   
@@ -12,6 +12,7 @@ This document is not finalized
 A short description of what this version of the model will add over the previous one.  
 - [x] a function that has been added to the branch 
 - [ ] a list of functions to be added  
+  
   
 ###V1: Contact type, Commissioner, Contact tables.
 - [x] insert contact type

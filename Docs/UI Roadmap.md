@@ -1,5 +1,5 @@
 #UI Roadmap
-This is the roadmap for the UI, this roadmap is particularly directed at the creation and early versions of the UI for commissionator until it catches up with V3 of the model, at this point the model will be updated to match any changes needed and the controller will be created to bridge the two parts together. Development will then continue as usual.
+This is the roadmap for the UI, this roadmap is particularly directed at the creation and early versions of the UI for commissionator until it catches up with V3 of the model, at this point the model will be updated to match any changes needed.  Development will then continue as usual.  
   
 This document is not finalized  
   
@@ -9,6 +9,7 @@ This document is not finalized
 A short description of what this version of the model will add over the previous one.  
 - [x] a function that has been added to the branch  
 - [ ] a list of functions to be added  
+  
   
 ###V1: QT Project, MainWindow basic format, menu  
 - [x] MainWindow loaded into application producing blank window  
@@ -36,5 +37,8 @@ A short description of what this version of the model will add over the previous
 - [x] Using column from left table as key to a query for right panel  
   
 ###V7: Context sensitive toolbar changes with panel changes
+- [x] New toolbars for testing
+- [x] Helper function to make swapping toolbars easy
+- [x] Swapable toolbars
   
-###TBA: Begin designing the specific panels to match V3 model
+###TBA: Begin designing the specific panels to match V3 model (and beyond)
