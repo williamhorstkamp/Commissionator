@@ -2,7 +2,7 @@
 This is data pertaining to the User Interface for Commissionator.  
 For it to make sense, you should also look at the Main UI image.  
   
-##Toolbar  
+##Menu  
   
 ###File  
 ####This tab is for creating, saving, and opening of records as well as program control.  
@@ -27,16 +27,14 @@ Payment
 Commissioner  
 Commission  
 Piece  
-Product  
-Sale  
-Payment  
+Storefront
   
 ###Help  
 About  
 Help Page  
   
-##Hotbar  
-The hotbar exists as a series of shortcuts to facilitate quicker useage of the program  
+##Toolbar  
+The toolbar exists as a series of shortcuts to facilitate quicker useage of the program  
 ###Open Record  
 ###Save Record  
 Works as Save As if never saved, works as Save is saved previously  
