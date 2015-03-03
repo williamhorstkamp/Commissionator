@@ -136,6 +136,9 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="GeneratedFiles\Debug\moc_LeftPanel.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_mainwindow.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
@@ -150,6 +153,9 @@
       </PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_LeftPanel.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Release\moc_mainwindow.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -170,7 +176,9 @@
     <ClCompile Include="GeneratedFiles\Release\moc_TestModel.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="src\LeftPanel.cpp" />
     <ClCompile Include="src\mainwindow.cpp" />
+    <ClCompile Include="src\ProxyModel.cpp" />
     <ClCompile Include="src\uimain.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -294,6 +302,21 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG -DQT_SQL_LIB "-I.\include" "-IC:\qt\qt5.4.0\5.4\msvc2013\include" "-IC:\qt\qt5.4.0\5.4\msvc2013\include\QtWidgets" "-IC:\qt\qt5.4.0\5.4\msvc2013\include\QtGui" "-IC:\qt\qt5.4.0\5.4\msvc2013\include\QtANGLE" "-IC:\qt\qt5.4.0\5.4\msvc2013\include\QtCore" "-I.\release" "-IC:\qt\qt5.4.0\5.4\msvc2013\mkspecs\win32-msvc2013" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtSql" "-I$(QTDIR)\include\QtWidgets"</Command>
     </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="include\LeftPanel.h">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing LeftPanel.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SQL_LIB "-I.\include" "-IC:\qt\qt5.4.0\5.4\msvc2013\include" "-IC:\qt\qt5.4.0\5.4\msvc2013\include\QtWidgets" "-IC:\qt\qt5.4.0\5.4\msvc2013\include\QtGui" "-IC:\qt\qt5.4.0\5.4\msvc2013\include\QtANGLE" "-IC:\qt\qt5.4.0\5.4\msvc2013\include\QtCore" "-I.\debug" "-IC:\qt\qt5.4.0\5.4\msvc2013\mkspecs\win32-msvc2013" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtSql" "-I$(QTDIR)\include\QtWidgets"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing LeftPanel.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG -DQT_SQL_LIB "-I.\include" "-IC:\qt\qt5.4.0\5.4\msvc2013\include" "-IC:\qt\qt5.4.0\5.4\msvc2013\include\QtWidgets" "-IC:\qt\qt5.4.0\5.4\msvc2013\include\QtGui" "-IC:\qt\qt5.4.0\5.4\msvc2013\include\QtANGLE" "-IC:\qt\qt5.4.0\5.4\msvc2013\include\QtCore" "-I.\release" "-IC:\qt\qt5.4.0\5.4\msvc2013\mkspecs\win32-msvc2013" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtSql" "-I$(QTDIR)\include\QtWidgets"</Command>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\ProxyModel.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QStackedWidget>
 #include "TestLayouts.h"
+#include "LeftPanel.h"
 #include "TestModel.h"
 
 namespace Commissionator {

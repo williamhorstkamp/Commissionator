@@ -122,7 +122,7 @@ namespace Commissionator{
         contextToolBar = panelToolBar1;
         panelToolBar2 = addToolBar(tr("Panel2"));
         panelToolBar2->addAction(newCommissionerAct);
-        panelToolBar2->setVisible(FALSE);
+        panelToolBar2->setVisible(false);
     }
 
     void MainWindow::createModel() {
@@ -134,7 +134,9 @@ namespace Commissionator{
         window = new QWidget();
         leftPanel = new QStackedWidget();
         rightPanel = new QStackedWidget();
-        lp1 = new LeftPanel(model->getLeftModel());
+        QList<int> hidden;
+        hidden.append(0);
+        lp1 = new LeftPanel("Commissioner", model->getLeftModel(), hidden);
         lp2 = new LeftPanel2();
         rp1 = new RightPanel(model->getRightModel());
         rp2 = new RightPanel2();
@@ -169,8 +171,8 @@ namespace Commissionator{
     }
 
     void MainWindow::swapContextToolBar(QToolBar *newBar) {
-        contextToolBar->setVisible(FALSE);
+        contextToolBar->setVisible(false);
         contextToolBar = newBar;
-        contextToolBar->setVisible(TRUE);
+        contextToolBar->setVisible(true);
     }
 }
