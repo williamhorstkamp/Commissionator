@@ -1,5 +1,7 @@
 #include <QHeaderView>
+#include <QAbstractProxyModel>
 #include "LeftPanel.h"
+#include "LeftProxyModel.h"
 
 namespace Commissionator {
     LeftPanel::LeftPanel(QString title, QSqlTableModel *model, QList<int> hiddenColumns) {
@@ -23,8 +25,12 @@ namespace Commissionator {
 
     void LeftPanel::createTable(QSqlTableModel *model, QList<int> hiddenColumns) {
         view = new QTableView();
-        view->setModel(model);
+        LeftProxyModel *proxy = new LeftProxyModel(this);
+        proxy->setSourceModel(model);
+        view->setModel(proxy);
         view->setSelectionBehavior(QAbstractItemView::SelectRows);
+        view->setEditTriggers(QAbstractItemView::NoEditTriggers);
+        view->setSortingEnabled(true);
         foreach(int col, hiddenColumns) {
             view->setColumnHidden(col, true);
         }
