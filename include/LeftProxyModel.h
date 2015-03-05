@@ -12,7 +12,6 @@ namespace Commissionator {
     public:
         LeftProxyModel(QObject *parent = 0) : QAbstractProxyModel(parent) {};
 
-        //void setSourceModel(QAbstractItemModel *newSourceModel);
         QModelIndex mapFromSource(const QModelIndex &index) const;
         QModelIndex	mapToSource(const QModelIndex &index) const;
         int rowCount(const QModelIndex &parent = QModelIndex()) const;

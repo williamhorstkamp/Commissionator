@@ -1,11 +1,7 @@
 #include "LeftProxyModel.h"
 
 namespace Commissionator {
-    /**
-    void LeftProxyModel::setSourceModel(QAbstractItemModel *sourceModel) {
-        QAbstractProxyModel::setSourceModel(sourceModel);
-    }
-    */
+
     QModelIndex LeftProxyModel::mapFromSource(const QModelIndex &index) const {
         if (index.isValid())
             if (sourceModel())
@@ -20,7 +16,7 @@ namespace Commissionator {
     }
 
     int LeftProxyModel::rowCount(const QModelIndex &parent) const {
-        if (sourceModel())
+        if (!sourceModel())
             return 0;
         return sourceModel()->rowCount(parent);
     }

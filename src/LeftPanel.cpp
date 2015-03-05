@@ -34,8 +34,10 @@ namespace Commissionator {
         foreach(int col, hiddenColumns) {
             view->setColumnHidden(col, true);
         }
+        /**
         for (int col = 0; col < view->horizontalHeader()->count(); col++) {
             view->horizontalHeader()->setSectionResizeMode(col, QHeaderView::Stretch);
         }
+        */
     }
 }
