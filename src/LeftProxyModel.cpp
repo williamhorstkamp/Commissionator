@@ -1,42 +1,59 @@
+#include <QFont>
+#include <QGuiApplication>
 #include "LeftProxyModel.h"
 
 namespace Commissionator {
 
-    QModelIndex LeftProxyModel::mapFromSource(const QModelIndex &index) const {
-        if (index.isValid())
-            if (sourceModel())
-                return QModelIndex();
-        return sourceModel()->index(index.row(), index.column());
-    }
-
-    QModelIndex	LeftProxyModel::mapToSource(const QModelIndex &index) const {
-        if (!sourceModel())
-            return QModelIndex();
-        return sourceModel()->index(index.row(), index.column());
-    }
-
     int LeftProxyModel::rowCount(const QModelIndex &parent) const {
         if (!sourceModel())
             return 0;
-        return sourceModel()->rowCount(parent);
+        return QIdentityProxyModel::rowCount(parent) + 1;
     }
-
+    /**
     int LeftProxyModel::columnCount(const QModelIndex &parent) const {
         if (!sourceModel())
             return 0;
         return sourceModel()->columnCount(parent);
     }
-
+    */
     QModelIndex LeftProxyModel::index(int row, int column, const QModelIndex &parent) const {
         if (!sourceModel())
             return QModelIndex();
-        return sourceModel()->index(row, column, parent);
+        if (row == rowCount() - 1)
+            return createIndex(row, column);
+        return QIdentityProxyModel::index(row, column, parent);
+    }
+    QVariant LeftProxyModel::data(const QModelIndex &index, int role) const {
+        if (index.isValid()){
+            if (role == Qt::DisplayRole) {
+                if (index.row() == rowCount() - 1) {
+                    return QVariant("Search");
+                }
+                return sourceModel()->data(index, role);
+            }
+            if (role == Qt::FontRole) {
+                if (index.row() == rowCount() - 1) {
+                    QFont font(QGuiApplication::font());
+                    font.setItalic(true);
+                    return font;
+                }
+            }
+        }
+        return QVariant();
+    }
+    
+    bool LeftProxyModel::setData(const QModelIndex &index, const QVariant &value, int role) {
+        if (index.row() == rowCount() - 1) {
+            return false;   //this is where the signal will be emitted
+        }
+        return QIdentityProxyModel::setData(index, value, role);
     }
 
-    QModelIndex LeftProxyModel::parent(const QModelIndex &child) const {
-        QModelIndex index = mapFromSource(child);
-        if (index.isValid())
-            return index.parent();
-        return QModelIndex();
+    Qt::ItemFlags LeftProxyModel::flags(const QModelIndex &index) const {
+        Qt::ItemFlags flags = QIdentityProxyModel::flags(index);
+        if (index.row() != rowCount() - 1) {
+            flags = flags & ~Qt::ItemIsEditable;
+        }
+        return flags;
     }
 }

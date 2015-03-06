@@ -1,23 +1,23 @@
 #ifndef LEFTPROXYMODEL_H
 #define LEFTPROXYMODEL_H
 
-#include <QAbstractProxyModel>
+#include <QIdentityProxyModel>
 
 namespace Commissionator {
 
-    class LeftProxyModel : public QAbstractProxyModel {
+    class LeftProxyModel : public QIdentityProxyModel {
 
         Q_OBJECT
 
     public:
-        LeftProxyModel(QObject *parent = 0) : QAbstractProxyModel(parent) {};
+        LeftProxyModel(QObject *parent = 0) : QIdentityProxyModel(parent) {};
 
-        QModelIndex mapFromSource(const QModelIndex &index) const;
-        QModelIndex	mapToSource(const QModelIndex &index) const;
         int rowCount(const QModelIndex &parent = QModelIndex()) const;
-        int columnCount(const QModelIndex &parent = QModelIndex()) const;
+        //int columnCount(const QModelIndex &parent = QModelIndex()) const;
         QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
-        QModelIndex parent(const QModelIndex &child) const;
+        QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+        Qt::ItemFlags flags(const QModelIndex &index) const;
+        bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
     };
 
 }

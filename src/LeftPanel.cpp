@@ -29,15 +29,14 @@ namespace Commissionator {
         proxy->setSourceModel(model);
         view->setModel(proxy);
         view->setSelectionBehavior(QAbstractItemView::SelectRows);
-        view->setEditTriggers(QAbstractItemView::NoEditTriggers);
+        view->setEditTriggers(QAbstractItemView::AllEditTriggers);
+        view->verticalHeader()->hide();
         view->setSortingEnabled(true);
         foreach(int col, hiddenColumns) {
             view->setColumnHidden(col, true);
         }
-        /**
         for (int col = 0; col < view->horizontalHeader()->count(); col++) {
             view->horizontalHeader()->setSectionResizeMode(col, QHeaderView::Stretch);
         }
-        */
     }
 }
