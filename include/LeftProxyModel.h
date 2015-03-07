@@ -10,7 +10,7 @@ namespace Commissionator {
         Q_OBJECT
 
     public:
-        LeftProxyModel(QObject *parent = 0) : QIdentityProxyModel(parent) {};
+        LeftProxyModel::LeftProxyModel(QObject *parent) : QIdentityProxyModel(parent) {};
 
         int rowCount(const QModelIndex &parent = QModelIndex()) const;
         //int columnCount(const QModelIndex &parent = QModelIndex()) const;

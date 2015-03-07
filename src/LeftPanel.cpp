@@ -1,7 +1,9 @@
 #include <QHeaderView>
 #include <QAbstractProxyModel>
+#include <QTableView>
 #include "LeftPanel.h"
 #include "LeftProxyModel.h"
+#include "SearchTableView.h"
 
 namespace Commissionator {
     LeftPanel::LeftPanel(QString title, QSqlTableModel *model, QList<int> hiddenColumns) {
@@ -24,19 +26,21 @@ namespace Commissionator {
     }
 
     void LeftPanel::createTable(QSqlTableModel *model, QList<int> hiddenColumns) {
-        view = new QTableView();
         LeftProxyModel *proxy = new LeftProxyModel(this);
         proxy->setSourceModel(model);
-        view->setModel(proxy);
+        view = new SearchTableView(proxy);
+        //view->setModel(proxy);
         view->setSelectionBehavior(QAbstractItemView::SelectRows);
         view->setEditTriggers(QAbstractItemView::AllEditTriggers);
         view->verticalHeader()->hide();
         view->setSortingEnabled(true);
+        /**
         foreach(int col, hiddenColumns) {
             view->setColumnHidden(col, true);
         }
         for (int col = 0; col < view->horizontalHeader()->count(); col++) {
             view->horizontalHeader()->setSectionResizeMode(col, QHeaderView::Stretch);
         }
+        */
     }
 }

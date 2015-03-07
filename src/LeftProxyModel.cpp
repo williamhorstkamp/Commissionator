@@ -8,6 +8,7 @@ namespace Commissionator {
         if (!sourceModel())
             return 0;
         return QIdentityProxyModel::rowCount(parent) + 1;
+        //return 1;
     }
     /**
     int LeftProxyModel::columnCount(const QModelIndex &parent) const {
@@ -17,11 +18,11 @@ namespace Commissionator {
     }
     */
     QModelIndex LeftProxyModel::index(int row, int column, const QModelIndex &parent) const {
-        if (!sourceModel())
-            return QModelIndex();
-        if (row == rowCount() - 1)
-            return createIndex(row, column);
+        if (sourceModel())
+            if (row == rowCount() - 1)
+                return createIndex(row, column);
         return QIdentityProxyModel::index(row, column, parent);
+        //return QModelIndex();
     }
     QVariant LeftProxyModel::data(const QModelIndex &index, int role) const {
         if (index.isValid()){
@@ -29,7 +30,7 @@ namespace Commissionator {
                 if (index.row() == rowCount() - 1) {
                     return QVariant("Search");
                 }
-                return sourceModel()->data(index, role);
+                return QIdentityProxyModel::data(index, role);
             }
             if (role == Qt::FontRole) {
                 if (index.row() == rowCount() - 1) {
@@ -51,9 +52,8 @@ namespace Commissionator {
 
     Qt::ItemFlags LeftProxyModel::flags(const QModelIndex &index) const {
         Qt::ItemFlags flags = QIdentityProxyModel::flags(index);
-        if (index.row() != rowCount() - 1) {
-            flags = flags & ~Qt::ItemIsEditable;
-        }
+        if (index.row() != rowCount() - 1)
+            flags &= ~Qt::ItemIsEditable;
         return flags;
     }
 }
