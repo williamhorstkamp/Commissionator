@@ -21,10 +21,16 @@ namespace Commissionator {
         QTableView *searchBox;
         void init();
         void updateSearchBoxGeometry();
+        QModelIndex firstIndex();
+        QModelIndex previousIndex(QModelIndex oldIndex);
+        QModelIndex nextIndex(QModelIndex oldIndex);
 
     private slots:
         void updateSectionWidth(int logicalIndex, int oldSize, int newSize);
         void updateSectionHeight(int logicalIndex, int oldSize, int newSize);
+
+    protected slots:
+        void closeEditor(QWidget * editor, QAbstractItemDelegate::EndEditHint hint);
     };
 }
 #endif

@@ -43,7 +43,6 @@ namespace Commissionator {
                 - searchBox->rowHeight(0);
             verticalScrollBar()->setValue(newValue);
         }
-        
         return current;
     }
 
@@ -78,9 +77,18 @@ namespace Commissionator {
             horizontalHeader()->height() + frameWidth(), viewport()->width() + verticalHeader()->width(), rowHeight(0));
     }
 
+    QModelIndex SearchTableView::firstIndex() {
+
+    }
+    QModelIndex SearchTableView::previousIndex(QModelIndex oldIndex) {
+
+    }
+    QModelIndex SearchTableView::nextIndex(QModelIndex oldIndex) {
+
+    }
+
     void SearchTableView::updateSectionWidth(int logicalIndex, int /**oldSize*/, int newSize) {
         searchBox->setColumnWidth(logicalIndex, newSize);
-
     }
 
     void SearchTableView::updateSectionHeight(int logicalIndex, int /**oldSize*/, int newSize) {
@@ -88,5 +96,25 @@ namespace Commissionator {
             searchBox->setRowHeight(logicalIndex, newSize);
             updateSearchBoxGeometry();
         }
+    }
+
+    void SearchTableView::closeEditor(QWidget * editor, QAbstractItemDelegate::EndEditHint hint) {
+        if (hint == QAbstractItemDelegate::NoHint)
+            QTableView::closeEditor(editor, QAbstractItemDelegate::SubmitModelCache);
+        else if (hint == QAbstractItemDelegate::EditNextItem || hint == QAbstractItemDelegate::EditPreviousItem) {
+            QModelIndex index;
+            if (hint == QAbstractItemDelegate::EditNextItem)
+                index = nextIndex(currentIndex());
+            else
+                index = previousIndex(currentIndex());
+            if (!index.isValid())
+                QTableView::closeEditor(editor, QAbstractItemDelegate::SubmitModelCache);
+            else {
+                QTableView::closeEditor(editor, QAbstractItemDelegate::NoHint);
+                setCurrentIndex(index);
+                edit(index);
+            }
+        } else
+            QTableView::closeEditor(editor, hint);
     }
 }
