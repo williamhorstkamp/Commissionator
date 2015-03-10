@@ -2,7 +2,6 @@
 #include <QAbstractProxyModel>
 #include <QTableView>
 #include "LeftPanel.h"
-#include "LeftProxyModel.h"
 #include "SearchTableView.h"
 
 namespace Commissionator {
@@ -26,10 +25,7 @@ namespace Commissionator {
     }
 
     void LeftPanel::createTable(QSqlTableModel *model, QList<int> hiddenColumns) {
-        LeftProxyModel *proxy = new LeftProxyModel(this);
-        proxy->setSourceModel(model);
-        view = new SearchTableView(proxy);
-        //view->setModel(proxy);
+        view = new SearchTableView(model);
         view->setSelectionBehavior(QAbstractItemView::SelectRows);
         view->setEditTriggers(QAbstractItemView::AllEditTriggers);
         view->verticalHeader()->hide();

@@ -2,6 +2,7 @@
 #define SEARCHTABLEVIEW_H
 
 #include <QTableView>
+#include "SearchProxyModel.h"
 
 namespace Commissionator {
     class SearchTableView : public QTableView {
@@ -16,12 +17,14 @@ namespace Commissionator {
         void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
         QModelIndex moveCursor(CursorAction cursorAction, Qt::KeyboardModifiers modifiers) Q_DECL_OVERRIDE;
         void scrollTo(const QModelIndex & index, ScrollHint hint = EnsureVisible) Q_DECL_OVERRIDE;
+        void keyPressEvent(QKeyEvent *event);
 
     private:
+        SearchProxyModel *proxy;
         QTableView *searchBox;
+
         void init();
         void updateSearchBoxGeometry();
-        QModelIndex firstIndex();
         QModelIndex previousIndex(QModelIndex oldIndex);
         QModelIndex nextIndex(QModelIndex oldIndex);
 
@@ -30,7 +33,7 @@ namespace Commissionator {
         void updateSectionHeight(int logicalIndex, int oldSize, int newSize);
 
     protected slots:
-        void closeEditor(QWidget * editor, QAbstractItemDelegate::EndEditHint hint);
+        void closeEditor(QWidget *editor, QAbstractItemDelegate::EndEditHint hint);
     };
 }
 #endif

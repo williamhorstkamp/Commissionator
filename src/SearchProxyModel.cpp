@@ -1,10 +1,21 @@
 #include <QFont>
+#include <QLabel>
 #include <QGuiApplication>
-#include "LeftProxyModel.h"
+#include "SearchProxyModel.h"
 
 namespace Commissionator {
 
-    int LeftProxyModel::rowCount(const QModelIndex &parent) const {
+    SearchProxyModel::SearchProxyModel(QObject *parent) : QIdentityProxyModel(parent) {
+        searchLabels = QList<QString>();
+    }
+
+    void SearchProxyModel::setSourceModel(QAbstractItemModel *newSourceModel) {
+        QIdentityProxyModel::setSourceModel(newSourceModel);
+        for (int i = 0; i < columnCount(); i++)
+            searchLabels.insert(i, "Search");
+    }
+
+    int SearchProxyModel::rowCount(const QModelIndex &parent) const {
         if (!sourceModel())
             return 0;
         return QIdentityProxyModel::rowCount(parent) + 1;
@@ -16,17 +27,17 @@ namespace Commissionator {
         return sourceModel()->columnCount(parent);
     }
     */
-    QModelIndex LeftProxyModel::index(int row, int column, const QModelIndex &parent) const {
+    QModelIndex SearchProxyModel::index(int row, int column, const QModelIndex &parent) const {
         if (sourceModel())
             if (row == rowCount() - 1)
                 return createIndex(rowCount() - 1, column);
         return QIdentityProxyModel::index(row, column, parent);
     }
-    QVariant LeftProxyModel::data(const QModelIndex &index, int role) const {
+    QVariant SearchProxyModel::data(const QModelIndex &index, int role) const {
         if (index.isValid()){
             if (role == Qt::DisplayRole) {
                 if (index.row() == 0) {
-                    return QVariant("Search");
+                    return QVariant(searchLabels.at(index.column()));
                 }
                 return QIdentityProxyModel::data(this->index(index.row() - 1, index.column(), index.parent()), role);
             }
@@ -41,17 +52,25 @@ namespace Commissionator {
         return QVariant();
     }
     
-    bool LeftProxyModel::setData(const QModelIndex &index, const QVariant &value, int role) {
-        if (index.row() == rowCount() - 1) {
-            return false;   //this is where the signal will be emitted
+    bool SearchProxyModel::setData(const QModelIndex &index, const QVariant &value, int role) {
+        if (index.row() == 0) {
+            searchLabels.replace(index.column(), value.toString());
+            emit QIdentityProxyModel::dataChanged(index, index);
+            return true;
         }
         return QIdentityProxyModel::setData(this->index(index.row() -1, index.column(), index.parent()), value, role);
     }
 
-    Qt::ItemFlags LeftProxyModel::flags(const QModelIndex &index) const {
+    Qt::ItemFlags SearchProxyModel::flags(const QModelIndex &index) const {
         Qt::ItemFlags flags = QIdentityProxyModel::flags(index);
         if (index.row() != 0)
             flags &= ~Qt::ItemIsEditable;
         return flags;
+    }
+
+    void SearchProxyModel::search(const QList<QString> searchEntries) {
+        //needs to actually search
+        for (int i = 0; i < columnCount(); i++)
+            searchLabels.replace(i, "Search");
     }
 }

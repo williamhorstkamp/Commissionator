@@ -1,12 +1,15 @@
 #include <QHeaderView>
 #include <QScrollBar>
-#include "LeftProxyModel.h"
+#include <QKeyEvent>
 #include "SearchTableView.h"
 
 namespace Commissionator {
     SearchTableView::SearchTableView(QAbstractItemModel *model) {
+        proxy = new SearchProxyModel(this);
+        proxy->setSourceModel(model);
         setModel(model);
         searchBox = new QTableView(this);
+        setFocusPolicy(Qt::StrongFocus);
 
         init();
         connect(horizontalHeader(), &QHeaderView::sectionResized, this, &SearchTableView::updateSectionWidth);
@@ -51,6 +54,18 @@ namespace Commissionator {
             QTableView::scrollTo(index, hint);
     }
 
+    void SearchTableView::keyPressEvent(QKeyEvent *event) {
+        
+        if (event->key() == Qt::Key_Return && state() != QAbstractItemView::EditingState) {
+            setCurrentIndex(indexAt(QPoint(0, 0)));
+            edit(indexAt(QPoint(0, 0)));
+            proxy->search();
+            close();
+        } else
+            QTableView::keyPressEvent(event);
+            
+    }
+
     void SearchTableView::init() {
         searchBox->setModel(model());
         searchBox->setFocusPolicy(Qt::NoFocus);
@@ -77,16 +92,21 @@ namespace Commissionator {
             horizontalHeader()->height() + frameWidth(), viewport()->width() + verticalHeader()->width(), rowHeight(0));
     }
 
-    QModelIndex SearchTableView::firstIndex() {
-
-    }
+    
     QModelIndex SearchTableView::previousIndex(QModelIndex oldIndex) {
-
+        if (oldIndex.column() == 0)
+            return indexAt(QPoint(0, model()->columnCount() - 1));
+        else
+            return indexAt(QPoint(0, oldIndex.column() - 1));
     }
+
     QModelIndex SearchTableView::nextIndex(QModelIndex oldIndex) {
-
+        if (oldIndex.column() == model()->columnCount() - 1)
+            return indexAt(QPoint(0, 0));
+        else
+            return indexAt(QPoint(0, oldIndex.column() + 1));
     }
-
+    
     void SearchTableView::updateSectionWidth(int logicalIndex, int /**oldSize*/, int newSize) {
         searchBox->setColumnWidth(logicalIndex, newSize);
     }
@@ -98,7 +118,7 @@ namespace Commissionator {
         }
     }
 
-    void SearchTableView::closeEditor(QWidget * editor, QAbstractItemDelegate::EndEditHint hint) {
+    void SearchTableView::closeEditor(QWidget *editor, QAbstractItemDelegate::EndEditHint hint) {
         if (hint == QAbstractItemDelegate::NoHint)
             QTableView::closeEditor(editor, QAbstractItemDelegate::SubmitModelCache);
         else if (hint == QAbstractItemDelegate::EditNextItem || hint == QAbstractItemDelegate::EditPreviousItem) {
@@ -107,9 +127,10 @@ namespace Commissionator {
                 index = nextIndex(currentIndex());
             else
                 index = previousIndex(currentIndex());
-            if (!index.isValid())
+            if (!index.isValid()) {
                 QTableView::closeEditor(editor, QAbstractItemDelegate::SubmitModelCache);
-            else {
+                
+            } else {
                 QTableView::closeEditor(editor, QAbstractItemDelegate::NoHint);
                 setCurrentIndex(index);
                 edit(index);
