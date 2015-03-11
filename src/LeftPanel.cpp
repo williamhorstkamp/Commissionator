@@ -26,7 +26,6 @@ namespace Commissionator {
 
     void LeftPanel::createTable(QSqlTableModel *model, QList<int> hiddenColumns) {
         view = new SearchTableView(model);
-        view->setSelectionBehavior(QAbstractItemView::SelectRows);
         view->setEditTriggers(QAbstractItemView::AllEditTriggers);
         view->verticalHeader()->hide();
         view->setSortingEnabled(true);
