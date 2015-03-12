@@ -7,9 +7,9 @@ namespace Commissionator {
     SearchTableView::SearchTableView(QAbstractItemModel *model) {
         proxy = new SearchProxyModel(this); 
         proxy->setSourceModel(model);
-        //searchBox = new SearchBoxView(this);
-        setModel(proxy);
+        
         init();
+
         connect(horizontalHeader(), &QHeaderView::sectionResized, this, &SearchTableView::updateSectionWidth);
         connect(verticalHeader(), &QHeaderView::sectionResized, this, &SearchTableView::updateSectionHeight);
         connect(searchBox->horizontalScrollBar(), &QScrollBar::valueChanged, horizontalScrollBar(), &QScrollBar::setValue);
@@ -21,12 +21,11 @@ namespace Commissionator {
         delete proxy;
     }
 
-    void SearchTableView::resizeEvent(QResizeEvent * event)
-    {
+    void SearchTableView::resizeEvent(QResizeEvent * event) {
         QTableView::resizeEvent(event);
         updateSearchBoxGeometry();
     }
-
+    /**
     QModelIndex SearchTableView::moveCursor(CursorAction cursorAction,
         Qt::KeyboardModifiers modifiers)
     {
@@ -39,37 +38,23 @@ namespace Commissionator {
         }
         return current;
     }
-
+    */
     void SearchTableView::scrollTo(const QModelIndex &index, ScrollHint hint) {
         if (index.row() > 0)
             QTableView::scrollTo(index, hint);
     }
 
     void SearchTableView::init() {
+        setModel(proxy);
         searchBox = new SearchBoxView(this);
         searchBox->setModel(proxy);
         
         setFocusPolicy(Qt::StrongFocus);
-        /**searchBox->setFocusPolicy(Qt::NoFocus);
-        searchBox->horizontalHeader()->hide();
-        searchBox->verticalHeader()->hide();
-        searchBox->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
-        */
         viewport()->stackUnder(searchBox);
-        /*
-        searchBox->setSelectionModel(selectionModel());
-        searchBox->setRowHeight(0, rowHeight(0));
-        searchBox->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-        searchBox->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-        for (int row = 1; row < model()->rowCount(); row++)
-            searchBox->setRowHidden(row, true);
-        searchBox->show();
-        */
         updateSearchBoxGeometry();
 
         setHorizontalScrollMode(ScrollPerPixel);
         setVerticalScrollMode(ScrollPerPixel);
-        //searchBox->setHorizontalScrollMode(ScrollPerPixel);
 
         setSelectionBehavior(QAbstractItemView::SelectRows);
     }

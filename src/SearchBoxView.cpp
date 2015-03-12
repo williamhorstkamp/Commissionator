@@ -24,7 +24,7 @@ namespace Commissionator {
     }
 
     void SearchBoxView::keyPressEvent(QKeyEvent *event) {
-        if (event->key() == Qt::Key_Return && state() != QAbstractItemView::EditingState) {
+        if (event->key() == Qt::Key_Return) {
             setCurrentIndex(indexAt(QPoint(0, 0)));
             edit(indexAt(QPoint(0, 0)));
             proxy->search();
@@ -40,41 +40,4 @@ namespace Commissionator {
         }
         QTableView::mousePressEvent(event);
     }
-    /**
-    QModelIndex SearchBoxView::previousIndex(QModelIndex oldIndex) {
-        if (oldIndex.column() == 0)
-            return indexAt(QPoint(0, model()->columnCount() - 1));
-        else
-            return indexAt(QPoint(0, oldIndex.column() - 1));
-    }
-
-    QModelIndex SearchBoxView::nextIndex(QModelIndex oldIndex) {
-        if (oldIndex.column() == model()->columnCount() - 1)
-            return indexAt(QPoint(0, 0));
-        else
-            return indexAt(QPoint(0, oldIndex.column() + 1));
-    }
-
-    void SearchBoxView::closeEditor(QWidget *editor, QAbstractItemDelegate::EndEditHint hint) {
-        if (hint == QAbstractItemDelegate::NoHint)
-            QTableView::closeEditor(editor, QAbstractItemDelegate::SubmitModelCache);
-        else if (hint == QAbstractItemDelegate::EditNextItem || hint == QAbstractItemDelegate::EditPreviousItem) {
-            QModelIndex index;
-            if (hint == QAbstractItemDelegate::EditNextItem)
-                index = nextIndex(currentIndex());
-            else
-                index = previousIndex(currentIndex());
-            if (!index.isValid()) {
-                QTableView::closeEditor(editor, QAbstractItemDelegate::SubmitModelCache);
-            } else {
-                QTableView::closeEditor(editor, QAbstractItemDelegate::NoHint);
-                setCurrentIndex(index);
-                edit(index);
-            }
-        } else {
-            proxy->search();
-            QTableView::closeEditor(editor, hint);
-        }
-    }
-    */
 }

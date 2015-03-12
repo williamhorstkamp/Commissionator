@@ -6,13 +6,13 @@
 namespace Commissionator {
 
     SearchProxyModel::SearchProxyModel(QObject *parent) : QIdentityProxyModel(parent) {
-        searchLabels = QList<QString>();
+        searchStrings = QList<QString>();
     }
 
     void SearchProxyModel::setSourceModel(QAbstractItemModel *newSourceModel) {
         QIdentityProxyModel::setSourceModel(newSourceModel);
         for (int i = 0; i < columnCount(); i++)
-            searchLabels.insert(i, "Search");
+            searchStrings.insert(i, "Search");
     }
 
     int SearchProxyModel::rowCount(const QModelIndex &parent) const {
@@ -37,7 +37,7 @@ namespace Commissionator {
         if (index.isValid()){
             if (role == Qt::DisplayRole) {
                 if (index.row() == 0) {
-                    return QVariant(searchLabels.at(index.column()));
+                    return QVariant(searchStrings.at(index.column()));
                 }
                 return QIdentityProxyModel::data(this->index(index.row() - 1, index.column(), index.parent()), role);
             }
@@ -54,7 +54,7 @@ namespace Commissionator {
     
     bool SearchProxyModel::setData(const QModelIndex &index, const QVariant &value, int role) {
         if (index.row() == 0) {
-            searchLabels.replace(index.column(), value.toString());
+            searchStrings.replace(index.column(), value.toString());
             emit QIdentityProxyModel::dataChanged(index, index);
             return true;
         }
@@ -68,9 +68,9 @@ namespace Commissionator {
         return flags;
     }
 
-    void SearchProxyModel::search(const QList<QString> searchEntries) {
+    void SearchProxyModel::search() {
         //needs to actually search
         for (int i = 0; i < columnCount(); i++)
-            searchLabels.replace(i, "Search");
+            searchStrings.replace(i, "Search");
     }
 }

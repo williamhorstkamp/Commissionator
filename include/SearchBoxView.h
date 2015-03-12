@@ -10,22 +10,43 @@ namespace Commissionator {
         Q_OBJECT
          
     public:
+        /**
+         *  Default constructor
+         *
+         *  @param parent - pointer to parent widget
+         */
         SearchBoxView(QWidget *parent) : QTableView(parent) {};
+
+        /**
+         *  New setModel function works for SearchProxyModel specifically.
+         *  Initializes the SearchBoxView so that it works correctly with
+         *  SearchTableView and calls QTableView::setModel();
+         */
         void setModel(SearchProxyModel *model);
 
     protected:
+        /**
+         *  Overrides the default keyPressEvent function to allow enter to
+         *  run the SearchProxyModel->search() function.
+         *
+         *  @param event - pointer to keyboard event
+         */
         void keyPressEvent(QKeyEvent *event);
+
+        /**
+         *  Overrides the default mousePressEvent function to allow the user to
+         *  edit the SearchBoxView fields with only a single click
+         */
         void mousePressEvent(QMouseEvent *event);
 
     private:
-        SearchProxyModel *proxy;
         /**
-        QModelIndex previousIndex(QModelIndex oldIndex);
-        QModelIndex nextIndex(QModelIndex oldIndex);
-
-    protected slots:
-        void closeEditor(QWidget *editor, QAbstractItemDelegate::EndEditHint hint);
-        */
+         *  Pointer to proxy model that is given via setModel(SearchProxyModel)
+         *  This is needed because QAbstractModels do not have search()
+         *  functions by default, which we need access to. Thus model() will
+         *  not return something useable for search().
+         */
+        SearchProxyModel *proxy;
     };
 }
 
