@@ -21,7 +21,7 @@ namespace Commissionator {
         return QIdentityProxyModel::rowCount(parent) + 1;
     }
     /**
-    int LeftProxyModel::columnCount(const QModelIndex &parent) const {
+    int SearchProxyModel::columnCount(const QModelIndex &parent) const {
         if (!sourceModel())
             return 0;
         return sourceModel()->columnCount(parent);
@@ -55,7 +55,7 @@ namespace Commissionator {
     bool SearchProxyModel::setData(const QModelIndex &index, const QVariant &value, int role) {
         if (index.row() == 0) {
             searchStrings.replace(index.column(), value.toString());
-            emit QIdentityProxyModel::dataChanged(index, index);
+            emit QIdentityProxyModel::dataChanged(this->index(0, 0), this->index(0, columnCount() - 1));
             return true;
         }
         return QIdentityProxyModel::setData(this->index(index.row() -1, index.column(), index.parent()), value, role);

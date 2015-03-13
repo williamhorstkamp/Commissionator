@@ -4,9 +4,11 @@
 
 namespace Commissionator {
 
+    SearchBoxView::SearchBoxView(QWidget *parent) : QTableView(parent) {
+    }
+
     void SearchBoxView::setModel(SearchProxyModel *model) {
-        proxy = model;
-        QTableView::setModel(proxy);
+        QTableView::setModel(model);
         
         setFocusPolicy(Qt::NoFocus);
         horizontalHeader()->hide();
@@ -26,8 +28,8 @@ namespace Commissionator {
     void SearchBoxView::keyPressEvent(QKeyEvent *event) {
         if (event->key() == Qt::Key_Return) {
             setCurrentIndex(indexAt(QPoint(0, 0)));
-            edit(indexAt(QPoint(0, 0)));
-            proxy->search();
+            //edit(indexAt(QPoint(0, 0)));
+            ((SearchProxyModel *)model())->search();
         } else
             QTableView::keyPressEvent(event);
     }

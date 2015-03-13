@@ -15,7 +15,7 @@ namespace Commissionator {
          *
          *  @param parent - pointer to parent widget
          */
-        SearchBoxView(QWidget *parent) : QTableView(parent) {};
+        SearchBoxView(QWidget *parent = nullptr);
 
         /**
          *  New setModel function works for SearchProxyModel specifically.
@@ -38,15 +38,6 @@ namespace Commissionator {
          *  edit the SearchBoxView fields with only a single click
          */
         void mousePressEvent(QMouseEvent *event);
-
-    private:
-        /**
-         *  Pointer to proxy model that is given via setModel(SearchProxyModel)
-         *  This is needed because QAbstractModels do not have search()
-         *  functions by default, which we need access to. Thus model() will
-         *  not return something useable for search().
-         */
-        SearchProxyModel *proxy;
     };
 }
 

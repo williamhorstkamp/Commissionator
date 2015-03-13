@@ -1,6 +1,7 @@
 #include <QHeaderView>
 #include <QScrollBar>
 #include <QKeyEvent>
+#include "SearchTableDelegate.h"
 #include "SearchTableView.h"
 
 namespace Commissionator {
@@ -57,6 +58,8 @@ namespace Commissionator {
         setVerticalScrollMode(ScrollPerPixel);
 
         setSelectionBehavior(QAbstractItemView::SelectRows);
+
+        setItemDelegate(new SearchTableDelegate);
     }
 
     void SearchTableView::updateSearchBoxGeometry() {
