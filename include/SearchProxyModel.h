@@ -31,8 +31,6 @@ namespace Commissionator {
          */
         int rowCount(const QModelIndex &parent = QModelIndex()) const;
 
-        //int columnCount(const QModelIndex &parent = QModelIndex()) const;
-
         /**
          *  Overrides default index function to handle the extra search row.
          *
@@ -76,6 +74,13 @@ namespace Commissionator {
     private:
         //List of QStrings containing the value to search with
         QList<QString> searchStrings;
+
+    signals:
+        /**
+         *  Signal that contains the search query.
+         *  Use it by connecting it to your model's search implementation
+         */
+        void searchSignal(const QList<QString> searchQuery);
     };
 
 }

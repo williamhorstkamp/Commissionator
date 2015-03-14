@@ -39,13 +39,6 @@ namespace Commissionator {
         void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
 
         /**
-         *  Overrides the default moveCursor function to prevent the user from
-         *  navigating into the row behind the Search Box using the keyboard.
-         *                       *       Broken      *
-         */
-        //QModelIndex moveCursor(CursorAction cursorAction, Qt::KeyboardModifiers modifiers) Q_DECL_OVERRIDE;
-
-        /**
         *  Overrides the default scrollTo function to prevent the user from
         *  scrolling to the hidden row.
         */

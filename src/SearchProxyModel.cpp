@@ -20,13 +20,7 @@ namespace Commissionator {
             return 0;
         return QIdentityProxyModel::rowCount(parent) + 1;
     }
-    /**
-    int SearchProxyModel::columnCount(const QModelIndex &parent) const {
-        if (!sourceModel())
-            return 0;
-        return sourceModel()->columnCount(parent);
-    }
-    */
+
     QModelIndex SearchProxyModel::index(int row, int column, const QModelIndex &parent) const {
         if (sourceModel())
             if (row == rowCount() - 1)
@@ -54,7 +48,8 @@ namespace Commissionator {
     
     bool SearchProxyModel::setData(const QModelIndex &index, const QVariant &value, int role) {
         if (index.row() == 0) {
-            searchStrings.replace(index.column(), value.toString());
+            if (!value.toString().isEmpty())
+                searchStrings.replace(index.column(), value.toString());
             emit QIdentityProxyModel::dataChanged(this->index(0, 0), this->index(0, columnCount() - 1));
             return true;
         }
@@ -69,7 +64,10 @@ namespace Commissionator {
     }
 
     void SearchProxyModel::search() {
-        //needs to actually search
+        for (int i = 0; i < columnCount(); i++) //replace any place that "Search" is stored 
+            if (searchStrings[i] == "Search")   //with an empty string
+                searchStrings.replace(i, "");   // to show that there was no entry to that field
+        emit searchSignal(searchStrings);
         for (int i = 0; i < columnCount(); i++)
             searchStrings.replace(i, "Search");
     }

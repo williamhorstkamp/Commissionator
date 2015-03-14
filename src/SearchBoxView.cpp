@@ -21,14 +21,13 @@ namespace Commissionator {
         for (int row = 1; row < this->model()->rowCount(); row++)
             setRowHidden(row, true);
         setHorizontalScrollMode(ScrollPerPixel);
-        show();
         
+        show();
     }
 
     void SearchBoxView::keyPressEvent(QKeyEvent *event) {
         if (event->key() == Qt::Key_Return) {
             setCurrentIndex(indexAt(QPoint(0, 0)));
-            //edit(indexAt(QPoint(0, 0)));
             ((SearchProxyModel *)model())->search();
         } else
             QTableView::keyPressEvent(event);

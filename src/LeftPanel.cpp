@@ -26,16 +26,9 @@ namespace Commissionator {
 
     void LeftPanel::createTable(QSqlTableModel *model, QList<int> hiddenColumns) {
         view = new SearchTableView(model);
-        view->setEditTriggers(QAbstractItemView::AllEditTriggers);
-        view->verticalHeader()->hide();
-        view->setSortingEnabled(true);
-        /**
+        
         foreach(int col, hiddenColumns) {
             view->setColumnHidden(col, true);
         }
-        for (int col = 0; col < view->horizontalHeader()->count(); col++) {
-            view->horizontalHeader()->setSectionResizeMode(col, QHeaderView::Stretch);
-        }
-        */
     }
 }
