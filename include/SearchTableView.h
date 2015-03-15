@@ -2,6 +2,7 @@
 #define SEARCHTABLEVIEW_H
 
 #include <QTableView>
+#include "SearchTableDelegate.h"
 #include "SearchBoxView.h"
 
 namespace Commissionator {
@@ -39,9 +40,9 @@ namespace Commissionator {
         void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
 
         /**
-        *  Overrides the default scrollTo function to prevent the user from
-        *  scrolling to the hidden row.
-        */
+         *  Overrides the default scrollTo function to prevent the user from
+         *  scrolling to the hidden row.
+         */
         void scrollTo(const QModelIndex & index, ScrollHint hint = EnsureVisible) Q_DECL_OVERRIDE;
 
     private:
@@ -49,6 +50,8 @@ namespace Commissionator {
         SearchProxyModel *proxy;
         //Search box inherits from QTableView and provides additional functionality
         SearchBoxView *searchBox;
+        //delegate that handles the icons displayed in on the table
+        SearchTableDelegate *delegate;
 
         /**
          *  Initializes the object and all its sub objects.
@@ -74,15 +77,29 @@ namespace Commissionator {
         void updateSectionWidth(int logicalIndex, int oldSize, int newSize);
 
         /**
-        *  Updates the height of the row the search box is in whenever the
-        *  matching one is changed in the search table
-        *
-        *  @param logicalIndex - the logical index of the row that has been
-        *      changed
-        *  @param oldSize - int containing the old size in number of pixels
-        *  @param newSize - int containing the new size in number of pixels
-        */
+         *  Updates the height of the row the search box is in whenever the
+         *  matching one is changed in the search table
+         *
+         *  @param logicalIndex - the logical index of the row that has been
+         *      changed
+         *  @param oldSize - int containing the old size in number of pixels
+         *  @param newSize - int containing the new size in number of pixels
+         */
         void updateSectionHeight(int logicalIndex, int oldSize, int newSize);
+
+    signals:
+        /**
+         *  Signal that contains a search query.
+         *  Use it by connecting it to your data model's search implementation
+         */
+        void searchSignal(const QList<QVariant> searchQuery);
+
+        /**
+         *  Signal that is thrown when when one of the SearchTableDelegate
+         *  icons was clicked.
+         *  Use it by connecting it to your data model's function of choice
+         */
+        void iconClicked(const QModelIndex &index);
     };
 }
 #endif

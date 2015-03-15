@@ -14,13 +14,40 @@ namespace Commissionator {
 
     private:
         QSqlDatabase db;
-        QSqlTableModel *leftModel;
+        QSqlQueryModel *leftModel;
+        //QSqlTableModel *leftModel;
         QSqlQueryModel *rightModel;
+        QSqlQuery *del;
     public slots:
         void updateRight(const QModelIndex &index) {
             rightModel->query().addBindValue(getValue(index, 0));
             rightModel->query().exec();
             rightModel->setQuery(rightModel->query());
+        }
+
+        void search(const QList<QVariant> searchQuery = QList<QVariant>()) {
+            if (searchQuery.isEmpty()) {
+                leftModel->query().bindValue(0, QVariant("%"));
+                leftModel->query().bindValue(1, QVariant("%"));
+                leftModel->query().bindValue(2, QVariant(0));
+            }
+            else {
+                if (searchQuery[0].toString() == "")
+                    leftModel->query().bindValue(0, QVariant("%"));
+                else
+                    leftModel->query().bindValue(0, QVariant(searchQuery[0].toString()));
+                leftModel->query().bindValue(1, QVariant("%" + searchQuery[1].toString() + "%"));
+                leftModel->query().bindValue(2, searchQuery[2].toInt());
+            }
+
+            leftModel->query().exec();
+            leftModel->setQuery(leftModel->query());
+        }
+
+        void deleteRecord(const QModelIndex &index) {
+            del->addBindValue(index.model()->index(index.row(), 0).data().toInt());
+            del->exec();
+            search();
         }
     public:
         TestModel() {
@@ -39,18 +66,34 @@ namespace Commissionator {
             db.exec("INSERT INTO test2 (stuff, thing) VALUES (2, 'maybe a byte');");
             db.exec("INSERT INTO test (stuff, thing) VALUES (3, 'one more row');");
             db.exec("INSERT INTO test2 (stuff, thing) VALUES (3, 'stuff stuff more stuff');");
-            db.exec("CREATE VIEW IF NOT EXISTS testview AS SELECT test.stuff, test.thing, count(*) FROM test2 JOIN test ON test2.stuff = test.stuff GROUP BY test.stuff");
+            //db.exec("CREATE VIEW IF NOT EXISTS testview AS SELECT test.stuff, test.thing, count(*) FROM test2 JOIN test ON test2.stuff = test.stuff GROUP BY test.stuff");
             leftModel = new QSqlTableModel(this, db);
-            leftModel->setTable("testview");
+            //leftModel->setTable("testview");
+            //leftModel = new QSqlQueryModel(this);
+            QSqlQuery query = QSqlQuery("SELECT test.stuff, "
+            "test.thing, count(*) FROM test2 JOIN test ON "
+            "test2.stuff = test.stuff WHERE test.stuff LIKE (?) AND test.thing LIKE (?) "
+            "GROUP BY test.stuff having count(*) >= (?)");
+            query.addBindValue(QVariant("%"));
+            query.addBindValue(QVariant("%"));
+            query.addBindValue(QVariant(0));
+
+            query.exec();
+            leftModel->setQuery(query);
+            leftModel->query().addBindValue(QVariant(0));
+            //leftModel->query().addBindValue(QVariant());
+            //leftModel->query().exec();
             leftModel->setHeaderData(1, Qt::Horizontal, QObject::tr("Thing"));
             leftModel->setHeaderData(2, Qt::Horizontal, QObject::tr("Test2 count"));
-            leftModel->setEditStrategy(QSqlTableModel::OnFieldChange);
-            leftModel->select();
+            //leftModel->setEditStrategy(QSqlTableModel::OnFieldChange);
+            //leftModel->select();
             rightModel = new QSqlQueryModel(this);
-            QSqlQuery *query = new QSqlQuery("SELECT thing FROM test2 WHERE stuff = (?)");
-            rightModel->setQuery(*query);
+            QSqlQuery query2 = QSqlQuery("SELECT thing FROM test2 WHERE stuff = (?)");
+            rightModel->setQuery(query2);
+
+            del = new QSqlQuery("DELETE FROM test WHERE stuff = (?)");
         }
-        QSqlTableModel *getLeftModel() {
+        QSqlQueryModel *getLeftModel() {
             return leftModel;
         }
 
@@ -59,7 +102,10 @@ namespace Commissionator {
         }
 
         QVariant getValue(const QModelIndex &index, int column) {
-            return index.model()->data(index.model()->index(index.row(), column));
+            if (index.isValid())
+                return index.model()->data(index.model()->index(index.row(), column));
+            else
+                return QVariant();
         }
     };
 }

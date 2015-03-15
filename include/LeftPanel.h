@@ -2,10 +2,10 @@
 #define LEFTPANEL_H
 
 #include <QVBoxLayout>
-#include <QTableView>
 #include <QSqlRelationalTableModel>
 #include <QList>
 #include <QLabel>
+#include "SearchTableView.h"
 
 namespace Commissionator {
     class LeftPanel :public QWidget {
@@ -13,7 +13,7 @@ namespace Commissionator {
 
     private:
         QVBoxLayout *layout;
-        QTableView *view;
+        SearchTableView *view;
         QLabel *titleLabel;
         
         /**
@@ -32,7 +32,7 @@ namespace Commissionator {
          *      view. Not Implemented during testing, but functionality is 
          *      written and tested.
          */
-        void createTable(QSqlTableModel *model, QList<int> hiddenColumns);
+        void createTable(QSqlQueryModel *model, QList<int> hiddenColumns);
 
     public:
         /**
@@ -46,7 +46,7 @@ namespace Commissionator {
          *      view. Not Implemented during testing, but functionality is
          *      written and tested.
          */
-        LeftPanel(QString title, QSqlTableModel *model, QList<int> hiddenColumns);
+        LeftPanel(QString title, QSqlQueryModel *model, QList<int> hiddenColumns);
     signals:
         /**
          *  Signal that is sent whenever the table has been clicked on.
@@ -56,6 +56,19 @@ namespace Commissionator {
          *  @param index - reference to the index that was clicked by the user
          */
         void tableClicked(const QModelIndex &index);
+
+        /**
+         *  Signal that contains the search query.
+         *  Is a forwarded version of SearchProxyModel::searchSignal
+         */
+        void search(const QList<QVariant> searchQuery);
+
+        /**
+        *  Signal that is thrown when when one of the SearchTableDelegate
+        *  icons was clicked.
+        *  Is a forwarded version of SearchTableDelegate::iconClicked
+        */
+        void iconClicked(const QModelIndex &index);
     };
 }
 #endif

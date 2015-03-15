@@ -73,15 +73,15 @@ namespace Commissionator {
 
     private:
         //List of QStrings containing the value to search with
-        QList<QString> searchStrings;
+        QList<QVariant> searchStrings;
 
     signals:
         /**
          *  Signal that contains the search query.
-         *  Use it by connecting it to your model's search implementation
+         *  The data captured in this signal is forward to the SearchTableView
+         *  signal of the same name.
          */
-        void searchSignal(const QList<QString> searchQuery);
+        void searchSignal(const QList<QVariant> searchQuery);
     };
-
 }
 #endif

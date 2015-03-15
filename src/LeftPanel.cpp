@@ -1,18 +1,19 @@
 #include <QHeaderView>
 #include <QAbstractProxyModel>
-#include <QTableView>
 #include "LeftPanel.h"
-#include "SearchTableView.h"
+
 
 namespace Commissionator {
-    LeftPanel::LeftPanel(QString title, QSqlTableModel *model, QList<int> hiddenColumns) {
+    LeftPanel::LeftPanel(QString title, QSqlQueryModel *model, QList<int> hiddenColumns) {
         layout = new QVBoxLayout();
         createTitle(title);
         createTable(model, hiddenColumns);
         layout->addWidget(titleLabel);
         layout->addWidget(view);
         setLayout(layout);
-        connect(view, &QTableView::clicked, this, &LeftPanel::tableClicked);
+        connect(view, &SearchTableView::searchSignal, this, &LeftPanel::search);
+        connect(view, &SearchTableView::iconClicked, this, &LeftPanel::iconClicked);
+        connect(view, &SearchTableView::clicked, this, &LeftPanel::tableClicked);
     }
 
     void LeftPanel::createTitle(QString title) {
@@ -24,11 +25,12 @@ namespace Commissionator {
         titleLabel->setFont(font);
     }
 
-    void LeftPanel::createTable(QSqlTableModel *model, QList<int> hiddenColumns) {
+    void LeftPanel::createTable(QSqlQueryModel *model, QList<int> hiddenColumns) {
         view = new SearchTableView(model);
-        
+        /**
         foreach(int col, hiddenColumns) {
-            view->setColumnHidden(col, true);
+            view->setColumnHidden(col, true);   //bugged - does not reduce number of columns in SearchBoxView
         }
+        */
     }
 }

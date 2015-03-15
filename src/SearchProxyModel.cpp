@@ -6,7 +6,7 @@
 namespace Commissionator {
 
     SearchProxyModel::SearchProxyModel(QObject *parent) : QIdentityProxyModel(parent) {
-        searchStrings = QList<QString>();
+        searchStrings = QList<QVariant>();
     }
 
     void SearchProxyModel::setSourceModel(QAbstractItemModel *newSourceModel) {
@@ -65,8 +65,8 @@ namespace Commissionator {
 
     void SearchProxyModel::search() {
         for (int i = 0; i < columnCount(); i++) //replace any place that "Search" is stored 
-            if (searchStrings[i] == "Search")   //with an empty string
-                searchStrings.replace(i, "");   // to show that there was no entry to that field
+            if (searchStrings[i].toString() == "Search")   //with an empty string
+                searchStrings.replace(i, QVariant(""));   // to show that there was no entry to that field
         emit searchSignal(searchStrings);
         for (int i = 0; i < columnCount(); i++)
             searchStrings.replace(i, "Search");

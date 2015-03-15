@@ -150,6 +150,8 @@ namespace Commissionator{
         line->setFrameShadow(QFrame::Sunken);
 
         connect(lp1, &LeftPanel::tableClicked, model, &TestModel::updateRight);
+        connect(lp1, &LeftPanel::search, model, &TestModel::search);
+        connect(lp1, &LeftPanel::iconClicked, model, &TestModel::deleteRecord);
 
         layout->addWidget(leftPanel);
         layout->addWidget(line);
