@@ -64,7 +64,7 @@ namespace Commissionator {
     }
 
     void SearchProxyModel::search() {
-        for (int i = 0; i < columnCount(); i++) //replace any place that "Search" is stored 
+        for (int i = 0; i < columnCount(); i++)     //replace any place that "Search" is stored 
             if (searchStrings[i].toString() == "Search")   //with an empty string
                 searchStrings.replace(i, QVariant(""));   // to show that there was no entry to that field
         emit searchSignal(searchStrings);

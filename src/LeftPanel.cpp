@@ -27,10 +27,10 @@ namespace Commissionator {
 
     void LeftPanel::createTable(QSqlQueryModel *model, QList<int> hiddenColumns) {
         view = new SearchTableView(model);
-        /**
+        
         foreach(int col, hiddenColumns) {
-            view->setColumnHidden(col, true);   //bugged - does not reduce number of columns in SearchBoxView
+            view->setColumnHidden(col, true);
         }
-        */
+        
     }
 }

@@ -5,6 +5,10 @@
 
 namespace Commissionator {
 
+    /**
+     *  Class is used as a proxy model to add and handle a search row
+     *  at the top of the table. For use with SearchTableView
+     */
     class SearchProxyModel : public QIdentityProxyModel {
 
         Q_OBJECT
@@ -12,6 +16,8 @@ namespace Commissionator {
     public:
         /**
          *  Default constructor overrides QIdentityProxyModel()
+         *
+         *  @param parent - pointer to parent
          */
         SearchProxyModel(QObject *parent);
 
@@ -28,6 +34,8 @@ namespace Commissionator {
          *  for the search row.
          *
          *  @param parent - reference containing the parent model
+         *
+         *  @return - number of rows as an integer
          */
         int rowCount(const QModelIndex &parent = QModelIndex()) const;
 
@@ -37,6 +45,8 @@ namespace Commissionator {
          *  @param row - int containing the row to get the index for
          *  @param colunn - int containing the colunn to get the index for
          *  @param parent - reference containing the parent model
+         *
+         *  @return - Model Index at the row, column combination
          */
         QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
 
@@ -46,6 +56,8 @@ namespace Commissionator {
          *
          *  @param index - reference to the index to retrieve the data for
          *  @param role - Qt role that the data is retrieving
+         *
+         *  @return - QVariant containing the data for the given index
          */
         QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
 
@@ -53,6 +65,8 @@ namespace Commissionator {
          *  Overrides the default flags function to handle the new search row.
          *
          *  @param index - reference to the index to retrieve the data for
+         *
+         *  @return - List of ItemFlags for the index
          */
         Qt::ItemFlags flags(const QModelIndex &index) const;
 
@@ -62,6 +76,8 @@ namespace Commissionator {
          *  @param index - reference to the index to retrieve the data for
          *  @param value - reference containing the data to set the index to
          *  @param role - Qt role that the data is being set for
+         *
+         *  @return - boolean representing whether data was corrected set or not
          */
         bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
 
@@ -80,6 +96,8 @@ namespace Commissionator {
          *  Signal that contains the search query.
          *  The data captured in this signal is forward to the SearchTableView
          *  signal of the same name.
+         *
+         *  @param searchQuery - QList of QVariants containing the search query
          */
         void searchSignal(const QList<QVariant> searchQuery);
     };

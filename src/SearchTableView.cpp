@@ -23,6 +23,19 @@ namespace Commissionator {
         delete proxy;
     }
 
+    void SearchTableView::setColumnHidden(int column, bool hide) {
+        QTableView::setColumnHidden(column, hide);
+        searchBox->setColumnHidden(column, hide);
+    }
+
+    QModelIndex SearchTableView::moveCursor(CursorAction cursorAction,
+        Qt::KeyboardModifiers modifiers) {
+        QModelIndex current = QTableView::moveCursor(cursorAction, modifiers);
+        if (current.row() == 0)
+            return QModelIndex();
+        return current;
+    }
+
     void SearchTableView::resizeEvent(QResizeEvent * event) {
         QTableView::resizeEvent(event);
         updateSearchBoxGeometry();
@@ -40,17 +53,21 @@ namespace Commissionator {
         
         setFocusPolicy(Qt::StrongFocus);
         viewport()->stackUnder(searchBox);
+        searchBox->setSelectionModel(selectionModel());
+        searchBox->setColumnWidth(0, columnWidth(0));
+
         updateSearchBoxGeometry();
 
         setHorizontalScrollMode(ScrollPerPixel);
         setVerticalScrollMode(ScrollPerPixel);
 
+        setSelectionMode(QAbstractItemView::NoSelection);
         setSelectionBehavior(QAbstractItemView::SelectRows);
         delegate = new SearchTableDelegate();
         delegate->setIconSize(24);
         setItemDelegate(delegate);
 
-        setEditTriggers(QAbstractItemView::AllEditTriggers);
+        setEditTriggers(QAbstractItemView::NoEditTriggers);
         verticalHeader()->hide();
         setSortingEnabled(true);
 
@@ -64,7 +81,7 @@ namespace Commissionator {
             horizontalHeader()->height() + frameWidth(), viewport()->width() + verticalHeader()->width(), rowHeight(0));
     }
     
-    void SearchTableView::updateSectionWidth(int logicalIndex, int /**oldSize*/, int newSize) {
+    void SearchTableView::updateSectionWidth(int logicalIndex, int /* *oldSize*/, int newSize) {
         searchBox->setColumnWidth(logicalIndex, newSize);
     }
 

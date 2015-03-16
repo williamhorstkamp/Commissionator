@@ -8,6 +8,10 @@
 #include "SearchTableView.h"
 
 namespace Commissionator {
+    /**
+     *  Class represents the left panel for many of the programs viewpoints,
+     *  including commissioner and commission
+     */
     class LeftPanel :public QWidget {
         Q_OBJECT
 
@@ -60,14 +64,18 @@ namespace Commissionator {
         /**
          *  Signal that contains the search query.
          *  Is a forwarded version of SearchProxyModel::searchSignal
+         *
+         *  @param searchQuery - QList of QVariants containing the search query
          */
         void search(const QList<QVariant> searchQuery);
 
         /**
-        *  Signal that is thrown when when one of the SearchTableDelegate
-        *  icons was clicked.
-        *  Is a forwarded version of SearchTableDelegate::iconClicked
-        */
+         *  Signal that is thrown when when one of the SearchTableDelegate
+         *  icons was clicked.
+         *  Is a forwarded version of SearchTableDelegate::iconClicked
+         *
+         *   @param index - index whose button was clicked
+         */
         void iconClicked(const QModelIndex &index);
     };
 }

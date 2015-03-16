@@ -17,18 +17,19 @@ namespace Commissionator {
     bool SearchTableDelegate::editorEvent(QEvent *event, 
         QAbstractItemModel *model, const QStyleOptionViewItem &option, 
         const QModelIndex &index) {
-        if (event->type() == QEvent::MouseButtonRelease) {
-            QMouseEvent *mEvent = (QMouseEvent*)event;
-            QRect rect = option.rect;
-            int x = rect.left() + rect.width() - buttonSize;
-            if (mEvent->x() > x && mEvent->x() < x + buttonSize && 
-                mEvent->y() > rect.top() &&
-                mEvent->y() < rect.top() + buttonSize) {
-                emit iconClicked(index);
-                return true;
-            } else
-                return QItemDelegate::editorEvent(event, model, option, index);
-        }
+        if (index.column() == index.model()->columnCount() - 1)
+            if (event->type() == QEvent::MouseButtonRelease) {
+                QMouseEvent *mEvent = (QMouseEvent*)event;
+                QRect rect = option.rect;
+                int x = rect.left() + rect.width() - buttonSize;
+                if (mEvent->x() > x && mEvent->x() < x + buttonSize && 
+                    mEvent->y() > rect.top() &&
+                    mEvent->y() < rect.top() + buttonSize) {
+                    emit iconClicked(index);
+                    return true;
+                }
+            }
+        return QItemDelegate::editorEvent(event, model, option, index);
     }
 
     void SearchTableDelegate::paint(QPainter *painter,
