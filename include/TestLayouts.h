@@ -8,31 +8,10 @@
 #include <QtSql\QSqlDatabase>
 #include <QtSql\QSqlQuery>
 #include <QSQLQueryModel>
+#include <QSqlTableModel>
 #include <QListView>
 
 namespace Commissionator {
-
-    class LeftPanel :public QWidget {
-
-        Q_OBJECT
-
-    private:
-        QVBoxLayout *layout;
-        QTableView *view;
-    public:
-        LeftPanel(QSqlQueryModel *model) {
-            layout = new QVBoxLayout();
-            view = new QTableView(); 
-            view->setModel(model);
-            view->setSelectionBehavior(QAbstractItemView::SelectRows);
-            layout->addWidget(new QLabel("This should be a table"));
-            layout->addWidget(view);
-            setLayout(layout);
-            connect(view, &QTableView::clicked, this, &LeftPanel::tableClicked);
-        }
-    signals:
-        void tableClicked(const QModelIndex &index);
-    };
 
     class LeftPanel2 :public QWidget {
     private:

@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QStackedWidget>
 #include "TestLayouts.h"
+#include "LeftPanel.h"
 #include "TestModel.h"
 
 namespace Commissionator {
@@ -16,16 +17,46 @@ namespace Commissionator {
         MainWindow();
 
     public slots:
+        //temp slots for testing
         void page1();
         void page2();
 
     private:
+        /**
+         *  Initializes menus
+         */
         void createMenus();
+
+        /**
+         *  Initializes actions
+         */
         void createActions();
+
+        /**
+         *  Initializes status bar
+         */
         void createStatusBar();
+
+        /**
+         *  Initializes toolbar
+         */
         void createToolBars();
+
+        /**
+         *  Initializes model
+         */
         void createModel();
+
+        /**
+         *  Initializes panels
+         */
         void createPanels();
+
+        /**
+         *  Switches the context toolbar to what is pointed to in newBar
+         *
+         *  @param newBar - pointer to the bar to set the context bar to
+         */
         void swapContextToolBar(QToolBar *newBar);
 
         QWidget *window;
