@@ -41,7 +41,7 @@ namespace Commissionator {
     void SearchBoxView::closeEditor(QWidget *editor, QAbstractItemDelegate::EndEditHint hint) {
         QTableView::closeEditor(editor, hint);
         if (hint == QAbstractItemDelegate::SubmitModelCache) {
-            ((SearchProxyModel *)model())->search();
+            emit searchSignal();
         }
     }
 }

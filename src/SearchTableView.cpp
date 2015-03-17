@@ -16,6 +16,7 @@ namespace Commissionator {
         connect(horizontalScrollBar(), &QScrollBar::valueChanged, searchBox->horizontalScrollBar(), &QScrollBar::setValue);
         connect(proxy, &SearchProxyModel::searchSignal, this, &SearchTableView::searchSignal);
         connect(delegate, &SearchTableDelegate::iconClicked, this, &SearchTableView::iconClicked);
+        connect(searchBox, &SearchBoxView::searchSignal, proxy, &SearchProxyModel::search);
     }
 
     SearchTableView::~SearchTableView() {

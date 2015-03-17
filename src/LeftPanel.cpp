@@ -16,6 +16,12 @@ namespace Commissionator {
         connect(view, &SearchTableView::clicked, this, &LeftPanel::tableClicked);
     }
 
+    LeftPanel::~LeftPanel() {
+        delete layout;
+        delete view;
+        delete titleLabel;
+    }
+
     void LeftPanel::createTitle(QString title) {
         titleLabel = new QLabel(title);
         titleLabel->setAlignment(Qt::AlignCenter);

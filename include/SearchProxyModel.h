@@ -81,11 +81,7 @@ namespace Commissionator {
          */
         bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
 
-        /**
-         *  Search function that performs a search based on the current values
-         *  of the search strings.
-         */
-        void search();
+
 
     private:
         //List of QStrings containing the value to search with
@@ -100,6 +96,13 @@ namespace Commissionator {
          *  @param searchQuery - QList of QVariants containing the search query
          */
         void searchSignal(const QList<QVariant> searchQuery);
+
+    public slots:
+        /**
+         *  Search slot that performs a search based on the current values
+         *  of the search strings.
+         */
+        void search();
     };
 }
 #endif

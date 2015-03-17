@@ -2,7 +2,7 @@
 #define LEFTPANEL_H
 
 #include <QVBoxLayout>
-#include <QSqlRelationalTableModel>
+#include <QSqlQueryModel>
 #include <QList>
 #include <QLabel>
 #include "SearchTableView.h"
@@ -51,6 +51,9 @@ namespace Commissionator {
          *      written and tested.
          */
         LeftPanel(QString title, QSqlQueryModel *model, QList<int> hiddenColumns);
+
+        ~LeftPanel();
+
     signals:
         /**
          *  Signal that is sent whenever the table has been clicked on.

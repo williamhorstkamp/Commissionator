@@ -68,6 +68,12 @@ namespace Commissionator {
          *      closed
          */
         void closeEditor(QWidget *editor, QAbstractItemDelegate::EndEditHint hint);
+
+    signals:
+        /**
+         *  Signal thrown when the search box is submitted.
+         */
+        void searchSignal();
     };
 }
 
