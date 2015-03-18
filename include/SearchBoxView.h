@@ -1,7 +1,7 @@
 #ifndef SEARCHBOXVIEW_H
 #define SEARCHBOXVIEW_H
 
-#include "SearchProxyModel.h"
+#include "FixedRowProxyModel.h"
 #include <QTableView>
 
 namespace Commissionator {
@@ -24,7 +24,7 @@ namespace Commissionator {
          *
          *  @param model - model display in the view
          */
-        void setModel(SearchProxyModel *model);
+        void setModel(FixedRowProxyModel *model);
 
     protected:
         /**

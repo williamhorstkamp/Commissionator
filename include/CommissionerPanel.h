@@ -4,7 +4,6 @@
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QTableView>
-/**
 #include <QTextEdit>
 #include <QPushButton>
 #include <QSqlQueryModel>
@@ -22,18 +21,17 @@ namespace Commissionator {
         void init();
 
         QVBoxLayout *layout;
-        QLabel commissionerName;
-        QLabel commissionerDate;
-        QLabel commissionerPaid;
-        QLabel contactInfoLabel;
-        //InsertTableView contactInfoTable;
-        QLabel commissionsLabel;
-        QTableView commissionsTable;
-        QPushButton newCommissionButton;
-        QLabel notesLabel;
-        QTextEdit notesEdit;
+        QLabel *commissionerName;
+        QLabel *commissionerDate;
+        QLabel *commissionerPaid;
+        QLabel *contactInfoLabel;
+        //InsertTableView *contactInfoTable;
+        QLabel *commissionsLabel;
+        QTableView *commissionsTable;
+        QPushButton *newCommissionButton;
+        QLabel *notesLabel;
+        QTextEdit *notesEdit;
     };
 }
 
 #endif
-*/

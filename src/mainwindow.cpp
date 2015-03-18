@@ -135,7 +135,7 @@ namespace Commissionator{
         leftPanel = new QStackedWidget();
         rightPanel = new QStackedWidget();
         QList<int> hidden;
-        //hidden.append(0);
+        hidden.append(0);
         lp1 = new LeftPanel("Commissioner", model->getLeftModel(), hidden);
         lp2 = new LeftPanel2();
         rp1 = new RightPanel(model->getRightModel());

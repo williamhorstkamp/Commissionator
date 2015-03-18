@@ -16,7 +16,7 @@ namespace Commissionator {
         show();
     }
 
-    void SearchBoxView::setModel(SearchProxyModel *model) {
+    void SearchBoxView::setModel(FixedRowProxyModel *model) {
         QTableView::setModel(model);   
         for (int row = 1; row < this->model()->rowCount(); row++)
             setRowHidden(row, true);

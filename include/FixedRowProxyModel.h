@@ -1,5 +1,5 @@
-#ifndef SEARCHPROXYMODEL_H
-#define SEARCGPROXYMODEL_H
+#ifndef FIXEDROWPROXYMODEL_H
+#define FIXEDROWPROXYMODEL_H
 
 #include <QIdentityProxyModel>
 
@@ -9,7 +9,7 @@ namespace Commissionator {
      *  Class is used as a proxy model to add and handle a search row
      *  at the top of the table. For use with SearchTableView
      */
-    class SearchProxyModel : public QIdentityProxyModel {
+    class FixedRowProxyModel : public QIdentityProxyModel {
 
         Q_OBJECT
 
@@ -19,7 +19,7 @@ namespace Commissionator {
          *
          *  @param parent - pointer to parent
          */
-        SearchProxyModel(QObject *parent);
+        FixedRowProxyModel(QObject *parent);
 
         /**
          *  Overrides the default setSourceModel. Provides default functionality
@@ -70,6 +70,8 @@ namespace Commissionator {
          */
         Qt::ItemFlags flags(const QModelIndex &index) const;
 
+        void setBottom(const bool newBottom);
+
         /**
          *  Overrides the default setData function to handle the new search row
          *
@@ -81,11 +83,15 @@ namespace Commissionator {
          */
         bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
 
+        void setText(QString newText);
 
+        
 
     private:
         //List of QStrings containing the value to search with
-        QList<QVariant> searchStrings;
+        QList<QVariant> queryStrings;
+        QString text;
+        bool bottom;
 
     signals:
         /**
@@ -95,14 +101,14 @@ namespace Commissionator {
          *
          *  @param searchQuery - QList of QVariants containing the search query
          */
-        void searchSignal(const QList<QVariant> searchQuery);
+        void querySignal(const QList<QVariant> query);
 
     public slots:
         /**
          *  Search slot that performs a search based on the current values
          *  of the search strings.
          */
-        void search();
+        void query();
     };
 }
 #endif

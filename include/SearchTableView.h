@@ -29,10 +29,49 @@ namespace Commissionator {
          */
         ~SearchTableView();
 
+        /**
+         *  Overrides default setColumnHidden function to call the same
+         *  function with the same parameters on searchBox as well.
+         */
         void setColumnHidden(int column, bool hide);
         
 
     protected:
+        /**
+         *  Initializes connections.
+         *  Exists to allow for easier use of derived classes.
+         */
+        void createConnections();
+
+        /**
+         *  Initializes delegate.
+         *  Exists to allow for easier use of derived classes.
+         */
+        void createDelegate();
+
+        /**
+         *  Initializes proxy.
+         *  Exists to allow for easier use of derived classes.
+         */
+        void createProxy();
+
+        /**
+         *  Initializes search box.
+         *  Exists to allow for easier use of derived classes.
+         */
+        void createSearchBox();
+
+        /**
+         *  Initializes table.
+         *  Exists to allow for easier use of derived classes.
+         */
+        void createTable();
+
+        /**
+         *  Initializes the object and all its sub objects.
+         */
+        void init();
+
         /**
          *  Overrides the default moveCursor function so that the user can not
          *  use keyboard controls to navigate to the hidden top row.
@@ -63,24 +102,18 @@ namespace Commissionator {
          */
         void scrollTo(const QModelIndex &index, ScrollHint hint = EnsureVisible) Q_DECL_OVERRIDE;
 
-    private:
+        /**
+        *  Updates the size of the search box based on the dimensions of the
+        *  search table.
+        */
+        void updateSearchBoxGeometry();
+
         //Proxy model that creates the search column and manages it
-        SearchProxyModel *proxy;
+        FixedRowProxyModel *proxy;
         //Search box inherits from QTableView and provides additional functionality
         SearchBoxView *searchBox;
         //delegate that handles the icons displayed in on the table
         SearchTableDelegate *delegate;
-
-        /**
-         *  Initializes the object and all its sub objects.
-         */
-        void init();
-        
-        /**
-         *  Updates the size of the search box based on the dimensions of the
-         *  search table.
-         */
-        void updateSearchBoxGeometry();
 
     private slots:
         /**

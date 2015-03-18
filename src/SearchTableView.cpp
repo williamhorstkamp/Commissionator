@@ -5,23 +5,16 @@
 
 namespace Commissionator {
     SearchTableView::SearchTableView(QAbstractItemModel *model) {
-        proxy = new SearchProxyModel(this); 
+        createProxy();
         proxy->setSourceModel(model);
         
         init();
-
-        connect(horizontalHeader(), &QHeaderView::sectionResized, this, &SearchTableView::updateSectionWidth);
-        connect(verticalHeader(), &QHeaderView::sectionResized, this, &SearchTableView::updateSectionHeight);
-        connect(searchBox->horizontalScrollBar(), &QScrollBar::valueChanged, horizontalScrollBar(), &QScrollBar::setValue);
-        connect(horizontalScrollBar(), &QScrollBar::valueChanged, searchBox->horizontalScrollBar(), &QScrollBar::setValue);
-        connect(proxy, &SearchProxyModel::searchSignal, this, &SearchTableView::searchSignal);
-        connect(delegate, &SearchTableDelegate::iconClicked, this, &SearchTableView::iconClicked);
-        connect(searchBox, &SearchBoxView::searchSignal, proxy, &SearchProxyModel::search);
     }
 
     SearchTableView::~SearchTableView() {
         delete searchBox;
         delete proxy;
+        delete delegate;
     }
 
     void SearchTableView::setColumnHidden(int column, bool hide) {
@@ -47,34 +40,56 @@ namespace Commissionator {
             QTableView::scrollTo(index, hint);
     }
 
-    void SearchTableView::init() {
-        setModel(proxy);
-        searchBox = new SearchBoxView(this);
-        searchBox->setModel(proxy);
-        
-        setFocusPolicy(Qt::StrongFocus);
-        viewport()->stackUnder(searchBox);
-        searchBox->setSelectionModel(selectionModel());
-        searchBox->setColumnWidth(0, columnWidth(0));
+    void SearchTableView::createConnections() {
+        connect(horizontalHeader(), &QHeaderView::sectionResized, this, &SearchTableView::updateSectionWidth);
+        connect(verticalHeader(), &QHeaderView::sectionResized, this, &SearchTableView::updateSectionHeight);
+        connect(searchBox->horizontalScrollBar(), &QScrollBar::valueChanged, horizontalScrollBar(), &QScrollBar::setValue);
+        connect(horizontalScrollBar(), &QScrollBar::valueChanged, searchBox->horizontalScrollBar(), &QScrollBar::setValue);
+        connect(proxy, &FixedRowProxyModel::querySignal, this, &SearchTableView::searchSignal);
+        connect(delegate, &SearchTableDelegate::iconClicked, this, &SearchTableView::iconClicked);
+        connect(searchBox, &SearchBoxView::searchSignal, proxy, &FixedRowProxyModel::query);
+    }
 
-        updateSearchBoxGeometry();
-
-        setHorizontalScrollMode(ScrollPerPixel);
-        setVerticalScrollMode(ScrollPerPixel);
-
-        setSelectionMode(QAbstractItemView::NoSelection);
-        setSelectionBehavior(QAbstractItemView::SelectRows);
+    void SearchTableView::createDelegate() {
         delegate = new SearchTableDelegate();
         delegate->setIconSize(24);
         setItemDelegate(delegate);
+    }
 
+    void SearchTableView::createProxy() {
+        proxy = new FixedRowProxyModel(this);
+        proxy->setText("Search");
+    }
+
+    void SearchTableView::createSearchBox() {
+        searchBox = new SearchBoxView(this);
+        searchBox->setModel(proxy);
+        viewport()->stackUnder(searchBox);
+        searchBox->setSelectionModel(selectionModel());
+        searchBox->setColumnWidth(0, columnWidth(0));
+        updateSearchBoxGeometry();
+    }
+    
+    void SearchTableView::createTable() {
+        setModel(proxy);
+        setFocusPolicy(Qt::StrongFocus);
+        setHorizontalScrollMode(ScrollPerPixel);
+        setVerticalScrollMode(ScrollPerPixel);
+        setSelectionMode(QAbstractItemView::NoSelection);
+        setSelectionBehavior(QAbstractItemView::SelectRows);
         setEditTriggers(QAbstractItemView::NoEditTriggers);
         verticalHeader()->hide();
         setSortingEnabled(true);
 
-        for (int col = 0; col < horizontalHeader()->count(); col++) {
+        for (int col = 0; col < horizontalHeader()->count(); col++)
             horizontalHeader()->setSectionResizeMode(col, QHeaderView::Stretch);
-        }
+    }
+
+    void SearchTableView::init() {
+        createTable();
+        createSearchBox();
+        createDelegate();
+        createConnections();
     }
 
     void SearchTableView::updateSearchBoxGeometry() {
