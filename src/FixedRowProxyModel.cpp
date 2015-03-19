@@ -11,7 +11,6 @@ namespace Commissionator {
         queryStrings = QList<QVariant>();
     }
 
-
     void FixedRowProxyModel::setSourceModel(QAbstractItemModel *newSourceModel) {
         QIdentityProxyModel::setSourceModel(newSourceModel);
         for (int i = 0; i < columnCount(); i++)
@@ -59,6 +58,10 @@ namespace Commissionator {
         return QVariant();
     }
     
+    bool FixedRowProxyModel::isOnBottom() {
+        return bottom;
+    }
+
     void FixedRowProxyModel::setBottom(const bool newBottom) {
         bottom = newBottom;
     }
@@ -75,6 +78,8 @@ namespace Commissionator {
 
     void FixedRowProxyModel::setText( QString newText) {
         text = newText;
+        for (int i = 0; i < columnCount(); i++)
+            queryStrings.replace(i, text);
     }
 
     Qt::ItemFlags FixedRowProxyModel::flags(const QModelIndex &index) const {

@@ -1,5 +1,5 @@
-#ifndef SEARCHTABLEDELEGATE_H
-#define SEARCHTABLEDELEGATE_H
+#ifndef FIXEDROWTABLEDELEGATE_H
+#define FIXEDROWTABLEDELEGATE_H
 
 #include <QItemDelegate>
 
@@ -7,7 +7,8 @@ namespace Commissionator {
     /**
      *  Class is a delegate to display buttons on a SearchTableView.
      */
-    class SearchTableDelegate : public QItemDelegate {
+    class FixedRowTableDelegate : public QItemDelegate {
+
         Q_OBJECT
 
     public:       
@@ -16,7 +17,9 @@ namespace Commissionator {
          *  
          *  @param parent - pointer to parent object
          */
-        SearchTableDelegate(QObject *parent = nullptr);
+        FixedRowTableDelegate(QObject *parent = nullptr);
+
+        void setIcon(QString iconLocation);
 
         /**
          *  Sets the size of the delegate's icon
@@ -51,6 +54,7 @@ namespace Commissionator {
 
     private:
         int buttonSize;
+        QIcon buttonIcon;
 
     signals:
         /**
@@ -58,7 +62,7 @@ namespace Commissionator {
          *
          *  @param index - index whose button was clicked
          */
-        void iconClicked(const QModelIndex &index);
+        void buttonClicked(const QModelIndex &index);
     };
 }
 

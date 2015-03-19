@@ -1,20 +1,25 @@
 #include <QApplication>
 #include <QMouseEvent>
 #include <QDialog>
-#include "SearchTableDelegate.h"
+#include "FixedRowTableDelegate.h"
 
 namespace Commissionator {
 
-    SearchTableDelegate::SearchTableDelegate(QObject *parent) : 
+    FixedRowTableDelegate::FixedRowTableDelegate(QObject *parent) :
         QItemDelegate(parent) {
         buttonSize = 0;
+        buttonIcon = QIcon();
     }
 
-    void SearchTableDelegate::setIconSize(int newSize) {
+    void FixedRowTableDelegate::setIcon(QString iconLocation) {
+        buttonIcon.addFile(iconLocation);
+    }
+
+    void FixedRowTableDelegate::setIconSize(int newSize) {
         buttonSize = newSize;
     }
 
-    bool SearchTableDelegate::editorEvent(QEvent *event, 
+    bool FixedRowTableDelegate::editorEvent(QEvent *event,
         QAbstractItemModel *model, const QStyleOptionViewItem &option, 
         const QModelIndex &index) {
         if (index.column() == index.model()->columnCount() - 1)
@@ -25,14 +30,14 @@ namespace Commissionator {
                 if (mEvent->x() > x && mEvent->x() < x + buttonSize && 
                     mEvent->y() > rect.top() &&
                     mEvent->y() < rect.top() + buttonSize) {
-                    emit iconClicked(index);
+                    emit buttonClicked(index);
                     return true;
                 }
             }
         return QItemDelegate::editorEvent(event, model, option, index);
     }
 
-    void SearchTableDelegate::paint(QPainter *painter,
+    void FixedRowTableDelegate::paint(QPainter *painter,
         const QStyleOptionViewItem &option, const QModelIndex &index) const {
         if (index.column() == index.model()->columnCount() - 1) {
             QStyleOptionButton button;
@@ -42,7 +47,7 @@ namespace Commissionator {
                 buttonSize, 
                 buttonSize);
 
-            button.icon = QIcon(":/Delete.png");
+            button.icon = buttonIcon;
             
             button.state = QStyle::State_Enabled;
             button.iconSize = QSize(buttonSize * 0.9, buttonSize * 0.9);

@@ -5,7 +5,7 @@
 #include <QSqlQueryModel>
 #include <QList>
 #include <QLabel>
-#include "SearchTableView.h"
+#include "FixedRowTable.h"
 
 namespace Commissionator {
     /**
@@ -17,7 +17,7 @@ namespace Commissionator {
 
     private:
         QVBoxLayout *layout;
-        SearchTableView *view;
+        FixedRowTable *view;
         QLabel *titleLabel;
         
         /**

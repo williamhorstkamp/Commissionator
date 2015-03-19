@@ -6,8 +6,8 @@
 namespace Commissionator {
 
     /**
-     *  Class is used as a proxy model to add and handle a search row
-     *  at the top of the table. For use with SearchTableView
+     *  Class is used as a proxy model to add and handle an insertable row
+     *  at the top of the table. For use with FixedRowTable and FixedRowBox
      */
     class FixedRowProxyModel : public QIdentityProxyModel {
 
@@ -23,7 +23,7 @@ namespace Commissionator {
 
         /**
          *  Overrides the default setSourceModel. Provides default functionality
-         *  plus prepares the QStrings containing the search input
+         *  plus prepares the QStrings containing the input
          *
          *  @param newSourceModel - the model that this model is going to proxy
          */
@@ -31,7 +31,7 @@ namespace Commissionator {
 
         /**
          *  Overrides the default rowCount function and adds an additional row
-         *  for the search row.
+         *  for the insertion row.
          *
          *  @param parent - reference containing the parent model
          *
@@ -40,7 +40,7 @@ namespace Commissionator {
         int rowCount(const QModelIndex &parent = QModelIndex()) const;
 
         /**
-         *  Overrides default index function to handle the extra search row.
+         *  Overrides default index function to handle the extra row.
          *
          *  @param row - int containing the row to get the index for
          *  @param colunn - int containing the colunn to get the index for
@@ -51,8 +51,8 @@ namespace Commissionator {
         QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
 
         /**
-         *  Overrides the default data function to handle the new search row
-         *  and put it at the top.
+         *  Overrides the default data function to handle the new row
+         *  and place it where it at either the top or bottom.
          *
          *  @param index - reference to the index to retrieve the data for
          *  @param role - Qt role that the data is retrieving
@@ -62,7 +62,7 @@ namespace Commissionator {
         QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
 
         /**
-         *  Overrides the default flags function to handle the new search row.
+         *  Overrides the default flags function to handle the new row.
          *
          *  @param index - reference to the index to retrieve the data for
          *
@@ -70,10 +70,23 @@ namespace Commissionator {
          */
         Qt::ItemFlags flags(const QModelIndex &index) const;
 
+        /**
+         *  Returns whether the extra row is on top or on bottom currently.
+         *
+         *  @return - true for bottom, false for top (default)
+         */
+        bool isOnBottom();
+
+        /**
+         *  Sets whether the extra row is displaying on bottom or on top.
+         *  If set to true will be on bottom, defaults to top (false).
+         *
+         *  @param newBottom - whether the row is on bottom or not
+         */
         void setBottom(const bool newBottom);
 
         /**
-         *  Overrides the default setData function to handle the new search row
+         *  Overrides the default setData function to handle the new row
          *
          *  @param index - reference to the index to retrieve the data for
          *  @param value - reference containing the data to set the index to
@@ -83,23 +96,28 @@ namespace Commissionator {
          */
         bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
 
+        /**
+         *  Sets the text that occupies the proxied row.
+         *  Overrides anything that is currently in the bar and replaces it
+         *  with the new text.
+         *
+         *  @param newText - text to set the fields to
+         */
         void setText(QString newText);
 
-        
-
     private:
-        //List of QStrings containing the value to search with
+        //List of QStrings containing the value to use with the query
         QList<QVariant> queryStrings;
         QString text;
         bool bottom;
 
     signals:
         /**
-         *  Signal that contains the search query.
-         *  The data captured in this signal is forward to the SearchTableView
-         *  signal of the same name.
+         *  Signal that contains the query.
+         *  The data captured in this signal is forward to FixedRowTable signal
+         *  named buttonClicked.
          *
-         *  @param searchQuery - QList of QVariants containing the search query
+         *  @param query - QList of QVariants containing the search query
          */
         void querySignal(const QList<QVariant> query);
 

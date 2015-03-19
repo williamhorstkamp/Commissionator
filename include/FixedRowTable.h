@@ -1,39 +1,50 @@
-#ifndef SEARCHTABLEVIEW_H
-#define SEARCHTABLEVIEW_H
+#ifndef FIXEDROWTABLE_H
+#define FIXEDROWTABLE_H
 
 #include <QTableView>
-#include "SearchTableDelegate.h"
-#include "SearchBoxView.h"
+#include "FixedRowTableDelegate.h"
+#include "FixedRowBox.h"
 
 namespace Commissionator {
 
     /**
      *  Class creates a customized QTableView with a fixed search bar, 
-     *   buttons on each row, and a few minor useability tweaks.
+     *  buttons on each row, and a few minor useability tweaks.
      */
-    class SearchTableView : public QTableView {
+    class FixedRowTable : public QTableView {
 
         Q_OBJECT
 
     public:
         /**
-         *  Constructor accepts a model to build a Search Table for.
+         *  Constructor accepts a model for which we are to build the table.
          *
          *  @param model - Pointer to QAbstractItemModel based model on use
          *      for the proxy model and views.
          */
-        SearchTableView(QAbstractItemModel *model);
+        FixedRowTable(QAbstractItemModel *model);
 
         /**
          *  Destructor cleans up internal objects.
          */
-        ~SearchTableView();
+        ~FixedRowTable();
+
+        void setBoxBottom(const bool isOnBottom);
+
+        void setBoxText(QString newText);
+
+        void setButtonIcon(QString newIcon);
+
+        void setButtonActivated(const bool isEnabled);
+
+        void setButtonSize(int size);
 
         /**
          *  Overrides default setColumnHidden function to call the same
-         *  function with the same parameters on searchBox as well.
+         *  function with the same parameters on box as well.
          */
         void setColumnHidden(int column, bool hide);
+
         
 
     protected:
@@ -59,7 +70,7 @@ namespace Commissionator {
          *  Initializes search box.
          *  Exists to allow for easier use of derived classes.
          */
-        void createSearchBox();
+        void createBox();
 
         /**
          *  Initializes table.
@@ -102,18 +113,20 @@ namespace Commissionator {
          */
         void scrollTo(const QModelIndex &index, ScrollHint hint = EnsureVisible) Q_DECL_OVERRIDE;
 
+    private:
+
         /**
         *  Updates the size of the search box based on the dimensions of the
         *  search table.
         */
-        void updateSearchBoxGeometry();
+        void updateBoxGeometry();
 
         //Proxy model that creates the search column and manages it
         FixedRowProxyModel *proxy;
         //Search box inherits from QTableView and provides additional functionality
-        SearchBoxView *searchBox;
+        FixedRowBox *box;
         //delegate that handles the icons displayed in on the table
-        SearchTableDelegate *delegate;
+        FixedRowTableDelegate *delegate;
 
     private slots:
         /**
@@ -145,7 +158,7 @@ namespace Commissionator {
          *
          *  @param searchQuery - QList of QVariants containing the search query
          */
-        void searchSignal(const QList<QVariant> searchQuery);
+        void boxQuery(const QList<QVariant> searchQuery);
 
         /**
          *  Signal that is thrown when when one of the SearchTableDelegate
@@ -154,7 +167,7 @@ namespace Commissionator {
          *
          *   @param index - index whose button was clicked
          */
-        void iconClicked(const QModelIndex &index);
+        void buttonClicked(const QModelIndex &index);
     };
 }
 #endif

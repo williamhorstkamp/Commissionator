@@ -1,11 +1,11 @@
-#ifndef SEARCHBOXVIEW_H
-#define SEARCHBOXVIEW_H
+#ifndef FIXEDROWBOX_H
+#define FIXEDROWBOX_H
 
 #include "FixedRowProxyModel.h"
 #include <QTableView>
 
 namespace Commissionator {
-    class SearchBoxView : public QTableView {
+    class FixedRowBox : public QTableView {
 
         Q_OBJECT
          
@@ -15,7 +15,7 @@ namespace Commissionator {
          *
          *  @param parent - pointer to parent widget
          */
-        SearchBoxView(QWidget *parent = nullptr);
+        FixedRowBox(QWidget *parent = nullptr);
 
         /**
          *  New setModel function works for SearchProxyModel specifically.
@@ -73,7 +73,7 @@ namespace Commissionator {
         /**
          *  Signal thrown when the search box is submitted.
          */
-        void searchSignal();
+        void boxQuery();
     };
 }
 

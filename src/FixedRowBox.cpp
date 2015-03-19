@@ -1,10 +1,10 @@
 #include <QKeyEvent>
 #include <QHeaderView>
-#include "SearchBoxView.h"
+#include "FixedRowBox.h"
 
 namespace Commissionator {
 
-    SearchBoxView::SearchBoxView(QWidget *parent) : QTableView(parent) {
+    FixedRowBox::FixedRowBox(QWidget *parent) : QTableView(parent) {
         setFocusPolicy(Qt::NoFocus);
         horizontalHeader()->hide();
         verticalHeader()->hide();
@@ -16,13 +16,13 @@ namespace Commissionator {
         show();
     }
 
-    void SearchBoxView::setModel(FixedRowProxyModel *model) {
+    void FixedRowBox::setModel(FixedRowProxyModel *model) {
         QTableView::setModel(model);   
         for (int row = 1; row < this->model()->rowCount(); row++)
             setRowHidden(row, true);
     }
     
-    void SearchBoxView::mousePressEvent(QMouseEvent *event) {
+    void FixedRowBox::mousePressEvent(QMouseEvent *event) {
         if (event->button() == Qt::LeftButton) {
             QModelIndex index = indexAt(event->pos());
             setCurrentIndex(indexAt(event->pos()));
@@ -31,17 +31,17 @@ namespace Commissionator {
         QTableView::mousePressEvent(event);
     }
 
-    void SearchBoxView::scrollTo(const QModelIndex &index, ScrollHint hint) {
+    void FixedRowBox::scrollTo(const QModelIndex &index, ScrollHint hint) {
         QTableView::scrollTo(indexAt(QPoint(0, index.column())), hint);
     }
 
-    void SearchBoxView::wheelEvent(QWheelEvent */**event*/) {
+    void FixedRowBox::wheelEvent(QWheelEvent * /**event*/) {
     }
 
-    void SearchBoxView::closeEditor(QWidget *editor, QAbstractItemDelegate::EndEditHint hint) {
+    void FixedRowBox::closeEditor(QWidget *editor, QAbstractItemDelegate::EndEditHint hint) {
         QTableView::closeEditor(editor, hint);
         if (hint == QAbstractItemDelegate::SubmitModelCache) {
-            emit searchSignal();
+            emit boxQuery();
         }
     }
 }
