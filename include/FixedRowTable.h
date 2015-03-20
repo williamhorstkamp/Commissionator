@@ -29,7 +29,7 @@ namespace Commissionator {
          */
         ~FixedRowTable();
 
-        void setBoxBottom(const bool isOnBottom);
+        void setBoxBottom(const bool newOnBottom);
 
         void setBoxText(QString newText);
 
@@ -127,6 +127,7 @@ namespace Commissionator {
         FixedRowBox *box;
         //delegate that handles the icons displayed in on the table
         FixedRowTableDelegate *delegate;
+        bool boxOnBottom;
 
     private slots:
         /**

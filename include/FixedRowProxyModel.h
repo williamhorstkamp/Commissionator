@@ -75,7 +75,7 @@ namespace Commissionator {
          *
          *  @return - true for bottom, false for top (default)
          */
-        bool isOnBottom();
+     //   bool isOnBottom();
 
         /**
          *  Sets whether the extra row is displaying on bottom or on top.
@@ -83,7 +83,7 @@ namespace Commissionator {
          *
          *  @param newBottom - whether the row is on bottom or not
          */
-        void setBottom(const bool newBottom);
+     //   void setBottom(const bool newBottom);
 
         /**
          *  Overrides the default setData function to handle the new row
@@ -109,7 +109,7 @@ namespace Commissionator {
         //List of QStrings containing the value to use with the query
         QList<QVariant> queryStrings;
         QString text;
-        bool bottom;
+        //bool bottom;
 
     signals:
         /**

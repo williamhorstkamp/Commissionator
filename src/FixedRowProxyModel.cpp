@@ -6,7 +6,6 @@
 namespace Commissionator {
 
     FixedRowProxyModel::FixedRowProxyModel(QObject *parent) : QIdentityProxyModel(parent) {
-        bottom = false;
         text = QString("");
         queryStrings = QList<QVariant>();
     }
@@ -33,22 +32,13 @@ namespace Commissionator {
     QVariant FixedRowProxyModel::data(const QModelIndex &index, int role) const {
         if (index.isValid()) {
             if (role == Qt::DisplayRole) {
-                if (bottom == false) {
-                    if (index.row() == 0) {
-                        return QVariant(queryStrings.at(index.column()));
-                    }
-                } else if (index.row() == rowCount() - 1)
+                if (index.row() == 0) {
                     return QVariant(queryStrings.at(index.column()));
+                }
                 return QIdentityProxyModel::data(this->index(index.row() - 1, index.column(), index.parent()), role);
             }
             if (role == Qt::FontRole) {
-                if (bottom == false) {
-                    if (index.row() == 0) {
-                        QFont font(QGuiApplication::font());
-                        font.setItalic(true);
-                        return font;
-                    }
-                } else if (index.row() == rowCount() - 1) {
+                if (index.row() == 0) {
                     QFont font(QGuiApplication::font());
                     font.setItalic(true);
                     return font;
@@ -56,14 +46,6 @@ namespace Commissionator {
             }
         }
         return QVariant();
-    }
-    
-    bool FixedRowProxyModel::isOnBottom() {
-        return bottom;
-    }
-
-    void FixedRowProxyModel::setBottom(const bool newBottom) {
-        bottom = newBottom;
     }
 
     bool FixedRowProxyModel::setData(const QModelIndex &index, const QVariant &value, int role) {

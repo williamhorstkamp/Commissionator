@@ -18,8 +18,9 @@ namespace Commissionator {
         delete delegate;
     }
 
-    void FixedRowTable::setBoxBottom(const bool isOnBottom) {
-        proxy->setBottom(isOnBottom);
+    void FixedRowTable::setBoxBottom(const bool newOnBottom) {
+        //proxy->setBottom(isOnBottom);
+        boxOnBottom = newOnBottom;
         updateBoxGeometry();
     }
 
@@ -94,11 +95,12 @@ namespace Commissionator {
         box->setSelectionModel(selectionModel());
         box->setColumnWidth(0, columnWidth(0));
         updateBoxGeometry();
+        boxOnBottom = false;
     }
     
     void FixedRowTable::createTable() {
         
-        setModel(proxy);
+        setModel(proxy->sourceModel());
         setFocusPolicy(Qt::StrongFocus);
         setHorizontalScrollMode(ScrollPerPixel);
         setVerticalScrollMode(ScrollPerPixel);
@@ -120,7 +122,7 @@ namespace Commissionator {
     }
 
     void FixedRowTable::updateBoxGeometry() {
-        if (proxy->isOnBottom()) {
+        if (boxOnBottom) {
             setViewportMargins(contentsRect().left(),
                 contentsRect().top() + horizontalHeader()->height(),
                 0, rowHeight(0));
@@ -128,22 +130,22 @@ namespace Commissionator {
                 contentsRect().bottom() - rowHeight(0), 
                 viewport()->width() + verticalHeader()->width(), rowHeight(0));
 
-            //if (model() == proxy)
+            if (model() == proxy)
                 //setRowHidden(0, true);
-                //setModel(proxy->sourceModel());
+                setModel(proxy->sourceModel());
         } else {
             box->setGeometry(verticalHeader()->width() + frameWidth(),
                 horizontalHeader()->height() + frameWidth(), viewport()->width() + verticalHeader()->width(), rowHeight(0));
-            //if (model() != proxy)
-            //    setModel(proxy);
+            if (model() != proxy)
+                setModel(proxy);
         } 
     }
     
-    void FixedRowTable::updateSectionWidth(int logicalIndex, int /* *oldSize*/, int newSize) {
+    void FixedRowTable::updateSectionWidth(int logicalIndex, int /*oldSize*/, int newSize) {
         box->setColumnWidth(logicalIndex, newSize);
     }
 
-    void FixedRowTable::updateSectionHeight(int logicalIndex, int /**oldSize*/, int newSize) {
+    void FixedRowTable::updateSectionHeight(int logicalIndex, int /*oldSize*/, int newSize) {
         if (logicalIndex == 0) {
             box->setRowHeight(logicalIndex, newSize);
             updateBoxGeometry();
