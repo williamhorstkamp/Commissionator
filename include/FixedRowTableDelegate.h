@@ -19,6 +19,12 @@ namespace Commissionator {
          */
         FixedRowTableDelegate(QObject *parent = nullptr);
 
+        /**
+         *  Sets the icon to the file referenced in the QString.
+         *
+         *  @param iconLocation - QString containing the location of the icon
+         *      on the disk
+         */
         void setIcon(QString iconLocation);
 
         /**

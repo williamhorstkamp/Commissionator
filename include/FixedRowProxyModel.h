@@ -71,21 +71,6 @@ namespace Commissionator {
         Qt::ItemFlags flags(const QModelIndex &index) const;
 
         /**
-         *  Returns whether the extra row is on top or on bottom currently.
-         *
-         *  @return - true for bottom, false for top (default)
-         */
-     //   bool isOnBottom();
-
-        /**
-         *  Sets whether the extra row is displaying on bottom or on top.
-         *  If set to true will be on bottom, defaults to top (false).
-         *
-         *  @param newBottom - whether the row is on bottom or not
-         */
-     //   void setBottom(const bool newBottom);
-
-        /**
          *  Overrides the default setData function to handle the new row
          *
          *  @param index - reference to the index to retrieve the data for

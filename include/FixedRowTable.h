@@ -29,14 +29,41 @@ namespace Commissionator {
          */
         ~FixedRowTable();
 
+        /**
+         *  Sets the bottom box to the bottom of the window if set to true
+         *
+         *  @param newOnBottom - bool containing whether the box should be on bottom
+         */
         void setBoxBottom(const bool newOnBottom);
 
+        /**
+         *  Sets the default text in the box to the text in newText.
+         *  Will clear the box of any entries when this is ran.
+         *
+         *  @param newText - new default text to set the box to
+         */
         void setBoxText(QString newText);
 
-        void setButtonIcon(QString newIcon);
-
+        /**
+         *  Activates or deactives the table buttons.
+         *
+         *  @param isEnabled - boolean referencing whether to activate the button
+         */
         void setButtonActivated(const bool isEnabled);
 
+        /**
+         *  Sets the button's icon to the file found at the location referenced
+         *  in the QString. Does not display without also setting button size.
+         *
+         *  @param newIcon - location on disk of the file to be used as the icon
+         */
+        void setButtonIcon(QString newIcon);
+
+        /**
+         *  Sets the button's size to the integer given
+         *
+         *  @param size - size in pixels of the button to be displayed
+         */
         void setButtonSize(int size);
 
         /**
