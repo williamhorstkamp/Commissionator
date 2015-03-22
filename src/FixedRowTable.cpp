@@ -19,7 +19,6 @@ namespace Commissionator {
     }
 
     void FixedRowTable::setBoxBottom(const bool newOnBottom) {
-        //proxy->setBottom(isOnBottom);
         boxOnBottom = newOnBottom;
         updateBoxGeometry();
     }
@@ -100,7 +99,7 @@ namespace Commissionator {
     
     void FixedRowTable::createTable() {
         
-        setModel(proxy->sourceModel());
+        setModel(proxy);
         setFocusPolicy(Qt::StrongFocus);
         setHorizontalScrollMode(ScrollPerPixel);
         setVerticalScrollMode(ScrollPerPixel);
@@ -108,7 +107,6 @@ namespace Commissionator {
         setSelectionBehavior(QAbstractItemView::SelectRows);
         setEditTriggers(QAbstractItemView::NoEditTriggers);
         verticalHeader()->hide();
-        //setSortingEnabled(true);  doesn't work because the way the proxy model works
 
         for (int col = 0; col < horizontalHeader()->count(); col++)
             horizontalHeader()->setSectionResizeMode(col, QHeaderView::Stretch);
@@ -127,17 +125,13 @@ namespace Commissionator {
                 contentsRect().top() + horizontalHeader()->height(),
                 0, rowHeight(0));
             box->setGeometry(verticalHeader()->width() + frameWidth(),
-                contentsRect().bottom() - rowHeight(0), 
-                viewport()->width() + verticalHeader()->width(), rowHeight(0));
-
-            if (model() == proxy)
-                //setRowHidden(0, true);
-                setModel(proxy->sourceModel());
+                contentsRect().bottom() - box->rowHeight(0), 
+                viewport()->width() + verticalHeader()->width(), box->rowHeight(0));
+            setRowHidden(0, true);
         } else {
             box->setGeometry(verticalHeader()->width() + frameWidth(),
                 horizontalHeader()->height() + frameWidth(), viewport()->width() + verticalHeader()->width(), rowHeight(0));
-            if (model() != proxy)
-                setModel(proxy);
+            setRowHidden(0, false);
         } 
     }
     

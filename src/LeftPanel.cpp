@@ -36,7 +36,6 @@ namespace Commissionator {
         view->setButtonIcon(":/Delete.png");
         view->setButtonSize(24);
         view->setBoxText("Search");
-        //view->setBoxBottom(true);
 
 
         foreach(int col, hiddenColumns) {
