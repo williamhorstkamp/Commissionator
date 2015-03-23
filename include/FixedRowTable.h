@@ -36,6 +36,14 @@ namespace Commissionator {
          */
         void setBoxBottom(const bool newOnBottom);
 
+        void setBoxButtonActivated(const bool isEnabled);
+
+        void setBoxButtonIcon(QString newIcon);
+
+        void setBoxButtonSize(int size);
+
+        void setBoxDelegate(FixedRowTableDelegate *newDelegate);
+
         /**
          *  Sets the default text in the box to the text in newText.
          *  Will clear the box of any entries when this is ran.
@@ -45,11 +53,17 @@ namespace Commissionator {
         void setBoxText(QString newText);
 
         /**
+         *  Overrides default setColumnHidden function to call the same
+         *  function with the same parameters on box as well.
+         */
+        void setColumnHidden(int column, bool hide);
+
+        /**
          *  Activates or deactives the table buttons.
          *
          *  @param isEnabled - boolean referencing whether to activate the button
          */
-        void setButtonActivated(const bool isEnabled);
+        void setTableButtonActivated(const bool isEnabled);
 
         /**
          *  Sets the button's icon to the file found at the location referenced
@@ -57,22 +71,16 @@ namespace Commissionator {
          *
          *  @param newIcon - location on disk of the file to be used as the icon
          */
-        void setButtonIcon(QString newIcon);
+        void setTableButtonIcon(QString newIcon);
 
         /**
          *  Sets the button's size to the integer given
          *
          *  @param size - size in pixels of the button to be displayed
          */
-        void setButtonSize(int size);
+        void setTableButtonSize(int size);
 
-        /**
-         *  Overrides default setColumnHidden function to call the same
-         *  function with the same parameters on box as well.
-         */
-        void setColumnHidden(int column, bool hide);
-
-        
+        void setTableDelegate(FixedRowTableDelegate *newDelegate);
 
     protected:
         /**
@@ -85,7 +93,7 @@ namespace Commissionator {
          *  Initializes delegate.
          *  Exists to allow for easier use of derived classes.
          */
-        void createDelegate();
+        void createDelegates();
 
         /**
          *  Initializes proxy.
@@ -153,7 +161,9 @@ namespace Commissionator {
         //Search box inherits from QTableView and provides additional functionality
         FixedRowBox *box;
         //delegate that handles the icons displayed in on the table
-        FixedRowTableDelegate *delegate;
+        FixedRowTableDelegate *tableDelegate;
+        //delegate that handles the icons displayed on the bar
+        FixedRowTableDelegate *boxDelegate;
         bool boxOnBottom;
 
     private slots:
@@ -181,12 +191,14 @@ namespace Commissionator {
 
     signals:
         /**
-         *  Signal that contains a search query.
-         *  Use it by connecting it to your data model's search implementation
+         *  Signal that contains a query.
+         *  Use it by connecting it to your data model's signal of choice
          *
-         *  @param searchQuery - QList of QVariants containing the search query
+         *  @param searchQuery - QList of QVariants containing the query
          */
         void boxQuery(const QList<QVariant> searchQuery);
+
+        void boxButtonClicked(const QModelIndex &index);
 
         /**
          *  Signal that is thrown when when one of the SearchTableDelegate
@@ -195,7 +207,7 @@ namespace Commissionator {
          *
          *   @param index - index whose button was clicked
          */
-        void buttonClicked(const QModelIndex &index);
+        void tableButtonClicked(const QModelIndex &index);
     };
 }
 #endif

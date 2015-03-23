@@ -23,6 +23,7 @@ namespace Commissionator {
     }
     
     void FixedRowBox::mousePressEvent(QMouseEvent *event) {
+        
         if (event->button() == Qt::LeftButton) {
             QModelIndex index = indexAt(event->pos());
             setCurrentIndex(indexAt(event->pos()));

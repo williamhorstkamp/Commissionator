@@ -1,13 +1,13 @@
 #ifndef FIXEDROWTABLEDELEGATE_H
 #define FIXEDROWTABLEDELEGATE_H
 
-#include <QItemDelegate>
+#include <QStyledItemDelegate>
 
 namespace Commissionator {
     /**
      *  Class is a delegate to display buttons on a SearchTableView.
      */
-    class FixedRowTableDelegate : public QItemDelegate {
+    class FixedRowTableDelegate : public QStyledItemDelegate {
 
         Q_OBJECT
 

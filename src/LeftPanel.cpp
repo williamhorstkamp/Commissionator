@@ -12,7 +12,7 @@ namespace Commissionator {
         layout->addWidget(view);
         setLayout(layout);
         connect(view, &FixedRowTable::boxQuery, this, &LeftPanel::search);
-        connect(view, &FixedRowTable::buttonClicked, this, &LeftPanel::iconClicked);
+        connect(view, &FixedRowTable::tableButtonClicked, this, &LeftPanel::iconClicked);
         connect(view, &FixedRowTable::clicked, this, &LeftPanel::tableClicked);
     }
 
@@ -33,10 +33,14 @@ namespace Commissionator {
 
     void LeftPanel::createTable(QSqlQueryModel *model, QList<int> hiddenColumns) {
         view = new FixedRowTable(model);
-        view->setButtonIcon(":/Delete.png");
-        view->setButtonSize(24);
+        view->setTableButtonActivated(true);
+        view->setTableButtonIcon(":/Delete.png");
+        view->setTableButtonSize(24);
         view->setBoxText("Search");
 
+        view->setBoxButtonActivated(true);
+        view->setBoxButtonIcon(":/Delete.png");
+        view->setBoxButtonSize(24);
 
         foreach(int col, hiddenColumns) {
             view->setColumnHidden(col, true);

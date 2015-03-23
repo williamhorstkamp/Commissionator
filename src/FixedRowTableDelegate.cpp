@@ -6,7 +6,7 @@
 namespace Commissionator {
 
     FixedRowTableDelegate::FixedRowTableDelegate(QObject *parent) :
-        QItemDelegate(parent) {
+        QStyledItemDelegate(parent) {
         buttonSize = 0;
         buttonIcon = QIcon();
     }
@@ -34,7 +34,7 @@ namespace Commissionator {
                     return true;
                 }
             }
-        return QItemDelegate::editorEvent(event, model, option, index);
+        return QStyledItemDelegate::editorEvent(event, model, option, index);
     }
 
     void FixedRowTableDelegate::paint(QPainter *painter,
@@ -56,6 +56,6 @@ namespace Commissionator {
                 &button, 
                 painter);
         }
-        QItemDelegate::paint(painter, option, index);
+        QStyledItemDelegate::paint(painter, option, index);
     }
 }

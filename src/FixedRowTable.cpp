@@ -15,7 +15,8 @@ namespace Commissionator {
     FixedRowTable::~FixedRowTable() {
         delete box;
         delete proxy;
-        delete delegate;
+        //delete tableDelegate;
+        delete boxDelegate;
     }
 
     void FixedRowTable::setBoxBottom(const bool newOnBottom) {
@@ -23,26 +24,55 @@ namespace Commissionator {
         updateBoxGeometry();
     }
 
+    void FixedRowTable::setBoxButtonActivated(const bool isEnabled) {
+        if (isEnabled && box->itemDelegate() != boxDelegate) {
+            QAbstractItemDelegate *temp = box->itemDelegate();
+            box->setItemDelegate(boxDelegate);
+            delete temp;
+        } else if (!isEnabled && box->itemDelegate() == boxDelegate)
+            box->setItemDelegate(new QStyledItemDelegate()); //the old delegate is not deleted because we don't want to lose the user's settings in case they re-enable the button
+    }
+
+    void FixedRowTable::setBoxButtonIcon(QString newIcon) {
+        boxDelegate->setIcon(newIcon);
+    }
+
+    void FixedRowTable::setBoxButtonSize(int size) {
+        boxDelegate->setIconSize(size);
+    }
+
+    void FixedRowTable::setBoxDelegate(FixedRowTableDelegate *newDelegate) {
+        FixedRowTableDelegate *temp = boxDelegate;
+        boxDelegate = newDelegate;
+        delete temp;
+    }
+
     void FixedRowTable::setBoxText(QString newText) {
         proxy->setText(newText);
     }
 
-    void FixedRowTable::setButtonIcon(QString newIcon) {
-        delegate->setIcon(newIcon);
-    }
-
-    void FixedRowTable::setButtonActivated(const bool isEnabled) {
-        if (isEnabled && itemDelegate() != delegate) {
+    void FixedRowTable::setTableButtonActivated(const bool isEnabled) {
+        if (isEnabled && itemDelegate() != tableDelegate) {
             QAbstractItemDelegate *temp = itemDelegate();
-            setItemDelegate(delegate);
+            setItemDelegate(tableDelegate);
             delete temp;
         }
-        else if (!isEnabled && itemDelegate() == delegate)
+        else if (!isEnabled && itemDelegate() == tableDelegate)
             setItemDelegate(new QStyledItemDelegate()); //the old delegate is not deleted because we don't want to lose the user's settings in case they re-enable the button
     }
 
-    void FixedRowTable::setButtonSize(int size) {
-        delegate->setIconSize(size);
+    void FixedRowTable::setTableButtonIcon(QString newIcon) {
+        tableDelegate->setIcon(newIcon);
+    }
+
+    void FixedRowTable::setTableButtonSize(int size) {
+        tableDelegate->setIconSize(size);
+    }
+
+    void FixedRowTable::setTableDelegate(FixedRowTableDelegate *newDelegate) {
+        FixedRowTableDelegate *temp = tableDelegate;
+        tableDelegate = newDelegate;
+        delete temp;
     }
 
     void FixedRowTable::setColumnHidden(int column, bool hide) {
@@ -74,13 +104,18 @@ namespace Commissionator {
         connect(box->horizontalScrollBar(), &QScrollBar::valueChanged, horizontalScrollBar(), &QScrollBar::setValue);
         connect(horizontalScrollBar(), &QScrollBar::valueChanged, box->horizontalScrollBar(), &QScrollBar::setValue);
         connect(proxy, &FixedRowProxyModel::querySignal, this, &FixedRowTable::boxQuery);
-        connect(delegate, &FixedRowTableDelegate::buttonClicked, this, &FixedRowTable::buttonClicked);
+        connect(tableDelegate, &FixedRowTableDelegate::buttonClicked, this, &FixedRowTable::tableButtonClicked);
+        connect(boxDelegate, &FixedRowTableDelegate::buttonClicked, this, &FixedRowTable::boxButtonClicked);
         connect(box, &FixedRowBox::boxQuery, proxy, &FixedRowProxyModel::query);
     }
 
-    void FixedRowTable::createDelegate() {
-        delegate = new FixedRowTableDelegate();
-        setItemDelegate(delegate);
+    void FixedRowTable::createDelegates() {
+        tableDelegate = new FixedRowTableDelegate();
+        setItemDelegate(tableDelegate);
+        setTableButtonActivated(false);
+        boxDelegate = new FixedRowTableDelegate();
+        box->setItemDelegate(boxDelegate);
+        setBoxButtonActivated(false);
     }
 
     void FixedRowTable::createProxy() {
@@ -115,7 +150,7 @@ namespace Commissionator {
     void FixedRowTable::init() {
         createTable();
         createBox();
-        createDelegate();
+        createDelegates();
         createConnections();
     }
 
@@ -127,11 +162,11 @@ namespace Commissionator {
             box->setGeometry(verticalHeader()->width() + frameWidth(),
                 contentsRect().bottom() - box->rowHeight(0), 
                 viewport()->width() + verticalHeader()->width(), box->rowHeight(0));
-            setRowHidden(0, true);
+            setRowHidden(0, true);  //hides the search row from the top
         } else {
             box->setGeometry(verticalHeader()->width() + frameWidth(),
                 horizontalHeader()->height() + frameWidth(), viewport()->width() + verticalHeader()->width(), rowHeight(0));
-            setRowHidden(0, false);
+            setRowHidden(0, false); //unhides the search row from the top to provide the space for the fixed row
         } 
     }
     
