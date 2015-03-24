@@ -22,8 +22,8 @@ namespace Commissionator {
     bool FixedRowTableDelegate::editorEvent(QEvent *event,
         QAbstractItemModel *model, const QStyleOptionViewItem &option, 
         const QModelIndex &index) {
-        if (index.column() == index.model()->columnCount() - 1)
-            if (event->type() == QEvent::MouseButtonRelease) {
+        if (event->type() == QEvent::MouseButtonRelease)
+            if (index.column() == index.model()->columnCount() - 1) {
                 QMouseEvent *mEvent = (QMouseEvent*)event;
                 QRect rect = option.rect;
                 int x = rect.left() + rect.width() - buttonSize;

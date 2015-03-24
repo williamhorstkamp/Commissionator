@@ -15,8 +15,7 @@ namespace Commissionator {
     FixedRowTable::~FixedRowTable() {
         delete box;
         delete proxy;
-        //delete tableDelegate;
-        delete boxDelegate;
+        delete tableDelegate;
     }
 
     void FixedRowTable::setBoxBottom(const bool newOnBottom) {
@@ -25,25 +24,20 @@ namespace Commissionator {
     }
 
     void FixedRowTable::setBoxButtonActivated(const bool isEnabled) {
-        if (isEnabled && box->itemDelegate() != boxDelegate) {
-            QAbstractItemDelegate *temp = box->itemDelegate();
-            box->setItemDelegate(boxDelegate);
-            delete temp;
-        } else if (!isEnabled && box->itemDelegate() == boxDelegate)
-            box->setItemDelegate(new QStyledItemDelegate()); //the old delegate is not deleted because we don't want to lose the user's settings in case they re-enable the button
+        boxButtonOn = isEnabled;
     }
 
     void FixedRowTable::setBoxButtonIcon(QString newIcon) {
-        boxDelegate->setIcon(newIcon);
+        boxButton->setIcon(QIcon(newIcon));
     }
 
-    void FixedRowTable::setBoxButtonSize(int size) {
-        boxDelegate->setIconSize(size);
+    void FixedRowTable::setBoxButtonWidth(double widthFactor) {
+        boxButtonWidth = widthFactor;
     }
 
-    void FixedRowTable::setBoxDelegate(FixedRowTableDelegate *newDelegate) {
-        FixedRowTableDelegate *temp = boxDelegate;
-        boxDelegate = newDelegate;
+    void FixedRowTable::setBoxDelegate(QAbstractItemDelegate *newDelegate) {
+        QAbstractItemDelegate *temp = box->itemDelegate();
+        box->setItemDelegate(newDelegate);
         delete temp;
     }
 
@@ -105,16 +99,14 @@ namespace Commissionator {
         connect(horizontalScrollBar(), &QScrollBar::valueChanged, box->horizontalScrollBar(), &QScrollBar::setValue);
         connect(proxy, &FixedRowProxyModel::querySignal, this, &FixedRowTable::boxQuery);
         connect(tableDelegate, &FixedRowTableDelegate::buttonClicked, this, &FixedRowTable::tableButtonClicked);
-        connect(boxDelegate, &FixedRowTableDelegate::buttonClicked, this, &FixedRowTable::boxButtonClicked);
         connect(box, &FixedRowBox::boxQuery, proxy, &FixedRowProxyModel::query);
+        connect(boxButton, &QPushButton::clicked, this, &FixedRowTable::boxButtonClicked);
     }
 
     void FixedRowTable::createDelegates() {
         tableDelegate = new FixedRowTableDelegate();
         setItemDelegate(tableDelegate);
         setTableButtonActivated(false);
-        boxDelegate = new FixedRowTableDelegate();
-        box->setItemDelegate(boxDelegate);
         setBoxButtonActivated(false);
     }
 
@@ -124,12 +116,15 @@ namespace Commissionator {
 
     void FixedRowTable::createBox() {
         box = new FixedRowBox(this);
+        boxButton = new QPushButton(this);
         box->setModel(proxy);
         viewport()->stackUnder(box);
         box->setSelectionModel(selectionModel());
         box->setColumnWidth(0, columnWidth(0));
         updateBoxGeometry();
         boxOnBottom = false;
+        boxButtonOn = false;
+        boxButtonWidth = 0;
     }
     
     void FixedRowTable::createTable() {
@@ -158,14 +153,44 @@ namespace Commissionator {
         if (boxOnBottom) {
             setViewportMargins(contentsRect().left(),
                 contentsRect().top() + horizontalHeader()->height(),
-                0, rowHeight(0));
-            box->setGeometry(verticalHeader()->width() + frameWidth(),
-                contentsRect().bottom() - box->rowHeight(0), 
-                viewport()->width() + verticalHeader()->width(), box->rowHeight(0));
+                0, box->rowHeight(0));
             setRowHidden(0, true);  //hides the search row from the top
+            if (boxButtonOn) {
+                if (boxButtonWidth == 0) {
+                    box->setGeometry(verticalHeader()->width() + frameWidth(),
+                        contentsRect().bottom() - box->rowHeight(0),
+                        viewport()->width() + verticalHeader()->width() - columnWidth(columnAt(
+                            viewport()->width() + verticalHeader()->width() - 1)),
+                        box->rowHeight(0));
+                    boxButton->setGeometry(
+                        viewport()->width() + verticalHeader()->width() - columnWidth(columnAt(
+                            viewport()->width() + verticalHeader()->width() - 1)),
+                        contentsRect().bottom() - box->rowHeight(0) - 1,
+                        columnWidth(columnAt(viewport()->width() + verticalHeader()->width() - 1)) + 3,
+                        box->rowHeight(0) + 2);
+                } else {
+                    box->setGeometry(verticalHeader()->width() + frameWidth(),
+                        contentsRect().bottom() - box->rowHeight(0),
+                        viewport()->width() + verticalHeader()->width() - boxButtonWidth,
+                        box->rowHeight(0));
+                    boxButton->setGeometry(
+                        viewport()->width() + verticalHeader()->width() - boxButtonWidth,
+                        contentsRect().bottom() - box->rowHeight(0) - 1,
+                        boxButtonWidth + 3,
+                        box->rowHeight(0) + 2);
+                }
+                boxButton->show();
+            } else {
+                box->setGeometry(verticalHeader()->width() + frameWidth(),
+                    contentsRect().bottom() - box->rowHeight(0),
+                    viewport()->width() + verticalHeader()->width(),
+                    box->rowHeight(0));
+                boxButton->hide();
+            }
         } else {
             box->setGeometry(verticalHeader()->width() + frameWidth(),
-                horizontalHeader()->height() + frameWidth(), viewport()->width() + verticalHeader()->width(), rowHeight(0));
+                horizontalHeader()->height() + frameWidth(), 
+                viewport()->width() + verticalHeader()->width(), rowHeight(0));
             setRowHidden(0, false); //unhides the search row from the top to provide the space for the fixed row
         } 
     }

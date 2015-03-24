@@ -2,6 +2,7 @@
 #define FIXEDROWTABLE_H
 
 #include <QTableView>
+#include <QPushButton>
 #include "FixedRowTableDelegate.h"
 #include "FixedRowBox.h"
 
@@ -17,7 +18,7 @@ namespace Commissionator {
 
     public:
         /**
-         *  Constructor accepts a model for which we are to build the table.
+         *  Constructor accepts a model that a table is built for.
          *
          *  @param model - Pointer to QAbstractItemModel based model on use
          *      for the proxy model and views.
@@ -36,13 +37,39 @@ namespace Commissionator {
          */
         void setBoxBottom(const bool newOnBottom);
 
+        /**
+         *  Activates or deactives the box button.
+         *
+         *  @param isEnabled - boolean referencing whether to activate the button
+         */
         void setBoxButtonActivated(const bool isEnabled);
 
+        /**
+         *  Sets the button's icon to the file found at the location referenced
+         *  in the QString. Does not display without also setting button size.
+         *
+         *  @param newIcon - location on disk of the file to be used as the icon
+         */
         void setBoxButtonIcon(QString newIcon);
 
-        void setBoxButtonSize(int size);
+        /**
+         *  Sets the box button's width based on the width factor given.
+         *  The factor is a multiple of the button's height that the width
+         *  should be.
+         *  0 will make the button take up the width of the last column.
+         *
+         *  @param widthFactor - the width factor as a double
+         */
+        void setBoxButtonWidth(double widthFactor);
 
-        void setBoxDelegate(FixedRowTableDelegate *newDelegate);
+        /**
+         *  Sets the box's delegate to allow you to display custom forms
+         *  in the box
+         *
+         *  @param newDelegate - pointer to the delegate which manages the
+         *      box
+         */
+        void setBoxDelegate(QAbstractItemDelegate *newDelegate);
 
         /**
          *  Sets the default text in the box to the text in newText.
@@ -66,20 +93,28 @@ namespace Commissionator {
         void setTableButtonActivated(const bool isEnabled);
 
         /**
-         *  Sets the button's icon to the file found at the location referenced
-         *  in the QString. Does not display without also setting button size.
+         *  Sets the table button's icon to the file found at the location 
+         *  referenced in the QString. Does not display without also setting 
+         *  button size.
          *
          *  @param newIcon - location on disk of the file to be used as the icon
          */
         void setTableButtonIcon(QString newIcon);
 
         /**
-         *  Sets the button's size to the integer given
+         *  Sets the table button's size to the integer given
          *
          *  @param size - size in pixels of the button to be displayed
          */
         void setTableButtonSize(int size);
 
+        /**
+         *  Sets the table's delegate to a FixedRowTableDelegate based delegate
+         *      to allow you to display custom forms in the box
+         *
+         *  @param newDelegate - pointer to the delegate which manages the
+         *      box
+         */
         void setTableDelegate(FixedRowTableDelegate *newDelegate);
 
     protected:
@@ -160,10 +195,11 @@ namespace Commissionator {
         FixedRowProxyModel *proxy;
         //Search box inherits from QTableView and provides additional functionality
         FixedRowBox *box;
+        QPushButton *boxButton;
+        double boxButtonWidth;
         //delegate that handles the icons displayed in on the table
         FixedRowTableDelegate *tableDelegate;
-        //delegate that handles the icons displayed on the bar
-        FixedRowTableDelegate *boxDelegate;
+        bool boxButtonOn;
         bool boxOnBottom;
 
     private slots:
@@ -198,7 +234,13 @@ namespace Commissionator {
          */
         void boxQuery(const QList<QVariant> searchQuery);
 
-        void boxButtonClicked(const QModelIndex &index);
+        /**
+         *  Signal that is emitted when the button in the floating box is
+         *  clicked
+         *
+         *  @param checked - whether the button has been handled or not
+         */
+        void boxButtonClicked(bool checked = false);
 
         /**
          *  Signal that is thrown when when one of the SearchTableDelegate

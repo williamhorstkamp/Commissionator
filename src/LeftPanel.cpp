@@ -38,10 +38,6 @@ namespace Commissionator {
         view->setTableButtonSize(24);
         view->setBoxText("Search");
 
-        view->setBoxButtonActivated(true);
-        view->setBoxButtonIcon(":/Delete.png");
-        view->setBoxButtonSize(24);
-
         foreach(int col, hiddenColumns) {
             view->setColumnHidden(col, true);
         }

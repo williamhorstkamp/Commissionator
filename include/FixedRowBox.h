@@ -1,8 +1,9 @@
 #ifndef FIXEDROWBOX_H
 #define FIXEDROWBOX_H
 
-#include "FixedRowProxyModel.h"
 #include <QTableView>
+#include "FixedRowTableDelegate.h"
+#include "FixedRowProxyModel.h"
 
 namespace Commissionator {
     class FixedRowBox : public QTableView {
