@@ -31,6 +31,10 @@ namespace Commissionator {
         boxButton->setIcon(QIcon(newIcon));
     }
 
+    void FixedRowTable::setBoxButtonText(QString newText) {
+        boxButton->setText(newText);
+    }
+
     void FixedRowTable::setBoxButtonWidth(double widthFactor) {
         boxButtonWidth = widthFactor;
     }
@@ -100,7 +104,7 @@ namespace Commissionator {
         connect(proxy, &FixedRowProxyModel::querySignal, this, &FixedRowTable::boxQuery);
         connect(tableDelegate, &FixedRowTableDelegate::buttonClicked, this, &FixedRowTable::tableButtonClicked);
         connect(box, &FixedRowBox::boxQuery, proxy, &FixedRowProxyModel::query);
-        connect(boxButton, &QPushButton::clicked, this, &FixedRowTable::boxButtonClicked);
+        connect(boxButton, &QPushButton::clicked, proxy, &FixedRowProxyModel::query);
     }
 
     void FixedRowTable::createDelegates() {
@@ -133,9 +137,6 @@ namespace Commissionator {
         setFocusPolicy(Qt::StrongFocus);
         setHorizontalScrollMode(ScrollPerPixel);
         setVerticalScrollMode(ScrollPerPixel);
-        setSelectionMode(QAbstractItemView::NoSelection);
-        setSelectionBehavior(QAbstractItemView::SelectRows);
-        setEditTriggers(QAbstractItemView::NoEditTriggers);
         verticalHeader()->hide();
 
         for (int col = 0; col < horizontalHeader()->count(); col++)
@@ -166,17 +167,19 @@ namespace Commissionator {
                         viewport()->width() + verticalHeader()->width() - columnWidth(columnAt(
                             viewport()->width() + verticalHeader()->width() - 1)),
                         contentsRect().bottom() - box->rowHeight(0) - 1,
-                        columnWidth(columnAt(viewport()->width() + verticalHeader()->width() - 1)) + 3,
+                        columnWidth(columnAt(viewport()->width() + verticalHeader()->width() - 1)) + 2,
                         box->rowHeight(0) + 2);
                 } else {
                     box->setGeometry(verticalHeader()->width() + frameWidth(),
                         contentsRect().bottom() - box->rowHeight(0),
-                        viewport()->width() + verticalHeader()->width() - boxButtonWidth,
+                        viewport()->width() + verticalHeader()->width() 
+                        - box->rowHeight(0)*boxButtonWidth,
                         box->rowHeight(0));
                     boxButton->setGeometry(
-                        viewport()->width() + verticalHeader()->width() - boxButtonWidth,
+                        viewport()->width() + verticalHeader()->width() 
+                        - box->rowHeight(0)*boxButtonWidth,
                         contentsRect().bottom() - box->rowHeight(0) - 1,
-                        boxButtonWidth + 3,
+                        box->rowHeight(0)*boxButtonWidth + 2,
                         box->rowHeight(0) + 2);
                 }
                 boxButton->show();
@@ -188,10 +191,44 @@ namespace Commissionator {
                 boxButton->hide();
             }
         } else {
-            box->setGeometry(verticalHeader()->width() + frameWidth(),
-                horizontalHeader()->height() + frameWidth(), 
-                viewport()->width() + verticalHeader()->width(), rowHeight(0));
-            setRowHidden(0, false); //unhides the search row from the top to provide the space for the fixed row
+            setViewportMargins(contentsRect().left(),
+                contentsRect().top() + horizontalHeader()->height(),
+                0, 0);
+            setRowHidden(0, false);
+            if (boxButtonOn) {
+                if (boxButtonWidth == 0) {
+                    box->setGeometry(verticalHeader()->width() + frameWidth(),
+                        contentsRect().top() + horizontalHeader()->height(),
+                        viewport()->width() + verticalHeader()->width() - columnWidth(columnAt(
+                        viewport()->width() + verticalHeader()->width() - 1)),
+                        box->rowHeight(0));
+                    boxButton->setGeometry(
+                        viewport()->width() + verticalHeader()->width() - columnWidth(columnAt(
+                        viewport()->width() + verticalHeader()->width() - 1)),
+                        contentsRect().top() + horizontalHeader()->height() - 1,
+                        columnWidth(columnAt(viewport()->width() + verticalHeader()->width() - 1)) + 2,
+                        box->rowHeight(0) + 2);
+                } else {
+                    box->setGeometry(verticalHeader()->width() + frameWidth(),
+                        contentsRect().top() + horizontalHeader()->height(),
+                        viewport()->width() + verticalHeader()->width()
+                        - box->rowHeight(0)*boxButtonWidth,
+                        box->rowHeight(0));
+                    boxButton->setGeometry(
+                        viewport()->width() + verticalHeader()->width()
+                        - box->rowHeight(0)*boxButtonWidth,
+                        contentsRect().top() + horizontalHeader()->height() - 1,
+                        box->rowHeight(0)*boxButtonWidth + 2,
+                        box->rowHeight(0) + 2);
+                }
+                boxButton->show();
+            } else {
+                box->setGeometry(verticalHeader()->width() + frameWidth(),
+                    horizontalHeader()->height() + frameWidth(),
+                    viewport()->width() + verticalHeader()->width(), rowHeight(0));
+                boxButton->hide();
+                
+            }
         } 
     }
     

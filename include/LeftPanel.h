@@ -15,29 +15,6 @@ namespace Commissionator {
     class LeftPanel :public QWidget {
         Q_OBJECT
 
-    private:
-        QVBoxLayout *layout;
-        FixedRowTable *view;
-        QLabel *titleLabel;
-        
-        /**
-         *  Initializes the panels title label based on QString input
-         *
-         *  @param title - QString containing text to set the panel label to
-         */
-        void createTitle(QString title);
-
-        /**
-         *  Initializes the panels title based on the given model.
-         *
-         *  @param model - pointer to the model to set the table view to
-         *
-         *  @param hiddenColumns - QList containing column ids to hide from the
-         *      view. Not Implemented during testing, but functionality is 
-         *      written and tested.
-         */
-        void createTable(QSqlQueryModel *model, QList<int> hiddenColumns);
-
     public:
         /**
          *  Constructor takes panel title and model data and initializes 
@@ -53,6 +30,29 @@ namespace Commissionator {
         LeftPanel(QString title, QSqlQueryModel *model, QList<int> hiddenColumns);
 
         ~LeftPanel();
+
+    private:
+        QVBoxLayout *layout;
+        FixedRowTable *view;
+        QLabel *titleLabel;
+
+        /**
+        *  Initializes the panels title label based on QString input
+        *
+        *  @param title - QString containing text to set the panel label to
+        */
+        void createTitle(QString title);
+
+        /**
+        *  Initializes the panels title based on the given model.
+        *
+        *  @param model - pointer to the model to set the table view to
+        *
+        *  @param hiddenColumns - QList containing column ids to hide from the
+        *      view. Not Implemented during testing, but functionality is
+        *      written and tested.
+        */
+        void createTable(QSqlQueryModel *model, QList<int> hiddenColumns);
 
     signals:
         /**

@@ -53,6 +53,13 @@ namespace Commissionator {
         void setBoxButtonIcon(QString newIcon);
 
         /**
+         *  Sets the button's icon to the text given.
+         *
+         *  @param newText - QString to set the button's text to
+         */
+        void setBoxButtonText(QString newText);
+
+        /**
          *  Sets the box button's width based on the width factor given.
          *  The factor is a multiple of the button's height that the width
          *  should be.
@@ -229,18 +236,12 @@ namespace Commissionator {
         /**
          *  Signal that contains a query.
          *  Use it by connecting it to your data model's signal of choice
+         *  Emitted when the box button is clicked or enter is struck while
+         *  editting one of the box's columns
          *
          *  @param searchQuery - QList of QVariants containing the query
          */
-        void boxQuery(const QList<QVariant> searchQuery);
-
-        /**
-         *  Signal that is emitted when the button in the floating box is
-         *  clicked
-         *
-         *  @param checked - whether the button has been handled or not
-         */
-        void boxButtonClicked(bool checked = false);
+        void boxQuery(const QList<QVariant> query);
 
         /**
          *  Signal that is thrown when when one of the SearchTableDelegate

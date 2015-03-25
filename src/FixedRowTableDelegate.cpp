@@ -42,7 +42,8 @@ namespace Commissionator {
         if (index.column() == index.model()->columnCount() - 1) {
             QStyleOptionButton button;
             QRect rect = option.rect;
-            button.rect = QRect(rect.left() + rect.width() - buttonSize, 
+            button.rect = QRect(rect.left() + rect.width() - buttonSize
+                - ((rect.height() - buttonSize) / 2),
                 rect.top() + (rect.height() - buttonSize) / 2,
                 buttonSize, 
                 buttonSize);

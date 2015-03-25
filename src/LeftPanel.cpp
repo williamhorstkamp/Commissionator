@@ -38,6 +38,8 @@ namespace Commissionator {
         view->setTableButtonSize(24);
         view->setBoxText("Search");
 
+        view->setSelectionMode(QAbstractItemView::NoSelection);
+
         foreach(int col, hiddenColumns) {
             view->setColumnHidden(col, true);
         }

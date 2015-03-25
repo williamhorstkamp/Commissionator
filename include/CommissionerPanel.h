@@ -7,6 +7,8 @@
 #include <QTextEdit>
 #include <QPushButton>
 #include <QSqlQueryModel>
+#include <QDataWidgetMapper>
+#include "FixedRowTable.h"
 
 namespace Commissionator {
     class CommissionerPanel : public QWidget {
@@ -14,23 +16,28 @@ namespace Commissionator {
         Q_OBJECT
 
     public:
-        CommissionerPanel(QSqlQueryModel *contactModel, QSqlQueryModel *commissionsModel);
+        CommissionerPanel(QSqlQueryModel *commissionerModel, 
+            QSqlQueryModel *contactModel, QSqlQueryModel *commissionsModel);
         ~CommissionerPanel();
 
     private:
-        void init();
-
         QVBoxLayout *layout;
+        QDataWidgetMapper *commissionerMapper;
         QLabel *commissionerName;
         QLabel *commissionerDate;
         QLabel *commissionerPaid;
         QLabel *contactInfoLabel;
-        //InsertTableView *contactInfoTable;
+        FixedRowTable *contactInfoTable;
         QLabel *commissionsLabel;
-        QTableView *commissionsTable;
+        FixedRowTable *commissionsTable;
         QPushButton *newCommissionButton;
         QLabel *notesLabel;
         QTextEdit *notesEdit;
+
+    signals:
+        void insertContact(const QList<QVariant> query);
+        void newCommission();
+
     };
 }
 
