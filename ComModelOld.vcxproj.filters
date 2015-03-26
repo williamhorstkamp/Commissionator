@@ -21,10 +21,10 @@
     <ClCompile Include="src\StatementHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ComModel.cpp">
+    <ClCompile Include="src\ComModelOld.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ComModelTest.cpp">
+    <ClCompile Include="src\ComModelOldTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -41,7 +41,7 @@
     <ClInclude Include="include\ValueHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\ComModel.h">
+    <ClInclude Include="include\ComModelOld.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

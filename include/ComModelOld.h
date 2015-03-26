@@ -13,7 +13,7 @@ namespace Commissionator {
      *  Provides a set of functions making it easier for the Controller to
      *  manipulate the database as well as request results of query functions.
      */
-    class ComModel {
+    class ComModelOld {
     private:
         SQLiteHandler *SQL;
 
@@ -36,13 +36,13 @@ namespace Commissionator {
         /**
          *  Default constructor
          */
-        ComModel();
+        ComModelOld();
 
         /**
          *  Destructor cleans up database and prepared statements by deleting 
          *  it.
          */
-        ~ComModel();
+        ~ComModelOld();
 
         /**
          *  Creates a database at the given file location/name. Then saves the

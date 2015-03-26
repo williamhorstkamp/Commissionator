@@ -1,33 +1,33 @@
-#include "ComModel.h"
+#include "ComModelOld.h"
 
 namespace Commissionator {
 
-    ComModel::ComModel() {
+    ComModelOld::ComModelOld() {
         SQL = new SQLiteHandler();
         SQL->createDatabase();
         build();
         prepare();
    }
 
-    ComModel::~ComModel() {
+    ComModelOld::~ComModelOld() {
         close();
         delete SQL;
     }
 
-    void ComModel::save(const std::string fileName) {
+    void ComModelOld::save(const std::string fileName) {
         SQL->save(fileName);
     }
 
-    void ComModel::open(const std::string fileName) {
+    void ComModelOld::open(const std::string fileName) {
         SQL->load(fileName);
         prepare();
     }
 
-    void ComModel::close() {
+    void ComModelOld::close() {
         SQL->closeDatabase();
     }
 
-    void ComModel::build() {
+    void ComModelOld::build() {
         std::string stmt = "CREATE TABLE IF NOT EXISTS ContactType("
             "id	INTEGER PRIMARY KEY AUTOINCREMENT,"
             "type	TEXT NOT NULL"
@@ -102,7 +102,7 @@ namespace Commissionator {
             SQL->rawExec("INSERT INTO Commissioner(id, name) VALUES (0, 'None')");
     }
 
-    void ComModel::prepare() {
+    void ComModelOld::prepare() {
         SQL->prepareStatement("insertCommissioner", 
             "INSERT INTO Commissioner(name) values (?)");
         SQL->prepareStatement("deleteCommissioner", 
@@ -234,14 +234,14 @@ namespace Commissionator {
             */
     }
 
-    void ComModel::insertCommissioner(const std::string comName) {
+    void ComModelOld::insertCommissioner(const std::string comName) {
         StatementHandler *stmt = SQL->getStatement("insertCommissioner");
         stmt->bind(1, comName);
         stmt->step();
         stmt->reset();
     }
 
-    void ComModel::deleteCommissioner(const int id) {
+    void ComModelOld::deleteCommissioner(const int id) {
         if (id != 0) {  //id of 'None' commissioner
             StatementHandler *stmt = SQL->getStatement("setCommissionerToNone");
             stmt->bind(1, id);
@@ -254,7 +254,7 @@ namespace Commissionator {
         }
     }
 
-    void ComModel::setCommissionerName(const int id, const std::string comName) {
+    void ComModelOld::setCommissionerName(const int id, const std::string comName) {
         StatementHandler *stmt = SQL->getStatement("setCommissionerName");
         stmt->bind(1, comName);
         stmt->bind(2, id);
@@ -262,7 +262,7 @@ namespace Commissionator {
         stmt->reset();
     }
 
-    const std::vector<const std::tuple<const int, const std::string>>ComModel::getCommissioners() {
+    const std::vector<const std::tuple<const int, const std::string>>ComModelOld::getCommissioners() {
         std::vector<const std::tuple<const int, const std::string>> comList;
         StatementHandler *stmt = SQL->getStatement("getCommissioners");
         while (stmt->step()) {
@@ -274,7 +274,7 @@ namespace Commissionator {
         return comList;
     }
 
-    const std::string ComModel::getCommissioner(const int id) {
+    const std::string ComModelOld::getCommissioner(const int id) {
         StatementHandler *stmt = SQL->getStatement("getCommissioner");
         stmt->bind(1, id);
         stmt->step();
@@ -283,21 +283,21 @@ namespace Commissionator {
         return output;
     }
 
-    void ComModel::insertContactType(const std::string typeName) {
+    void ComModelOld::insertContactType(const std::string typeName) {
         StatementHandler *stmt = SQL->getStatement("insertContactType");
         stmt->bind(1, typeName);
         stmt->step();
         stmt->reset();
     }
 
-    void ComModel::deleteContactType(const int id) {
+    void ComModelOld::deleteContactType(const int id) {
         StatementHandler *stmt = SQL->getStatement("deleteContactType");
         stmt->bind(1, id);
         stmt->step();
         stmt->reset();
     }
 
-    void ComModel::setContactTypeName(const int id, const std::string typeName) {
+    void ComModelOld::setContactTypeName(const int id, const std::string typeName) {
         StatementHandler *stmt = SQL->getStatement("setContactTypeName");
         stmt->bind(1, typeName);
         stmt->bind(2, id);
@@ -305,7 +305,7 @@ namespace Commissionator {
         stmt->reset();
     }
 
-    const std::vector<const std::tuple<const int, const std::string> > ComModel::getContactTypes() {
+    const std::vector<const std::tuple<const int, const std::string> > ComModelOld::getContactTypes() {
         std::vector<const std::tuple<const int, const std::string>> typeList;
         StatementHandler *stmt = SQL->getStatement("getContactTypes");
         while (stmt->step()) {
@@ -317,7 +317,7 @@ namespace Commissionator {
         return typeList;
     }
 
-    const std::string ComModel::getContactType(const int id) {
+    const std::string ComModelOld::getContactType(const int id) {
         StatementHandler *stmt = SQL->getStatement("getContactType");
         stmt->bind(1, id);
         stmt->step();
@@ -326,7 +326,7 @@ namespace Commissionator {
         return output;
     }
 
-    void ComModel::insertContact(const int comId, const int typeId, const std::string entry) {
+    void ComModelOld::insertContact(const int comId, const int typeId, const std::string entry) {
         StatementHandler *stmt = SQL->getStatement("insertContact");
         stmt->bind(1, comId);
         stmt->bind(2, typeId);
@@ -335,14 +335,14 @@ namespace Commissionator {
         stmt->reset();
     }
 
-    void ComModel::deleteContact(const int id) {
+    void ComModelOld::deleteContact(const int id) {
         StatementHandler *stmt = SQL->getStatement("deleteContact");
         stmt->bind(1, id);
         stmt->step();
         stmt->reset();
     }
 
-    void ComModel::setContactType(const int contactId, const int typeId) {
+    void ComModelOld::setContactType(const int contactId, const int typeId) {
         StatementHandler *stmt = SQL->getStatement("setContactType");
         stmt->bind(1, typeId);
         stmt->bind(2, contactId);
@@ -350,7 +350,7 @@ namespace Commissionator {
         stmt->reset();
     }
 
-    void ComModel::setContactEntry(const int contactId, const std::string entry) {
+    void ComModelOld::setContactEntry(const int contactId, const std::string entry) {
         StatementHandler *stmt = SQL->getStatement("setContactEntry");
         stmt->bind(1, entry);
         stmt->bind(2, contactId);
@@ -358,7 +358,7 @@ namespace Commissionator {
         stmt->reset();
     }
 
-    const std::vector<const std::tuple<const int, const int, const std::string>> ComModel::
+    const std::vector<const std::tuple<const int, const int, const std::string>> ComModelOld::
         getContacts(const int comId) {
         std::vector<const std::tuple<const int, const int, const std::string>> contactList;
         StatementHandler *stmt = SQL->getStatement("getContacts");
@@ -372,7 +372,7 @@ namespace Commissionator {
         return contactList;
     }
 
-    const std::tuple<const int, const int, const std::string> ComModel::
+    const std::tuple<const int, const int, const std::string> ComModelOld::
         getContact(const int id) {
         StatementHandler *stmt = SQL->getStatement("getContact");
         stmt->bind(1, id);
@@ -383,7 +383,7 @@ namespace Commissionator {
         return contactInfo;
     }
 
-    void ComModel::insertProduct(const std::string name, const double price) {
+    void ComModelOld::insertProduct(const std::string name, const double price) {
         StatementHandler *stmt = SQL->getStatement("insertProduct");
         stmt->bind(1, name);
         stmt->bind(2, price);
@@ -391,7 +391,7 @@ namespace Commissionator {
         stmt->reset();
     }
 
-    void ComModel::deleteProduct(const int id) {
+    void ComModelOld::deleteProduct(const int id) {
         if (id != 0) {  //HERESY! A magic number? SQL value of generic product - deleting it would be bad
             StatementHandler *stmt = SQL->getStatement("setPiecesToGeneric");
             stmt->bind(1, id);
@@ -404,7 +404,7 @@ namespace Commissionator {
         }
     }
 
-    void ComModel::setProductPrice(const int id, const double price) {
+    void ComModelOld::setProductPrice(const int id, const double price) {
         StatementHandler *stmt = SQL->getStatement("setProductPrice");
         stmt->bind(1, price);
         stmt->bind(2, id);
@@ -412,7 +412,7 @@ namespace Commissionator {
         stmt->reset();
     }
 
-    void ComModel::setProductName(const int id, const std::string name) {
+    void ComModelOld::setProductName(const int id, const std::string name) {
         StatementHandler *stmt = SQL->getStatement("setProductName");
         stmt->bind(1, name);
         stmt->bind(2, id);
@@ -420,7 +420,7 @@ namespace Commissionator {
         stmt->reset();
     }
 
-    const std::vector<const std::tuple<const int, const std::string, const double>> ComModel::
+    const std::vector<const std::tuple<const int, const std::string, const double>> ComModelOld::
         getProducts() {
         std::vector<const std::tuple<const int, const std::string, const double>> products;
         StatementHandler *stmt = SQL->getStatement("getProducts");
@@ -433,7 +433,7 @@ namespace Commissionator {
         return products;
     }
 
-    const std::tuple<const std::string, const double> ComModel::getProduct(const int id) {
+    const std::tuple<const std::string, const double> ComModelOld::getProduct(const int id) {
         StatementHandler *stmt = SQL->getStatement("getProduct");
         stmt->bind(1, id);
         stmt->step();
@@ -443,7 +443,7 @@ namespace Commissionator {
         return product;
     }
 
-    void ComModel::insertPiece(const int commissionId, const int productId,
+    void ComModelOld::insertPiece(const int commissionId, const int productId,
         const std::string description ) {
         StatementHandler *stmt = SQL->getStatement("insertPiece");
         stmt->bind(1, commissionId);
@@ -453,7 +453,7 @@ namespace Commissionator {
         stmt->reset();
     }
 
-    void ComModel::insertPiece(const int commissionId, const int productId) {
+    void ComModelOld::insertPiece(const int commissionId, const int productId) {
         StatementHandler *stmt = SQL->getStatement("insertPiece");
         stmt->bind(1, commissionId);
         stmt->bind(2, productId);
@@ -462,21 +462,21 @@ namespace Commissionator {
         stmt->reset();
     }
 
-    void ComModel::deletePiece(const int id) {
+    void ComModelOld::deletePiece(const int id) {
         StatementHandler *stmt = SQL->getStatement("deletePiece");
         stmt->bind(1, id);
         stmt->step();
         stmt->reset();
     }
 
-    void ComModel::deletePieceByCommission(const int id) {
+    void ComModelOld::deletePieceByCommission(const int id) {
         StatementHandler *stmt = SQL->getStatement("deletePieceByCommission");
         stmt->bind(1, id);
         stmt->step();
         stmt->reset();
     }
 
-    void ComModel::setPieceDescription(const int id, const std::string description) {
+    void ComModelOld::setPieceDescription(const int id, const std::string description) {
         StatementHandler *stmt = SQL->getStatement("setPieceDescription");
         stmt->bind(1, description);
         stmt->bind(2, id);
@@ -484,7 +484,7 @@ namespace Commissionator {
         stmt->reset();
     }
 
-    const std::vector<const std::tuple<const int, const int, const int, const std::string>> ComModel::
+    const std::vector<const std::tuple<const int, const int, const int, const std::string>> ComModelOld::
         getPieces() {
         std::vector<const std::tuple<const int, const int, const int, const std::string>> pieces;
         StatementHandler *stmt = SQL->getStatement("getPieces");
@@ -499,7 +499,7 @@ namespace Commissionator {
     }
 
     const std::tuple<const int, const int, const std::string>
-        ComModel::getPiece(const int id) {
+        ComModelOld::getPiece(const int id) {
         StatementHandler *stmt = SQL->getStatement("getPiece");
         stmt->bind(1, id);
         stmt->step();
@@ -508,7 +508,7 @@ namespace Commissionator {
         return piece;
     }
 
-    const std::vector<const std::tuple<const int, const int, const int, const std::string>> ComModel::
+    const std::vector<const std::tuple<const int, const int, const int, const std::string>> ComModelOld::
         searchPieces(const std::string description) {
         std::vector<const std::tuple<const int, const int, const int, const std::string>> pieces;
         StatementHandler *stmt = SQL->getStatement("searchPieces");
@@ -524,7 +524,7 @@ namespace Commissionator {
     }
 
 
-    void ComModel::insertCommission(const int commissioner, const std::string createDate, const std::string dueDate) {
+    void ComModelOld::insertCommission(const int commissioner, const std::string createDate, const std::string dueDate) {
         StatementHandler *stmt = SQL->getStatement("insertCommission");
         stmt->bind(1, createDate);
         stmt->bind(2, dueDate);
@@ -533,14 +533,14 @@ namespace Commissionator {
         stmt->reset();
     }
 
-    void ComModel::deleteCommission(const int id) {
+    void ComModelOld::deleteCommission(const int id) {
         StatementHandler *stmt = SQL->getStatement("deleteCommission");
         stmt->bind(1, id);
         stmt->step();
         stmt->reset();
     }
 
-    void ComModel::setCommissionDueDate(const int id, const std::string dueDate) {
+    void ComModelOld::setCommissionDueDate(const int id, const std::string dueDate) {
         StatementHandler *stmt = SQL->getStatement("setCommissionDueDate");
         stmt->bind(1, dueDate);
         stmt->bind(2, id);
@@ -548,7 +548,7 @@ namespace Commissionator {
         stmt->reset();
     }
 
-    void ComModel::setCommissionPaidDate(const int id, const std::string paidDate) {
+    void ComModelOld::setCommissionPaidDate(const int id, const std::string paidDate) {
         StatementHandler *stmt = SQL->getStatement("setCommissionPaidDate");
         stmt->bind(1, paidDate);
         stmt->bind(2, id);
@@ -557,7 +557,7 @@ namespace Commissionator {
     }
 
     const std::vector<const std::tuple<const int, const int, const std::string,
-        const std::string, const std::string >> ComModel::getCommissions() {
+        const std::string, const std::string >> ComModelOld::getCommissions() {
         std::vector<const std::tuple<const int, const int, const std::string,
             const std::string, const std::string >> commissions;
         StatementHandler *stmt = SQL->getStatement("getCommissions");
@@ -572,7 +572,7 @@ namespace Commissionator {
     }
 
     const std::tuple<const int, const std::string, const std::string, 
-        const std::string> ComModel::getCommission(const int id) {
+        const std::string> ComModelOld::getCommission(const int id) {
         StatementHandler *stmt = SQL->getStatement("getCommission");
         stmt->bind(1, id);
         stmt->step();
@@ -583,21 +583,21 @@ namespace Commissionator {
         return commission;
     }
 
-    void ComModel::insertPaymentMethod(const std::string name) {
+    void ComModelOld::insertPaymentMethod(const std::string name) {
         StatementHandler *stmt = SQL->getStatement("insertPaymentMethod");
         stmt->bind(1, name);
         stmt->step();
         stmt->reset();
     }
 
-    void ComModel::deletePaymentMethod(const int id) {
+    void ComModelOld::deletePaymentMethod(const int id) {
         StatementHandler *stmt = SQL->getStatement("deletePaymentMethod");
         stmt->bind(1, id);
         stmt->step();
         stmt->reset();
     }
 
-    void ComModel::setPaymentMethodName(const int id, const std::string name) {
+    void ComModelOld::setPaymentMethodName(const int id, const std::string name) {
         StatementHandler *stmt = SQL->getStatement("setPaymentMethodName");
         stmt->bind(1, name);
         stmt->bind(2, id);
@@ -606,7 +606,7 @@ namespace Commissionator {
     }
 
     const std::vector <const std::tuple<const int, const std::string> >
-        ComModel::getPaymentMethods() {
+        ComModelOld::getPaymentMethods() {
         std::vector<const std::tuple<const int, const std::string>> payments;
         StatementHandler *stmt = SQL->getStatement("getPaymentMethods");
         while (stmt->step()) {
@@ -618,7 +618,7 @@ namespace Commissionator {
         return payments;
     }
 
-    const std::string ComModel::getPaymentMethod(const int id) {
+    const std::string ComModelOld::getPaymentMethod(const int id) {
         StatementHandler *stmt = SQL->getStatement("getPaymentMethod");
         stmt->bind(1, id);
         stmt->step();
@@ -627,7 +627,7 @@ namespace Commissionator {
         return name;
     }
 
-    void ComModel::insertPayment(const int commissionerId, const int paymentMethodId,
+    void ComModelOld::insertPayment(const int commissionerId, const int paymentMethodId,
         const std::string date, const double amount, const std::string note) {
         StatementHandler *stmt = SQL->getStatement("insertPayment");
         stmt->bind(1, commissionerId);
@@ -639,7 +639,7 @@ namespace Commissionator {
         stmt->reset();
     }
 
-    void ComModel::insertPayment(const int commissionerId, 
+    void ComModelOld::insertPayment(const int commissionerId, 
         const int paymentMethodId, const std::string date, const double amount) {
         StatementHandler *stmt = SQL->getStatement("insertPayment");
         stmt->bind(1, commissionerId);
@@ -651,7 +651,7 @@ namespace Commissionator {
         stmt->reset();
     }
 
-    void ComModel::setPaymentMethod(const int paymentId, const int methodId) {
+    void ComModelOld::setPaymentMethod(const int paymentId, const int methodId) {
         StatementHandler *stmt = SQL->getStatement("setPaymentMethod");
         stmt->bind(1, methodId);
         stmt->bind(2, paymentId);
@@ -659,7 +659,7 @@ namespace Commissionator {
         stmt->reset();
     }
 
-    void ComModel::setPaymentDate(const int paymentId, const std::string date) {
+    void ComModelOld::setPaymentDate(const int paymentId, const std::string date) {
         StatementHandler *stmt = SQL->getStatement("setPaymentDate");
         stmt->bind(1, date);
         stmt->bind(2, paymentId);
@@ -667,7 +667,7 @@ namespace Commissionator {
         stmt->reset();
     }
 
-    void ComModel::setPaymentAmount(const int paymentId, const double amount) {
+    void ComModelOld::setPaymentAmount(const int paymentId, const double amount) {
         StatementHandler *stmt = SQL->getStatement("setPaymentAmount");
         stmt->bind(1,amount);
         stmt->bind(2, paymentId);
@@ -675,7 +675,7 @@ namespace Commissionator {
         stmt->reset();
     }
 
-    void ComModel::setPaymentCommissioner(const int paymentId, 
+    void ComModelOld::setPaymentCommissioner(const int paymentId, 
         const int commissionerId) {
         StatementHandler *stmt = SQL->getStatement("setPaymentCommissioner");
         stmt->bind(1, commissionerId);
@@ -686,7 +686,7 @@ namespace Commissionator {
 
     const std::vector <const std::tuple<const int, const int, const int,
         const std::string, const double, const std::string>>
-        ComModel::getPayments() {
+        ComModelOld::getPayments() {
         std::vector<const std::tuple<const int, const int, const int,
             const std::string, const double, const std::string >> payments;
         StatementHandler *stmt = SQL->getStatement("getPayments");
@@ -702,7 +702,7 @@ namespace Commissionator {
     }
 
     const std::tuple<const int, const int, const std::string, const double, 
-        const std::string> ComModel::getPaymentById(const int paymentId) {
+        const std::string> ComModelOld::getPaymentById(const int paymentId) {
         StatementHandler *stmt = SQL->getStatement("getPaymentById");
         stmt->bind(1, paymentId);
         stmt->step();
@@ -716,7 +716,7 @@ namespace Commissionator {
 
     const std::vector<const std::tuple<const int, const int,
         const std::string, const double, const std::string >>
-        ComModel::getPaymentsByCommissioner(const int commissionerId) {
+        ComModelOld::getPaymentsByCommissioner(const int commissionerId) {
         std::vector<const std::tuple<const int, const int,
             const std::string, const double, const std::string >> payments;
         StatementHandler *stmt = SQL->getStatement("getPaymentsByCommissioner");

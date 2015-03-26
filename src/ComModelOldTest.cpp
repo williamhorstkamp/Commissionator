@@ -1,4 +1,4 @@
-#include "ComModel.h"
+#include "ComModelOld.h"
 #include <iostream>
 #include "gtest/gtest.h"
 
@@ -9,7 +9,7 @@ using namespace Commissionator;
  */
 
 TEST(V1Test, close) {
-    ComModel *com = new ComModel();
+    ComModelOld *com = new ComModelOld();
     ASSERT_NO_THROW(com->close());
     ASSERT_THROW(com->insertContactType("test"), std::out_of_range);
 
@@ -17,7 +17,7 @@ TEST(V1Test, close) {
 }
 
 TEST(V1Test, saveOpen) {
-    ComModel *com = new ComModel();
+    ComModelOld *com = new ComModelOld();
     com->save("test.db3");
     com->close();
     ASSERT_THROW(com->save("test2.db3"), SQLiteException);  //can't save if db isnt open
@@ -28,7 +28,7 @@ TEST(V1Test, saveOpen) {
 }
 
 TEST(V1Test, getContactType) {
-    ComModel *com = new ComModel();
+    ComModelOld *com = new ComModelOld();
     com->insertContactType("testType");
     com->insertContactType("testType2");
 
@@ -44,7 +44,7 @@ TEST(V1Test, getContactType) {
 }
 
 TEST(V1Test, deleteContactType) {
-    ComModel *com = new ComModel();
+    ComModelOld *com = new ComModelOld();
     com->insertContactType("testContactType");
     EXPECT_EQ("testContactType", com->getContactType(1));
     com->deleteContactType(1);
@@ -55,7 +55,7 @@ TEST(V1Test, deleteContactType) {
 }
 
 TEST(V1Test, setContactTypeName) {
-    ComModel *com = new ComModel();
+    ComModelOld *com = new ComModelOld();
     com->insertContactType("testContactType");
     EXPECT_EQ("testContactType", com->getContactType(1));
     com->setContactTypeName(1, "testContactType1");
@@ -65,7 +65,7 @@ TEST(V1Test, setContactTypeName) {
 }
 
 TEST(V1Test, getCommissioners) {
-    ComModel *com = new ComModel();
+    ComModelOld *com = new ComModelOld();
     com->insertCommissioner("testCommissioner");
     com->insertCommissioner("testCommissioner2");
     com->insertCommissioner("testCommissioner3");
@@ -85,7 +85,7 @@ TEST(V1Test, getCommissioners) {
 }
 
 TEST(V1Test, deleteCommissioner) {
-    ComModel *com = new ComModel();
+    ComModelOld *com = new ComModelOld();
     com->insertCommissioner("testCommissioner");
     com->insertCommission(1, "01/01/2001", "05/05/2005");
     std::vector<const std::tuple<const int, const int, const std::string, const std::string, const std::string>> commissionList;
@@ -101,7 +101,7 @@ TEST(V1Test, deleteCommissioner) {
 }
 
 TEST(V1Test, setCommissionerName) {
-    ComModel *com = new ComModel();
+    ComModelOld *com = new ComModelOld();
     com->insertCommissioner("testCommissioner");
     EXPECT_EQ("testCommissioner", com->getCommissioner(1));
     com->setCommissionerName(1, "testCommissioner1");
@@ -111,7 +111,7 @@ TEST(V1Test, setCommissionerName) {
 }
 
 TEST(V1Test, getContact) {
-    ComModel *com = new ComModel();
+    ComModelOld *com = new ComModelOld();
     com->insertContactType("testType");
     com->insertCommissioner("testCommissioner");
     com->insertContact(1, 1, "testContact");
@@ -125,7 +125,7 @@ TEST(V1Test, getContact) {
 }
 
 TEST(V1Test, deleteContact){
-    ComModel *com = new ComModel();
+    ComModelOld *com = new ComModelOld();
     com->insertContactType("testType");
     com->insertCommissioner("testCommissioner");
     com->insertContact(1, 1, "testContact");
@@ -140,7 +140,7 @@ TEST(V1Test, deleteContact){
 }
 
 TEST(V1Test, setContactType) {
-    ComModel *com = new ComModel();
+    ComModelOld *com = new ComModelOld();
     com->insertContactType("testType");
     com->insertContactType("testType2");
     com->insertCommissioner("testCommissioner");
@@ -156,7 +156,7 @@ TEST(V1Test, setContactType) {
 }
 
 TEST(V1Test, setContactName) {
-    ComModel *com = new ComModel();
+    ComModelOld *com = new ComModelOld();
     com->insertContactType("testType");
     com->insertCommissioner("testCommissioner");
     com->insertContact(1, 1, "testContact");
@@ -171,7 +171,7 @@ TEST(V1Test, setContactName) {
 }
 
 TEST(V2Test, getProduct) {
-    ComModel *com = new ComModel();
+    ComModelOld *com = new ComModelOld();
     com->insertProduct("testProduct", 1.0);
     com->insertProduct("testProduct2", 2.0);
     std::vector<const std::tuple<const int, const std::string, const double>>proList;
@@ -189,7 +189,7 @@ TEST(V2Test, getProduct) {
 }
 
 TEST(V2Test, deleteProduct) {
-    ComModel *com = new ComModel();
+    ComModelOld *com = new ComModelOld();
     com->insertCommissioner("testCommissioner");
     com->insertProduct("testProduct", 1.0);
     com->insertCommission(1, "01/01/2001", "05/05/2005");
@@ -214,7 +214,7 @@ TEST(V2Test, deleteProduct) {
 }
 
 TEST(V2Test, setProductPrice) {
-    ComModel *com = new ComModel();
+    ComModelOld *com = new ComModelOld();
     com->insertProduct("testProduct", 1.0);
     com->setProductPrice(1, 2.0);
     std::tuple<const std::string, const double> product("testProduct", 2.0);
@@ -224,7 +224,7 @@ TEST(V2Test, setProductPrice) {
 }
 
 TEST(V2Test, setProductName) {
-    ComModel *com = new ComModel();
+    ComModelOld *com = new ComModelOld();
     com->insertProduct("testProduct", 1.0);
     com->setProductName(1, "testProduct1");
     std::tuple<const std::string, const double> product("testProduct1", 1.0);
@@ -234,7 +234,7 @@ TEST(V2Test, setProductName) {
 }
 
 TEST(V2Test, getCommission) {
-    ComModel *com = new ComModel();
+    ComModelOld *com = new ComModelOld();
     com->insertCommissioner("testCommissioner");
     com->insertCommission(1, "01/01/2001", "05/05/2005");
     std::vector<const std::tuple<const int, const int, const std::string, const std::string, const std::string>> comList;
@@ -248,7 +248,7 @@ TEST(V2Test, getCommission) {
 }
 
 TEST(V2Test, deleteCommission) {
-    ComModel *com = new ComModel();
+    ComModelOld *com = new ComModelOld();
     com->insertCommissioner("testCommissioner");
     com->insertCommission(1, "01/01/2001", "05/05/2005");
     com->deleteCommission(1);
@@ -259,7 +259,7 @@ TEST(V2Test, deleteCommission) {
 }
 
 TEST(V2Test, setCommissionDueDate) {
-    ComModel *com = new ComModel();
+    ComModelOld *com = new ComModelOld();
     com->insertCommissioner("testCommissioner");
     com->insertCommission(1, "01/01/2001", "05/05/2005");
     com->setCommissionDueDate(1, "06/06/2006");
@@ -270,7 +270,7 @@ TEST(V2Test, setCommissionDueDate) {
 }
 
 TEST(V2Test, setCommissionPaidDate) {
-    ComModel *com = new ComModel();
+    ComModelOld *com = new ComModelOld();
     com->insertCommissioner("testCommissioner");
     com->insertCommission(1, "01/01/2001", "05/05/2005");
     com->setCommissionPaidDate(1, "05/05/2005");
@@ -281,7 +281,7 @@ TEST(V2Test, setCommissionPaidDate) {
 }
 
 TEST(V2Test, getPieces) {
-    ComModel *com = new ComModel();
+    ComModelOld *com = new ComModelOld();
     com->insertCommissioner("testCommissioner");
     com->insertProduct("testProduct", 1.0);
     com->insertProduct("testProduct2", 2.0);
@@ -300,7 +300,7 @@ TEST(V2Test, getPieces) {
 }
 
 TEST(V2Test, searchPieces) {
-    ComModel *com = new ComModel();
+    ComModelOld *com = new ComModelOld();
     com->insertCommissioner("testCommissioner");
     com->insertProduct("testProduct", 1.0);
     com->insertProduct("testProduct2", 2.0);
@@ -317,7 +317,7 @@ TEST(V2Test, searchPieces) {
 }
 
 TEST(V2Test, deletePiece){
-    ComModel *com = new ComModel();
+    ComModelOld *com = new ComModelOld();
     com->insertCommissioner("testCommissioner");
     com->insertProduct("testProduct", 1.0);
     com->insertCommission(1, "01/01/2001", "05/05/2005");
@@ -333,7 +333,7 @@ TEST(V2Test, deletePiece){
 }
 
 TEST(V2Test, deletePieceByCommission){
-    ComModel *com = new ComModel();
+    ComModelOld *com = new ComModelOld();
     com->insertCommissioner("testCommissioner");
     com->insertProduct("testProduct", 1.0);
     com->insertCommission(1, "01/01/2001", "05/05/2005");
@@ -349,7 +349,7 @@ TEST(V2Test, deletePieceByCommission){
 }
 
 TEST(V2Test, setPieceDescription) {
-    ComModel *com = new ComModel();
+    ComModelOld *com = new ComModelOld();
     com->insertCommissioner("testCommissioner");
     com->insertProduct("testProduct", 1.0);
     com->insertCommission(1, "01/01/2001", "05/05/2005");
@@ -367,7 +367,7 @@ TEST(V2Test, setPieceDescription) {
 }
 
 TEST(V3Test, getPaymentMethods) {
-    ComModel *com = new ComModel();
+    ComModelOld *com = new ComModelOld();
     com->insertPaymentMethod("testPaymentMethod");
     com->insertPaymentMethod("testPaymentMethod2");
     std::vector<const std::tuple<const int, const std::string>> methodList;
@@ -382,7 +382,7 @@ TEST(V3Test, getPaymentMethods) {
 }
 
 TEST(V3Test, deletePaymentMethod) {
-    ComModel *com = new ComModel();
+    ComModelOld *com = new ComModelOld();
     com->insertPaymentMethod("testPaymentMethod");
     std::vector<const std::tuple<const int, const std::string>> methodList;
     methodList.push_back(std::tuple<const int, const std::string>(1, "testPaymentMethod"));
@@ -395,7 +395,7 @@ TEST(V3Test, deletePaymentMethod) {
 }
 
 TEST(V3Test, setPaymentMethodName) {
-    ComModel *com = new ComModel();
+    ComModelOld *com = new ComModelOld();
     com->insertPaymentMethod("testPaymentMethod");
     std::vector<const std::tuple<const int, const std::string>> methodList;
     methodList.push_back(std::tuple<const int, const std::string>(1, "testPaymentMethod"));
@@ -410,7 +410,7 @@ TEST(V3Test, setPaymentMethodName) {
 }
 
 TEST(V3Test, getPayments) {
-    ComModel *com = new ComModel();
+    ComModelOld *com = new ComModelOld();
     com->insertPaymentMethod("testPaymentMethod");
     com->insertPaymentMethod("testPaymentMethod2");
     com->insertCommissioner("testCommissioner");
@@ -440,7 +440,7 @@ TEST(V3Test, getPayments) {
 }
 
 TEST(V3Test, setPaymentMethod) {
-    ComModel *com = new ComModel();
+    ComModelOld *com = new ComModelOld();
     com->insertPaymentMethod("testPaymentMethod");
     com->insertPaymentMethod("testPaymentMethod2");
     com->insertCommissioner("testCommissioner");
@@ -463,7 +463,7 @@ TEST(V3Test, setPaymentMethod) {
 }
 
 TEST(V3Test, setPaymentDate) {
-    ComModel *com = new ComModel();
+    ComModelOld *com = new ComModelOld();
     com->insertPaymentMethod("testPaymentMethod");
     com->insertCommissioner("testCommissioner");
     com->insertPayment(1, 1, "01/01/2001", 10);
@@ -485,7 +485,7 @@ TEST(V3Test, setPaymentDate) {
 }
 
 TEST(V3Test, setPaymentAmount) {
-    ComModel *com = new ComModel();
+    ComModelOld *com = new ComModelOld();
     com->insertPaymentMethod("testPaymentMethod");
     com->insertCommissioner("testCommissioner");
     com->insertPayment(1, 1, "01/01/2001", 10);
@@ -507,7 +507,7 @@ TEST(V3Test, setPaymentAmount) {
 }
 
 TEST(V3Test, setPaymentCommissioner) {
-    ComModel *com = new ComModel();
+    ComModelOld *com = new ComModelOld();
     com->insertPaymentMethod("testPaymentMethod");
     com->insertCommissioner("testCommissioner");
     com->insertCommissioner("testCommissioner2");
@@ -530,7 +530,7 @@ TEST(V3Test, setPaymentCommissioner) {
 }
 
 TEST(V3Test, getPaymentsByCommissioner) {
-    ComModel *com = new ComModel();
+    ComModelOld *com = new ComModelOld();
     com->insertPaymentMethod("testPaymentMethod");
     com->insertPaymentMethod("testPaymentMethod2");
     com->insertCommissioner("testCommissioner");
