@@ -16,6 +16,10 @@ namespace Commissionator{
         Q_OBJECT
 
     public:
+        ComModel(QObject *parent = 0);
+
+        ~ComModel();
+
         /**
          *  Function returns a pointer to a model containing data for the
          *  commission table to be displayed on the commission panel.
@@ -69,7 +73,7 @@ namespace Commissionator{
          *  Display order:
          *  Index, Payment Type
          */
-        QSqlQueryModel *getPaymentType();
+        QSqlQueryModel *getPaymentTypes();
 
         /**
          *  Function returns a pointer to a model containing data for the
@@ -100,7 +104,7 @@ namespace Commissionator{
          *  @return - pointer to QDataWidgetMapper containing data about the
          *      commission
          *  Data order:
-         *  Name, Create Date, Paid Date, Due Date, Money Owed
+         *  Commissioner Name, Create Date, Paid Date, Due Date, Money Owed
          */
         QDataWidgetMapper *getCommission();
 
@@ -263,6 +267,8 @@ namespace Commissionator{
         QSqlQueryModel *getSalePiecesSold();
 
     public slots:
+
+        void newRecord();
 
         /**
          *  Opens the SQLite database at the given filename.
@@ -516,7 +522,7 @@ namespace Commissionator{
          *  @param productName - name of the product
          *  @param basePrice - base price of the product without options
          */
-        void insertProduct(const QString productName, const QString basePrice);
+        void insertProduct(const QString productName, const double basePrice);
 
         /**
          *  Inserts product option type into the database.
@@ -536,8 +542,8 @@ namespace Commissionator{
          *  @param startDate - starting date of the sale
          *  @param endDate - ending date of the sale
          */
-        void insertSale(const QString name, const QString startDate, 
-            const QString endDate);
+        void insertSale(const QString name, const QDate startDate, 
+            const QDate endDate);
 
         /**
          *  Inserts deal into the database.
@@ -564,26 +570,26 @@ namespace Commissionator{
          *  @param product - what type of product the piece is
          *  @param description - description of the piece
          */
-        void insertPiece(const QString commission, const QString product,
+        void insertPiece(const int commission, const int product,
             const QString description);
 
         /**
          *  Inserts payment into the database.
          *
-         *  @param commission - commission the payment is for
-         *  @param paymentType - type of payment that is being made
-         *  @param payment - the amount the payment is made for
+         *  @param commissionId - commission the payment is for
+         *  @param paymentTypeId - type of payment that is being made
+         *  @param paymentAmount - the amount the payment is made for
          */
-        void insertPayment(const QString commission, const QString paymentType,
-            const QString payment);
+        void insertPayment(const int commissionId, const int paymentTypeId,
+            const double paymentAmount);
 
         /**
          *  Inserts commission into the database.
          *
-         *  @param commissioner - name of commissioner of the commission
+         *  @param commissionerId - id of commissioner of the commission
          *  @param dueDate - due date of the commission
          */
-        void insertCommission(const QString commissioner, const QString dueDate);
+        void insertCommission(const int commissionerId, const QDate dueDate);
 
         /**
          *  Inserts payment into the database.
