@@ -196,7 +196,7 @@ namespace Commissionator{
          *
          *  @return - pointer to QSqlQueryModel containing commissioner commissions
          *  Display order:
-         *  Payment Method, Date, Amount, Notes
+         *  Create Date, Paid Date, Cost, Finish Date
          */
         QSqlQueryModel *getCommissionerCommissions();
 
@@ -493,12 +493,12 @@ namespace Commissionator{
         /**
          *  Inserts contact into the database.
          *
-         *  @param commissionerName - name of commissioner the contact is for
+         *  @param commissionerId - id of commissioner the contact is for
          *  @param contactType - type of contact
          *  @param contactEntry - the entry for this contact
          */
-        void insertContact(const QString commissionerName, 
-            const QString contactType, const QString contactEntry);
+        void insertContact(const int commissionerId, 
+            const int contactType, const QString contactEntry);
 
         /**
          *  Inserts contact type into the database.
@@ -568,10 +568,11 @@ namespace Commissionator{
          *
          *  @param commission - commission the piece belongs to
          *  @param product - what type of product the piece is
+         *  @param name - the name of the piece
          *  @param description - description of the piece
          */
         void insertPiece(const int commission, const int product,
-            const QString description);
+            const QString name, const QString description);
 
         /**
          *  Inserts payment into the database.
@@ -579,9 +580,10 @@ namespace Commissionator{
          *  @param commissionId - commission the payment is for
          *  @param paymentTypeId - type of payment that is being made
          *  @param paymentAmount - the amount the payment is made for
+         *  @param paymentNotes - notes about the payment
          */
         void insertPayment(const int commissionId, const int paymentTypeId,
-            const double paymentAmount);
+            const double paymentAmount, const QString paymentNotes);
 
         /**
          *  Inserts commission into the database.

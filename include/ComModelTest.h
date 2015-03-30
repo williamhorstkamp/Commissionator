@@ -17,13 +17,13 @@ namespace Commissionator {
         void init();
 
         //void commissionsTest();
-        //void commissionersTest();
+        void commissionersTest();
         //void piecesTest();
         //void productsTest();
         //void salesTest();
 
         //void commissionTest();
-        //void commissionerTest();
+        void commissionerTest();
         //void pieceTest();
         //void productTest();
         //void saleTest();
@@ -32,14 +32,12 @@ namespace Commissionator {
         //void commissionPaymentsTest();
         //void commissionNotesTest();
 
-        //void commissionerContactsTest();
-        //void commissionerCommissionsTest();
-        //void commissionerNotesTest();
+        void commissionerContactsTest();
+       void commissionerCommissionsTest();
 
         //void pieceEventsTest();
         //void pieceReferencesTest();
         //void pieceEventDatesTest();
-        //void pieceDescriptionTest();
 
         //void productOptionsTest();
         //void productPiecesSoldTest();
@@ -48,17 +46,18 @@ namespace Commissionator {
         //void saleDealsTest();
         //void salePiecesSoldTest();
 
-        void insertCommissioner();
-        //void insertContactTest();
+        void insertCommissionerTest();
+        void insertContactTest();
         //void insertPieceReferenceTest();
-        void insertProduct();
-        //void insertProductOption();
-        //void insertSale();
-        //void insertDeal();
-        void insertPiece();
-        void insertPayment();
-        void insertCommission();
-        void insertPaymentType();
+        void insertProductTest();
+        //void insertProductOptionTest();
+        //void insertSaleTest();
+        //void insertDealTest();
+        void insertPieceTest();
+        void insertPaymentTest();
+        void insertCommissionTest();
+        void insertPaymentTypeTest();
+        void insertContactTypeTest();
 
         void cleanup();
         void cleanupTestCase();
