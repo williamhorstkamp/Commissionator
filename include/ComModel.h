@@ -84,7 +84,7 @@ namespace Commissionator{
          *  Display order:
          *  Index, Name, Start Date, End Date
          */
-        QSqlQueryModel *getSales();
+        //QSqlQueryModel *getSales();
 
         /**
          *  Function returns a pointer to a model containing data for the
@@ -106,7 +106,7 @@ namespace Commissionator{
          *  Data order:
          *  Commissioner Name, Create Date, Paid Date, Due Date, Money Owed
          */
-        QDataWidgetMapper *getCommission();
+        //QDataWidgetMapper *getCommission();
 
         /**
          *  Function returns a QDataWidgetMapper that can be connected to
@@ -142,7 +142,7 @@ namespace Commissionator{
          *  Data order:
          *  Name, Number Produced, Base Price
          */
-        QDataWidgetMapper *getProduct();
+        //QDataWidgetMapper *getProduct();
 
         /**
          *  Function returns a QDataWidgetMapper that can be connected to
@@ -154,7 +154,7 @@ namespace Commissionator{
          *  Data order:
          *  Sale Name, Start Date, End Date, Description
          */
-        QDataWidgetMapper *getSale();
+        //QDataWidgetMapper *getSale();
 
         /**
          *  Function returns a pointer to a model containing data for the
@@ -165,7 +165,7 @@ namespace Commissionator{
          *  Display order:
          *  Product, Name, Price, Sale, Start Date, Finish Date
          */
-        QSqlQueryModel *getCommissionPieces();
+        //QSqlQueryModel *getCommissionPieces();
 
         /**
          *  Function returns a pointer to a model containing data for the
@@ -209,7 +209,7 @@ namespace Commissionator{
          *  Display order:
          *  Event Name, Start Date, End Date
          */
-        QSqlTableModel *getPieceEvents();
+        //QSqlTableModel *getPieceEvents();
 
         /**
          *  Function returns a pointer to a model containing data for the
@@ -220,7 +220,7 @@ namespace Commissionator{
          *  Display order:
          *  Reference
          */
-        QSqlQueryModel *getPieceReferences();
+        //QSqlQueryModel *getPieceReferences();
 
         /**
          *  Function returns a pointer to a model containing data for the
@@ -231,7 +231,7 @@ namespace Commissionator{
          *  Display order:
          *  Name, Price, Is Numeric
          */
-        QSqlTableModel *getProductOptions();
+        //QSqlTableModel *getProductOptions();
 
         /**
          *  Function returns a pointer to a model containing data for the
@@ -242,7 +242,7 @@ namespace Commissionator{
          *  Display order:
          *  Commissioner, Piece Name, Start Date, Finish Date
          */
-        QSqlQueryModel *getProductPiecesSold();
+        //QSqlQueryModel *getProductPiecesSold();
 
         /**
          *  Function returns a pointer to a model containing data for the
@@ -253,7 +253,7 @@ namespace Commissionator{
          *  Display order:
          *  Deal, Num Bought
          */
-        QSqlQueryModel *getSaleDeals();
+        //QSqlQueryModel *getSaleDeals();
 
         /**
          *  Function returns a pointer to a model containing data for the
@@ -264,10 +264,14 @@ namespace Commissionator{
          *  Display order:
          *  Commissioner, Piece Name, Start Date, Finish Date
          */
-        QSqlQueryModel *getSalePiecesSold();
+        //QSqlQueryModel *getSalePiecesSold();
 
     public slots:
 
+        /**
+         *  Opens a new SQLite database in memory, including building the
+         *  schema and preparing queries. 
+         */
         void newRecord();
 
         /**
@@ -275,19 +279,19 @@ namespace Commissionator{
          *
          *  @param fileName - fileName to open
          */
-        void open(QString fileName);
+        //void open(QString fileName);
 
         /**
          *  Closes the open database
          */
-        void close();
+        //void close();
         
         /**
          *  Saves the currently open database to the file at the given filename.
          *
          *  @param fileName - the filename and location to save the file to
          */
-        void save(QString fileName);
+        //void save(QString fileName);
 
         /**
          *  Slot limits the results of getCommissions() based on the inputs
@@ -300,11 +304,11 @@ namespace Commissionator{
          *  @Param numberOfPieces - how many pieces were in the commission
          *  @param finishDate - finish date to search for
          */
-        void searchCommissions(const QString commissioner, 
+        /**void searchCommissions(const QString commissioner, 
             const QString createDate, const QString paidDate,
             const QString dueDate, const QString numberOfPieces,
             const QString finishDate);
-
+*/
         /**
          *  Slot limits the results of getCommissioners() based on the inputs
          *  given in the searchQuery.
@@ -314,8 +318,8 @@ namespace Commissionator{
          *      finished
          *  @param balance - how much money they owe total
          */
-        void searchCommissioners(const QString name, const QString dateOldest, 
-            const QString balance);
+        //void searchCommissioners(const QString name, const QString dateOldest, 
+        //    const QString balance);
 
         /**
          *  Slot limits the results of getPieces() based on the inputs
@@ -326,10 +330,10 @@ namespace Commissionator{
          *  @Param startDate - the date the piece was started
          *  @Param finishDate - the date the piece was finished
          */
-        void searchPieces(const QString commissionerName,
+      /**  void searchPieces(const QString commissionerName,
             const QString pieceName, const QString startDate,
             const QString finishDate);
-
+            */
         /**
          *  Slot limits the results of getProducts() based on the inputs
          *  given in the searchQuery.
@@ -339,8 +343,8 @@ namespace Commissionator{
          *  @param numberOfPieces - the number of pieces of this product
          *      that have been commissioned
          */
-        void searchProducts(const QString name, const QString basePrice,
-            const QString numberOfPieces);
+        //void searchProducts(const QString name, const QString basePrice,
+            //const QString numberOfPieces);
 
         /**
          *  Slot limits the results of getSales() based on the inputs
@@ -350,8 +354,8 @@ namespace Commissionator{
          *  @param startDate - starting date of the sale
          *  @param endDate - ending date of the sale
          */
-        void searchSales(const QString name, const QString startDate,
-            const QString endDate);
+        //void searchSales(const QString name, const QString startDate,
+            //const QString endDate);
 
         /**
          *  Slot sets a number of models relating to the commission panel to
@@ -383,7 +387,7 @@ namespace Commissionator{
          *
          *  @param index - index containing the product to set the models to
          */
-        void setProduct(const QModelIndex &index);
+        //void setProduct(const QModelIndex &index);
 
         /**
          *  Slot sets a number of models relating to the sale panel to
@@ -391,35 +395,35 @@ namespace Commissionator{
          *
          *  @param index - index containing the sale to set the models to
          */
-        void setSale(const QModelIndex &index);
+        //void setSale(const QModelIndex &index);
 
         /**
          *  Deletes the commissioner at the given index.
          *
          *  @param index - index from the Commissioner table to delete
          */
-        void deleteCommissioner(const QModelIndex &index);
+        //void deleteCommissioner(const QModelIndex &index);
 
         /**
          *  Deletes the contact at the given index.
          *
          *  @param index - index from the Contact table to delete
          */
-        void deleteContact(const QModelIndex &index);
+        //void deleteContact(const QModelIndex &index);
 
         /**
          *  Deletes the contact type at the given index.
          *
          *  @param index - index from the Contact Type table to delete
          */
-        void deleteContactType(const QModelIndex &index);
+        //void deleteContactType(const QModelIndex &index);
 
         /**
          *  Deletes the piece reference at the given index.
          *
          *  @param index - index from the reference table to delete
          */
-        void deletePieceReference(const QModelIndex &index);
+        //void deletePieceReference(const QModelIndex &index);
 
         /**
          *  Deletes the product at the given index. Product is hidden, not
@@ -427,7 +431,7 @@ namespace Commissionator{
          *
          *  @param index - index from the product table to delete
          */
-        void deleteProduct(const QModelIndex &index);
+        //void deleteProduct(const QModelIndex &index);
 
         /**
          *  Deletes the product option at the given index. Option is hidden, not
@@ -435,35 +439,35 @@ namespace Commissionator{
          *
          *  @param index - index from the product option table to delete
          */
-        void deleteProductOption(const QModelIndex &index);
+        //void deleteProductOption(const QModelIndex &index);
 
         /**
          *  Deletes the sale at the given index.
          *
          *  @param index - index from the sale table to delete
          */
-        void deleteSale(const QModelIndex &index);
+        //void deleteSale(const QModelIndex &index);
 
         /**
          *  Deletes the deal at the given index.
          *
          *  @param index - index from the sale deal table to delete
          */
-        void deleteDeal(const QModelIndex &index);
+        //void deleteDeal(const QModelIndex &index);
 
         /**
          *  Deletes the piece at the given index.
          *
          *  @param index - index from the piece table to delete
          */
-        void deletePiece(const QModelIndex &index);
+        //void deletePiece(const QModelIndex &index);
 
         /**
          *  Deletes the payment at the given index.
          *
          *  @param index - index from the payment table to delete
          */
-        void deletePayment(const QModelIndex &index);
+        //void deletePayment(const QModelIndex &index);
 
         /**
          *  Deletes the commission at the given index. Pieces are reassigned
@@ -471,7 +475,7 @@ namespace Commissionator{
          *
          *  @param index - index from the commission table to delete
          */
-        void deleteCommission(const QModelIndex &index);
+        //void deleteCommission(const QModelIndex &index);
 
         /**
          *  Deletes the payment type at the given index. Payment type is hidden,
@@ -479,7 +483,7 @@ namespace Commissionator{
          *
          *  @param index - index from the sale table to delete
          */
-        void deletePaymentType(const QModelIndex &index);
+        //void deletePaymentType(const QModelIndex &index);
 
         /**
          *  Inserts commissioner into the database.
@@ -513,8 +517,8 @@ namespace Commissionator{
          *  @param piece - piece the reference is for
          *  @param reference - reference to be bound
          */
-        void insertPieceReference(const QString piece, 
-            const QString reference);
+        //void insertPieceReference(const QString piece, 
+        //    const QString reference);
 
         /**
          *  Inserts product into the database.
@@ -532,8 +536,8 @@ namespace Commissionator{
          *  @param optionPrice - cost of the option
          *  @param isNumeric - whether the price is a numeric value or a boolean
          */
-        void insertProductOption(const QString product, const QString option,
-            const QString optionPrice, bool isNumeric);
+        //void insertProductOption(const QString product, const QString option,
+            //const QString optionPrice, bool isNumeric);
 
         /**
          *  Inserts sale into the database.
@@ -542,8 +546,8 @@ namespace Commissionator{
          *  @param startDate - starting date of the sale
          *  @param endDate - ending date of the sale
          */
-        void insertSale(const QString name, const QDate startDate, 
-            const QDate endDate);
+        //void insertSale(const QString name, const QDate startDate, 
+            //const QDate endDate);
 
         /**
          *  Inserts deal into the database.
@@ -560,8 +564,8 @@ namespace Commissionator{
          *  @param product2 - the product you get with the deal
          *  @param scalar2 - the amount you pay for the second product
          */
-        void insertDeal(const QString dealName, int count1, QString product1, 
-            double scalar1, int count2, QString product2, double scalar2);
+        //void insertDeal(const QString dealName, int count1, QString product1, 
+            //double scalar1, int count2, QString product2, double scalar2);
 
         /**
          *  Inserts piece into the database.
@@ -613,7 +617,7 @@ namespace Commissionator{
         */
         void prepare();
 
-        QSqlDatabase sql;
+        QSqlDatabase *sql;
         QSqlQueryModel *commissionsModel;
         QSqlQueryModel *commissionersModel;
         QSqlQueryModel *piecesModel;
