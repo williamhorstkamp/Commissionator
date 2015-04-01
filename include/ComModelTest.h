@@ -59,6 +59,11 @@ namespace Commissionator {
         void insertPaymentTypeTest();
         void insertContactTypeTest();
 
+        void searchCommissionsTest();
+        void searchCommissionersTest();
+        void searchProductsTest();
+        void searchPiecesTest();
+
         void cleanup();
         void cleanupTestCase();
     };

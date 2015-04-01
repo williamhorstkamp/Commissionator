@@ -304,11 +304,11 @@ namespace Commissionator{
          *  @Param numberOfPieces - how many pieces were in the commission
          *  @param finishDate - finish date to search for
          */
-        /**void searchCommissions(const QString commissioner, 
+        void searchCommissions(const QString commissioner, 
             const QString createDate, const QString paidDate,
             const QString dueDate, const QString numberOfPieces,
             const QString finishDate);
-*/
+
         /**
          *  Slot limits the results of getCommissioners() based on the inputs
          *  given in the searchQuery.
@@ -318,8 +318,8 @@ namespace Commissionator{
          *      finished
          *  @param balance - how much money they owe total
          */
-        //void searchCommissioners(const QString name, const QString dateOldest, 
-        //    const QString balance);
+        void searchCommissioners(const QString name, const QString dateOldest, 
+            const QString balance);
 
         /**
          *  Slot limits the results of getPieces() based on the inputs
@@ -330,10 +330,10 @@ namespace Commissionator{
          *  @Param startDate - the date the piece was started
          *  @Param finishDate - the date the piece was finished
          */
-      /**  void searchPieces(const QString commissionerName,
+        void searchPieces(const QString commissionerName,
             const QString pieceName, const QString startDate,
             const QString finishDate);
-            */
+            
         /**
          *  Slot limits the results of getProducts() based on the inputs
          *  given in the searchQuery.
@@ -343,8 +343,8 @@ namespace Commissionator{
          *  @param numberOfPieces - the number of pieces of this product
          *      that have been commissioned
          */
-        //void searchProducts(const QString name, const QString basePrice,
-            //const QString numberOfPieces);
+        void searchProducts(const QString name, const QString basePrice,
+            const QString numberOfPieces);
 
         /**
          *  Slot limits the results of getSales() based on the inputs
@@ -529,6 +529,14 @@ namespace Commissionator{
         void insertProduct(const QString productName, const double basePrice);
 
         /**
+         *  Inserts new product price into database.
+         *
+         *  @param productId - id of the product
+         *  @param basePrice - base price of the product without options
+         */
+        void insertProductPrice(const int productId, const double basePrice);
+
+        /**
          *  Inserts product option type into the database.
          *
          *  @param product - product the option is for
@@ -619,30 +627,10 @@ namespace Commissionator{
 
         QSqlDatabase *sql;
         QSqlQueryModel *commissionsModel;
-        QSqlQueryModel *commissionersModel;
-        QSqlQueryModel *piecesModel;
-        QSqlQueryModel *productsModel;
-        QSqlQueryModel *salesModel;
-
-        QDataWidgetMapper *commissionModel;
-        QDataWidgetMapper *commissionModel;
-        QDataWidgetMapper *pieceModel;
-        QDataWidgetMapper *productModel;
-        QDataWidgetMapper *saleModel;
-
-        QSqlQueryModel *commissionPiecesModel;
-        QSqlQueryModel *commissionPaymentsModel;
-
-        QSqlQueryModel *commissionerContactsModel;
-        QSqlQueryModel *commissionerCommissionsModel;
-
-        QSqlQueryModel *pieceEventsModel;
-        QSqlQueryModel *pieceReferencesModel;
-
-        QSqlTableModel *productOptionsModel;
-        QSqlQueryModel *productPiecesSoldModel;
-
-        QSqlQueryModel *saleDealsModel;
-        QSqlQueryModel *salePiecesSoldModel;
+        QSqlQuery *insertCommissionerQuery;
+        QSqlQuery *insertCommissionQuery;
+        QSqlQuery *insertProductQuery;
+        QSqlQuery *insertProductPriceQuery;
+        QSqlQuery *insertPieceQuery;
     };
 }
