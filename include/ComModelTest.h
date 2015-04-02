@@ -1,18 +1,20 @@
 #ifndef COMMODELTEST_H
 #define COMMODELTEST_H
 
-#include <QtTest/QtTest>
+#include <QtTest>
+#include <QWidget>
 #include "ComModel.h"
 
 namespace Commissionator {
     class ComModelTest : public QObject {
 
         Q_OBJECT
-
+            
     private:
         ComModel *com;
 
     private slots:
+    
         void initTestCase();
         void init();
 
@@ -33,7 +35,7 @@ namespace Commissionator {
         //void commissionNotesTest();
 
         void commissionerContactsTest();
-       void commissionerCommissionsTest();
+        void commissionerCommissionsTest();
 
         //void pieceEventsTest();
         //void pieceReferencesTest();
@@ -59,13 +61,14 @@ namespace Commissionator {
         void insertPaymentTypeTest();
         void insertContactTypeTest();
 
-        void searchCommissionsTest();
-        void searchCommissionersTest();
-        void searchProductsTest();
-        void searchPiecesTest();
+        //void searchCommissionsTest();
+        //void searchCommissionersTest();
+        //void searchProductsTest();
+        //void searchPiecesTest();
 
         void cleanup();
         void cleanupTestCase();
+        
     };
 }
 

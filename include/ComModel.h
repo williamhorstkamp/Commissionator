@@ -1,9 +1,12 @@
+#ifndef COMMODEL_H
+#define COMMODEL_H
 #include <QSqlDatabase>
 #include <QSqlQueryModel>
 #include <QSqlTableModel>
 #include <QDataWidgetMapper>
+#include <QDate>
 
-namespace Commissionator{
+namespace Commissionator {
 
     /**
      *  Class that manages the SQLite database through QSqlDatabase.
@@ -626,6 +629,7 @@ namespace Commissionator{
         void prepare();
 
         QSqlDatabase *sql;
+        QSqlQueryModel *commissionersModel;
         QSqlQueryModel *commissionsModel;
         QSqlQuery *insertCommissionerQuery;
         QSqlQuery *insertCommissionQuery;
@@ -634,3 +638,5 @@ namespace Commissionator{
         QSqlQuery *insertPieceQuery;
     };
 }
+
+#endif

@@ -16,9 +16,54 @@ namespace Commissionator {
         build();
         prepare();
     }
+    
+    QDataWidgetMapper *ComModel::getCommissioner() {
+
+    }
+
+    QSqlQueryModel *ComModel::getCommissionerCommissions() {
+
+    }
+
+    QSqlQueryModel *ComModel::getCommissionerContacts() {
+
+    }
+
+    QSqlQueryModel *ComModel::getCommissioners() {
+
+    }
+
+    QSqlQueryModel *ComModel::getCommissionPayments() {
+
+    }
 
     QSqlQueryModel *ComModel::getCommissions() {
         return commissionsModel;
+    }
+
+    QSqlQueryModel *ComModel::getContactTypes() {
+
+    }
+
+    QSqlQueryModel *ComModel::getPaymentTypes() {
+
+    }
+
+    QDataWidgetMapper *ComModel::getPiece() {
+
+    }
+
+    QSqlQueryModel *ComModel::getPieces() {
+
+    }
+
+    QSqlQueryModel *ComModel::getProducts() {
+
+    }
+
+    void ComModel::searchCommissioners(const QString name, const QString dateOldest,
+        const QString balance) {
+
     }
 
     void ComModel::searchCommissions(const QString commissioner,
@@ -35,12 +80,27 @@ namespace Commissionator {
         commissionsModel->setQuery(commissionsModel->query());
     }
 
-    void ComModel::insertCommissioner(const QString commissionerName,
-        const QString commissionerNotes) {
-        insertCommissionerQuery->bindValue(0, commissionerName);
-        insertCommissionerQuery->bindValue(1, commissionerNotes);
-        insertCommissionerQuery->exec();
-        searchCommissioners("", "", "");
+    void ComModel::searchPieces(const QString commissionerName,
+        const QString pieceName, const QString startDate,
+        const QString finishDate) {
+
+    }
+
+    void ComModel::searchProducts(const QString name, const QString basePrice,
+        const QString numberOfPieces) {
+
+    }
+
+    void ComModel::setCommission(const QModelIndex &index) {
+
+    }
+
+    void ComModel::setCommissioner(const QModelIndex &index) {
+
+    }
+
+    void ComModel::setPiece(const QModelIndex &index) {
+
     }
 
     void ComModel::insertCommission(const int commissionerId, 
@@ -52,6 +112,32 @@ namespace Commissionator {
         insertCommissionQuery->bindValue(3, "");
         insertCommissionQuery->exec();
         searchCommissions("", "", "", "", "", "");
+    }
+
+    void ComModel::insertCommissioner(const QString commissionerName,
+        const QString commissionerNotes) {
+        insertCommissionerQuery->bindValue(0, commissionerName);
+        insertCommissionerQuery->bindValue(1, commissionerNotes);
+        insertCommissionerQuery->exec();
+        searchCommissioners("", "", "");
+    }
+
+    void ComModel::insertContact(const int commissionerId,
+        const int contactType, const QString contactEntry) {
+
+    }
+
+    void ComModel::insertContactType(const QString contactTypeName) {
+
+    }
+
+    void ComModel::insertPayment(const int commissionId, const int paymentTypeId,
+        const double paymentAmount, const QString paymentNotes) {
+
+    }
+
+    void ComModel::insertPaymentType(const QString typeName) {
+
     }
 
     void ComModel::insertPiece(const int commission, const int product,
@@ -75,6 +161,10 @@ namespace Commissionator {
             QDate::currentDate().toString("MM/DD/yyyy"));
         insertProductPriceQuery->exec();
         searchProducts("", "", "");
+    }
+
+    void ComModel::insertProductPrice(const int productId, const double basePrice) {
+
     }
 
     void ComModel::build() {
@@ -169,16 +259,20 @@ namespace Commissionator {
     }
 
     void ComModel::prepare() {
+        commissionersModel = new QSqlQueryModel(this);
+        QSqlQuery commissionsQuery = QSqlQuery(""
+            );
         commissionsModel = new QSqlQueryModel(this);
         QSqlQuery commissionsQuery = QSqlQuery("SELECT Commission.id, "
             "Commissioner.name, Commission.createDate, Commission.paidDate, "
             "Commission.dueDate, COUNT(Piece.id), "
             "CASE WHEN min(Piece.finishDate) LIKE '0' THEN 'Unfinished' "
+            "WHEN min(Piece.finishDate IS NULL THEN 'No Pieces'"
             "ELSE MAX(Piece.finishDate) "
             "END "
             "FROM Commission INNER JOIN "
             "Commissioner ON Commission.Commissioner = Commissioner.id "
-            "INNER JOIN Piece ON Commission.id = Piece.commission "
+            "LEFT JOIN Piece ON Commission.id = Piece.commission "
             "WHERE Commissioner.name LIKE (?) AND "
             "Commission.createDate LIKE (?) AND "
             "Commission.paidDate LIKE (?) AND Commission.dueDate LIKE (?) "
@@ -199,5 +293,6 @@ namespace Commissionator {
         insertPieceQuery = new QSqlQuery("INSERT INTO "
             "Piece(commission, product, name, description, createDate, finishDate) "
             "VALUES(?, ?, ?, ?, ?, ?)");
+
     }
 }

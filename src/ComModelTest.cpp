@@ -1,6 +1,6 @@
 #include <QLabel>
+#include <QDate>
 #include <QLineEdit>
-#include "ComModel.h"
 #include "ComModelTest.h"
 
 namespace Commissionator {
@@ -14,6 +14,7 @@ namespace Commissionator {
      *  of the more basal features will hold the entire program up if they fail
      *  to function appropriately.
      */
+    
     void ComModelTest::initTestCase() {
         com = new ComModel(this);
     }
@@ -21,7 +22,7 @@ namespace Commissionator {
     void ComModelTest::init() {
         com->newRecord();
     }
-
+    
     void ComModelTest::insertCommissionerTest() {
         com->insertCommissioner("TestName", "");
         com->insertCommissioner("TestName2", "Test Notes");
@@ -32,7 +33,7 @@ namespace Commissionator {
         QVERIFY(coms->index(0, 3).data().toString() == "TestName2");
         QVERIFY(coms->index(1, 3).data().toString() == "Test Notes");
     }
-
+    
     void ComModelTest::insertProductTest() {
         com->insertProduct("TestName", 1.0);
         com->insertProduct("TestName2", 2.0);
@@ -68,7 +69,7 @@ namespace Commissionator {
         QAbstractItemModel *pieces = com->getPiece()->model();
         QVERIFY(pieces->index(0, 0).data().toString() == "TestCommissioner");
         QVERIFY(pieces->index(0, 1).data().toString() == "TestName");
-        QVERIFY(pieces->index(0, 2).data().toDate == QDate::currentDate());
+        QVERIFY(pieces->index(0, 2).data().toDate() == QDate::currentDate());
         QVERIFY(pieces->index(0, 4).data().toString() == "");
     }
 
@@ -103,7 +104,7 @@ namespace Commissionator {
         QVERIFY(contacts->index(0, 0).data().toString() == "TestContactType");
         QVERIFY(contacts->index(0, 1).data().toString() == "TestEntry");
     }
-
+    
     void ComModelTest::commissionersTest() {
         QAbstractItemModel *coms = com->getCommissioners();
         com->insertCommissioner("TestCommissioner", "");
@@ -128,7 +129,7 @@ namespace Commissionator {
         com->insertPayment(2, 1, 2.0, "");
         QVERIFY(coms->index(2, 3).data().toDouble() == 0.0);
     }
-
+    
     void ComModelTest::commissionerTest() {
         QDataWidgetMapper *coms = com->getCommissioner();
         com->insertCommissioner("TestCommissioner", "TestNotes");
@@ -144,17 +145,17 @@ namespace Commissionator {
         coms->addMapping(customerSince, 1);
         coms->addMapping(moneyOwed, 2);
         coms->addMapping(notes, 3);
-        QVERIFY(name->text == "TestCommissioner");
-        QVERIFY(customerSince->text == QDate::currentDate());
-        QVERIFY(moneyOwed->text == 1.0);
-        QVERIFY(notes->text == "TestNotes");
-        notes->text = "TestNotes2";
+        QVERIFY(name->text() == "TestCommissioner");
+        QVERIFY(customerSince->text() == QDate::currentDate().toString("MM/DD/yyyy"));
+        QVERIFY(moneyOwed->text().toDouble() == 1.0);
+        QVERIFY(notes->text() == "TestNotes");
+        notes->text() = "TestNotes2";
         QLabel *notes2 = new QLabel();
         coms->addMapping(notes2, 3);
-        QVERIFY(notes2->text == "TestNotes2");
+        QVERIFY(notes2->text() == "TestNotes2");
         com->insertPaymentType("TypeName");
         com->insertPayment(1, 1, 1.0, "");
-        QVERIFY(moneyOwed->text == 0.0);
+        QVERIFY(moneyOwed->text().toDouble() == 0.0);
         delete name;
         delete customerSince;
         delete moneyOwed;
@@ -211,9 +212,9 @@ namespace Commissionator {
         QDataWidgetMapper *mapper = com->getPiece();
         QLabel *label = new QLabel();
         mapper->addMapping(label, 3);
-        label->text == QDate::currentDate();
+        label->text() == QDate::currentDate().toString("MM/DD/yyyy");
         com->setPiece(com->getPieces()->index(1, 0));
-        label->text == QDate::currentDate();
+        label->text() == QDate::currentDate().toString("MM/DD/yyyy");
         QVERIFY(commissions->index(0, 3).data().toDate() == QDate::currentDate());
         QVERIFY(commissions->index(1, 3).data().toString() == "UnFinished");
     }
@@ -224,4 +225,5 @@ namespace Commissionator {
     void ComModelTest::cleanupTestCase(){
         delete com;
     }
+    
 }
