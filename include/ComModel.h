@@ -628,14 +628,23 @@ namespace Commissionator {
         */
         void prepare();
 
+        QVariant getValue(const QModelIndex &index, int column);
+
         QSqlDatabase *sql;
+        QDataWidgetMapper *commissionerMapper;
         QSqlQueryModel *commissionersModel;
         QSqlQueryModel *commissionsModel;
+        QSqlQueryModel *contactTypesModel;
         QSqlQuery *insertCommissionerQuery;
         QSqlQuery *insertCommissionQuery;
-        QSqlQuery *insertProductQuery;
-        QSqlQuery *insertProductPriceQuery;
+        QSqlQuery *insertContactQuery;
+        QSqlQuery *insertContactTypeQuery;
+        QSqlQuery *insertPaymentQuery;
+        QSqlQuery *insertPaymentTypeQuery;
         QSqlQuery *insertPieceQuery;
+        QSqlQuery *insertProductPriceQuery;
+        QSqlQuery *insertProductQuery;
+        QSqlQueryModel *paymentTypesModel;
     };
 }
 
