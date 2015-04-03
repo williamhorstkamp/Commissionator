@@ -4,7 +4,7 @@
 #include <QSqlQueryModel>
 #include <QSqlTableModel>
 #include <QDataWidgetMapper>
-#include <QDate>
+#include <QDateTime>
 
 namespace Commissionator {
 
@@ -557,8 +557,8 @@ namespace Commissionator {
          *  @param startDate - starting date of the sale
          *  @param endDate - ending date of the sale
          */
-        //void insertSale(const QString name, const QDate startDate, 
-            //const QDate endDate);
+        //void insertSale(const QString name, const QDateTime startDate, 
+            //const QDateTime endDate);
 
         /**
          *  Inserts deal into the database.
@@ -606,7 +606,7 @@ namespace Commissionator {
          *  @param commissionerId - id of commissioner of the commission
          *  @param dueDate - due date of the commission
          */
-        void insertCommission(const int commissionerId, const QDate dueDate);
+        void insertCommission(const int commissionerId, const QDateTime dueDate);
 
         /**
          *  Inserts payment into the database.
