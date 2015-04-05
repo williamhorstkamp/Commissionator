@@ -26,7 +26,7 @@ namespace Commissionator {
     }
 
     QSqlQueryModel *ComModel::getCommissionerContacts() {
-
+		return commissionerContactModel;
     }
 
     QSqlQueryModel *ComModel::getCommissioners() {
@@ -100,8 +100,16 @@ namespace Commissionator {
     }
 
     void ComModel::setCommissioner(const QModelIndex &index) {
-        qobject_cast<QSqlQueryModel *>(commissionerMapper->model())->query()
-            .bindValue(0, getValue(index, 0));
+        QSqlQuery *comQuery = qobject_cast<QSqlQueryModel *>
+            (commissionerMapper->model())->query();
+		comQuery->bindValue(0, getValue(index, 0));
+		comQuery->exec();
+		QSqlQuery *comComsQuery commissionerCommissionModel->query();
+		comComsQuery->bindValue(0, getValue(index, 0));
+		comComsQuery->exec();
+		QSqlQuery *conQuery = commissionerContactModel->query();
+		conQuery->bindValue(0, getValue(index, 0));
+		conQuery->exec();
     }
 
     void ComModel::setPiece(const QModelIndex &index) {
@@ -292,6 +300,26 @@ namespace Commissionator {
     }
 
     void ComModel::prepare() {
+		commissionerCommissionModel = new QSqlQueryModel(this);
+		commissionerCommissionModel->setQuery(QSqlQuery("SELECT createDate,"
+			" paidDate, SUM(price), finishDate FROM (SELECT datetime"
+			"(Commission.createDate, 'unixepoch', 'localtime') createDate, "
+			"datetime(Commission.paidDate, 'unixepoch', 'localtime' paidDate,)"
+			"ProductPrices.price price, datetime(max(Piece.finishDate),"
+			" 'unixepoch', 'localtime') finishDate"
+			"FROM Commission"
+            "INNER JOIN Piece ON Commission.id = Piece.commission"
+            "INNER JOIN ProductPrices ON Piece.product = ProductPrices.product"
+			"INNER JOIN Commissioner ON "
+			"Commission.commissioner = Commissioner.id"
+            "WHERE Commissioner.id = (?)"
+            "AND ProductPrices.date < Commission.createDate"
+            "GROUP BY Piece.id HAVING date = max(date))"));
+		commissionerContactModel = new QSqlQueryModel(this);
+		commissionerContactModel->setQuery(QSqlQuery("SELECT ContactType.type,"
+		"Contact.entry FROM Contact"
+		"INNER JOIN ContactType ON Contact.type = ContactType.id"
+		"WHERE Contact.commissioner = (?)"));
         commissionerMapper = new QDataWidgetMapper(this);
         QSqlQueryModel commissionerModel(this);
         commissionerMapper->setModel(&commissionerModel);

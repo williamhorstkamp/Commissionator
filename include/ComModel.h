@@ -631,8 +631,11 @@ namespace Commissionator {
         QVariant getValue(const QModelIndex &index, int column);
 
         QSqlDatabase *sql;
+		QSqlQueryModel *commissionerCommissionsModel;
+		QSqlQueryModel *commissionerContactModel;
         QDataWidgetMapper *commissionerMapper;
         QSqlQueryModel *commissionersModel;
+		QDataWidgetMapper *commissionMapper;
         QSqlQueryModel *commissionsModel;
         QSqlQueryModel *contactTypesModel;
         QSqlQuery *insertCommissionerQuery;
@@ -647,5 +650,4 @@ namespace Commissionator {
         QSqlQueryModel *paymentTypesModel;
     };
 }
-
 #endif
