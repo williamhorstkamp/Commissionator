@@ -632,10 +632,11 @@ namespace Commissionator {
 
         QSqlDatabase *sql;
 		QSqlQueryModel *commissionerCommissionsModel;
-		QSqlQueryModel *commissionerContactModel;
+		QSqlQueryModel *commissionerContactsModel;
         QDataWidgetMapper *commissionerMapper;
         QSqlQueryModel *commissionersModel;
 		QDataWidgetMapper *commissionMapper;
+		QSqlQueryModel *commissionPaymentsModel;
         QSqlQueryModel *commissionsModel;
         QSqlQueryModel *contactTypesModel;
         QSqlQuery *insertCommissionerQuery;

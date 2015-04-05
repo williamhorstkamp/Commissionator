@@ -22,11 +22,11 @@ namespace Commissionator {
     }
 
     QSqlQueryModel *ComModel::getCommissionerCommissions() {
-
+		return commissionerCommissionsModel;
     }
 
     QSqlQueryModel *ComModel::getCommissionerContacts() {
-		return commissionerContactModel;
+		return commissionerContactsModel;
     }
 
     QSqlQueryModel *ComModel::getCommissioners() {
@@ -34,7 +34,7 @@ namespace Commissionator {
     }
 
     QSqlQueryModel *ComModel::getCommissionPayments() {
-
+		return commissionPaymentsModel;
     }
 
     QSqlQueryModel *ComModel::getCommissions() {
@@ -96,7 +96,9 @@ namespace Commissionator {
     }
 
     void ComModel::setCommission(const QModelIndex &index) {
-
+		QSqlQuery *comPayQuery = commissionPaymentsModel->query();
+		comPayQuery->bindValue(0, getValue(index, 0));
+		comPayQuery->exec();
     }
 
     void ComModel::setCommissioner(const QModelIndex &index) {
@@ -104,10 +106,10 @@ namespace Commissionator {
             (commissionerMapper->model())->query();
 		comQuery->bindValue(0, getValue(index, 0));
 		comQuery->exec();
-		QSqlQuery *comComsQuery commissionerCommissionModel->query();
+		QSqlQuery *comComsQuery commissionerCommissionsModel->query();
 		comComsQuery->bindValue(0, getValue(index, 0));
 		comComsQuery->exec();
-		QSqlQuery *conQuery = commissionerContactModel->query();
+		QSqlQuery *conQuery = commissionerContactsModel->query();
 		conQuery->bindValue(0, getValue(index, 0));
 		conQuery->exec();
     }
@@ -300,8 +302,8 @@ namespace Commissionator {
     }
 
     void ComModel::prepare() {
-		commissionerCommissionModel = new QSqlQueryModel(this);
-		commissionerCommissionModel->setQuery(QSqlQuery("SELECT createDate,"
+		commissionerCommissionsModel = new QSqlQueryModel(this);
+		commissionerCommissionsModel->setQuery(QSqlQuery("SELECT createDate,"
 			" paidDate, SUM(price), finishDate FROM (SELECT datetime"
 			"(Commission.createDate, 'unixepoch', 'localtime') createDate, "
 			"datetime(Commission.paidDate, 'unixepoch', 'localtime' paidDate,)"
@@ -315,8 +317,8 @@ namespace Commissionator {
             "WHERE Commissioner.id = (?)"
             "AND ProductPrices.date < Commission.createDate"
             "GROUP BY Piece.id HAVING date = max(date))"));
-		commissionerContactModel = new QSqlQueryModel(this);
-		commissionerContactModel->setQuery(QSqlQuery("SELECT ContactType.type,"
+		commissionerContactsModel = new QSqlQueryModel(this);
+		commissionerContactsModel->setQuery(QSqlQuery("SELECT ContactType.type,"
 		"Contact.entry FROM Contact"
 		"INNER JOIN ContactType ON Contact.type = ContactType.id"
 		"WHERE Contact.commissioner = (?)"));
@@ -337,14 +339,26 @@ namespace Commissionator {
             "INNER JOIN Commissioner ON "
             "Commission.commissioner = Commissioner.id"
             "WHERE Commissioner.id = C.id) b) = 0 THEN 'Paid off'"
-            "HEN(SELECT SUM(a.price) FROM"
-            "SELECT ProductPrices.price price FROM Commission"
+            "WHEN(SELECT SUM(a.price) FROM"
+            "(SELECT ProductPrices.price price FROM Commission"
             "INNER JOIN Piece ON Commission.id = Piece.commission"
             "INNER JOIN ProductPrices ON Piece.product = ProductPrices.product"
             "WHERE Commission.commissioner = C.id"
             "AND ProductPrices.date < Commission.createDate"
             "GROUP BY Piece.id"
             "HAVING date = max(date)) a) IS NULL THEN 'No Commissioned Pieces'"
+			"WHEN(SELECT SUM(b.fee) FROM "
+            "(SELECT SUM(Payment.fee) fee FROM Payment"
+            "INNER JOIN Commission ON Payment.commission = Commission.id"
+            "INNER JOIN Commissioner ON "
+            "Commission.commissioner = Commissioner.id"
+            "WHERE Commissioner.id = C.id) b) IS NULL THEN (SELECT SUM(a.price) FROM"
+			"(SELECT ProductPrices.price price FROM Commission"
+            "INNER JOIN Piece ON Commission.id = Piece.commission"
+            "INNER JOIN ProductPrices ON Piece.product = ProductPrices.product"
+            "WHERE Commission.commissioner = C.id"
+            "AND ProductPrices.date < Commission.createDate"
+            "GROUP BY Piece.id HAVING date = max(date)) a)"
             "ELSE(SELECT SUM(a.price) - b.fee FROM"
             "(SELECT ProductPrices.price price FROM Commission"
             "INNER JOIN Piece ON Commission.id = Piece.commission"
@@ -362,7 +376,8 @@ namespace Commissionator {
             "LEFT JOIN Commission ON C.id = Commission.commissioner"
             "WHERE C.id = (?)"));
         commissionersModel = new QSqlQueryModel(this);
-        commissionersModel->setQuery(QSqlQuery("SELECT name,"
+        commissionersModel->setQuery(QSqlQuery(
+			"SELECT Commissioner.id, Commissioner.name, "
             "CASE WHEN max(Commission.createDate) IS NULL THEN 'No Commissions'"
             "ELSE datetime(max(Commission.createDate), 'unixepoch', 'localtime')"
             "END AS firstCommission,"
@@ -405,6 +420,12 @@ namespace Commissionator {
             "GROUP BY C.id HAVING firstCommission like (?)"
             "AND amountOwed like (?);"));
         searchCommissioners("", "", "");
+		commissionPaymentsModel = new QSqlQueryModel(this);
+		commissionsPaymentsModel->setQuery(QSqlQuery("SELECT PaymentType.name,"
+			"DATETIME(Payment.date, 'unixepoch', 'localtime'), Payment.fee, "
+			"Payment.note FROM Payment "
+			"INNER JOIN PaymentType ON Payment.method = PaymentType.id"
+			"WHERE Payment.commission = (?) "));
         commissionsModel = new QSqlQueryModel(this);
         commissionsModel->setQuery(QSqlQuery("SELECT Commission.id, "
             "Commissioner.name, Commission.createDate, Commission.paidDate, "
