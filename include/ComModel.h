@@ -649,6 +649,8 @@ namespace Commissionator {
         QSqlQuery *insertProductPriceQuery;
         QSqlQuery *insertProductQuery;
         QSqlQueryModel *paymentTypesModel;
+        QSqlQueryModel *piecesModel;
+        QSqlQueryModel *productsModel;
     };
 }
 #endif
