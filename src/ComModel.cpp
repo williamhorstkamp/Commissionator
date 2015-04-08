@@ -17,8 +17,12 @@ namespace Commissionator {
         prepare();
     }
     
-    QDataWidgetMapper *ComModel::getCommissioner() {
-        return commissionerMapper;
+    QDataWidgetMapper *ComModel::getCommissionerEditable() {
+        return commissionerEditableMapper;
+    }
+
+    QDataWidgetMapper *ComModel::getCommissionerGenerated() {
+        return commissionerGeneratedMapper;
     }
 
     QSqlQueryModel *ComModel::getCommissionerCommissions() {
@@ -49,8 +53,12 @@ namespace Commissionator {
         return paymentTypesModel;
     }
 
-    QDataWidgetMapper *ComModel::getPiece() {
+    QDataWidgetMapper *ComModel::getPieceEditable() {
+        return pieceEditableMapper;
+    }
 
+    QDataWidgetMapper *ComModel::getPieceGenerated() {
+        return pieceGeneratedMapper;
     }
 
     QSqlQueryModel *ComModel::getPieces() {
@@ -106,24 +114,33 @@ namespace Commissionator {
 
     void ComModel::setCommission(const QModelIndex &index) {
 		QSqlQuery *comPayQuery = &commissionPaymentsModel->query();
-		comPayQuery->bindValue(0, getValue(index, 0));
-		comPayQuery->exec();
+        commissionPaymentsModel->query().bindValue(0, getValue(index, 0));
+        commissionPaymentsModel->query().exec();
+        commissionPaymentsModel->setQuery(commissionPaymentsModel->query());
     }
 
     void ComModel::setCommissioner(const QModelIndex &index) {
-        QSqlQuery *comQuery = &qobject_cast<QSqlQueryModel *>(commissionerMapper->model())->query();
-		comQuery->bindValue(0, getValue(index, 0));
-		comQuery->exec();
-		QSqlQuery *comComsQuery = &commissionerCommissionsModel->query();
-		comComsQuery->bindValue(0, getValue(index, 0));
-		comComsQuery->exec();
-		QSqlQuery *conQuery = &commissionerContactsModel->query();
-		conQuery->bindValue(0, getValue(index, 0));
-		conQuery->exec();
+        QSqlQueryModel *comGenQueryModel = qobject_cast<QSqlQueryModel *>
+            (commissionerGeneratedMapper->model());
+        comGenQueryModel->query().bindValue(0, getValue(index, 0));
+        comGenQueryModel->query().exec();
+        comGenQueryModel->setQuery(comGenQueryModel->query());
+        commissionerEditableMapper->setCurrentModelIndex(index);
+        commissionerCommissionsModel->query().bindValue(0, getValue(index, 0));
+        commissionerCommissionsModel->query().exec();
+        commissionerCommissionsModel->setQuery(commissionerCommissionsModel->query());
+        commissionerContactsModel->query().bindValue(0, getValue(index, 0));
+        commissionerContactsModel->query().exec();
+        commissionerContactsModel->setQuery(commissionerContactsModel->query());
     }
 
     void ComModel::setPiece(const QModelIndex &index) {
-
+        QSqlQueryModel *pieGenQueryModel = qobject_cast<QSqlQueryModel *>
+            (pieceGeneratedMapper->model());
+        pieGenQueryModel->query().bindValue(0, getValue(index, 0));
+        pieGenQueryModel->query().exec();
+        pieGenQueryModel->setQuery(pieGenQueryModel->query());
+        pieceEditableMapper->setCurrentModelIndex(index);
     }
 
     void ComModel::insertCommission(const int commissionerId, 
@@ -150,7 +167,8 @@ namespace Commissionator {
         insertContactQuery->bindValue(0, commissionerId);
         insertContactQuery->bindValue(1, contactType);
         insertContactQuery->bindValue(2, contactEntry);
-        //update commissionerContacts
+        commissionerContactsModel->query().exec();
+        commissionerContactsModel->setQuery(commissionerContactsModel->query());
     }
 
     void ComModel::insertContactType(const QString contactTypeName) {
@@ -169,7 +187,8 @@ namespace Commissionator {
         insertPaymentQuery->bindValue(4, 
             QDateTime::currentDateTime().toMSecsSinceEpoch());
         insertPaymentQuery->exec();
-        //update commissionPayments
+        commissionPaymentsModel->query().exec();
+        commissionPaymentsModel->setQuery(commissionPaymentsModel->query());
     }
 
     void ComModel::insertPaymentType(const QString typeName) {
@@ -262,11 +281,11 @@ namespace Commissionator {
             "CREATE TABLE IF NOT EXISTS Piece("
             "id INTEGER PRIMARY KEY AUTOINCREMENT,"
             "name   TEXT NOT NULL,"
-            "description    TEXT NOT NULL,"
             "commission   INTEGER NOT NULL,"
             "product  INTEGER NOT NULL,"
             "createDate TEXT NOT NULL,"
             "finishDate TEXT NOT NULL,"
+            "notes TEXT NOT NULL,"
             "FOREIGN KEY(commission) REFERENCES Commission(id),"
             "FOREIGN KEY(product) REFERENCES Product(id)"
             ");"
@@ -283,6 +302,7 @@ namespace Commissionator {
             "dueDate TEXT NOT NULL, "
             "paidDate	TEXT NOT NULL,"
             "commissioner INTEGER NOT NULL,"
+            "notes TEXT NOT NULL,"
             "FOREIGN KEY(commissioner) REFERENCES Commissioner(id)"
             ");"
             "CREATE TABLE IF NOT EXISTS PaymentType("
@@ -302,7 +322,7 @@ namespace Commissionator {
         //needs to add generics (product, commissioner, ?)
     }
 
-    QVariant getValue(const QModelIndex &index, int column) {
+    QVariant ComModel::getValue(const QModelIndex &index, int column) {
         if (index.isValid())
             return index.model()->data(index.model()->index(index.row(), column));
         else
@@ -330,11 +350,15 @@ namespace Commissionator {
             "Contact.entry FROM Contact"
             "INNER JOIN ContactType ON Contact.type = ContactType.id"
             "WHERE Contact.commissioner = (?);"));
-        commissionerMapper = new QDataWidgetMapper(this);
-        QSqlQueryModel commissionerModel(this);
-        commissionerMapper->setModel(&commissionerModel);
-        commissionerModel.setQuery(QSqlQuery("SELECT name, "
-            "datetime(min(Commission.createDate), 'unixepoch', 'localtime'), "
+        commissionerEditableMapper = new QDataWidgetMapper(this);
+        QSqlTableModel commissionerEditableModel(this);
+        commissionerEditableModel.setTable("Commissioner");
+        commissionerEditableMapper->setModel(&commissionerEditableModel);
+        commissionerGeneratedMapper = new QDataWidgetMapper(this);
+        QSqlQueryModel commissionerGeneratedModel(this);
+        commissionerGeneratedMapper->setModel(&commissionerGeneratedModel);
+        commissionerGeneratedModel.setQuery(QSqlQuery("SELECT "
+            "min(Commission.createDate), "
             "CASE WHEN(SELECT SUM(a.price) - b.fee FROM"
             "(SELECT ProductPrices.price price FROM Commission"
             "INNER JOIN Piece ON Commission.id = Piece.commission"
@@ -379,7 +403,7 @@ namespace Commissionator {
             "INNER JOIN Commissioner ON "
             "Commission.commissioner = Commissioner.id"
             "WHERE Commissioner.id = C.id) b)"
-            "END AS amountOwed, C.notes"
+            "END AS amountOwed"
             "FROM Commissioner C"
             "LEFT JOIN Commission ON C.id = Commission.commissioner"
             "WHERE C.id = (?);"));
@@ -480,6 +504,19 @@ namespace Commissionator {
         paymentTypesModel = new QSqlQueryModel(this);
         paymentTypesModel->setQuery(QSqlQuery("SELECT name FROM PaymentType"));
         paymentTypesModel->query().exec();
+        pieceEditableMapper = new QDataWidgetMapper(this);
+        QSqlTableModel pieceEditableModel(this);
+        pieceEditableModel.setTable("Piece");
+        pieceEditableMapper->setModel(&pieceEditableModel);
+        pieceGeneratedMapper = new QDataWidgetMapper(this);
+        QSqlQueryModel pieceGeneratedModel(this);
+        pieceGeneratedMapper->setModel(&pieceGeneratedModel);
+        pieceGeneratedModel.setQuery(QSqlQuery("SELECT Commissioner.name,"
+            "Product.name FROM Piece"
+            "INNER JOIN Product ON Piece.product = Product.id"
+            "INNER JOIN Commission ON Piece.commission = Commission.id"
+            "INNER JOIN Commissioner ON Commission.commissioner = Commissioner.id"
+            "WHERE Piece.id = (?)"));
         piecesModel = new QSqlQueryModel(this);
         piecesModel->setQuery(QSqlQuery("SELECT Piece.id, Commissioner.name,"
             "Piece.name, DATETIME(Piece.createDate, 'unixepoch', 'localtime'),"

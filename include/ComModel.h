@@ -103,59 +103,116 @@ namespace Commissionator {
          *  Function returns a QDataWidgetMapper that can be connected to
          *  multiple views. The current record can be set by
          *  setCommission(const QModelIndex &)
+         *  Contains the editable data about a commission
          *
          *  @return - pointer to QDataWidgetMapper containing data about the
          *      commission
          *  Data order:
-         *  Commissioner Name, Create Date, Paid Date, Due Date, Money Owed
+         *  Id, Create Date, Due Date, Paid Date, Notes
          */
-        //QDataWidgetMapper *getCommission();
+        //QDataWidgetMapper *getCommissionEditable();
+
+        /**
+         *  Function returns a QDataWidgetMapper that can be connected to
+         *  multiple views. The current record can be set by
+         *  setCommission(const QModelIndex &)
+         *  Contains the money owed for the commission
+         *
+         *  @return - pointer to QDataWidgetMapper containing data about the
+         *      commission
+         *   Data order:
+         *   Money Owed
+         */
+        //QDataWidgetMapper *getCommissionGenerated();
 
         /**
          *  Function returns a QDataWidgetMapper that can be connected to
          *  multiple views. The current record can be set by
          *  setCommissioner(const QModelIndex &)
+         *  Contains editable data about the commissioner
          *
          *  @return - pointer to QDataWidgetMapper containing data about the
          *      commissioner
          *  Data order:
-         *  Name, Customer Since, Money Owed, Notes
+         *  Id, Name, Notes
          */
-        QDataWidgetMapper *getCommissioner();
+        QDataWidgetMapper *getCommissionerEditable();
+
+        /**
+         *  Function returns a QDataWidgetMapper that can be connected to
+         *  multiple views. The current record can be set by
+         *  setCommissioner(const QModelIndex &)
+         *  Contains generated (uneditable) data about the commissioner
+         *
+         *  @return - pointer to QDataWidgetMapper containing data about the
+         *      commissioner
+         *  Data order:
+         *  Customer Since, Money Owed
+         */
+        QDataWidgetMapper *getCommissionerGenerated();
 
         /**
          *  Function returns a QDataWidgetMapper that can be connected to
          *  multiple views. The current record can be set by
          *  setPiece(const QModelIndex &)
+         *  Contains the editable data about the piece
          *
          *  @return - pointer to QDataWidgetMapper containing data about the
          *      piece
          *  Data order:
-         *  Commissioner Name, Piece Name, Start Date, Finish Date, Description
+         *  Id, Piece Name, Product Id, Start Date, End Date, Notes
          */
-        QDataWidgetMapper *getPiece();
+        QDataWidgetMapper *getPieceEditable();
+
+        /**
+         *  Function returns a QDataWidgetMapper that can be connected to
+         *  multiple views. The current record can be set by
+         *  setPiece(const QModelIndex &)
+         *  Contains the generated (uneditable) data about the piece
+         *
+         *  @return - pointer to QDataWidgetMapper containing data about the
+         *      piece
+         *  Data order:
+         *  Commissioner Name, Product Name
+         */
+        QDataWidgetMapper *getPieceGenerated();
 
         /**
          *  Function returns a QDataWidgetMapper that can be connected to
          *  multiple views. The current record can be set by
          *  setProduct(const QModelIndex &)
+         *  Contains the editable data about the product
          *
          *  @return - pointer to QDataWidgetMapper containing data about the
          *      product
          *  Data order:
-         *  Name, Number Produced, Base Price
+         *  Id, Name
          */
-        //QDataWidgetMapper *getProduct();
+        //QDataWidgetMapper *getProductEditable();
+
+        /**
+         *  Function returns a QDataWidgetMapper that can be connected to
+         *  multiple views. The current record can be set by
+         *  setProduct(const QModelIndex &)
+         *  Contains the generated (uneditable) data about the product
+         *
+         *  @return - pointer to QDataWidgetMapper containing data about the
+         *      product
+         *  Data order:
+         *  Number Produced, Base Price
+         */
+        //QDataWidgetMapper *getProductGenerated();
 
         /**
          *  Function returns a QDataWidgetMapper that can be connected to
          *  multiple views. The current record can be set by
          *  setSale(const QModelIndex &)
+         *  Contains the data about the sale, all of which is editable
          *
          *  @return - pointer to QDataWidgetMapper containing data about the
          *      sale
          *  Data order:
-         *  Sale Name, Start Date, End Date, Description
+         *  Sale Name, Start Date, End Date, Notes
          */
         //QDataWidgetMapper *getSale();
 
@@ -633,7 +690,8 @@ namespace Commissionator {
         QSqlDatabase *sql;
 		QSqlQueryModel *commissionerCommissionsModel;
 		QSqlQueryModel *commissionerContactsModel;
-        QDataWidgetMapper *commissionerMapper;
+        QDataWidgetMapper *commissionerEditableMapper;
+        QDataWidgetMapper *commissionerGeneratedMapper;
         QSqlQueryModel *commissionersModel;
 		QDataWidgetMapper *commissionMapper;
 		QSqlQueryModel *commissionPaymentsModel;
@@ -649,6 +707,8 @@ namespace Commissionator {
         QSqlQuery *insertProductPriceQuery;
         QSqlQuery *insertProductQuery;
         QSqlQueryModel *paymentTypesModel;
+        QDataWidgetMapper *pieceEditableMapper;
+        QDataWidgetMapper *pieceGeneratedMapper;
         QSqlQueryModel *piecesModel;
         QSqlQueryModel *productsModel;
     };
