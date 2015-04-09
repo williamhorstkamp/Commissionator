@@ -126,7 +126,7 @@ namespace Commissionator{
     }
 
     void MainWindow::createModel() {
-        model = new TestModel();
+        model = new ComModel();
     }
 
     void MainWindow::createPanels() {
@@ -136,9 +136,9 @@ namespace Commissionator{
         rightPanel = new QStackedWidget();
         QList<int> hidden;
         hidden.append(0);
-        lp1 = new LeftPanel("Commissioner", model->getLeftModel(), hidden);
+        lp1 = new LeftPanel("Commissioner", model->getCommissioners(), hidden);
         lp2 = new LeftPanel2();
-        rp1 = new RightPanel(model->getRightModel());
+        rp1 = new RightPanel(model->getCommissionerContacts());
         rp2 = new RightPanel2();
         leftPanel->addWidget(lp1);
         leftPanel->addWidget(lp2);
@@ -149,9 +149,9 @@ namespace Commissionator{
         line->setFrameShape(QFrame::VLine);
         line->setFrameShadow(QFrame::Sunken);
 
-        connect(lp1, &LeftPanel::tableClicked, model, &TestModel::updateRight);
-        connect(lp1, &LeftPanel::search, model, &TestModel::search);
-        connect(lp1, &LeftPanel::iconClicked, model, &TestModel::deleteRecord);
+        //connect(lp1, &LeftPanel::tableClicked, model, &TestModel::updateRight);
+        //connect(lp1, &LeftPanel::search, model, &TestModel::search);
+        //connect(lp1, &LeftPanel::iconClicked, model, &TestModel::deleteRecord);
 
         layout->addWidget(leftPanel);
         layout->addWidget(line);

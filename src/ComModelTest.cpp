@@ -27,12 +27,15 @@ namespace Commissionator {
         com->insertCommissioner("TestName2", "Test Notes");
         com->setCommissioner(com->getCommissioners()->index(0, 1));
         QAbstractItemModel *coms = com->getCommissionerEditable()->model();
+        qDebug() << com->getCommissioners()->index(0, 0).data().toString();
+        for (int i = 0; i < com->getCommissioners()->columnCount(); i++)
+            qDebug() << "Header " << i << ":"<< com->getCommissioners()->headerData(i, Qt::Horizontal).toString();
         QVERIFY(coms->index(0, 1).data().toString() == "TestName");
         QVERIFY(coms->index(0, 2).data().toString() == "");
         QVERIFY(coms->index(1, 1).data().toString() == "TestName2");
         QVERIFY(coms->index(1, 2).data().toString() == "Test Notes");
     }
-    
+    /**
     void ComModelTest::insertProductTest() {
         com->insertProduct("TestName", 1.0);
         com->insertProduct("TestName2", 2.0);
@@ -109,7 +112,7 @@ namespace Commissionator {
         QVERIFY(contacts->index(0, 0).data().toString() == "TestContactType");
         QVERIFY(contacts->index(0, 1).data().toString() == "TestEntry");
     }
-    
+    /**
     void ComModelTest::commissionersTest() {
         QAbstractItemModel *coms = com->getCommissioners();
         com->insertCommissioner("TestCommissioner", "");
@@ -121,6 +124,9 @@ namespace Commissionator {
         com->insertCommission(3, QDateTime::currentDateTime());
         com->insertPiece(2, 1, "TestPiece2", "");
         com->insertPiece(2, 1, "TestPiece3", "");
+        qDebug() << coms->index(0, 1).data().toString();
+        com->setCommissioner(coms->index(0, 1));
+        qDebug() << com->getCommissionerEditable()->model()->index(0, 1).data().toString();
         QVERIFY(coms->index(0, 1).data().toString() == "TestCommissioner");
         QVERIFY(coms->index(1, 1).data().toString() == "TestCommissioner2");
         QVERIFY(coms->index(2, 1).data().toString() == "TestCommissioner3");
@@ -228,7 +234,7 @@ namespace Commissionator {
             == QDateTime::currentDateTime().toString("MM/DD/yyyy"));
         QVERIFY(commissions->index(1, 3).data().toString() == "UnFinished");
     }
-    
+    */
     void ComModelTest::cleanup() {
     }
 

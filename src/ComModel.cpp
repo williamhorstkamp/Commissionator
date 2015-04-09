@@ -4,12 +4,13 @@
 
 namespace Commissionator {
     ComModel::ComModel(QObject *parent) : QObject(parent) {
-        sql = new QSqlDatabase();
+        //sql = new QSqlDatabase();
     }
 
     ComModel::~ComModel() {
-        delete insertCommissionerQuery;
-        delete sql;
+//        delete insertCommissionerQuery;
+        sql.close();
+        //delete sql;
     }
 
     void ComModel::newRecord() {
@@ -113,18 +114,15 @@ namespace Commissionator {
     }
 
     void ComModel::setCommission(const QModelIndex &index) {
-		QSqlQuery *comPayQuery = &commissionPaymentsModel->query();
         commissionPaymentsModel->query().bindValue(0, getValue(index, 0));
         commissionPaymentsModel->query().exec();
         commissionPaymentsModel->setQuery(commissionPaymentsModel->query());
     }
 
     void ComModel::setCommissioner(const QModelIndex &index) {
-        QSqlQueryModel *comGenQueryModel = qobject_cast<QSqlQueryModel *>
-            (commissionerGeneratedMapper->model());
-        comGenQueryModel->query().bindValue(0, getValue(index, 0));
-        comGenQueryModel->query().exec();
-        comGenQueryModel->setQuery(comGenQueryModel->query());
+        commissionerGeneratedModel->query().bindValue(0, getValue(index, 0));
+        commissionerGeneratedModel->query().exec();
+        commissionerGeneratedModel->setQuery(commissionerGeneratedModel->query());
         commissionerEditableMapper->setCurrentModelIndex(index);
         commissionerCommissionsModel->query().bindValue(0, getValue(index, 0));
         commissionerCommissionsModel->query().exec();
@@ -231,11 +229,11 @@ namespace Commissionator {
     }
 
     void ComModel::build() {
-        *sql = QSqlDatabase::addDatabase("QSQLITE");
-        sql->setDatabaseName(":memory:");
-        sql->open();
-        sql->exec("PRAGMA foreign_keys = ON;");
-        sql->exec("CREATE TABLE IF NOT EXISTS ContactType("
+        sql = QSqlDatabase::addDatabase("QSQLITE");
+        sql.setDatabaseName(":memory:");
+        sql.open();
+        sql.exec("PRAGMA foreign_keys = ON;");
+        sql.exec("CREATE TABLE IF NOT EXISTS ContactType("
             "id	INTEGER PRIMARY KEY AUTOINCREMENT,"
             "type	TEXT NOT NULL"
             ");"
@@ -319,6 +317,7 @@ namespace Commissionator {
             "FOREIGN KEY(commission) REFERENCES Commission(id),"
             "FOREIGN KEY(method) REFERENCES PaymentType(id)"
             ");");
+        sql.exec("INSERT INTO Commissioner(name, notes) VALUES ('who', 'whatsit');");
         //needs to add generics (product, commissioner, ?)
     }
 
@@ -344,20 +343,20 @@ namespace Commissionator {
             "Commission.commissioner = Commissioner.id"
             "WHERE Commissioner.id = (?)"
             "AND ProductPrices.date < Commission.createDate"
-            "GROUP BY Piece.id HAVING date = max(date));"));
+            "GROUP BY Piece.id HAVING date = max(date));", sql));
 		commissionerContactsModel = new QSqlQueryModel(this);
         commissionerContactsModel->setQuery(QSqlQuery("SELECT ContactType.type,"
             "Contact.entry FROM Contact"
             "INNER JOIN ContactType ON Contact.type = ContactType.id"
-            "WHERE Contact.commissioner = (?);"));
+            "WHERE Contact.commissioner = (?);", sql));
         commissionerEditableMapper = new QDataWidgetMapper(this);
-        QSqlTableModel commissionerEditableModel(this);
+        QSqlTableModel commissionerEditableModel(this, sql);
         commissionerEditableModel.setTable("Commissioner");
         commissionerEditableMapper->setModel(&commissionerEditableModel);
         commissionerGeneratedMapper = new QDataWidgetMapper(this);
-        QSqlQueryModel commissionerGeneratedModel(this);
-        commissionerGeneratedMapper->setModel(&commissionerGeneratedModel);
-        commissionerGeneratedModel.setQuery(QSqlQuery("SELECT "
+        commissionerGeneratedModel = new QSqlQueryModel(this);
+        commissionerGeneratedMapper->setModel(commissionerGeneratedModel);
+        commissionerGeneratedModel->setQuery(QSqlQuery("SELECT "
             "min(Commission.createDate), "
             "CASE WHEN(SELECT SUM(a.price) - b.fee FROM"
             "(SELECT ProductPrices.price price FROM Commission"
@@ -406,10 +405,9 @@ namespace Commissionator {
             "END AS amountOwed"
             "FROM Commissioner C"
             "LEFT JOIN Commission ON C.id = Commission.commissioner"
-            "WHERE C.id = (?);"));
+            "WHERE C.id = (?);", sql));
         commissionersModel = new QSqlQueryModel(this);
-        commissionersModel->setQuery(QSqlQuery(
-			"SELECT Commissioner.id, Commissioner.name, "
+        commissionersModel->setQuery(QSqlQuery("SELECT C.id, C.name, "
             "CASE WHEN max(Commission.createDate) IS NULL THEN 'No Commissions'"
             "ELSE datetime(max(Commission.createDate), 'unixepoch', 'localtime')"
             "END AS firstCommission,"
@@ -450,14 +448,14 @@ namespace Commissionator {
             "LEFT JOIN Commission ON C.id = Commission.commissioner"
             "WHERE name LIKE (?)"
             "GROUP BY C.id HAVING firstCommission like (?)"
-            "AND amountOwed like (?);"));
+            "AND amountOwed like (?);", sql));
         searchCommissioners("", "", "");
 		commissionPaymentsModel = new QSqlQueryModel(this);
         commissionPaymentsModel->setQuery(QSqlQuery("SELECT PaymentType.name,"
             "DATETIME(Payment.date, 'unixepoch', 'localtime'), Payment.fee, "
             "Payment.note FROM Payment "
             "INNER JOIN PaymentType ON Payment.method = PaymentType.id"
-            "WHERE Payment.commission = (?);"));
+            "WHERE Payment.commission = (?);", sql));
         commissionsModel = new QSqlQueryModel(this);
         commissionsModel->setQuery(QSqlQuery("SELECT Commission.id, "
             "Commissioner.name, Commission.createDate, Commission.paidDate, "
@@ -474,38 +472,38 @@ namespace Commissionator {
             "Commission.paidDate LIKE (?) AND Commission.dueDate LIKE (?) "
             "GROUP BY Commission.id "
             "HAVING COUNT(Piece.id) LIKE (?) AND "
-            "MAX(Piece.finishDate) LIKE (?);"));
+            "MAX(Piece.finishDate) LIKE (?);", sql));
         searchCommissions("", "", "", "", "", "");
         contactTypesModel = new QSqlQueryModel(this);
-        contactTypesModel->setQuery(QSqlQuery("SELECT type FROM ContactType"));
+        contactTypesModel->setQuery(QSqlQuery("SELECT type FROM ContactType;", sql));
         contactTypesModel->query().exec();
         insertCommissionerQuery = new QSqlQuery("INSERT INTO "
-            "Commissioner(name, notes) VALUES (?, ?);");
+            "Commissioner(name, notes) VALUES (?, ?);", sql);
         insertCommissionQuery = new QSqlQuery("INSERT INTO "
             "Commission(commissioner, dueDate, createDate, paidDate) "
-            "VALUES (?, ?, ?, ?);");
+            "VALUES (?, ?, ?, ?);", sql);
         insertContactTypeQuery = new QSqlQuery("INSERT INTO "
-            "ContactType(type) VALUES (?);");
+            "ContactType(type) VALUES (?);", sql);
         insertContactQuery = new QSqlQuery("INSERT INTO"
-            "Contact(commissioner, type, entry) VALUES(?, ?, ?);");
+            "Contact(commissioner, type, entry) VALUES(?, ?, ?);", sql);
         insertPaymentTypeQuery = new QSqlQuery("INSERT INTO"
-            "PaymentType(name) VALUES (?);");
+            "PaymentType(name) VALUES (?);", sql);
         insertPaymentQuery = new QSqlQuery("INSERT INTO"
             "Payment(commission, method, fee, note, date)"
-            "VALUES (?, ?, ?, ?, ?);");
+            "VALUES (?, ?, ?, ?, ?);", sql);
         insertPieceQuery = new QSqlQuery("INSERT INTO "
             "Piece(commission, product, name, description, createDate, finishDate) "
-            "VALUES(?, ?, ?, ?, ?, ?);");
+            "VALUES(?, ?, ?, ?, ?, ?);", sql);
         insertProductPriceQuery = new QSqlQuery("INSERT INTO "
             "ProductPrices(product, price, date) "
-            "VALUES (?, ?, ?);");
+            "VALUES (?, ?, ?);", sql);
         insertProductQuery = new QSqlQuery("INSERT INTO "
-            "Product(name) VALUES(?);");
+            "Product(name) VALUES(?);", sql);
         paymentTypesModel = new QSqlQueryModel(this);
-        paymentTypesModel->setQuery(QSqlQuery("SELECT name FROM PaymentType"));
+        paymentTypesModel->setQuery(QSqlQuery("SELECT name FROM PaymentType", sql));
         paymentTypesModel->query().exec();
         pieceEditableMapper = new QDataWidgetMapper(this);
-        QSqlTableModel pieceEditableModel(this);
+        QSqlTableModel pieceEditableModel(this, sql);
         pieceEditableModel.setTable("Piece");
         pieceEditableMapper->setModel(&pieceEditableModel);
         pieceGeneratedMapper = new QDataWidgetMapper(this);
@@ -516,7 +514,7 @@ namespace Commissionator {
             "INNER JOIN Product ON Piece.product = Product.id"
             "INNER JOIN Commission ON Piece.commission = Commission.id"
             "INNER JOIN Commissioner ON Commission.commissioner = Commissioner.id"
-            "WHERE Piece.id = (?)"));
+            "WHERE Piece.id = (?)", sql));
         piecesModel = new QSqlQueryModel(this);
         piecesModel->setQuery(QSqlQuery("SELECT Piece.id, Commissioner.name,"
             "Piece.name, DATETIME(Piece.createDate, 'unixepoch', 'localtime'),"
@@ -526,7 +524,7 @@ namespace Commissionator {
             "INNER JOIN Commissioner ON Commission.commissioner = Commissioner.id;"
             "WHERE Commissioner.name LIKE (?)"
             "AND DATETIME(Piece.createDate, 'unixepoch', 'localtime') LIKE (?)"
-            "AND DATETIME(Piece.finishDate, 'unixepoch', 'localtime') LIKE (?)"));
+            "AND DATETIME(Piece.finishDate, 'unixepoch', 'localtime') LIKE (?)", sql));
         searchPieces("", "", "", "");
         productsModel = new QSqlQueryModel(this);
         productsModel->setQuery(QSqlQuery("SELECT Product.id, Product.name,"
@@ -538,7 +536,7 @@ namespace Commissionator {
             "AND ProductPrices.price LIKE (?)"
             "GROUP BY Product.id"
             "HAVING ProductPrices.date = MAX(ProductPrices.date)"
-            "AND COALESCE(SUM(Piece.id), 0) LIKE (?)"));
+            "AND COALESCE(SUM(Piece.id), 0) LIKE (?)", sql));
         searchProducts("", "", "");
     }
 }
