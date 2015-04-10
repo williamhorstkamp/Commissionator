@@ -461,13 +461,7 @@ namespace Commissionator {
             "WHERE name LIKE (?) "
             "GROUP BY C.id HAVING firstCommission like (?) "
             "AND amountOwed like (?);", sql));
-
-        commissionersModel->query().addBindValue(QVariant("%"));
-        commissionersModel->query().addBindValue(QVariant("%"));
-        commissionersModel->query().addBindValue(QVariant("%"));
-
-        commissionersModel->query().exec();
-        //searchCommissioners("", "", "");
+        searchCommissioners("", "", "");
 		commissionPaymentsModel = new QSqlQueryModel(this);
         commissionPaymentsModel->setQuery(QSqlQuery("SELECT PaymentType.name,"
             "DATETIME(Payment.date, 'unixepoch', 'localtime'), Payment.fee, "
