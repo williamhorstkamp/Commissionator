@@ -4,7 +4,7 @@
 
 namespace Commissionator {
     ComModel::ComModel(QObject *parent) : QObject(parent) {
-        //sql = new QSqlDatabase();
+        newRecord();
     }
 
     ComModel::~ComModel() {
@@ -72,9 +72,12 @@ namespace Commissionator {
 
     void ComModel::searchCommissioners(const QString name, const QString dateOldest,
         const QString balance) {
-        commissionersModel->query().bindValue(0, "%" + name + "%");
-        commissionersModel->query().bindValue(1, "%" + dateOldest + "%");
-        commissionersModel->query().bindValue(2, "%" + balance + "%");
+        //commissionersModel->query().bindValue(0, "%" + name + "%");
+        //commissionersModel->query().bindValue(1, "%" + dateOldest + "%");
+        //commissionersModel->query().bindValue(2, "%" + balance + "%");
+        commissionersModel->query().addBindValue("%");
+        commissionersModel->query().addBindValue("%");
+        commissionersModel->query().addBindValue("%");
         commissionersModel->query().exec();
         commissionersModel->setQuery(commissionersModel->query());
     }
@@ -234,90 +237,99 @@ namespace Commissionator {
         sql.open();
         sql.exec("PRAGMA foreign_keys = ON;");
         sql.exec("CREATE TABLE IF NOT EXISTS ContactType("
-            "id	INTEGER PRIMARY KEY AUTOINCREMENT,"
+            "id	INTEGER PRIMARY KEY AUTOINCREMENT, "
             "type	TEXT NOT NULL"
-            ");"
-            "CREATE TABLE IF NOT EXISTS Contact("
-            "id	INTEGER PRIMARY KEY AUTOINCREMENT,"
-            "commissioner   INTEGER NOT NULL,"
-            "type	INTEGER NOT NULL,"
-            "entry	TEXT NOT NULL,"
-            "FOREIGN KEY(type) REFERENCES ContactType(id),"
+            ");");
+        sql.exec("CREATE TABLE IF NOT EXISTS Contact("
+            "id	INTEGER PRIMARY KEY AUTOINCREMENT, "
+            "commissioner   INTEGER NOT NULL, "
+            "type	INTEGER NOT NULL, "
+            "entry	TEXT NOT NULL, "
+            "FOREIGN KEY(type) REFERENCES ContactType(id), "
             "FOREIGN KEY(commissioner) REFERENCES Commissioner(id)"
             ");"
-            "CREATE TABLE IF NOT EXISTS Commissioner("
-            "id	INTEGER PRIMARY KEY AUTOINCREMENT,"
-            "name	TEXT NOT NULL,"
+            );
+        sql.exec("CREATE TABLE IF NOT EXISTS Commissioner("
+            "id	INTEGER PRIMARY KEY AUTOINCREMENT, "
+            "name	TEXT NOT NULL, "
             "notes  TEXT NOT NULL"
             ");"
-            "CREATE TABLE IF NOT EXISTS Product("
-            "id	INTEGER PRIMARY KEY AUTOINCREMENT,"
+            );
+        sql.exec("CREATE TABLE IF NOT EXISTS Product("
+            "id	INTEGER PRIMARY KEY AUTOINCREMENT, "
             "name	TEXT NOT NULL"
             ");"
-            "CREATE TABLE IF NOT EXISTS ProductPrices("
-            "id INTEGER PRIMARY KEY AUTOINCREMENT,"
-            "product INTEGER NOT NULL,"
-            "price REAL NOT NULL,"
-            "date TEXT NOT NULL,"
+            );
+        sql.exec("CREATE TABLE IF NOT EXISTS ProductPrices("
+            "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+            "product INTEGER NOT NULL, "
+            "price REAL NOT NULL, "
+            "date TEXT NOT NULL, "
             "FOREIGN KEY(product) REFERENCES Product(id)"
             ");"
-            "CREATE TABLE IF NOT EXISTS ProductOption("
-            "id	INTEGER PRIMARY KEY AUTOINCREMENT,"
-            "name	TEXT NOT NULL,"
-            "price	REAL NOT NULL,"
-            "isInt	BOOL NOT NULL,"
-            "product	INTEGER NOT NULL,"
+            );
+        sql.exec("CREATE TABLE IF NOT EXISTS ProductOption("
+            "id	INTEGER PRIMARY KEY AUTOINCREMENT, "
+            "name	TEXT NOT NULL, "
+            "price	REAL NOT NULL, "
+            "isInt	BOOL NOT NULL, "
+            "product	INTEGER NOT NULL, "
             "FOREIGN KEY(product) REFERENCES Product(id)"
             ");"
-            "CREATE TABLE IF NOT EXISTS ProductOptionPrices("
-            "id INTEGER PRIMARY KEY AUTOINCREMENT,"
-            "productOption INTEGER NOT NULL,"
-            "price REAL NOT NULL,"
-            "date TEXT NOT NULL,"
+            );
+        sql.exec("CREATE TABLE IF NOT EXISTS ProductOptionPrices("
+            "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+            "productOption INTEGER NOT NULL, "
+            "price REAL NOT NULL, "
+            "date TEXT NOT NULL, "
             "FOREIGN KEY(productOption)REFERENCES ProductOption(id)"
             ");"
-            "CREATE TABLE IF NOT EXISTS Piece("
-            "id INTEGER PRIMARY KEY AUTOINCREMENT,"
-            "name   TEXT NOT NULL,"
-            "commission   INTEGER NOT NULL,"
-            "product  INTEGER NOT NULL,"
-            "createDate TEXT NOT NULL,"
-            "finishDate TEXT NOT NULL,"
-            "notes TEXT NOT NULL,"
-            "FOREIGN KEY(commission) REFERENCES Commission(id),"
+            );
+        sql.exec("CREATE TABLE IF NOT EXISTS Piece("
+            "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+            "name   TEXT NOT NULL, "
+            "commission   INTEGER NOT NULL, "
+            "product  INTEGER NOT NULL, "
+            "createDate TEXT NOT NULL, "
+            "finishDate TEXT NOT NULL, "
+            "notes TEXT NOT NULL, "
+            "FOREIGN KEY(commission) REFERENCES Commission(id), "
             "FOREIGN KEY(product) REFERENCES Product(id)"
             ");"
-            "CREATE TABLE IF NOT EXISTS PieceOption("
-            "field	TEXT NOT NULL,"
-            "piece	INTEGER NOT NULL,"
-            "option	INTEGER NOT NULL,"
-            "FOREIGN KEY(piece) REFERENCES Piece(id),"
+            );
+        sql.exec("CREATE TABLE IF NOT EXISTS PieceOption("
+            "field	TEXT NOT NULL, "
+            "piece	INTEGER NOT NULL, "
+            "option	INTEGER NOT NULL, "
+            "FOREIGN KEY(piece) REFERENCES Piece(id), "
             "FOREIGN KEY(option) REFERENCES ProductOption(id)"
             ");"
-            "CREATE TABLE IF NOT EXISTS Commission("
-            "id	INTEGER PRIMARY KEY AUTOINCREMENT,"
-            "createDate	TEXT NOT NULL,"
+            );
+        sql.exec("CREATE TABLE IF NOT EXISTS Commission("
+            "id	INTEGER PRIMARY KEY AUTOINCREMENT, "
+            "createDate	TEXT NOT NULL, "
             "dueDate TEXT NOT NULL, "
-            "paidDate	TEXT NOT NULL,"
-            "commissioner INTEGER NOT NULL,"
-            "notes TEXT NOT NULL,"
+            "paidDate	TEXT NOT NULL, "
+            "commissioner INTEGER NOT NULL, "
+            "notes TEXT NOT NULL, "
             "FOREIGN KEY(commissioner) REFERENCES Commissioner(id)"
             ");"
-            "CREATE TABLE IF NOT EXISTS PaymentType("
-            "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+            );
+        sql.exec("CREATE TABLE IF NOT EXISTS PaymentType("
+            "id INTEGER PRIMARY KEY AUTOINCREMENT, "
             "name	TEXT NOT NULL"
             ");"
-            "CREATE TABLE IF NOT EXISTS Payment("
-            "id	INTEGER PRIMARY KEY AUTOINCREMENT,"
-            "commission	INTEGER NOT NULL,"
-            "method	INTEGER NOT NULL,"
-            "date	TEXT NOT NULL,"
-            "fee	REAL NOT NULL,"
-            "note   TEXT NOT NULL,"
-            "FOREIGN KEY(commission) REFERENCES Commission(id),"
+            );
+        sql.exec("CREATE TABLE IF NOT EXISTS Payment("
+            "id	INTEGER PRIMARY KEY AUTOINCREMENT, "
+            "commission	INTEGER NOT NULL, "
+            "method	INTEGER NOT NULL, "
+            "date	TEXT NOT NULL, "
+            "fee	REAL NOT NULL, "
+            "note   TEXT NOT NULL, "
+            "FOREIGN KEY(commission) REFERENCES Commission(id), "
             "FOREIGN KEY(method) REFERENCES PaymentType(id)"
             ");");
-        sql.exec("INSERT INTO Commissioner(name, notes) VALUES ('who', 'whatsit');");
         //needs to add generics (product, commissioner, ?)
     }
 
@@ -408,48 +420,54 @@ namespace Commissionator {
             "WHERE C.id = (?);", sql));
         commissionersModel = new QSqlQueryModel(this);
         commissionersModel->setQuery(QSqlQuery("SELECT C.id, C.name, "
-            "CASE WHEN max(Commission.createDate) IS NULL THEN 'No Commissions'"
-            "ELSE datetime(max(Commission.createDate), 'unixepoch', 'localtime')"
-            "END AS firstCommission,"
-            "CASE WHEN(SELECT SUM(a.price) - b.fee FROM"
-            "(SELECT ProductPrices.price price FROM Commission"
-            "INNER JOIN Piece ON Commission.id = Piece.commission"
-            "INNER JOIN ProductPrices ON Piece.product = ProductPrices.product"
-            "WHERE Commission.commissioner = C.id"
-            "AND ProductPrices.date < Commission.createDate"
-            "GROUP BY Piece.id HAVING date = max(date)) a"
-            "LEFT JOIN (SELECT SUM(Payment.fee) fee FROM Payment"
-            "INNER JOIN Commission ON Payment.commission = Commission.id"
+            "CASE WHEN max(Commission.createDate) IS NULL THEN 'No Commissions' "
+            "ELSE datetime(max(Commission.createDate), 'unixepoch', 'localtime') "
+            "END AS firstCommission, "
+            "CASE WHEN(SELECT SUM(a.price) - b.fee FROM "
+            "(SELECT ProductPrices.price price FROM Commission "
+            "INNER JOIN Piece ON Commission.id = Piece.commission "
+            "INNER JOIN ProductPrices ON Piece.product = ProductPrices.product "
+            "WHERE Commission.commissioner = C.id "
+            "AND ProductPrices.date < Commission.createDate "
+            "GROUP BY Piece.id HAVING date = max(date)) a "
+            "LEFT JOIN (SELECT SUM(Payment.fee) fee FROM Payment "
+            "INNER JOIN Commission ON Payment.commission = Commission.id "
             "INNER JOIN Commissioner ON "
-            "Commission.commissioner = Commissioner.id"
-            "WHERE Commissioner.id = C.id) b) = 0 THEN 'Paid off'"
-            "WHEN(SELECT SUM(a.price) FROM"
-            "(SELECT ProductPrices.price price FROM Commission"
-            "INNER JOIN Piece ON Commission.id = Piece.commission"
-            "INNER JOIN ProductPrices ON Piece.product = ProductPrices.product"
-            "WHERE Commission.commissioner = C.id"
-            "AND ProductPrices.date < Commission.createDate"
-            "GROUP BY Piece.id"
-            "HAVING date = max(date)) a) IS NULL THEN 'No Commissioned Pieces'"
-            "ELSE (SELECT SUM(a.price) - b.fee FROM"
-            "(SELECT ProductPrices.price price FROM Commission"
-            "INNER JOIN Piece ON Commission.id = Piece.commission"
-            "INNER JOIN ProductPrices ON Piece.product = ProductPrices.product"
-            "WHERE Commission.commissioner = C.id"
-            "AND ProductPrices.date < Commission.createDate"
-            "GROUP BY Piece.id HAVING date = max(date)) a"
-            "LEFT JOIN (SELECT SUM(Payment.fee) fee FROM Payment"
-            "INNER JOIN Commission ON Payment.commission = Commission.id"
+            "Commission.commissioner = Commissioner.id "
+            "WHERE Commissioner.id = C.id) b) = 0 THEN 'Paid off' "
+            "WHEN(SELECT SUM(a.price) FROM "
+            "(SELECT ProductPrices.price price FROM Commission "
+            "INNER JOIN Piece ON Commission.id = Piece.commission "
+            "INNER JOIN ProductPrices ON Piece.product = ProductPrices.product "
+            "WHERE Commission.commissioner = C.id "
+            "AND ProductPrices.date < Commission.createDate "
+            "GROUP BY Piece.id "
+            "HAVING date = max(date)) a) IS NULL THEN 'No Commissioned Pieces' "
+            "ELSE (SELECT SUM(a.price) - b.fee FROM "
+            "(SELECT ProductPrices.price price FROM Commission "
+            "INNER JOIN Piece ON Commission.id = Piece.commission "
+            "INNER JOIN ProductPrices ON Piece.product = ProductPrices.product "
+            "WHERE Commission.commissioner = C.id "
+            "AND ProductPrices.date < Commission.createDate "
+            "GROUP BY Piece.id HAVING date = max(date)) a "
+            "LEFT JOIN (SELECT SUM(Payment.fee) fee FROM Payment "
+            "INNER JOIN Commission ON Payment.commission = Commission.id "
             "INNER JOIN Commissioner ON "
-            "Commission.commissioner = Commissioner.id"
-            "WHERE Commissioner.id = C.id) b)"
-            "END AS amountOwed"
-            "FROM Commissioner C"
-            "LEFT JOIN Commission ON C.id = Commission.commissioner"
-            "WHERE name LIKE (?)"
-            "GROUP BY C.id HAVING firstCommission like (?)"
+            "Commission.commissioner = Commissioner.id "
+            "WHERE Commissioner.id = C.id) b) "
+            "END AS amountOwed "
+            "FROM Commissioner C "
+            "LEFT JOIN Commission ON C.id = Commission.commissioner "
+            "WHERE name LIKE (?) "
+            "GROUP BY C.id HAVING firstCommission like (?) "
             "AND amountOwed like (?);", sql));
-        searchCommissioners("", "", "");
+
+        commissionersModel->query().addBindValue(QVariant("%"));
+        commissionersModel->query().addBindValue(QVariant("%"));
+        commissionersModel->query().addBindValue(QVariant("%"));
+
+        commissionersModel->query().exec();
+        //searchCommissioners("", "", "");
 		commissionPaymentsModel = new QSqlQueryModel(this);
         commissionPaymentsModel->setQuery(QSqlQuery("SELECT PaymentType.name,"
             "DATETIME(Payment.date, 'unixepoch', 'localtime'), Payment.fee, "
