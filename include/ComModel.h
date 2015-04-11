@@ -24,6 +24,13 @@ namespace Commissionator {
         ~ComModel();
 
         /**
+         *  Function closes currently open SQL database.
+         *  Does not perform any sort of saving function to the database
+         *  currently in memory.
+         */
+        void close();
+
+        /**
          *  Function returns a pointer to a model containing data for the
          *  commission table to be displayed on the commission panel.
          *  Can be limited with searchCommissions(const QList<QVariant>)
@@ -662,8 +669,10 @@ namespace Commissionator {
          *
          *  @param commissionerId - id of commissioner of the commission
          *  @param dueDate - due date of the commission
+         *  @param notes - notes for the commission
          */
-        void insertCommission(const int commissionerId, const QDateTime dueDate);
+        void insertCommission(const int commissionerId,
+            const QDateTime dueDate, const QString notes);
 
         /**
          *  Inserts payment into the database.

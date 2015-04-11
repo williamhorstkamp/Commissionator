@@ -30,11 +30,12 @@ namespace Commissionator {
         QVERIFY(com->getCommissioners()->index(1, 1).data().toString() == "TestName2");
         //QVERIFY(com->getCommissioners()->index(1, 2).data().toString() == "Test Notes");
     }
-    /**
+    
     void ComModelTest::insertProductTest() {
         com->insertProduct("TestName", 1.0);
         com->insertProduct("TestName2", 2.0);
         QAbstractItemModel *pros = com->getProducts();
+        qDebug() << pros->index(0, 1).data().toString();
         QVERIFY(pros->index(0, 1).data().toString() == "TestName");
         QVERIFY(pros->index(0, 2).data().toDouble() == 1.0);
         QVERIFY(pros->index(1, 1).data().toString() == "TestName2");
@@ -43,7 +44,7 @@ namespace Commissionator {
     
     void ComModelTest::insertCommissionTest() {
         com->insertCommissioner("TestCommissioner", "");
-        com->insertCommission(1, QDateTime::currentDateTime());
+        com->insertCommission(1, QDateTime::currentDateTime(), "TestNotes");
         QAbstractItemModel *coms = com->getCommissions();
         QVERIFY(coms->index(0, 1).data().toString() == "TestCommissioner");
         QVERIFY(coms->index(0, 2).data().toDateTime().toString("MM/DD/yyyy")
@@ -59,7 +60,7 @@ namespace Commissionator {
         QVERIFY(pays->index(0, 1).data().toString() == "PaymentType");
         QVERIFY(pays->index(1, 1).data().toString() == "PaymentType2");
     }
-
+    /*
     void ComModelTest::insertPieceTest() {
         com->insertCommissioner("TestCommissioner", "");
         com->insertCommission(1, QDateTime::currentDateTime());
@@ -74,11 +75,12 @@ namespace Commissionator {
             == QDateTime::currentDateTime().toString("MM/DD/yyyy"));
         QVERIFY(piecesE->index(0, 5).data().toString() == "");
     }
-
+    */
     void ComModelTest::insertPaymentTest() {
         com->insertCommissioner("TestCommissioner", "");
         com->insertPaymentType("PaymentType");
-        com->insertCommission(1, QDateTime::currentDateTime());
+        com->insertCommission(1, QDateTime::currentDateTime(), "");
+        com->insertProduct("TestProduct", 1.0);
         com->insertPiece(1, 1, "TestPiece", "");
         com->insertPayment(1, 1, 1.0, "PaymentDescription");
         com->setCommission(com->getCommissions()->index(0, 0));
@@ -231,7 +233,7 @@ namespace Commissionator {
     }
     */
     void ComModelTest::cleanup() {
-        
+        com->close();
     }
 
     void ComModelTest::cleanupTestCase() {

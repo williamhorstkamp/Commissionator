@@ -49,17 +49,17 @@ namespace Commissionator {
         //void salePiecesSoldTest();
 
         void insertCommissionerTest();
-        //void insertContactTest();
+        void insertContactTest();
         //void insertPieceReferenceTest();
-        //void insertProductTest();
+        void insertProductTest();
         //void insertProductOptionTest();
         //void insertSaleTest();
         //void insertDealTest();
         //void insertPieceTest();
-        //void insertPaymentTest();
-        //void insertCommissionTest();
-        //void insertPaymentTypeTest();
-        //void insertContactTypeTest();
+        void insertPaymentTest();
+        void insertCommissionTest();
+        void insertPaymentTypeTest();
+        void insertContactTypeTest();
 
         //void searchCommissionsTest();
         //void searchCommissionersTest();
