@@ -8,14 +8,21 @@ namespace Commissionator {
     }
 
     ComModel::~ComModel() {
-//        delete insertCommissionerQuery;
+        close();
+    }
+
+    void ComModel::close() {
         sql.close();
-        //delete sql;
+        QSqlDatabase::removeDatabase("QSQLITE");
     }
 
     void ComModel::newRecord() {
-        build();
-        prepare();
+        if (sql.isOpen()) {
+            //throw error
+        } else {
+            build();
+            prepare();
+        } 
     }
     
     QDataWidgetMapper *ComModel::getCommissionerEditable() {
@@ -72,12 +79,9 @@ namespace Commissionator {
 
     void ComModel::searchCommissioners(const QString name, const QString dateOldest,
         const QString balance) {
-        //commissionersModel->query().bindValue(0, "%" + name + "%");
-        //commissionersModel->query().bindValue(1, "%" + dateOldest + "%");
-        //commissionersModel->query().bindValue(2, "%" + balance + "%");
-        commissionersModel->query().addBindValue("%");
-        commissionersModel->query().addBindValue("%");
-        commissionersModel->query().addBindValue("%");
+        commissionersModel->query().bindValue(0, "%" + name + "%");
+        commissionersModel->query().bindValue(1, "%" + dateOldest + "%");
+        commissionersModel->query().bindValue(2, "%" + balance + "%");
         commissionersModel->query().exec();
         commissionersModel->setQuery(commissionersModel->query());
     }
@@ -145,12 +149,13 @@ namespace Commissionator {
     }
 
     void ComModel::insertCommission(const int commissionerId, 
-        const QDateTime dueDate) {
+        const QDateTime dueDate, const QString notes) {
         insertCommissionQuery->bindValue(0, commissionerId);
         insertCommissionQuery->bindValue(1, dueDate.toMSecsSinceEpoch());
-        insertCommissionQuery->bindValue(2, 
+        insertCommissionQuery->bindValue(2, notes);
+        insertCommissionQuery->bindValue(3, 
             QDateTime::currentDateTime().toMSecsSinceEpoch());
-        insertCommissionQuery->bindValue(3, "");
+        insertCommissionQuery->bindValue(4, "");
         insertCommissionQuery->exec();
         searchCommissions("", "", "", "", "", "");
     }
@@ -168,6 +173,7 @@ namespace Commissionator {
         insertContactQuery->bindValue(0, commissionerId);
         insertContactQuery->bindValue(1, contactType);
         insertContactQuery->bindValue(2, contactEntry);
+        insertContactQuery->exec();
         commissionerContactsModel->query().exec();
         commissionerContactsModel->setQuery(commissionerContactsModel->query());
     }
@@ -225,6 +231,7 @@ namespace Commissionator {
     void ComModel::insertProductPrice(const int productId, const double basePrice) {
         insertProductQuery->bindValue(0, productId);
         insertProductQuery->bindValue(1, basePrice);
+        insertProductQuery->exec();
         insertProductPriceQuery->bindValue(2,
             QDateTime::currentDateTime().toMSecsSinceEpoch());
         insertProductPriceQuery->exec();
@@ -233,7 +240,7 @@ namespace Commissionator {
 
     void ComModel::build() {
         sql = QSqlDatabase::addDatabase("QSQLITE");
-        sql.setDatabaseName(":memory:");
+        sql.setDatabaseName("testing.db3");
         sql.open();
         sql.exec("PRAGMA foreign_keys = ON;");
         sql.exec("CREATE TABLE IF NOT EXISTS ContactType("
@@ -487,21 +494,21 @@ namespace Commissionator {
             "MAX(Piece.finishDate) LIKE (?);", sql));
         searchCommissions("", "", "", "", "", "");
         contactTypesModel = new QSqlQueryModel(this);
-        contactTypesModel->setQuery(QSqlQuery("SELECT type FROM ContactType;", sql));
+        contactTypesModel->setQuery(QSqlQuery("SELECT id, type FROM ContactType;", sql));
         contactTypesModel->query().exec();
         insertCommissionerQuery = new QSqlQuery("INSERT INTO "
             "Commissioner(name, notes) VALUES (?, ?);", sql);
         insertCommissionQuery = new QSqlQuery("INSERT INTO "
-            "Commission(commissioner, dueDate, createDate, paidDate) "
-            "VALUES (?, ?, ?, ?);", sql);
+            "Commission(commissioner, dueDate, notes, createDate, paidDate) "
+            "VALUES (?, ?, ?, ?, ?);", sql);
         insertContactTypeQuery = new QSqlQuery("INSERT INTO "
             "ContactType(type) VALUES (?);", sql);
-        insertContactQuery = new QSqlQuery("INSERT INTO"
+        insertContactQuery = new QSqlQuery("INSERT INTO "
             "Contact(commissioner, type, entry) VALUES(?, ?, ?);", sql);
-        insertPaymentTypeQuery = new QSqlQuery("INSERT INTO"
+        insertPaymentTypeQuery = new QSqlQuery("INSERT INTO "
             "PaymentType(name) VALUES (?);", sql);
-        insertPaymentQuery = new QSqlQuery("INSERT INTO"
-            "Payment(commission, method, fee, note, date)"
+        insertPaymentQuery = new QSqlQuery("INSERT INTO "
+            "Payment(commission, method, fee, note, date) "
             "VALUES (?, ?, ?, ?, ?);", sql);
         insertPieceQuery = new QSqlQuery("INSERT INTO "
             "Piece(commission, product, name, description, createDate, finishDate) "
@@ -539,16 +546,16 @@ namespace Commissionator {
             "AND DATETIME(Piece.finishDate, 'unixepoch', 'localtime') LIKE (?)", sql));
         searchPieces("", "", "", "");
         productsModel = new QSqlQueryModel(this);
-        productsModel->setQuery(QSqlQuery("SELECT Product.id, Product.name,"
-            "ProductPrices.price, COALESCE(SUM(Piece.id), 0)"
-            "FROM Product"
-            "LEFT JOIN ProductPrices ON Product.id = ProductPrices.product"
-            "LEFT JOIN Piece ON Product.id = Piece.product"
-            "WHERE Product.name LIKE (?)"
-            "AND ProductPrices.price LIKE (?)"
-            "GROUP BY Product.id"
-            "HAVING ProductPrices.date = MAX(ProductPrices.date)"
-            "AND COALESCE(SUM(Piece.id), 0) LIKE (?)", sql));
+        productsModel->setQuery(QSqlQuery("SELECT Product.id, Product.name, "
+            "ProductPrices.price, COALESCE(COUNT(Piece.id), 0) "
+            "FROM Product "
+            "LEFT JOIN ProductPrices ON Product.id = ProductPrices.product "
+            "LEFT JOIN Piece ON Product.id = Piece.product "
+            "WHERE Product.name LIKE (?) "
+            "AND ProductPrices.price LIKE (?) "
+            "GROUP BY Product.id "
+            "HAVING ProductPrices.date = MAX(ProductPrices.date) "
+            "AND COALESCE(SUM(Piece.id), 0) LIKE (?);", sql));
         searchProducts("", "", "");
     }
 }
