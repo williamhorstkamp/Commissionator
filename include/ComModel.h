@@ -689,14 +689,28 @@ namespace Commissionator {
         */
         void build();
 
+        /**
+         *  Function finishes all queries that were setup in the
+         *  prepareModels() function.
+         */
         void cleanupQueries();
 
+        /**
+         *  Function returns the value of the table with the row from
+         *  index and the column given.
+         *  Exists as a helper function so the model can access a row's id
+         *  no matter which particular column's index was passed to the model
+         *  through a socket.
+         *
+         *  @param index - reference to the index whose row is being accessed
+         *  @param column - column that contains the value to return
+         */
         QVariant getValue(const QModelIndex &index, int column);
 
         /**
         *  Prepares the various sub-models that are managed by the ComModel.
         */
-        void prepareQueries();
+        void prepareModels();
 
         QSqlDatabase sql;
 		QSqlQueryModel *commissionerCommissionsModel;

@@ -24,7 +24,7 @@ namespace Commissionator {
             //throw error
         } else {
             build();
-            prepareQueries();
+            prepareModels();
         } 
     }
     
@@ -371,7 +371,7 @@ namespace Commissionator {
             return QVariant();
     }
 
-    void ComModel::prepareQueries() {
+    void ComModel::prepareModels() {
 		commissionerCommissionsModel = new QSqlQueryModel(this);
         commissionerCommissionsModel->setQuery(QSqlQuery("SELECT createDate,"
             " paidDate, SUM(price), finishDate FROM (SELECT datetime"
