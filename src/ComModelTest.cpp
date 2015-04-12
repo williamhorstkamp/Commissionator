@@ -35,7 +35,6 @@ namespace Commissionator {
         com->insertProduct("TestName", 1.0);
         com->insertProduct("TestName2", 2.0);
         QAbstractItemModel *pros = com->getProducts();
-        qDebug() << pros->index(0, 1).data().toString();
         QVERIFY(pros->index(0, 1).data().toString() == "TestName");
         QVERIFY(pros->index(0, 2).data().toDouble() == 1.0);
         QVERIFY(pros->index(1, 1).data().toString() == "TestName2");
@@ -63,7 +62,7 @@ namespace Commissionator {
     /*
     void ComModelTest::insertPieceTest() {
         com->insertCommissioner("TestCommissioner", "");
-        com->insertCommission(1, QDateTime::currentDateTime());
+        com->insertCommission(1, QDateTime::currentDateTime(), "");
         com->insertProduct("TestName", 1.0);
         com->insertPiece(1, 1, "TestPiece", "");
         QAbstractItemModel *piecesE = com->getPieceEditable()->model();
@@ -96,6 +95,8 @@ namespace Commissionator {
         com->insertContactType("TestContactType");
         com->insertContactType("TestContactType2");
         QAbstractItemModel *contacts = com->getContactTypes();
+        for (int i = 0; i < contacts->columnCount(); i++)
+            qDebug() << contacts->index(i, 1).data().toString();
         QVERIFY(contacts->index(0, 1).data().toString() == "TestContactType");
         QVERIFY(contacts->index(1, 1).data().toString() == "TestContactType2");
     }

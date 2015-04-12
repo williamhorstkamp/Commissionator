@@ -12,8 +12,11 @@ namespace Commissionator {
     }
 
     void ComModel::close() {
+        cleanupQueries();
+        QString connection = sql.connectionName();
         sql.close();
-        QSqlDatabase::removeDatabase("QSQLITE");
+        sql = QSqlDatabase();
+        QSqlDatabase::removeDatabase(connection);
     }
 
     void ComModel::newRecord() {
@@ -21,7 +24,7 @@ namespace Commissionator {
             //throw error
         } else {
             build();
-            prepare();
+            prepareQueries();
         } 
     }
     
@@ -220,18 +223,16 @@ namespace Commissionator {
     void ComModel::insertProduct(const QString productName, const double basePrice) {
         insertProductQuery->bindValue(0, productName);
         insertProductQuery->exec();
-        QSqlQuery insertedRow;
-        insertedRow.exec("(SELECT last_insert_rowid())");
-        insertedRow.first();
-        insertedRow.value(0).toInt();
-        insertProductPrice(insertedRow.value(0).toInt(), basePrice);
+        QSqlQuery lastId("SELECT last_insert_rowid();", sql);
+        lastId.exec();
+        lastId.first();
+        insertProductPrice(lastId.value(0).toInt(), basePrice);
         searchProducts("", "", "");
     }
 
     void ComModel::insertProductPrice(const int productId, const double basePrice) {
-        insertProductQuery->bindValue(0, productId);
-        insertProductQuery->bindValue(1, basePrice);
-        insertProductQuery->exec();
+        insertProductPriceQuery->bindValue(0, basePrice);
+        insertProductPriceQuery->bindValue(1, basePrice);
         insertProductPriceQuery->bindValue(2,
             QDateTime::currentDateTime().toMSecsSinceEpoch());
         insertProductPriceQuery->exec();
@@ -240,7 +241,7 @@ namespace Commissionator {
 
     void ComModel::build() {
         sql = QSqlDatabase::addDatabase("QSQLITE");
-        sql.setDatabaseName("testing.db3");
+        sql.setDatabaseName(":memory:");
         sql.open();
         sql.exec("PRAGMA foreign_keys = ON;");
         sql.exec("CREATE TABLE IF NOT EXISTS ContactType("
@@ -340,6 +341,29 @@ namespace Commissionator {
         //needs to add generics (product, commissioner, ?)
     }
 
+    void ComModel::cleanupQueries() {
+        commissionerCommissionsModel->query().finish();
+        commissionerContactsModel->query().finish();
+        commissionerGeneratedModel->query().finish();
+        commissionersModel->query().finish();
+        commissionPaymentsModel->query().finish();
+        commissionsModel->query().finish();
+        contactTypesModel->query().exec();
+        insertCommissionerQuery->finish();
+        insertCommissionQuery->finish();
+        insertContactTypeQuery->finish();
+        insertContactQuery->finish();
+        insertPaymentTypeQuery->finish();
+        insertPaymentQuery->finish();
+        insertPieceQuery->finish();
+        insertProductPriceQuery->finish();
+        insertProductQuery->finish();
+        paymentTypesModel->query().finish();
+        pieceGeneratedModel->query().finish();
+        piecesModel->query().finish();
+        productsModel->query().finish();
+    }
+
     QVariant ComModel::getValue(const QModelIndex &index, int column) {
         if (index.isValid())
             return index.model()->data(index.model()->index(index.row(), column));
@@ -347,7 +371,7 @@ namespace Commissionator {
             return QVariant();
     }
 
-    void ComModel::prepare() {
+    void ComModel::prepareQueries() {
 		commissionerCommissionsModel = new QSqlQueryModel(this);
         commissionerCommissionsModel->setQuery(QSqlQuery("SELECT createDate,"
             " paidDate, SUM(price), finishDate FROM (SELECT datetime"
@@ -511,7 +535,7 @@ namespace Commissionator {
             "Payment(commission, method, fee, note, date) "
             "VALUES (?, ?, ?, ?, ?);", sql);
         insertPieceQuery = new QSqlQuery("INSERT INTO "
-            "Piece(commission, product, name, description, createDate, finishDate) "
+            "Piece(commission, product, name, notes, createDate, finishDate) "
             "VALUES(?, ?, ?, ?, ?, ?);", sql);
         insertProductPriceQuery = new QSqlQuery("INSERT INTO "
             "ProductPrices(product, price, date) "
@@ -526,9 +550,9 @@ namespace Commissionator {
         pieceEditableModel.setTable("Piece");
         pieceEditableMapper->setModel(&pieceEditableModel);
         pieceGeneratedMapper = new QDataWidgetMapper(this);
-        QSqlQueryModel pieceGeneratedModel(this);
-        pieceGeneratedMapper->setModel(&pieceGeneratedModel);
-        pieceGeneratedModel.setQuery(QSqlQuery("SELECT Commissioner.name,"
+        pieceGeneratedModel = new QSqlQueryModel(this);
+        pieceGeneratedMapper->setModel(pieceGeneratedModel);
+        pieceGeneratedModel->setQuery(QSqlQuery("SELECT Commissioner.name,"
             "Product.name FROM Piece"
             "INNER JOIN Product ON Piece.product = Product.id"
             "INNER JOIN Commission ON Piece.commission = Commission.id"
