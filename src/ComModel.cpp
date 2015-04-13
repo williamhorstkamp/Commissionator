@@ -376,7 +376,7 @@ namespace Commissionator {
         commissionerCommissionsModel->setQuery(QSqlQuery("SELECT createDate,"
             " paidDate, SUM(price), finishDate FROM (SELECT datetime"
             "(Commission.createDate, 'unixepoch', 'localtime') createDate, "
-            "datetime(Commission.paidDate, 'unixepoch', 'localtime' paidDate,)"
+            "datetime(Commission.paidDate, 'unixepoch', 'localtime') paidDate, "
             "ProductPrices.price price, datetime(max(Piece.finishDate),"
             " 'unixepoch', 'localtime') finishDate"
             "FROM Commission"
@@ -504,7 +504,7 @@ namespace Commissionator {
             "Commissioner.name, Commission.createDate, Commission.paidDate, "
             "Commission.dueDate, COUNT(Piece.id), "
             "CASE WHEN MIN(Piece.finishDate) LIKE '0' THEN 'Unfinished' "
-            "WHEN MIN(Piece.finishDate IS NULL THEN 'No Pieces'"
+            "WHEN MIN(Piece.finishDate) IS NULL THEN 'No Pieces'"
             "ELSE MAX(Piece.finishDate) "
             "END "
             "FROM Commission INNER JOIN "
@@ -515,7 +515,7 @@ namespace Commissionator {
             "Commission.paidDate LIKE (?) AND Commission.dueDate LIKE (?) "
             "GROUP BY Commission.id "
             "HAVING COUNT(Piece.id) LIKE (?) AND "
-            "MAX(Piece.finishDate) LIKE (?);", sql));
+            "COALESCE(MAX(Piece.finishDate), '') LIKE (?);", sql));
         searchCommissions("", "", "", "", "", "");
         contactTypesModel = new QSqlQueryModel(this);
         contactTypesModel->setQuery(QSqlQuery("SELECT id, type FROM ContactType;", sql));
@@ -543,7 +543,7 @@ namespace Commissionator {
         insertProductQuery = new QSqlQuery("INSERT INTO "
             "Product(name) VALUES(?);", sql);
         paymentTypesModel = new QSqlQueryModel(this);
-        paymentTypesModel->setQuery(QSqlQuery("SELECT name FROM PaymentType", sql));
+        paymentTypesModel->setQuery(QSqlQuery("SELECT id, name FROM PaymentType", sql));
         paymentTypesModel->query().exec();
         pieceEditableMapper = new QDataWidgetMapper(this);
         QSqlTableModel pieceEditableModel(this, sql);
