@@ -108,10 +108,6 @@ namespace Commissionator {
         com->insertContact(1, 1, "TestEntry");
         com->setCommissioner(com->getCommissioners()->index(0, 1));
         QAbstractItemModel *contacts = com->getCommissionerContacts();
-        for (int i = 0; i < contacts->rowCount(); i++){
-            qDebug() << contacts->index(i, 0).data().toString();
-            qDebug() << contacts->index(i, 1).data().toString();
-        }     
         QVERIFY(contacts->index(0, 0).data().toString() == "TestContactType");
         QVERIFY(contacts->index(0, 1).data().toString() == "TestEntry");
     }

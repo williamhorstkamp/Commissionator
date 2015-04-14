@@ -1,5 +1,6 @@
 #include <QSqlQuery>
 #include <QDate>
+#include <QDebug>
 #include "ComModel.h"
 
 namespace Commissionator {
@@ -124,20 +125,21 @@ namespace Commissionator {
     }
 
     void ComModel::setCommission(const QModelIndex &index) {
-        commissionPaymentsModel->query().bindValue(0, getValue(index, 0));
+        commissionPaymentsModel->query().bindValue(0, getValue(index, 0).toString());
         commissionPaymentsModel->query().exec();
         commissionPaymentsModel->setQuery(commissionPaymentsModel->query());
     }
 
     void ComModel::setCommissioner(const QModelIndex &index) {
-        commissionerGeneratedModel->query().bindValue(0, getValue(index, 0));
+        int comId = getValue(index, 0).toInt();
+        commissionerGeneratedModel->query().bindValue(0, comId);
         commissionerGeneratedModel->query().exec();
         commissionerGeneratedModel->setQuery(commissionerGeneratedModel->query());
         commissionerEditableMapper->setCurrentModelIndex(index);
-        commissionerCommissionsModel->query().bindValue(0, getValue(index, 0));
+        commissionerCommissionsModel->query().bindValue(0, comId);
         commissionerCommissionsModel->query().exec();
         commissionerCommissionsModel->setQuery(commissionerCommissionsModel->query());
-        commissionerContactsModel->query().bindValue(0, getValue(index, 0));
+        commissionerContactsModel->query().bindValue(0, comId);
         commissionerContactsModel->query().exec();
         commissionerContactsModel->setQuery(commissionerContactsModel->query());
     }
@@ -145,7 +147,7 @@ namespace Commissionator {
     void ComModel::setPiece(const QModelIndex &index) {
         QSqlQueryModel *pieGenQueryModel = qobject_cast<QSqlQueryModel *>
             (pieceGeneratedMapper->model());
-        pieGenQueryModel->query().bindValue(0, getValue(index, 0));
+        pieGenQueryModel->query().bindValue(0, getValue(index, 0).toString());
         pieGenQueryModel->query().exec();
         pieGenQueryModel->setQuery(pieGenQueryModel->query());
         pieceEditableMapper->setCurrentModelIndex(index);
@@ -177,6 +179,7 @@ namespace Commissionator {
         insertContactQuery->bindValue(1, contactType);
         insertContactQuery->bindValue(2, contactEntry);
         insertContactQuery->exec();
+        commissionerContactsModel->query().bindValue(0, commissionerId);
         commissionerContactsModel->query().exec();
         commissionerContactsModel->setQuery(commissionerContactsModel->query());
     }
@@ -388,9 +391,9 @@ namespace Commissionator {
             "AND ProductPrices.date < Commission.createDate"
             "GROUP BY Piece.id HAVING date = max(date));", sql));
 		commissionerContactsModel = new QSqlQueryModel(this);
-        commissionerContactsModel->setQuery(QSqlQuery("SELECT ContactType.type,"
-            "Contact.entry FROM Contact"
-            "INNER JOIN ContactType ON Contact.type = ContactType.id"
+        commissionerContactsModel->setQuery(QSqlQuery("SELECT ContactType.type, "
+            "Contact.entry FROM Contact "
+            "INNER JOIN ContactType ON Contact.type = ContactType.id "
             "WHERE Contact.commissioner = (?);", sql));
         commissionerEditableMapper = new QDataWidgetMapper(this);
         QSqlTableModel commissionerEditableModel(this, sql);
