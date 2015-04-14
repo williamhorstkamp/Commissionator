@@ -24,13 +24,6 @@ namespace Commissionator {
         ~ComModel();
 
         /**
-         *  Function closes currently open SQL database.
-         *  Does not perform any sort of saving function to the database
-         *  currently in memory.
-         */
-        void close();
-
-        /**
          *  Function returns a pointer to a model containing data for the
          *  commission table to be displayed on the commission panel.
          *  Can be limited with searchCommissions(const QList<QVariant>)
@@ -336,6 +329,11 @@ namespace Commissionator {
     public slots:
 
         /**
+         *  Closes the open database
+         */
+        void close();
+
+        /**
          *  Opens a new SQLite database in memory, including building the
          *  schema and preparing queries. 
          */
@@ -347,11 +345,6 @@ namespace Commissionator {
          *  @param fileName - fileName to open
          */
         //void open(QString fileName);
-
-        /**
-         *  Closes the open database
-         */
-        //void close();
         
         /**
          *  Saves the currently open database to the file at the given filename.

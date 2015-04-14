@@ -34,8 +34,8 @@ namespace Commissionator {
         //void commissionPaymentsTest();
         //void commissionNotesTest();
 
-        //void commissionerContactsTest();
-        //void commissionerCommissionsTest();
+        void commissionerContactsTest();
+        void commissionerCommissionsTest();
 
         //void pieceEventsTest();
         //void pieceReferencesTest();
@@ -55,7 +55,7 @@ namespace Commissionator {
         //void insertProductOptionTest();
         //void insertSaleTest();
         //void insertDealTest();
-        //void insertPieceTest();
+        void insertPieceTest();
         void insertPaymentTest();
         void insertCommissionTest();
         void insertPaymentTypeTest();
