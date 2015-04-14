@@ -88,7 +88,7 @@ namespace Commissionator {
         com->setCommission(com->getCommissions()->index(0, 0));
         QAbstractItemModel *pays = com->getCommissionPayments();
         QVERIFY(pays->index(0, 0).data().toString() == "PaymentType");
-        QVERIFY(pays->index(0, 1).data().toDateTime().toString("MM/dd/yyyy")
+        QVERIFY(pays->index(0, 1).data().toString()
             == QDateTime::currentDateTime().toString("MM/dd/yyyy"));
         QVERIFY(pays->index(0, 2).data().toDouble() == 1.0);
         QVERIFY(pays->index(0, 3).data().toString() == "PaymentDescription");

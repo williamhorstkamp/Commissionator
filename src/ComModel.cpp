@@ -497,10 +497,10 @@ namespace Commissionator {
             "AND amountOwed like (?);", sql));
         searchCommissioners("", "", "");
 		commissionPaymentsModel = new QSqlQueryModel(this);
-        commissionPaymentsModel->setQuery(QSqlQuery("SELECT PaymentType.name,"
-            "DATETIME(Payment.date, 'unixepoch', 'localtime'), Payment.fee, "
+        commissionPaymentsModel->setQuery(QSqlQuery("SELECT PaymentType.name, "
+            "strftime('%m/%d/%Y', Payment.date/1000, 'unixepoch', 'localtime'), Payment.fee, "
             "Payment.note FROM Payment "
-            "INNER JOIN PaymentType ON Payment.method = PaymentType.id"
+            "INNER JOIN PaymentType ON Payment.method = PaymentType.id "
             "WHERE Payment.commission = (?);", sql));
         commissionsModel = new QSqlQueryModel(this);
         commissionsModel->setQuery(QSqlQuery("SELECT Commission.id, "
