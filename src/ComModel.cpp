@@ -582,7 +582,7 @@ namespace Commissionator {
         searchPieces("", "", "", "");
         productsModel = new QSqlQueryModel(this);
         productsModel->setQuery(QSqlQuery("SELECT Product.id, Product.name, "
-            "ProductPrices.price, COALESCE(COUNT(Piece.id), 0) "
+            "ProductPrices.price, COUNT(Piece.id) "
             "FROM Product "
             "LEFT JOIN ProductPrices ON Product.id = ProductPrices.product "
             "LEFT JOIN Piece ON Product.id = Piece.product "
@@ -590,7 +590,7 @@ namespace Commissionator {
             "AND ProductPrices.price LIKE (?) "
             "GROUP BY Product.id "
             "HAVING ProductPrices.date = MAX(ProductPrices.date) "
-            "AND COALESCE(SUM(Piece.id), 0) LIKE (?);", sql));
+            "AND COALESCE(COUNT(Piece.id), 0) LIKE (?);", sql));
         searchProducts("", "", "");
     }
 }
