@@ -511,8 +511,12 @@ namespace Commissionator {
             "WHERE Payment.commission = (?);", sql));
         commissionsModel = new QSqlQueryModel(this);
         commissionsModel->setQuery(QSqlQuery("SELECT Commission.id, "
-            "Commissioner.name, Commission.createDate, Commission.paidDate, "
-            "Commission.dueDate, COUNT(Piece.id), "
+            "Commissioner.name, STRFTIME('%m/%d/%Y', "
+            "Commission.createDate/1000, 'unixepoch', 'localtime'), "
+            "COALESCE(STRFTIME('%m/%d/%Y', Commission.paidDate/1000, "
+            "'unixepoch', 'localtime'), 'Unpaid'), "
+            "STRFTIME('%m/%d/%Y', Commission.dueDate/1000, 'unixepoch', 'localtime'), "
+            "COUNT(Piece.id), "
             "CASE WHEN MIN(Piece.finishDate) LIKE '0' THEN 'Unfinished' "
             "WHEN MIN(Piece.finishDate) IS NULL THEN 'No Pieces'"
             "ELSE MAX(Piece.finishDate) "

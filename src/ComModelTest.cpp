@@ -45,16 +45,13 @@ namespace Commissionator {
         com->insertCommissioner("TestCommissioner", "");
         com->insertCommission(1, QDateTime::currentDateTime(), "TestNotes");
         QAbstractItemModel *coms = com->getCommissions();
-        QDateTime convertedTime = QDateTime();
         qDebug() << coms->index(0, 1).data().toString();
         QVERIFY(coms->index(0, 1).data().toString() == "TestCommissioner");
-        convertedTime.setMSecsSinceEpoch(coms->index(0, 2).data().toString().toLongLong());
-        qDebug() << convertedTime.toString("MM/dd/yyyy");
-        QVERIFY(convertedTime.toString("MM/dd/yyyy")
+        qDebug() << coms->index(0, 2).data().toString();
+        QVERIFY(coms->index(0, 2).data().toString()
             == QDateTime::currentDateTime().toString("MM/dd/yyyy"));
-        convertedTime.setMSecsSinceEpoch(coms->index(0, 4).data().toString().toLongLong());
-        qDebug() << convertedTime.toString("MM/dd/yyyy");
-        QVERIFY(convertedTime.toString("MM/dd/yyyy")
+        qDebug() << coms->index(0, 4).data().toString();
+        QVERIFY(coms->index(0, 4).data().toString()
             == QDateTime::currentDateTime().toString("MM/dd/yyyy"));
     }
 
