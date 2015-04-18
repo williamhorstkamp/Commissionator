@@ -583,6 +583,7 @@ namespace Commissionator {
             "INNER JOIN Commission ON Piece.commission = Commission.id "
             "INNER JOIN Commissioner ON Commission.commissioner = Commissioner.id "
             "WHERE Commissioner.name LIKE (?) "
+            "AND Piece.name LIKE (?) "
             "AND STRFTIME('%m/%d/%Y', Piece.createDate/1000, 'unixepoch', 'localtime') LIKE (?) "
             "AND COALESCE(STRFTIME('%m/%d/%Y', Piece.finishDate/1000, 'unixepoch', "
             "'localtime'), 0) LIKE (?);", sql));

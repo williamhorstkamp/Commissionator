@@ -71,6 +71,9 @@ namespace Commissionator {
         QAbstractItemModel *piecesE = com->getPieceEditable()->model();
         QAbstractItemModel *piecesG = com->getPieceGenerated()->model();
         com->setPiece(com->getPieces()->index(0, 0));
+        for (int i = 0; i < com->getPieces()->rowCount(); ++i)
+            for (int j = 0; j < com->getPieces()->columnCount(); ++j)
+                qDebug() << com->getPieces()->index(i, j).data().toString();
         qDebug() << piecesG->index(0, 0).data().toString();
         qDebug() << piecesG->index(0, 1).data().toString();
         qDebug() << piecesE->index(0, 1).data().toString();
