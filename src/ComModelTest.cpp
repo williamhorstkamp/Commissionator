@@ -70,15 +70,12 @@ namespace Commissionator {
         com->insertPiece(1, 1, "TestPiece", "");
         QAbstractItemModel *piecesE = com->getPieceEditable()->model();
         QAbstractItemModel *piecesG = com->getPieceGenerated()->model();
-        for (int i = 0; i < piecesG->rowCount(); ++i) {
-            qDebug() << piecesG->index(i, 0).data().toString();
-            qDebug() << piecesG->index(i, 1).data().toString();
-        }
-        for (int i = 0; i < piecesE->rowCount(); ++i) {
-            qDebug() << piecesE->index(i, 1).data().toString();
-            qDebug() << piecesE->index(i, 3).data().toString();
-            qDebug() << piecesE->index(i, 5).data().toString();
-        }
+        com->setPiece(com->getPieces()->index(0, 0));
+        qDebug() << piecesG->index(0, 0).data().toString();
+        qDebug() << piecesG->index(0, 1).data().toString();
+        qDebug() << piecesE->index(0, 1).data().toString();
+        qDebug() << piecesE->index(0, 3).data().toString();
+        qDebug() << piecesE->index(0, 5).data().toString();
         QVERIFY(piecesG->index(0, 0).data().toString() == "TestCommissioner");
         QVERIFY(piecesG->index(0, 1).data().toString() == "TestName");
         QVERIFY(piecesE->index(0, 1).data().toString() == "TestPiece");
@@ -94,7 +91,7 @@ namespace Commissionator {
         com->insertProduct("TestProduct", 1.0);
         com->insertPiece(1, 1, "TestPiece", "");
         com->insertPayment(1, 1, 1.0, "PaymentDescription");
-        com->setCommission(com->getCommissions()->index(0, 0));
+        com->setCommission(com->getCommissions()->index(0, 1));
         QAbstractItemModel *pays = com->getCommissionPayments();
         QVERIFY(pays->index(0, 0).data().toString() == "PaymentType");
         QVERIFY(pays->index(0, 1).data().toString()

@@ -574,19 +574,22 @@ namespace Commissionator {
             "INNER JOIN Commissioner ON Commission.commissioner = Commissioner.id"
             "WHERE Piece.id = (?)", sql));
         piecesModel = new QSqlQueryModel(this);
-        piecesModel->setQuery(QSqlQuery("SELECT Piece.id, Commissioner.name,"
-            "Piece.name, DATETIME(Piece.createDate, 'unixepoch', 'localtime'),"
-            "DATETIME(Piece.finishDate, 'unixepoch', 'localtime')"
-            "FROM Piece"
-            "INNER JOIN Commission ON Piece.commission = Commission.id"
-            "INNER JOIN Commissioner ON Commission.commissioner = Commissioner.id;"
-            "WHERE Commissioner.name LIKE (?)"
-            "AND DATETIME(Piece.createDate, 'unixepoch', 'localtime') LIKE (?)"
-            "AND DATETIME(Piece.finishDate, 'unixepoch', 'localtime') LIKE (?)", sql));
+        piecesModel->setQuery(QSqlQuery("SELECT Piece.id, Commissioner.name, "
+            "Piece.name, STRFTIME('%m/%d/%Y',Piece.createDate/1000, 'unixepoch', "
+            "'localtime'), "
+            "COALESCE(STRFTIME('%m/%d/%Y', Piece.finishDate/1000, 'unixepoch', "
+            "'localtime'), 'Unfinished') "
+            "FROM Piece "
+            "INNER JOIN Commission ON Piece.commission = Commission.id "
+            "INNER JOIN Commissioner ON Commission.commissioner = Commissioner.id "
+            "WHERE Commissioner.name LIKE (?) "
+            "AND STRFTIME('%m/%d/%Y', Piece.createDate/1000, 'unixepoch', 'localtime') LIKE (?) "
+            "AND COALESCE(STRFTIME('%m/%d/%Y', Piece.finishDate/1000, 'unixepoch', "
+            "'localtime'), 0) LIKE (?);", sql));
         searchPieces("", "", "", "");
         productsModel = new QSqlQueryModel(this);
         productsModel->setQuery(QSqlQuery("SELECT Product.id, Product.name, "
-            "ProductPrices.price, COUNT(Piece.id) "
+            "ProductPrices.price, COUNT(DISTINCT Piece.id) "
             "FROM Product "
             "LEFT JOIN ProductPrices ON Product.id = ProductPrices.product "
             "LEFT JOIN Piece ON Product.id = Piece.product "
