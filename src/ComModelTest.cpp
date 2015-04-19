@@ -68,23 +68,22 @@ namespace Commissionator {
         com->insertCommission(1, QDateTime::currentDateTime(), "");
         com->insertProduct("TestName", 1.0);
         com->insertPiece(1, 1, "TestPiece", "");
-        QAbstractItemModel *piecesE = com->getPieceEditable()->model();
-        QAbstractItemModel *piecesG = com->getPieceGenerated()->model();
         com->setPiece(com->getPieces()->index(0, 0));
         for (int i = 0; i < com->getPieces()->rowCount(); ++i)
             for (int j = 0; j < com->getPieces()->columnCount(); ++j)
                 qDebug() << com->getPieces()->index(i, j).data().toString();
-        qDebug() << piecesG->index(0, 0).data().toString();
-        qDebug() << piecesG->index(0, 1).data().toString();
-        qDebug() << piecesE->index(0, 1).data().toString();
-        qDebug() << piecesE->index(0, 3).data().toString();
-        qDebug() << piecesE->index(0, 5).data().toString();
-        QVERIFY(piecesG->index(0, 0).data().toString() == "TestCommissioner");
-        QVERIFY(piecesG->index(0, 1).data().toString() == "TestName");
-        QVERIFY(piecesE->index(0, 1).data().toString() == "TestPiece");
-        QVERIFY(piecesE->index(0, 3).data().toDateTime().toString("MM/dd/yyyy")
+        qDebug() << com->getPiece()->index(0, 0).data().toString();
+        qDebug() << com->getPiece()->index(0, 1).data().toString();
+        qDebug() << com->getPiece()->index(0, 2).data().toString();
+        qDebug() << com->getPiece()->index(0, 3).data().toString();
+        qDebug() << com->getPiece()->index(0, 4).data().toString();
+        QVERIFY(com->getPiece()->index(0, 0).data().toString() == "TestCommissioner");
+        QVERIFY(com->getPiece()->index(0, 1).data().toString() == "TestPiece");
+        QVERIFY(com->getPiece()->index(0, 2).data().toString()
             == QDateTime::currentDateTime().toString("MM/dd/yyyy"));
-        QVERIFY(piecesE->index(0, 5).data().toString() == "");
+        QVERIFY(com->getPiece()->index(0, 3).data().toString()
+            == "Unfinished");
+        QVERIFY(com->getPiece()->index(0, 4).data().toString() == "");
     }
     
     void ComModelTest::insertPaymentTest() {

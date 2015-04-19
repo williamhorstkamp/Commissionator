@@ -65,12 +65,8 @@ namespace Commissionator {
         return paymentTypesModel;
     }
 
-    QDataWidgetMapper *ComModel::getPieceEditable() {
-        return pieceEditableMapper;
-    }
-
-    QDataWidgetMapper *ComModel::getPieceGenerated() {
-        return pieceGeneratedMapper;
+    QSqlQueryModel *ComModel::getPiece() {
+        return pieceModel;
     }
 
     QSqlQueryModel *ComModel::getPieces() {
@@ -125,7 +121,7 @@ namespace Commissionator {
     }
 
     void ComModel::setCommission(const QModelIndex &index) {
-        commissionPaymentsModel->query().bindValue(0, getValue(index, 0).toString());
+        commissionPaymentsModel->query().bindValue(0, getValue(index, 0).toInt());
         commissionPaymentsModel->query().exec();
         commissionPaymentsModel->setQuery(commissionPaymentsModel->query());
     }
@@ -145,12 +141,9 @@ namespace Commissionator {
     }
 
     void ComModel::setPiece(const QModelIndex &index) {
-        QSqlQueryModel *pieGenQueryModel = qobject_cast<QSqlQueryModel *>
-            (pieceGeneratedMapper->model());
-        pieGenQueryModel->query().bindValue(0, getValue(index, 0).toString());
-        pieGenQueryModel->query().exec();
-        pieGenQueryModel->setQuery(pieGenQueryModel->query());
-        pieceEditableMapper->setCurrentModelIndex(index);
+        pieceModel->query().bindValue(0, getValue(index, 0).toInt());
+        pieceModel->query().exec();
+        pieceModel->setQuery(pieceModel->query());
     }
 
     void ComModel::insertCommission(const int commissionerId, 
@@ -362,10 +355,9 @@ namespace Commissionator {
         insertProductPriceQuery->finish();
         insertProductQuery->finish();
         paymentTypesModel->query().finish();
-        pieceGeneratedModel->query().finish();
+        pieceModel->query().finish();
         piecesModel->query().finish();
         productsModel->query().finish();
-        delete pieceEditableMapper->model();
         delete commissionerEditableMapper->model();
     }
 
@@ -559,20 +551,15 @@ namespace Commissionator {
         paymentTypesModel = new QSqlQueryModel(this);
         paymentTypesModel->setQuery(QSqlQuery("SELECT id, name FROM PaymentType", sql));
         paymentTypesModel->query().exec();
-        pieceEditableMapper = new QDataWidgetMapper(this);
-        QSqlTableModel *pieceEditableModel = new QSqlTableModel(this, sql);
-        pieceEditableModel->setTable("Piece");
-        pieceEditableModel->select();
-        pieceEditableMapper->setModel(pieceEditableModel);
-        pieceGeneratedMapper = new QDataWidgetMapper(this);
-        pieceGeneratedModel = new QSqlQueryModel(this);
-        pieceGeneratedMapper->setModel(pieceGeneratedModel);
-        pieceGeneratedModel->setQuery(QSqlQuery("SELECT Commissioner.name,"
-            "Product.name FROM Piece"
-            "INNER JOIN Product ON Piece.product = Product.id"
-            "INNER JOIN Commission ON Piece.commission = Commission.id"
-            "INNER JOIN Commissioner ON Commission.commissioner = Commissioner.id"
-            "WHERE Piece.id = (?)", sql));
+        pieceModel = new QSqlQueryModel(this);
+        pieceModel->setQuery(QSqlQuery("SELECT Commissioner.name, Piece.name, "
+            "STRFTIME('%m/%d/%Y', Piece.createDate/1000, 'unixepoch', "
+            "'localtime'), COALESCE(STRFTIME('%m/%d/%Y', Piece.finishDate/1000, "
+            "'unixepoch', 'localtime'), 'Unfinished'), Piece.notes FROM Piece "
+            "INNER JOIN Product ON Piece.product = Product.id "
+            "INNER JOIN Commission ON Piece.commission = Commission.id "
+            "INNER JOIN Commissioner ON Commission.commissioner = Commissioner.id "
+            "WHERE Piece.id = (?)"));
         piecesModel = new QSqlQueryModel(this);
         piecesModel->setQuery(QSqlQuery("SELECT Piece.id, Commissioner.name, "
             "Piece.name, STRFTIME('%m/%d/%Y',Piece.createDate/1000, 'unixepoch', "

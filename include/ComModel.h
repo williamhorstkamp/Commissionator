@@ -152,30 +152,15 @@ namespace Commissionator {
         QDataWidgetMapper *getCommissionerGenerated();
 
         /**
-         *  Function returns a QDataWidgetMapper that can be connected to
-         *  multiple views. The current record can be set by
-         *  setPiece(const QModelIndex &)
-         *  Contains the editable data about the piece
+         *  Function returns a QSqlQueryModel that contains data about the
+         *  seleted Piece
          *
          *  @return - pointer to QDataWidgetMapper containing data about the
-         *      piece
-         *  Data order:
-         *  Id, Piece Name, Product Id, Start Date, End Date, Notes
-         */
-        QDataWidgetMapper *getPieceEditable();
-
-        /**
-         *  Function returns a QDataWidgetMapper that can be connected to
-         *  multiple views. The current record can be set by
-         *  setPiece(const QModelIndex &)
-         *  Contains the generated (uneditable) data about the piece
-         *
-         *  @return - pointer to QDataWidgetMapper containing data about the
-         *      piece
-         *  Data order:
-         *  Commissioner Name, Product Name
-         */
-        QDataWidgetMapper *getPieceGenerated();
+         *      commission
+         *   Data order:
+         *   Commissioner Name, Piece Name, Start Date, End Date, Notes
+        */
+        QSqlQueryModel *getPiece();
 
         /**
          *  Function returns a QDataWidgetMapper that can be connected to
@@ -728,9 +713,7 @@ namespace Commissionator {
         QSqlQuery *insertProductPriceQuery;
         QSqlQuery *insertProductQuery;
         QSqlQueryModel *paymentTypesModel;
-        QDataWidgetMapper *pieceEditableMapper;
-        QDataWidgetMapper *pieceGeneratedMapper;
-        QSqlQueryModel *pieceGeneratedModel;
+        QSqlQueryModel *pieceModel;
         QSqlQueryModel *piecesModel;
         QSqlQueryModel *productsModel;
     };
