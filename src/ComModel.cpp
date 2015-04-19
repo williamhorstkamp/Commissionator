@@ -194,6 +194,33 @@ namespace Commissionator {
         insertPaymentQuery->exec();
         commissionPaymentsModel->query().exec();
         commissionPaymentsModel->setQuery(commissionPaymentsModel->query());
+        QSqlQuery wasJustPaid("SELECT CASE WHEN Commission.paidDate IS NULL "
+            "AND totalPrices.price = sum(Payment.fee) "
+            "THEN 'true' ELSE 'false' END "
+            "FROM Commission "
+            "LEFT JOIN(SELECT prices.com comId, SUM(prices.price) price "
+            "FROM(SELECT C.id com, PP.price price FROM Commission C "
+            "INNER JOIN Piece P ON C.id = P.commission "
+            "INNER JOIN ProductPrices PP ON P.product = PP.product "
+            "WHERE  PP.date <= C.createDate "
+            "GROUP BY P.id HAVING PP.date = MAX(PP.date)) as prices "
+            "GROUP BY prices.com) as totalPrices "
+            "ON Commission.id = totalPrices.comId "
+            "LEFT JOIN Payment ON Commission.id = Payment.commission "
+            "WHERE Commission.id = (?)", sql);
+        wasJustPaid.bindValue(0, commissionId);
+        wasJustPaid.exec();
+        wasJustPaid.next();
+        qDebug() << wasJustPaid.value(0).toBool();
+        if (wasJustPaid.value(0).toBool() == true) {
+            QSqlQuery setPaidDate("UPDATE Commission SET paidDate = (?) "
+                "WHERE Commission.id = (?)", sql);
+            setPaidDate.bindValue(0, QDateTime::currentDateTime().toMSecsSinceEpoch());
+            setPaidDate.bindValue(1, commissionId);
+            setPaidDate.exec();
+            commissionerCommissionsModel->query().exec();
+            commissionerCommissionsModel->setQuery(commissionerCommissionsModel->query());
+        }
     }
 
     void ComModel::insertPaymentType(const QString typeName) {
