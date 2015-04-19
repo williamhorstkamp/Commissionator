@@ -209,12 +209,6 @@ namespace Commissionator {
         com->insertPiece(2, 1, "TestPiece3", "");
         com->setCommissioner(com->getCommissioners()->index(0, 0));
         QAbstractItemModel *commissions = com->getCommissionerCommissions();
-        for (int i = 0; i < commissions->rowCount(); i++) {
-            qDebug() << commissions->index(i, 0).data().toString();
-            qDebug() << commissions->index(i, 1).data().toString();
-            qDebug() << commissions->index(i, 2).data().toDouble();
-            qDebug() << commissions->index(i, 3).data().toString();
-        }
         QVERIFY(commissions->index(0, 0).data().toString()
             == QDateTime::currentDateTime().toString("MM/dd/yyyy"));
         QVERIFY(commissions->index(0, 1).data().toString() == "Unpaid");
@@ -227,8 +221,6 @@ namespace Commissionator {
         QVERIFY(commissions->index(1, 3).data().toString() == "Unfinished");
         com->insertPaymentType("TestType");
         com->insertPayment(1, 1, 2.0, "");
-        qDebug() << commissions->index(0, 1).data().toString();
-        qDebug() << commissions->index(1, 1).data().toString();
         QVERIFY(commissions->index(0, 1).data().toString()
             == QDateTime::currentDateTime().toString("MM/dd/yyyy"));
         QVERIFY(commissions->index(1, 1).data().toString() == "Unpaid");
