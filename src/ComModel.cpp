@@ -206,6 +206,7 @@ namespace Commissionator {
         wasJustPaid.bindValue(0, commissionId);
         wasJustPaid.exec();
         wasJustPaid.next();
+        qDebug() << wasJustPaid.value(0).toBool();
         if (wasJustPaid.value(0).toBool() == true) {
             QSqlQuery setPaidDate("UPDATE Commission SET paidDate = (?) "
                 "WHERE Commission.id = (?)", sql);
