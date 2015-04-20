@@ -29,12 +29,8 @@ namespace Commissionator {
         } 
     }
     
-    QDataWidgetMapper *ComModel::getCommissionerEditable() {
-        return commissionerEditableMapper;
-    }
-
-    QDataWidgetMapper *ComModel::getCommissionerGenerated() {
-        return commissionerGeneratedMapper;
+    QSqlQueryModel *ComModel::getCommissioner() {
+        return commissionerModel;
     }
 
     QSqlQueryModel *ComModel::getCommissionerCommissions() {
@@ -128,10 +124,9 @@ namespace Commissionator {
 
     void ComModel::setCommissioner(const QModelIndex &index) {
         int comId = getValue(index, 0).toInt();
-        commissionerGeneratedModel->query().bindValue(0, comId);
-        commissionerGeneratedModel->query().exec();
-        commissionerGeneratedModel->setQuery(commissionerGeneratedModel->query());
-        commissionerEditableMapper->setCurrentModelIndex(index);
+        commissionerModel->query().bindValue(0, comId);
+        commissionerModel->query().exec();
+        commissionerModel->setQuery(commissionerModel->query());
         commissionerCommissionsModel->query().bindValue(0, comId);
         commissionerCommissionsModel->query().exec();
         commissionerCommissionsModel->setQuery(commissionerCommissionsModel->query());
@@ -366,7 +361,7 @@ namespace Commissionator {
     void ComModel::cleanupQueries() {
         commissionerCommissionsModel->query().finish();
         commissionerContactsModel->query().finish();
-        commissionerGeneratedModel->query().finish();
+        commissionerModel->query().finish();
         commissionersModel->query().finish();
         commissionPaymentsModel->query().finish();
         commissionsModel->query().finish();
@@ -384,7 +379,6 @@ namespace Commissionator {
         pieceModel->query().finish();
         piecesModel->query().finish();
         productsModel->query().finish();
-        delete commissionerEditableMapper->model();
     }
 
     QVariant ComModel::getValue(const QModelIndex &index, int column) {
@@ -412,70 +406,63 @@ namespace Commissionator {
             "Commission.commissioner = Commissioner.id "
             "WHERE Commissioner.id = (?) "
             "AND ProductPrices.date < Commission.createDate "
-            "GROUP BY Piece.id HAVING date = max(date))"
+            "GROUP BY Piece.id HAVING date = max(date)) "
             "GROUP BY ComID;", sql));
 		commissionerContactsModel = new QSqlQueryModel(this);
         commissionerContactsModel->setQuery(QSqlQuery("SELECT ContactType.type, "
             "Contact.entry FROM Contact "
             "INNER JOIN ContactType ON Contact.type = ContactType.id "
             "WHERE Contact.commissioner = (?);", sql));
-        commissionerEditableMapper = new QDataWidgetMapper(this);
-        QSqlTableModel *commissionerEditableModel = new QSqlTableModel(this, sql);
-        commissionerEditableModel->setTable("Commissioner");
-        commissionerEditableModel->select();
-        commissionerEditableMapper->setModel(commissionerEditableModel);
-        commissionerGeneratedMapper = new QDataWidgetMapper(this);
-        commissionerGeneratedModel = new QSqlQueryModel(this);
-        commissionerGeneratedMapper->setModel(commissionerGeneratedModel);
-        commissionerGeneratedModel->setQuery(QSqlQuery("SELECT "
+        commissionerModel = new QSqlQueryModel(this);
+        commissionerModel->setQuery(QSqlQuery("SELECT C.name, "
             "min(Commission.createDate), "
-            "CASE WHEN(SELECT SUM(a.price) - b.fee FROM"
-            "(SELECT ProductPrices.price price FROM Commission"
-            "INNER JOIN Piece ON Commission.id = Piece.commission"
-            "INNER JOIN ProductPrices ON Piece.product = ProductPrices.product"
-            "WHERE Commission.commissioner = C.id"
-            "AND ProductPrices.date < Commission.createDate"
-            "GROUP BY Piece.id HAVING date = max(date)) a"
-            "LEFT JOIN(SELECT SUM(Payment.fee) fee FROM Payment"
-            "INNER JOIN Commission ON Payment.commission = Commission.id"
+            "CASE WHEN(SELECT SUM(a.price) - b.fee FROM "
+            "(SELECT ProductPrices.price price FROM Commission "
+            "INNER JOIN Piece ON Commission.id = Piece.commission "
+            "INNER JOIN ProductPrices ON Piece.product = ProductPrices.product "
+            "WHERE Commission.commissioner = C.id "
+            "AND ProductPrices.date < Commission.createDate "
+            "GROUP BY Piece.id HAVING date = max(date)) a "
+            "LEFT JOIN(SELECT SUM(Payment.fee) fee FROM Payment "
+            "INNER JOIN Commission ON Payment.commission = Commission.id "
             "INNER JOIN Commissioner ON "
-            "Commission.commissioner = Commissioner.id"
-            "WHERE Commissioner.id = C.id) b) = 0 THEN 'Paid off'"
-            "WHEN(SELECT SUM(a.price) FROM"
-            "(SELECT ProductPrices.price price FROM Commission"
-            "INNER JOIN Piece ON Commission.id = Piece.commission"
-            "INNER JOIN ProductPrices ON Piece.product = ProductPrices.product"
-            "WHERE Commission.commissioner = C.id"
-            "AND ProductPrices.date < Commission.createDate"
-            "GROUP BY Piece.id"
-            "HAVING date = max(date)) a) IS NULL THEN 'No Commissioned Pieces'"
+            "Commission.commissioner = Commissioner.id "
+            "WHERE Commissioner.id = C.id) b) = 0 THEN 'Paid off' "
+            "WHEN(SELECT SUM(a.price) FROM "
+            "(SELECT ProductPrices.price price FROM Commission "
+            "INNER JOIN Piece ON Commission.id = Piece.commission "
+            "INNER JOIN ProductPrices ON Piece.product = ProductPrices.product "
+            "WHERE Commission.commissioner = C.id "
+            "AND ProductPrices.date < Commission.createDate "
+            "GROUP BY Piece.id "
+            "HAVING date = max(date)) a) IS NULL THEN 'No Commissioned Pieces' "
             "WHEN(SELECT SUM(b.fee) FROM "
-            "(SELECT SUM(Payment.fee) fee FROM Payment"
-            "INNER JOIN Commission ON Payment.commission = Commission.id"
+            "(SELECT SUM(Payment.fee) fee FROM Payment "
+            "INNER JOIN Commission ON Payment.commission = Commission.id "
             "INNER JOIN Commissioner ON "
-            "Commission.commissioner = Commissioner.id"
-            "WHERE Commissioner.id = C.id) b) IS NULL THEN (SELECT SUM(a.price) FROM"
-            "(SELECT ProductPrices.price price FROM Commission"
-            "INNER JOIN Piece ON Commission.id = Piece.commission"
-            "INNER JOIN ProductPrices ON Piece.product = ProductPrices.product"
-            "WHERE Commission.commissioner = C.id"
-            "AND ProductPrices.date < Commission.createDate"
-            "GROUP BY Piece.id HAVING date = max(date)) a)"
-            "ELSE(SELECT SUM(a.price) - b.fee FROM"
-            "(SELECT ProductPrices.price price FROM Commission"
-            "INNER JOIN Piece ON Commission.id = Piece.commission"
-            "INNER JOIN ProductPrices ON Piece.product = ProductPrices.product"
-            "WHERE Commission.commissioner = C.id"
-            "AND ProductPrices.date < Commission.createDate"
-            "GROUP BY Piece.id HAVING date = max(date)) a"
-            "LEFT JOIN(SELECT SUM(Payment.fee) fee FROM Payment"
-            "INNER JOIN Commission ON Payment.commission = Commission.id"
+            "Commission.commissioner = Commissioner.id "
+            "WHERE Commissioner.id = C.id) b) IS NULL THEN (SELECT SUM(a.price) FROM "
+            "(SELECT ProductPrices.price price FROM Commission "
+            "INNER JOIN Piece ON Commission.id = Piece.commission "
+            "INNER JOIN ProductPrices ON Piece.product = ProductPrices.product "
+            "WHERE Commission.commissioner = C.id "
+            "AND ProductPrices.date < Commission.createDate "
+            "GROUP BY Piece.id HAVING date = max(date)) a) "
+            "ELSE(SELECT SUM(a.price) - b.fee FROM "
+            "(SELECT ProductPrices.price price FROM Commission "
+            "INNER JOIN Piece ON Commission.id = Piece.commission "
+            "INNER JOIN ProductPrices ON Piece.product = ProductPrices.product "
+            "WHERE Commission.commissioner = C.id "
+            "AND ProductPrices.date < Commission.createDate "
+            "GROUP BY Piece.id HAVING date = max(date)) a "
+            "LEFT JOIN(SELECT SUM(Payment.fee) fee FROM Payment "
+            "INNER JOIN Commission ON Payment.commission = Commission.id "
             "INNER JOIN Commissioner ON "
-            "Commission.commissioner = Commissioner.id"
-            "WHERE Commissioner.id = C.id) b)"
-            "END AS amountOwed"
-            "FROM Commissioner C"
-            "LEFT JOIN Commission ON C.id = Commission.commissioner"
+            "Commission.commissioner = Commissioner.id "
+            "WHERE Commissioner.id = C.id) b) "
+            "END AS amountOwed, C.notes "
+            "FROM Commissioner C "
+            "LEFT JOIN Commission ON C.id = Commission.commissioner "
             "WHERE C.id = (?);", sql));
         commissionersModel = new QSqlQueryModel(this);
         commissionersModel->setQuery(QSqlQuery("SELECT C.id, C.name, "
