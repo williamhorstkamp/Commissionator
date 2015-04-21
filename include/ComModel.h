@@ -1,580 +1,674 @@
-#include "SQLiteHandler.h"
-#include <string>
-#include <vector>
-#include <tuple>
-
-using namespace SQLiter;
+#ifndef COMMODEL_H
+#define COMMODEL_H
+#include <QSqlDatabase>
+#include <QSqlQueryModel>
+#include <QSqlTableModel>
+#include <QDataWidgetMapper>
+#include <QDateTime>
 
 namespace Commissionator {
 
     /**
-     *  Class that manages the SQLite database through an SQLiteHandler.
-     *  Acts as the "model" in the programs MVC design.
-     *  Provides a set of functions making it easier for the Controller to
+     *  Class that manages the SQLite database through QSqlDatabase.
+     *  Acts as the "model" in the programs MVC/MV design.
+     *  Provides a set of functions making it easier for the to
      *  manipulate the database as well as request results of query functions.
      */
-    class ComModel {
-    private:
-        SQLiteHandler *SQL;
+    class ComModel : public QObject {
 
-        /**
-         *  Builds the database schema into the currently managed database.
-         *  Ran during the create function before prepared statements are
-         *  dealt with.
-         */
-        void build();
-
-        /**
-         *  Prepares the prepared statements against the currently managed
-         *  database. This command is ran during both the open and create
-         *  functions.
-         */
-        void prepare();
+        Q_OBJECT
 
     public:
+        ComModel(QObject *parent = 0);
 
-        /**
-         *  Default constructor
-         */
-        ComModel();
-
-        /**
-         *  Destructor cleans up database and prepared statements by deleting 
-         *  it.
-         */
         ~ComModel();
 
         /**
-         *  Creates a database at the given file location/name. Then saves the
-         *  contents of the SQL to disk.
+         *  Function returns a pointer to a model containing data for the
+         *  commission table to be displayed on the commission panel.
+         *  Can be limited with searchCommissions(const QList<QVariant>)
          *
-         *  @param fileName - C String containing file location and name
+         *  @return - pointer to QSqlQueryModel containing commissions
+         *  Display order:
+         *  Index, Commissioner, Create Date, Paid Date, Due Date, 
+         *  Number of Pieces, Finish Date
          */
-        void save(const std::string fileName);
+        QSqlQueryModel *getCommissions();
 
         /**
-         *  Opens a database at the given file location/name. Then prepares
-         *  the statements against the database.
+         *  Function returns a pointer to a model containing data for the
+         *  commissioner table to be displayed on the commissioner panel.
+         *  Can be limited with searchCommissioners(const QList<QVariant>)
          *
-         *  @param fileName - C String containing file location and name
+         *  @return - pointer to QSqlQueryModel containing commissioners
+         *  Display order:
+         *  Index, Name, Date of Oldest Commission, Outstanding Balance
          */
-        void open(const std::string fileName);
+        QSqlQueryModel *getCommissioners();
 
         /**
-         *  Closes the database.
+         *  Function returns a pointer to a model containing data for the
+         *  pieces table to be displayed on the pieces panel.
+         *  Can be limited with searchPieces(const QList<QVariant>)
+         *
+         *  @return - pointer to QSqlQueryModel containing pieces
+         *  Display order:
+         *  Index, Commissioner, Piece Name, Start Date, Finish Date
+         */
+        QSqlQueryModel *getPieces();
+
+        /**
+         *  Function returns a pointer to a model containing data for the
+         *  product table to be displayed on the storefront panel.
+         *  Can be limited with searchProducts(const QList<QVariant>)
+         *
+         *  @return - pointer to QSqlQueryModel containing products
+         *  Display order:
+         *  Index, Name, Base Price, Number of Pieces Produced
+         */
+        QSqlQueryModel *getProducts();
+
+        /**
+         *  Function returns a pointer to a model containing data for the
+         *  payment type slider to be displayed on the payment popup dialog.
+         *
+         *  @return - pointer to QSqlQueryModel containing payment types
+         *  Display order:
+         *  Index, Payment Type
+         */
+        QSqlQueryModel *getPaymentTypes();
+
+        /**
+         *  Function returns a pointer to a model containing data for the
+         *  sales table to be displayed on the storefront panel.
+         *  Can be limited with searchSales(const QList<QVariant>)
+         *
+         *  @return - pointer to QSqlQueryModel containing sales
+         *  Display order:
+         *  Index, Name, Start Date, End Date
+         */
+        //QSqlQueryModel *getSales();
+
+        /**
+         *  Function returns a pointer to a model containing data for the
+         *  contact type slider to be displayed on the commissioner panel.
+         *
+         *  @return - pointer to QSqlQueryModel containing contact types
+         *  Display order:
+         *  Index, Type Name
+         */
+        QSqlQueryModel *getContactTypes();
+
+        /**
+         *  Function returns a QSqlQueryModel that contains data about the
+         *  seleted Commission
+         *
+         *  @return - pointer to QSqlQueryModel containing data about the
+         *      commission
+         *   Data order:
+         *   Commissioner Name, Create Date, Paid Date, Due Date, Amount Owed,
+         *       Notes
+         */
+        QSqlQueryModel *getCommission();
+
+        /**
+         *  Function returns a QSqlQueryModel that contains data about the
+         *  seleted Commissioner
+         *
+         *  @return - pointer to QSqlQueryModel containing data about the
+         *      commissioner
+         *   Data order:
+         *   Commissioner Name, Customer Since, Amount Owed, Notes
+         */
+        QSqlQueryModel *getCommissioner();
+
+        /**
+         *  Function returns a QSqlQueryModel that contains data about the
+         *  seleted Piece
+         *
+         *  @return - pointer to QSqlQueryModel containing data about the
+         *      piece
+         *   Data order:
+         *   Commissioner Name, Piece Name, Start Date, End Date, Notes
+        */
+        QSqlQueryModel *getPiece();
+
+        /**
+         *  Function returns a QSqlQueryModel that contains data about the
+         *  seleted Product
+         *
+         *  @return - pointer to QSqlQueryModel containing data about the
+         *      product
+         *   Data order:
+         *   Product Name, Number Produced, Base Price
+         */
+        QSqlQueryModel *getProduct();
+
+        /**
+         *  Function returns a QDataWidgetMapper that can be connected to
+         *  multiple views. The current record can be set by
+         *  setSale(const QModelIndex &)
+         *  Contains the data about the sale, all of which is editable
+         *
+         *  @return - pointer to QDataWidgetMapper containing data about the
+         *      sale
+         *  Data order:
+         *  Sale Name, Start Date, End Date, Notes
+         */
+        //QDataWidgetMapper *getSale();
+
+        /**
+         *  Function returns a pointer to a model containing data for the
+         *  commission pieces table to be displayed on the commission panel.
+         *  The current record can be set by setCommission(const QModelIndex &)
+         *
+         *  @return - pointer to QSqlQueryModel containing commission pieces
+         *  Display order:
+         *  Product, Name, Price, Sale, Start Date, Finish Date
+         */
+        //QSqlQueryModel *getCommissionPieces();
+
+        /**
+         *  Function returns a pointer to a model containing data for the
+         *  commission payments table to be displayed on the commission panel.
+         *  The current record can be set by setCommission(const QModelIndex &)
+         *
+         *  @return - pointer to QSqlQueryModel containing commission payments
+         *  Display order:
+         *  Payment Method, Date, Amount, Notes
+         */
+        QSqlQueryModel *getCommissionPayments();
+
+        /**
+         *  Function returns a pointer to a model containing data for the
+         *  commissioner contacts table to be displayed on the commissioner panel.
+         *  The current record can be set by setCommissioner(const QModelIndex &)
+         *
+         *  @return - pointer to QSqlQueryModel containing commissioner contacts
+         *  Display order:
+         *  Contact Type, Entry
+         */
+        QSqlQueryModel *getCommissionerContacts();
+
+        /**
+         *  Function returns a pointer to a model containing data for the
+         *  commissioner commissions table to be displayed on the commissioner panel.
+         *  The current record can be set by setCommissioner(const QModelIndex &)
+         *
+         *  @return - pointer to QSqlQueryModel containing commissioner commissions
+         *  Display order:
+         *  Create Date, Paid Date, Cost, Finish Date
+         */
+        QSqlQueryModel *getCommissionerCommissions();
+
+        /**
+         *  Function returns a pointer to a model containing data for the
+         *  piece events table to be displayed on the piece panel.
+         *  The current record can be set by setPiece(const QModelIndex &)
+         *
+         *  @return - pointer to QSqlTableModel containing piece events
+         *  Display order:
+         *  Event Name, Start Date, End Date
+         */
+        //QSqlTableModel *getPieceEvents();
+
+        /**
+         *  Function returns a pointer to a model containing data for the
+         *  piece references table to be displayed on the piece panel.
+         *  The current record can be set by setPiece(const QModelIndex &)
+         *
+         *  @return - pointer to QSqlQueryModel containing piece references
+         *  Display order:
+         *  Reference
+         */
+        //QSqlQueryModel *getPieceReferences();
+
+        /**
+         *  Function returns a pointer to a model containing data for the
+         *  product options table to be displayed on the product panel.
+         *  The current record can be set by setProduct(const QModelIndex &)
+         *
+         *  @return - pointer to QSqlTableModel containing product options
+         *  Display order:
+         *  Name, Price, Is Numeric
+         */
+        //QSqlTableModel *getProductOptions();
+
+        /**
+         *  Function returns a pointer to a model containing data for the
+         *  product pieces sold table to be displayed on the product panel.
+         *  The current record can be set by setProduct(const QModelIndex &)
+         *
+         *  @return - pointer to QSqlQueryModel containing pieces sold
+         *  Display order:
+         *  Commissioner, Piece Name, Start Date, Finish Date
+         */
+        //QSqlQueryModel *getProductPiecesSold();
+
+        /**
+         *  Function returns a pointer to a model containing data for the
+         *  sale deals table to be displayed on the sale panel.
+         *  The current record can be set by setSale(const QModelIndex &)
+         *
+         *  @return - pointer to QSqlQueryModel containing sale deals
+         *  Display order:
+         *  Deal, Num Bought
+         */
+        //QSqlQueryModel *getSaleDeals();
+
+        /**
+         *  Function returns a pointer to a model containing data for the
+         *  sale pieces sold table to be displayed on the sale panel.
+         *  The current record can be set by setSale(const QModelIndex &)
+         *
+         *  @return - pointer to QSqlQueryModel containing pieces sold
+         *  Display order:
+         *  Commissioner, Piece Name, Start Date, Finish Date
+         */
+        //QSqlQueryModel *getSalePiecesSold();
+
+    public slots:
+
+        /**
+         *  Closes the open database
          */
         void close();
 
         /**
-         *  Inserts a commissioner into the database with a given name.
-         *
-         *  @param comName - C String containing the name of the commissioner
+         *  Opens a new SQLite database in memory, including building the
+         *  schema and preparing queries. 
          */
-        void insertCommissioner(const std::string comName);
+        void newRecord();
 
         /**
-         *  Deletes a commissioner with a given id. Can not delete the 'None'
-         *  commissioner (0)
+         *  Opens the SQLite database at the given filename.
          *
-         *  @param id - int containing the id of the commissioner to delete
+         *  @param fileName - fileName to open
          */
-        void deleteCommissioner(const int id);
-
-        /**
-         *  Renames a commissioner with a given id and name
-         *
-         *  @param id - int containing the id of the commissioner to rename
-         *  @param comName - C string containing the new name of the
-         *      commissioner
-         */
-        void setCommissionerName(const int id, const std::string comName);
-
-        /**
-         *  Returns a vector of tuples containing the data for all the
-         *  commissioners stored in the database.
-         *
-         *  @return - A vector of <int, string> tuples. Each tuple represents
-         *      one of the commissioners stored in the database.
-         *      Order of the returned values is:
-         *      Commissioner(id), Commissioner(name)
-         */
-        const std::vector<const std::tuple<const int, const std::string>> 
-            getCommissioners();
-
-        /**
-         *  Returns the name of a commissioner given its id.
-         *
-         *  @param id - int representing Commissioner(id)
-         *
-         *  @return - String containing Commissioner(name) for 
-         *      Commissioner(id) = id
-         */
-        const std::string getCommissioner(const int id);
-
-        /**
-         *  Inserts a contact type into the database with a given name.
-         *
-         *  @param typeName - C String containing the name of the type
-         */
-        void insertContactType(const std::string typeName);
-
-        /**
-        *  Deletes a contact type with a given id
-        *
-        *  @param id - int containing the id of the contact to delete
-        */
-        void deleteContactType(const int id);
-
-        /**
-         *  Renames a contact type with a given id and name
-         *
-         *  @param id - int containing the id of the contact name to rename
-         *  @param typeName - C string containing the new name of the contact 
-         *      name
-         */
-        void setContactTypeName(const int id, const std::string typeName);
-
-        /**
-         *  Returns a vector of tuples containing the data for all the
-         *  contactTypes stored in the database.
-         *
-         *  @return - A vector of <int, string> tuples. Each tuple represents
-         *      one of the contact types stored in the database.
-         *      Order of the returned values is:
-         *      ContactType(id), ContactType(type)
-         */
-        const std::vector<const std::tuple<const int, const std::string>> 
-            getContactTypes();
-
-        /**
-         *  Returns the type of a contact type given its id.
-         *
-         *  @param id - int representing ContactType(id)
-         *
-         *  @return - String containing ContactType(id) for
-         *      ContactType(id) = id
-         */
-        const std::string getContactType(const int id);
-
-        /**
-         *  Inserts a contact into the database given contact name, contact
-         *  type, and the entry.
-         *
-         *  @param comName - C String containing the name of the commissioner
-         *  @param typeName - C String containing the name of the type
-         *  @param entry - C string containg the contact entry
-         */
-        void insertContact(const int comId, const int typeId,
-            const std::string entry);
+        //void open(QString fileName);
         
         /**
-         *  Deletes a contact with a given id
+         *  Saves the currently open database to the file at the given filename.
          *
-         *  @param id - int containing the id of the contact to delete
+         *  @param fileName - the filename and location to save the file to
          */
-        void deleteContact(const int id);
+        //void save(QString fileName);
 
         /**
-         *  Edits the type of a contact
-         *
-         *  @param contactId - int containing the id of the contact to edit
-         *  @param typeId - int containing the id of the type to change to  
+         *  Slot limits the results of getCommissions() based on the inputs
+         *  given in the searchQuery.
+         *  
+         *  @param commissioner - commissioner name to search for
+         *  @param createDate - creation date to search for
+         *  @param paidDate - payment date to search for
+         *  @Param dueDate - due date to search for
+         *  @Param numberOfPieces - how many pieces were in the commission
+         *  @param finishDate - finish date to search for
          */
-        void setContactType(const int contactId, const int typeId);
+        void searchCommissions(const QString commissioner, 
+            const QString createDate, const QString paidDate,
+            const QString dueDate, const QString numberOfPieces,
+            const QString finishDate);
 
         /**
-         *  Edits the type of a contact
+         *  Slot limits the results of getCommissioners() based on the inputs
+         *  given in the searchQuery.
          *
-         *  @param id - int containing the id of the contact to edit
-         *  @param entry - C string containing the new entry
+         *  @param name - the commissioner name
+         *  @param dateOldest - the date of their first commission that isn't 
+         *      finished
+         *  @param balance - how much money they owe total
          */
-        void setContactEntry(const int id, const std::string entry);
+        void searchCommissioners(const QString name, const QString dateOldest, 
+            const QString balance);
 
         /**
-         *  Returns a vector of tuples containing the data for all the
-         *  contacts stored in the database for a certain commissioner.
+         *  Slot limits the results of getPieces() based on the inputs
+         *  given in the searchQuery.
          *
-         *  @param comId - int representing Commissioner(id)
-         *
-         *  @return - A vector of <int, int, string> tuples. Each tuple 
-         *      represents one of the contacts stored in the database for the
-         *      commissioner.
-         *      Order of the returned values is:
-         *      Contact(commissioner), Contact(type), Contact(entry)
+         *  @param commissionerName - the name of the commissioner of the piece
+         *  @param pieceName - the name of the piece
+         *  @Param startDate - the date the piece was started
+         *  @Param finishDate - the date the piece was finished
          */
-        const std::vector<const std::tuple<const int, const int, 
-            const std::string>> getContacts(const int comId);
+        void searchPieces(const QString commissionerName,
+            const QString pieceName, const QString startDate,
+            const QString finishDate);
+            
+        /**
+         *  Slot limits the results of getProducts() based on the inputs
+         *  given in the searchQuery.
+         *
+         *  @param name - name of the product
+         *  @param basePrice - the price of the product without options
+         *  @param numberOfPieces - the number of pieces of this product
+         *      that have been commissioned
+         */
+        void searchProducts(const QString name, const QString basePrice,
+            const QString numberOfPieces);
 
         /**
-         *  Returns a tuple containing the data for the contact with the given
-         *  id.
+         *  Slot limits the results of getSales() based on the inputs
+         *  given in the searchQuery.
          *
-         *  @param id - int representing Contact(id)
-         *
-         *  @return -  A <int, int, string> tuple.
-         *      Order of the returned values is:
-         *      Contact(commissioner), Contact(type), Contact(entry)
+         *  @param name - name of the sale
+         *  @param startDate - starting date of the sale
+         *  @param endDate - ending date of the sale
          */
-        const std::tuple<const int, const int, const std::string> 
-            getContact(const int id);
+        //void searchSales(const QString name, const QString startDate,
+            //const QString endDate);
 
         /**
-         *  Inserts a product into the database with a given name and price.
+         *  Slot sets a number of models relating to the commission panel to
+         *  the commission referenced by the given index.
          *
-         *  @param name - C String containing the name of thep product
-         *  @param price - double representing the price of the product
+         *  @param index - index containing the commission to set the models to
          */
-        void insertProduct(const std::string name, const double price);
+        void setCommission(const QModelIndex &index);
 
         /**
-         *  Deletes a product given its id by first reassinging all instances
-         *  of that product to the generic product (0), then deleting it from
-         *  the database. Can not delete the Generic product (0).
+         *  Slot sets a number of models relating to the commissioner panel to
+         *  the commissioner referenced by the given index.
          *
-         *  @param id - id of the product to delete
+         *  @param index - index containing the commissioner to set the models to
          */
-        void deleteProduct(const int id);
+        void setCommissioner(const QModelIndex &index);
 
         /**
-         *  Changes the price of a product given its id.
+         *  Slot sets a number of models relating to the piece panel to
+         *  the piece referenced by the given index.
          *
-         *  @param id - id of the product to alter
-         *  @param price - double representing new price of the product
+         *  @param index - index containing the piece to set the models to
          */
-        void setProductPrice(const int id, const double price);
+        void setPiece(const QModelIndex &index);
 
         /**
-         *  Changes the name of a product given its id.
+         *  Slot sets a number of models relating to the product panel to
+         *  the product referenced by the given index.
          *
-         *  @param id - id of the product to alter
-         *  @param name - C string containing the new name of the product
+         *  @param index - index containing the product to set the models to
          */
-        void setProductName(const int id, const std::string  name);
+        //void setProduct(const QModelIndex &index);
 
         /**
-         *  Returns a vector of tuples containing the data for all the
-         *  products stored in the database.
+         *  Slot sets a number of models relating to the sale panel to
+         *  the sale referenced by the given index.
          *
-         *  @return - A vector of <int, string, double> tuples. Each tuple 
-         *      represents one of the products stored in the database.
-         *      Order of the returned values is:
-         *      Product(id), Product(name), Product(price)
+         *  @param index - index containing the sale to set the models to
          */
-        const std::vector<const std::tuple<const int, const std::string, 
-            const double>> getProducts();
+        //void setSale(const QModelIndex &index);
 
         /**
-        *  Returns a tuple containing the data for the product with the given
-        *  id.
-        *
-        *  @param id - int representing the product id.
-        *
-        *  @return -  A <string, double> tuple.
-        *      Order of the returned values is:
-        *      Product(name), Product(price)
+         *  Deletes the commissioner at the given index.
+         *
+         *  @param index - index from the Commissioner table to delete
+         */
+        //void deleteCommissioner(const QModelIndex &index);
+
+        /**
+         *  Deletes the contact at the given index.
+         *
+         *  @param index - index from the Contact table to delete
+         */
+        //void deleteContact(const QModelIndex &index);
+
+        /**
+         *  Deletes the contact type at the given index.
+         *
+         *  @param index - index from the Contact Type table to delete
+         */
+        //void deleteContactType(const QModelIndex &index);
+
+        /**
+         *  Deletes the piece reference at the given index.
+         *
+         *  @param index - index from the reference table to delete
+         */
+        //void deletePieceReference(const QModelIndex &index);
+
+        /**
+         *  Deletes the product at the given index. Product is hidden, not
+         *  actually deleted, so old records aren't broken.
+         *
+         *  @param index - index from the product table to delete
+         */
+        //void deleteProduct(const QModelIndex &index);
+
+        /**
+         *  Deletes the product option at the given index. Option is hidden, not
+         *  actually deleted, so old records aren't broken.
+         *
+         *  @param index - index from the product option table to delete
+         */
+        //void deleteProductOption(const QModelIndex &index);
+
+        /**
+         *  Deletes the sale at the given index.
+         *
+         *  @param index - index from the sale table to delete
+         */
+        //void deleteSale(const QModelIndex &index);
+
+        /**
+         *  Deletes the deal at the given index.
+         *
+         *  @param index - index from the sale deal table to delete
+         */
+        //void deleteDeal(const QModelIndex &index);
+
+        /**
+         *  Deletes the piece at the given index.
+         *
+         *  @param index - index from the piece table to delete
+         */
+        //void deletePiece(const QModelIndex &index);
+
+        /**
+         *  Deletes the payment at the given index.
+         *
+         *  @param index - index from the payment table to delete
+         */
+        //void deletePayment(const QModelIndex &index);
+
+        /**
+         *  Deletes the commission at the given index. Pieces are reassigned
+         *  to a generic commission.
+         *
+         *  @param index - index from the commission table to delete
+         */
+        //void deleteCommission(const QModelIndex &index);
+
+        /**
+         *  Deletes the payment type at the given index. Payment type is hidden,
+         *  not actually deleted, so as to not break old records.
+         *
+         *  @param index - index from the sale table to delete
+         */
+        //void deletePaymentType(const QModelIndex &index);
+
+        /**
+         *  Inserts commissioner into the database.
+         *
+         *  @param commissionerName - name of commissioner
+         *  @param commissionerNotes - notes for commissioner
+         */
+        void insertCommissioner(const QString commissionerName, 
+            const QString commissionerNotes);
+
+        /**
+         *  Inserts contact into the database.
+         *
+         *  @param commissionerId - id of commissioner the contact is for
+         *  @param contactType - type of contact
+         *  @param contactEntry - the entry for this contact
+         */
+        void insertContact(const int commissionerId, 
+            const int contactType, const QString contactEntry);
+
+        /**
+         *  Inserts contact type into the database.
+         *
+         *  @param contactTypeName - QString representing Contact Type name
+         */
+        void insertContactType(const QString contactTypeName);
+
+        /**
+         *  Inserts piece reference into the database.
+         *
+         *  @param piece - piece the reference is for
+         *  @param reference - reference to be bound
+         */
+        //void insertPieceReference(const QString piece, 
+        //    const QString reference);
+
+        /**
+         *  Inserts product into the database.
+         *
+         *  @param productName - name of the product
+         *  @param basePrice - base price of the product without options
+         */
+        void insertProduct(const QString productName, const double basePrice);
+
+        /**
+         *  Inserts new product price into database.
+         *
+         *  @param productId - id of the product
+         *  @param basePrice - base price of the product without options
+         */
+        void insertProductPrice(const int productId, const double basePrice);
+
+        /**
+         *  Inserts product option type into the database.
+         *
+         *  @param product - product the option is for
+         *  @param option - name of product option
+         *  @param optionPrice - cost of the option
+         *  @param isNumeric - whether the price is a numeric value or a boolean
+         */
+        //void insertProductOption(const QString product, const QString option,
+            //const QString optionPrice, bool isNumeric);
+
+        /**
+         *  Inserts sale into the database.
+         *
+         *  @param name - name of the sale
+         *  @param startDate - starting date of the sale
+         *  @param endDate - ending date of the sale
+         */
+        //void insertSale(const QString name, const QDateTime startDate, 
+            //const QDateTime endDate);
+
+        /**
+         *  Inserts deal into the database.
+         *
+         *  Is in the form of:
+         *  Buy count1 of product1 at scalar1% and get count2 of product2
+         *      at sclar2%.
+         *
+         *  @param dealName - name of the deal
+         *  @param count1 - how many of product1 you have to buy to get the deal
+         *  @param product1 - the product you have to buy to get the deal
+         *  @param scalar1 - the percent price you pay for the first product
+         *  @param count2 - the number of product2s you recieve
+         *  @param product2 - the product you get with the deal
+         *  @param scalar2 - the amount you pay for the second product
+         */
+        //void insertDeal(const QString dealName, int count1, QString product1, 
+            //double scalar1, int count2, QString product2, double scalar2);
+
+        /**
+         *  Inserts piece into the database.
+         *
+         *  @param commission - commission the piece belongs to
+         *  @param product - what type of product the piece is
+         *  @param name - the name of the piece
+         *  @param description - description of the piece
+         */
+        void insertPiece(const int commission, const int product,
+            const QString name, const QString description);
+
+        /**
+         *  Inserts payment into the database.
+         *
+         *  @param commissionId - commission the payment is for
+         *  @param paymentTypeId - type of payment that is being made
+         *  @param paymentAmount - the amount the payment is made for
+         *  @param paymentNotes - notes about the payment
+         */
+        void insertPayment(const int commissionId, const int paymentTypeId,
+            const double paymentAmount, const QString paymentNotes);
+
+        /**
+         *  Inserts commission into the database.
+         *
+         *  @param commissionerId - id of commissioner of the commission
+         *  @param dueDate - due date of the commission
+         *  @param notes - notes for the commission
+         */
+        void insertCommission(const int commissionerId,
+            const QDateTime dueDate, const QString notes);
+
+        /**
+         *  Inserts payment into the database.
+         *
+         *  @param typeName - name of the payment type that is being entered
+         */
+        void insertPaymentType(const QString typeName);
+
+    private:
+        /**
+        *  Builds the database schema into the currently managed database.
+        *  Ran during the create function before prepared statements and
+        *  individual models are dealt with.
         */
-        const std::tuple<const std::string, const double> getProduct(const int id);
+        void build();
 
         /**
-         *  Inserts a piece into the database as part of a given commission,
-         *  as a specific product, and with an optional description.
-         *
-         *  @param commissionId - the id of the commission that we are tying
-         *      the piece to.
-         *  @param productId - the id of the product that the peice is a unit
-         *      of.
-         *  @param description - C string containing product description
+         *  Function finishes all queries that were setup in the
+         *  prepareModels() function.
          */
-        void insertPiece(const int commissionId, const int productId,
-            const std::string description);
+        void cleanupQueries();
 
         /**
-        *  Inserts a piece into the database as part of a given commission,
-        *  and as a specific product.
-        *
-        *  @param commissionId - the id of the commission that we are tying
-        *      the piece to.
-        *  @param productId - the id of the product that the peice is a unit
-        *      of.
+         *  Function returns the value of the table with the row from
+         *  index and the column given.
+         *  Exists as a helper function so the model can access a row's id
+         *  no matter which particular column's index was passed to the model
+         *  through a socket.
+         *
+         *  @param index - reference to the index whose row is being accessed
+         *  @param column - column that contains the value to return
+         */
+        QVariant getValue(const QModelIndex &index, int column);
+
+        /**
+        *  Prepares the various sub-models that are managed by the ComModel.
         */
-        void insertPiece(const int commissionId, const int productId);
+        void prepareModels();
 
-        /**
-         *  Deletes a piece given its id.
-         *
-         *  @param id - id of the piece to delete
-         */
-        void deletePiece(const int id);
-
-        /**
-        *  Deletes a piece given its commission id.
-        *
-        *  @param id - id of the piece to delete
-        */
-        void deletePieceByCommission(const int id);
-
-
-        /**
-         *  Changes the description of a piece given its id.
-         *
-         *  @param id - id of the product to alter
-         *  @param description - C string containing new description
-         */
-        void setPieceDescription(const int id, const std::string description);
-
-        /**
-         *  Returns a vector of tuples containing the data for all the
-         *  pieces stored in the database.
-         *
-         *  @return - A vector of <int, int, int, string> tuples. Each tuple
-         *      represents one of the pieces stored in the database.
-         *      Order of the returned values is:
-         *      Piece(id), Piece(commissionId), Piece(productId), 
-         *      Piece(description)
-         */
-        const std::vector <const std::tuple<const int, const int, const int, 
-            const std::string>> getPieces();
-
-        /**
-         *  Returns a tuple containing the data for the piece with the
-         *  given id.
-         *
-         *  @param paymentId - int representing the payment id
-         *
-         *  @return - A <int, int, string> tuple.
-         *      Order of the returned values is:
-         *      Piece(commissionId), Piece(productId),
-         *      Piece(description)
-         */
-        const std::tuple<const int, const int, const std::string> 
-            getPiece(const int id);
-
-        /**
-         *  Returns a vector of tuples containing the data for all the
-         *  pieces stored in the database with contains description string.
-         *
-         *  @return - A vector of <int, int, int, string> tuples. Each tuple
-         *      represents one of the pieces stored in the database.
-         *      Order of the returned values is:
-         *      Piece(id), Piece(commissionId), Piece(productId),
-         *      Piece(description)
-         */
-        const std::vector<const std::tuple<const int, const int, const int, 
-            const std::string>> searchPieces(const std::string description);
-
-        /**
-         *  Inserts a commission into the database with a given creation date
-         *  and due date.
-         *
-         *  @param commissioner - int representing id of commissioner of the 
-         *      commission
-         *  @param createDate - C string containing creation date in the form
-         *      of YYYY-MM-DD
-         *  @param dueDate - C string containing creation date in the form
-         *      of YYYY-MM-DD
-         */
-        void insertCommission(int commissioner, const std::string createDate, 
-            const std::string dueDate);
-
-        /**
-         *  Deletes a commission with a given id.
-         *
-         *  @param id - id representing the commission to delete
-         */
-        void deleteCommission(const int id);
-
-        /**
-         *  Changes the due date of a commission given its id
-         *
-         *  @param id - id of the commission to alter
-         *  @param description - C string containing new due date in the form
-         *      of YYYY-MM-DD
-         */
-        void setCommissionDueDate(const int id, const std::string dueDate);
-
-        /**
-        *  Changes the paid date of a commission given its id
-        *
-        *  @param id - id of the commission to alter
-        *  @param description - C string containing new paid date in the form
-        *      of YYYY-MM-DD
-        */
-        void setCommissionPaidDate(const int id, const std::string paidDate);
-
-        /**
-         *  Returns a vector of tuples containing the data for all the
-         *  pieces stored in the database.
-         *
-         *  @return - A vector of <int, string, string, string> tuples. Each 
-         *      tuple represents one of the pieces stored in the database.
-         *      Order of the returned values is:
-         *      Commission(id), Commission(commissioner), Commission(createDate), 
-         *      Commission(dueDate), Commission(paidDate)
-         */
-        const std::vector<const std::tuple<const int, const int, 
-            const std::string, const std::string, 
-            const std::string>>getCommissions();
-
-        /**
-         *  Returns a tuple containing the data for the commission with the 
-         *  given id.
-         *
-         *  @param id - int representing the commission id.
-         *
-         *  @return -  A <string, string, string> tuple.
-         *      Order of the returned values is:
-         *      Commissioner(commissioner), Commission(createDate), 
-         *      Commission(dueDate), Commission(paidDate)
-         */
-        const std::tuple<const int, const std::string, const std::string, 
-            const std::string>getCommission(const int id);
-
-        /**
-         *  Inserts a payment method with given name
-         *
-         *  @param name - String containing the name of the new payment method
-         */
-        void insertPaymentMethod(const std::string name);
-
-        /**
-         *  Deletes a payment method with given id
-         *
-         *  @param id - int containing the id of the payment method to delete
-         */
-        void deletePaymentMethod(const int id);
-
-        /**
-         *  Sets the name of the payment method identified by id
-         *
-         *  @param id - int containing the id of the payment method to edit
-         *  @param name - String containing the name of the payment method
-         */
-        void setPaymentMethodName(const int id, const std::string name);
-
-        /**
-         *  Returns a vector of tuples containing the data for all the
-         *  payment methods stored in the database.
-         *
-         *  @return - A vector of <int, string> tuples. Each
-         *      tuple represents one of the payment methods stored in the 
-         *      database.
-         *      Order of the returned values is:
-         *      PaymentMethod(id), PaymentMethod(name)
-         */
-        const std::vector<const std::tuple<const int, const std::string>> 
-            getPaymentMethods();
-
-        /**
-         *  Returns the name of the payment method given id
-         *
-         *  @param id - id of the payment method
-         *
-         *  @return - String containing the name of the payment method
-         */
-        const std::string getPaymentMethod(const int id);
-
-        /**
-         *  Inserts a payment with given commissioner, payment method, date,
-         *  payment amount, and note.
-         *
-         *  @param commissionerId - int representing id of the commissioner
-         *  @param commissionerId - int representing id of the payment method
-         *  @param date - String containing the date the payment was made
-         *  @param amount - int representing the dollar amount the payment was 
-         *      for
-         *  @param note - String containing a note about the payment
-         */
-        void insertPayment(const int commissionerId, const int paymentMethodId,
-            const std::string date, const double amount, const std::string note);
-
-        /**
-         *  Inserts a payment with given commissioner, payment method, date,
-         *  and payment amount.
-         *
-         *  @param commissionerId - int representing id of the commissioner
-         *  @param commissionerId - int representing id of the payment method
-         *  @param date - String containing the date the payment was made
-         *  @param amount - int representing the dollar amount the payment was
-         *      for
-         */
-        void insertPayment(const int commissionerId, const int paymentMethodId,
-            const std::string date, const double amount);
-
-        /**
-         *  Sets the method of the payment identified by id
-         *
-         *  @param paymentId - int containing the id of the payment to edit
-         *  @param methodId - int containing the id of the  method to change to
-         */
-        void setPaymentMethod(const int paymentId, const int methodId);
-
-        /**
-         *  Sets the date of the payment identified by id
-         *
-         *  @param paymentId - int containing the id of the payment to edit
-         *  @param date - String containing the new date of the payment
-         */
-        void setPaymentDate(const int paymentId, const std::string date);
-
-        /**
-         *  Sets the payment amount of the payment identified by id
-         *
-         *  @param paymentId - int containing the id of the payment to edit
-         *  @param methodId - int containing the value to change amount to
-         */
-        void setPaymentAmount(const int paymentId, const double amount);
-
-        /**
-         *  Sets the commissioner of the payment identified by id
-         *
-         *  @param paymentId - int containing the id of the payment to edit
-         *  @param methodId - int containing the id of the commissioner to 
-         *      change to
-         */
-        void setPaymentCommissioner(const int paymentId, 
-            const int commissionerId);
-
-        /**
-         *  Returns a vector of tuples containing the data for all the
-         *  payments stored in the database.
-         *
-         *  @return - A vector of <int, int, int, string, int, string> tuples. 
-         *      Each tuple represents one of the payments stored in the 
-         *      database.
-         *      Order of the returned values is:
-         *      Payment(id), Payment(commissioner), Payment(method), 
-         *      Payment(date), Payment(fee), Payment(note)
-         */
-        const std::vector<const std::tuple<const int, const int, const int, 
-            const std::string, const double, const std::string>> getPayments();
-
-        /**
-         *  Returns a tuple containing the data for the payment with the
-         *  given id.
-         *
-         *  @param paymentId - int representing the payment id
-         *
-         *  @return - A <int, int, string, int, string> tuple.
-         *      Order of the returned values is:
-         *      Payment(commissioner), Payment(method),
-         *      Payment(date), Payment(fee), Payment(note)
-         */
-        const std::tuple<const int, const int, const std::string, 
-            const double, const std::string> getPaymentById(const int paymentId);
-
-        /**
-         *  Returns a vector of tuples containing the data for all the
-         *  payments stored in the database for the given commissioner.
-         *
-         *  @return - A vector of <int, int, string, int, string> tuples.
-         *      Each tuple represents one of the payments stored in the
-         *      database.
-         *      Order of the returned values is:
-         *      Payment(id), Payment(method), Payment(date), Payment(fee), 
-         *      Payment(note)
-         */
-        const std::vector<const std::tuple<const int, const int,
-            const std::string, const double, const std::string >>
-            getPaymentsByCommissioner(const int commissionerId);
+        QSqlDatabase sql;
+		QSqlQueryModel *commissionerCommissionsModel;
+		QSqlQueryModel *commissionerContactsModel;
+        QSqlQueryModel *commissionerModel;
+        QSqlQueryModel *commissionersModel;
+		QSqlQueryModel *commissionmodel;
+		QSqlQueryModel *commissionPaymentsModel;
+        QSqlQueryModel *commissionsModel;
+        QSqlQueryModel *contactTypesModel;
+        QSqlQuery *insertCommissionerQuery;
+        QSqlQuery *insertCommissionQuery;
+        QSqlQuery *insertContactQuery;
+        QSqlQuery *insertContactTypeQuery;
+        QSqlQuery *insertPaymentQuery;
+        QSqlQuery *insertPaymentTypeQuery;
+        QSqlQuery *insertPieceQuery;
+        QSqlQuery *insertProductPriceQuery;
+        QSqlQuery *insertProductQuery;
+        QSqlQueryModel *paymentTypesModel;
+        QSqlQueryModel *pieceModel;
+        QSqlQueryModel *piecesModel;
+        QSqlQueryModel *productModel;
+        QSqlQueryModel *productsModel;
     };
 }
+#endif

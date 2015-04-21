@@ -11,9 +11,15 @@ namespace Commissionator {
         layout->addWidget(titleLabel);
         layout->addWidget(view);
         setLayout(layout);
-        connect(view, &SearchTableView::searchSignal, this, &LeftPanel::search);
-        connect(view, &SearchTableView::iconClicked, this, &LeftPanel::iconClicked);
-        connect(view, &SearchTableView::clicked, this, &LeftPanel::tableClicked);
+        connect(view, &FixedRowTable::boxQuery, this, &LeftPanel::search);
+        connect(view, &FixedRowTable::tableButtonClicked, this, &LeftPanel::iconClicked);
+        connect(view, &FixedRowTable::clicked, this, &LeftPanel::tableClicked);
+    }
+
+    LeftPanel::~LeftPanel() {
+        delete layout;
+        delete view;
+        delete titleLabel;
     }
 
     void LeftPanel::createTitle(QString title) {
@@ -26,8 +32,14 @@ namespace Commissionator {
     }
 
     void LeftPanel::createTable(QSqlQueryModel *model, QList<int> hiddenColumns) {
-        view = new SearchTableView(model);
-        
+        view = new FixedRowTable(model);
+        view->setTableButtonActivated(true);
+        view->setTableButtonIcon(":/Delete.png");
+        view->setTableButtonSize(24);
+        view->setBoxText("Search");
+
+        view->setSelectionMode(QAbstractItemView::NoSelection);
+
         foreach(int col, hiddenColumns) {
             view->setColumnHidden(col, true);
         }

@@ -1,558 +1,264 @@
-#include "ComModel.h"
-#include <iostream>
-#include "gtest/gtest.h"
+#include <QLabel>
+#include <QDateTime>
+#include "ComModelTest.h"
 
-using namespace Commissionator;
-/**
- *  No real way to check insertion without also using accessors
- *  because of this, insertions are checked in the get test for each table
- */
-
-TEST(V1Test, close) {
-    ComModel *com = new ComModel();
-    ASSERT_NO_THROW(com->close());
-    ASSERT_THROW(com->insertContactType("test"), std::out_of_range);
-
-    delete com;
-}
-
-TEST(V1Test, saveOpen) {
-    ComModel *com = new ComModel();
-    com->save("test.db3");
-    com->close();
-    ASSERT_THROW(com->save("test2.db3"), SQLiteException);  //can't save if db isnt open
-    ASSERT_NO_THROW(com->open("test.db3"));
-    EXPECT_NO_THROW(com->insertContactType("test"));
-
-    delete com;
-}
-
-TEST(V1Test, getContactType) {
-    ComModel *com = new ComModel();
-    com->insertContactType("testType");
-    com->insertContactType("testType2");
-
-    std::vector<const std::tuple<const int, const std::string>> typeList;
-    typeList.push_back(std::tuple<const int, const std::string>(1, "testType"));
-    typeList.push_back(std::tuple<const int, const std::string>(2, "testType2"));
-    EXPECT_EQ(typeList, com->getContactTypes());
-    EXPECT_EQ("testType", com->getContactType(1));
-    EXPECT_EQ("testType2", com->getContactType(2));
-    typeList.clear();
-
-    delete com;
-}
-
-TEST(V1Test, deleteContactType) {
-    ComModel *com = new ComModel();
-    com->insertContactType("testContactType");
-    EXPECT_EQ("testContactType", com->getContactType(1));
-    com->deleteContactType(1);
-    std::vector<const std::tuple<const int, const std::string>> empty;
-    EXPECT_EQ(empty, com->getContactTypes());
-
-    delete com;
-}
-
-TEST(V1Test, setContactTypeName) {
-    ComModel *com = new ComModel();
-    com->insertContactType("testContactType");
-    EXPECT_EQ("testContactType", com->getContactType(1));
-    com->setContactTypeName(1, "testContactType1");
-    EXPECT_EQ("testContactType1", com->getContactType(1));
-
-    delete com;
-}
-
-TEST(V1Test, getCommissioners) {
-    ComModel *com = new ComModel();
-    com->insertCommissioner("testCommissioner");
-    com->insertCommissioner("testCommissioner2");
-    com->insertCommissioner("testCommissioner3");
-
-    std::vector<const std::tuple<const int, const std::string>> comList;
-    comList.push_back(std::tuple<int, std::string>(0, "None"));
-    comList.push_back(std::tuple<int, std::string>(1, "testCommissioner"));
-    comList.push_back(std::tuple<int, std::string>(2, "testCommissioner2"));
-    comList.push_back(std::tuple<int, std::string>(3, "testCommissioner3"));
-    EXPECT_EQ(comList, com->getCommissioners());
-    EXPECT_EQ("testCommissioner", com->getCommissioner(1));
-    EXPECT_EQ("testCommissioner2", com->getCommissioner(2));
-    EXPECT_EQ("testCommissioner3", com->getCommissioner(3));
-    comList.clear();
-
-    delete com;
-}
-
-TEST(V1Test, deleteCommissioner) {
-    ComModel *com = new ComModel();
-    com->insertCommissioner("testCommissioner");
-    com->insertCommission(1, "01/01/2001", "05/05/2005");
-    std::vector<const std::tuple<const int, const int, const std::string, const std::string, const std::string>> commissionList;
-    commissionList.push_back(std::tuple<const int, const int, const std::string, const std::string, const std::string>(1, 0, "01/01/2001", "05/05/2005", ""));
-    EXPECT_EQ("testCommissioner", com->getCommissioner(1));
-    com->deleteCommissioner(1);
-    std::vector<const std::tuple<const int, const std::string>> comList;
-    comList.push_back(std::tuple<int, std::string>(0, "None"));
-    EXPECT_EQ(comList, com->getCommissioners());
-    EXPECT_EQ(commissionList, com->getCommissions());
-
-    delete com;
-}
-
-TEST(V1Test, setCommissionerName) {
-    ComModel *com = new ComModel();
-    com->insertCommissioner("testCommissioner");
-    EXPECT_EQ("testCommissioner", com->getCommissioner(1));
-    com->setCommissionerName(1, "testCommissioner1");
-    EXPECT_EQ("testCommissioner1", com->getCommissioner(1));
-
-    delete com;
-}
-
-TEST(V1Test, getContact) {
-    ComModel *com = new ComModel();
-    com->insertContactType("testType");
-    com->insertCommissioner("testCommissioner");
-    com->insertContact(1, 1, "testContact");
-    std::vector<const std::tuple<const int, const  int, const std::string>> conList;
-    conList.push_back(std::tuple<const int, const  int, const std::string>(1, 1, "testContact"));
-    EXPECT_EQ(conList, com->getContacts(1));
-    EXPECT_EQ(conList.at(0), com->getContact(1));
-    conList.clear();
-
-    delete com;
-}
-
-TEST(V1Test, deleteContact){
-    ComModel *com = new ComModel();
-    com->insertContactType("testType");
-    com->insertCommissioner("testCommissioner");
-    com->insertContact(1, 1, "testContact");
-    std::vector<const std::tuple<const int, const  int, const std::string>> conList;
-    conList.push_back(std::tuple<const int, const  int, const std::string>(1, 1, "testContact"));
-    EXPECT_EQ(conList, com->getContacts(1));
-    conList.clear();
-    com->deleteContact(1);
-    EXPECT_EQ(conList, com->getContacts(1));
-
-    delete com;
-}
-
-TEST(V1Test, setContactType) {
-    ComModel *com = new ComModel();
-    com->insertContactType("testType");
-    com->insertContactType("testType2");
-    com->insertCommissioner("testCommissioner");
-    com->insertContact(1, 1, "testContact");
-    std::vector<const std::tuple<const int, const  int, const std::string>> conList;
-    conList.push_back(std::tuple<const int, const  int, const std::string>(1, 1, "testContact"));
-    conList.push_back(std::tuple<const int, const  int, const std::string>(1, 2, "testContact"));
-    EXPECT_EQ(conList.at(0), com->getContact(1));
-    com->setContactType(1, 2);
-    EXPECT_EQ(conList.at(1), com->getContact(1));
-
-    delete com;
-}
-
-TEST(V1Test, setContactName) {
-    ComModel *com = new ComModel();
-    com->insertContactType("testType");
-    com->insertCommissioner("testCommissioner");
-    com->insertContact(1, 1, "testContact");
-    std::vector<const std::tuple<const int, const  int, const std::string>> conList;
-    conList.push_back(std::tuple<const int, const  int, const std::string>(1, 1, "testContact"));
-    conList.push_back(std::tuple<const int, const  int, const std::string>(1, 1, "testContact1"));
-    EXPECT_EQ(conList.at(0), com->getContact(1));
-    com->setContactEntry(1, "testContact1");
-    EXPECT_EQ(conList.at(1), com->getContact(1));
-
-    delete com;
-}
-
-TEST(V2Test, getProduct) {
-    ComModel *com = new ComModel();
-    com->insertProduct("testProduct", 1.0);
-    com->insertProduct("testProduct2", 2.0);
-    std::vector<const std::tuple<const int, const std::string, const double>>proList;
-    proList.push_back(std::tuple<const int, const std::string, const double>(0, "Generic", 0)); //already exists in the database by default
-    proList.push_back(std::tuple<const int, const std::string, const double>(1, "testProduct", 1.0));
-    proList.push_back(std::tuple<const int, const std::string, const double>(2, "testProduct2", 2.0));
-    EXPECT_EQ(proList, com->getProducts());
-    std::tuple<const std::string, const double> testProduct("testProduct", 1.0);
-    std::tuple<const std::string, const double> testProduct2("testProduct2", 2.0);
-    EXPECT_EQ(testProduct, com->getProduct(1));
-    EXPECT_EQ(testProduct2, com->getProduct(2));
-    proList.clear();
-
-    delete com;
-}
-
-TEST(V2Test, deleteProduct) {
-    ComModel *com = new ComModel();
-    com->insertCommissioner("testCommissioner");
-    com->insertProduct("testProduct", 1.0);
-    com->insertCommission(1, "01/01/2001", "05/05/2005");
-    com->insertPiece(1, 1);
-    std::vector<const std::tuple<const int, const std::string, const double>>proList;
-    proList.push_back(std::tuple<const int, const std::string, const double>(0, "Generic", 0)); //already exists in the database by default
-    proList.push_back(std::tuple<const int, const std::string, const double>(1, "testProduct", 1.0));
-    std::vector<const std::tuple<const int, const int, const int, const std::string>> pieList;
-    pieList.push_back(std::tuple<const int, const int, const int, const std::string>(1, 1, 0, ""));
-    EXPECT_EQ(proList, com->getProducts());
-    proList.clear();
-    proList.push_back(std::tuple<const int, const std::string, const double>(0, "Generic", 0));
-    com->deleteProduct(1);
-    EXPECT_EQ(proList, com->getProducts());
-    com->deleteProduct(0);
-    EXPECT_EQ(proList, com->getProducts());
-    EXPECT_EQ(pieList, com->getPieces());
-    proList.clear();
-    std::vector<const std::tuple<const int, const std::string, const double>>().swap(proList);
-
-    delete com;
-}
-
-TEST(V2Test, setProductPrice) {
-    ComModel *com = new ComModel();
-    com->insertProduct("testProduct", 1.0);
-    com->setProductPrice(1, 2.0);
-    std::tuple<const std::string, const double> product("testProduct", 2.0);
-    EXPECT_EQ(product, com->getProduct(1));
-
-    delete com;
-}
-
-TEST(V2Test, setProductName) {
-    ComModel *com = new ComModel();
-    com->insertProduct("testProduct", 1.0);
-    com->setProductName(1, "testProduct1");
-    std::tuple<const std::string, const double> product("testProduct1", 1.0);
-    EXPECT_EQ(product, com->getProduct(1));
-
-    delete com;
-}
-
-TEST(V2Test, getCommission) {
-    ComModel *com = new ComModel();
-    com->insertCommissioner("testCommissioner");
-    com->insertCommission(1, "01/01/2001", "05/05/2005");
-    std::vector<const std::tuple<const int, const int, const std::string, const std::string, const std::string>> comList;
-    comList.push_back(std::tuple<const int, const int, const std::string, const std::string, const std::string>(1, 1, "01/01/2001", "05/05/2005", ""));
-    EXPECT_EQ(comList, com->getCommissions());
-    std::tuple<const int, const std::string, const std::string, const std::string> testCommission(1, "01/01/2001", "05/05/2005", "");
-    EXPECT_EQ(testCommission, com->getCommission(1));
-    comList.clear();
-
-    delete com;
-}
-
-TEST(V2Test, deleteCommission) {
-    ComModel *com = new ComModel();
-    com->insertCommissioner("testCommissioner");
-    com->insertCommission(1, "01/01/2001", "05/05/2005");
-    com->deleteCommission(1);
-    std::vector<const std::tuple<const int, const int, const std::string, const std::string, const std::string>> empty;
-    EXPECT_EQ(empty, com->getCommissions());
-   
-    delete com;
-}
-
-TEST(V2Test, setCommissionDueDate) {
-    ComModel *com = new ComModel();
-    com->insertCommissioner("testCommissioner");
-    com->insertCommission(1, "01/01/2001", "05/05/2005");
-    com->setCommissionDueDate(1, "06/06/2006");
-    std::tuple<const int, const std::string, const std::string, const std::string> testCommission(1, "01/01/2001", "06/06/2006", "");
-    EXPECT_EQ(testCommission, com->getCommission(1));
-
-    delete com;
-}
-
-TEST(V2Test, setCommissionPaidDate) {
-    ComModel *com = new ComModel();
-    com->insertCommissioner("testCommissioner");
-    com->insertCommission(1, "01/01/2001", "05/05/2005");
-    com->setCommissionPaidDate(1, "05/05/2005");
-    std::tuple<const int, const std::string, const std::string, const std::string> testCommission(1, "01/01/2001", "05/05/2005", "05/05/2005");
-    EXPECT_EQ(testCommission, com->getCommission(1));
-
-    delete com;
-}
-
-TEST(V2Test, getPieces) {
-    ComModel *com = new ComModel();
-    com->insertCommissioner("testCommissioner");
-    com->insertProduct("testProduct", 1.0);
-    com->insertProduct("testProduct2", 2.0);
-    com->insertCommission(1, "01/01/2001", "05/05/2005");
-    com->insertPiece(1, 1);
-    com->insertPiece(1, 2, "testPiece2");
-    std::vector<const std::tuple<const int, const int, const int, const std::string>> pieList;
-    pieList.push_back(std::tuple<const int, const int, const int, const std::string>(1, 1, 1, ""));
-    pieList.push_back(std::tuple<const int, const int, const int, const std::string>(2, 1, 2, "testPiece2"));
-    EXPECT_EQ(pieList, com->getPieces());
-    std::tuple<const int, const int, const std::string>piece(1, 1, "");
-    EXPECT_EQ(piece, com->getPiece(1));
-    pieList.clear();
-
-    delete com;
-}
-
-TEST(V2Test, searchPieces) {
-    ComModel *com = new ComModel();
-    com->insertCommissioner("testCommissioner");
-    com->insertProduct("testProduct", 1.0);
-    com->insertProduct("testProduct2", 2.0);
-    com->insertCommission(1, "01/01/2001", "05/05/2005");
-    com->insertPiece(1, 1);
-    com->insertPiece(1, 2, "testPiece2");
-    std::vector<const std::tuple<const int, const int, const int, const std::string>> pieList;
-    pieList.push_back(std::tuple<const int, const int, const int, const std::string>(2, 1, 2, "testPiece2"));
-    EXPECT_EQ(pieList, com->searchPieces("test"));
-    pieList.clear();
-
-    delete com;
+namespace Commissionator {
+    /**
+     *  Note: Because of the nature of black box testing, some features can't
+     *  be tested 100% in isolation of one another.
+     *  For instance, it can not be checked whether an insertion or deletion
+     *  is successful without accessing the table it would be displayed on.
+     *  Because of this, when a large number of related tests fail, the tester
+     *  should first direct their focus towards the common functions, as some
+     *  of the more basal features will hold the entire program up if they fail
+     *  to function appropriately.
+     */
     
-}
+    void ComModelTest::initTestCase() {
+        com = new ComModel(this);
+    }
 
-TEST(V2Test, deletePiece){
-    ComModel *com = new ComModel();
-    com->insertCommissioner("testCommissioner");
-    com->insertProduct("testProduct", 1.0);
-    com->insertCommission(1, "01/01/2001", "05/05/2005");
-    com->insertPiece(1, 1);
-    std::vector<const std::tuple<const int, const int, const int, const std::string>> pieList;
-    pieList.push_back(std::tuple<const int, const int, const int, const std::string>(1, 1, 1, ""));
-    EXPECT_EQ(pieList, com->getPieces());
-    pieList.clear();
-    com->deletePiece(1);
-    EXPECT_EQ(pieList, com->getPieces());
+    void ComModelTest::init() {
+        com->newRecord();
+    }
+    
+    void ComModelTest::insertCommissionerTest() {
+        com->insertCommissioner("TestName", "");
+        com->insertCommissioner("TestName2", "Test Notes");
+        QVERIFY(com->getCommissioners()->index(0, 1).data().toString() == "TestName");
+        //QVERIFY(com->getCommissioners()->index(0, 2).data().toString() == "");
+        QVERIFY(com->getCommissioners()->index(1, 1).data().toString() == "TestName2");
+        //QVERIFY(com->getCommissioners()->index(1, 2).data().toString() == "Test Notes");
+    }
+    
+    void ComModelTest::insertProductTest() {
+        com->insertProduct("TestName", 1.0);
+        com->insertProduct("TestName2", 2.0);
+        QAbstractItemModel *pros = com->getProducts();
+        QVERIFY(pros->index(0, 1).data().toString() == "TestName");
+        QVERIFY(pros->index(0, 2).data().toDouble() == 1.0);
+        QVERIFY(pros->index(1, 1).data().toString() == "TestName2");
+        QVERIFY(pros->index(1, 2).data().toDouble() == 2.0);
+    }
+    
+    void ComModelTest::insertCommissionTest() {
+        com->insertCommissioner("TestCommissioner", "");
+        com->insertCommission(1, QDateTime::currentDateTime(), "TestNotes");
+        QAbstractItemModel *coms = com->getCommissions();
+        QVERIFY(coms->index(0, 1).data().toString() == "TestCommissioner");
+        QVERIFY(coms->index(0, 2).data().toString()
+            == QDateTime::currentDateTime().toString("MM/dd/yyyy"));
+        QVERIFY(coms->index(0, 4).data().toString()
+            == QDateTime::currentDateTime().toString("MM/dd/yyyy"));
+    }
 
-    delete com;
-}
+    void ComModelTest::insertPaymentTypeTest() {
+        com->insertPaymentType("PaymentType");
+        com->insertPaymentType("PaymentType2");
+        QAbstractItemModel *pays = com->getPaymentTypes();
+        QVERIFY(pays->index(0, 1).data().toString() == "PaymentType");
+        QVERIFY(pays->index(1, 1).data().toString() == "PaymentType2");
+    }
+    
+    void ComModelTest::insertPieceTest() {
+        com->insertCommissioner("TestCommissioner", "");
+        com->insertCommission(1, QDateTime::currentDateTime(), "");
+        com->insertProduct("TestName", 1.0);
+        com->insertPiece(1, 1, "TestPiece", "");
+        com->setPiece(com->getPieces()->index(0, 0));
+        QVERIFY(com->getPiece()->index(0, 0).data().toString() == "TestCommissioner");
+        QVERIFY(com->getPiece()->index(0, 1).data().toString() == "TestPiece");
+        QVERIFY(com->getPiece()->index(0, 2).data().toString()
+            == QDateTime::currentDateTime().toString("MM/dd/yyyy"));
+        QVERIFY(com->getPiece()->index(0, 3).data().toString()
+            == "Unfinished");
+        QVERIFY(com->getPiece()->index(0, 4).data().toString() == "");
+    }
+    
+    void ComModelTest::insertPaymentTest() {
+        com->insertCommissioner("TestCommissioner", "");
+        com->insertPaymentType("PaymentType");
+        com->insertCommission(1, QDateTime::currentDateTime(), "");
+        com->insertProduct("TestProduct", 1.0);
+        com->insertPiece(1, 1, "TestPiece", "");
+        com->insertPayment(1, 1, 1.0, "PaymentDescription");
+        com->setCommission(com->getCommissions()->index(0, 1));
+        QAbstractItemModel *pays = com->getCommissionPayments();
+        QVERIFY(pays->index(0, 0).data().toString() == "PaymentType");
+        QVERIFY(pays->index(0, 1).data().toString()
+            == QDateTime::currentDateTime().toString("MM/dd/yyyy"));
+        QVERIFY(pays->index(0, 2).data().toDouble() == 1.0);
+        QVERIFY(pays->index(0, 3).data().toString() == "PaymentDescription");
+    }
 
-TEST(V2Test, deletePieceByCommission){
-    ComModel *com = new ComModel();
-    com->insertCommissioner("testCommissioner");
-    com->insertProduct("testProduct", 1.0);
-    com->insertCommission(1, "01/01/2001", "05/05/2005");
-    com->insertPiece(1, 1);
-    std::vector<const std::tuple<const int, const int, const int, const std::string>> pieList;
-    pieList.push_back(std::tuple<const int, const int, const int, const std::string>(1, 1, 1, ""));
-    EXPECT_EQ(pieList, com->getPieces());
-    pieList.clear();
-    com->deletePieceByCommission(1);
-    EXPECT_EQ(pieList, com->getPieces());
+    void ComModelTest::insertContactTypeTest() {
+        com->insertContactType("TestContactType");
+        com->insertContactType("TestContactType2");
+        QAbstractItemModel *contacts = com->getContactTypes();
+        QVERIFY(contacts->index(0, 1).data().toString() == "TestContactType");
+        QVERIFY(contacts->index(1, 1).data().toString() == "TestContactType2");
+    }
 
-    delete com;
-}
+    void ComModelTest::insertContactTest() {
+        com->insertCommissioner("TestCommissioner", "");
+        com->insertContactType("TestContactType");
+        com->insertContact(1, 1, "TestEntry");
+        com->setCommissioner(com->getCommissioners()->index(0, 1));
+        QAbstractItemModel *contacts = com->getCommissionerContacts();
+        QVERIFY(contacts->index(0, 0).data().toString() == "TestContactType");
+        QVERIFY(contacts->index(0, 1).data().toString() == "TestEntry");
+    }
+    /*
+    void ComModelTest::commissionersTest() {
+        QAbstractItemModel *coms = com->getCommissioners();
+        com->insertCommissioner("TestCommissioner", "");
+        com->insertCommissioner("TestCommissioner2", "");
+        com->insertCommissioner("TestCommissioner3", "");
+        com->insertProduct("TestProduct", 1.0);
+        com->insertCommission(2, QDateTime::currentDateTime(), "");
+        com->insertPiece(1, 1, "TestPiece", "");
+        com->insertCommission(3, QDateTime::currentDateTime(), "");
+        com->insertPiece(2, 1, "TestPiece2", "");
+        com->insertPiece(2, 1, "TestPiece3", "");
+        qDebug() << coms->index(0, 1).data().toString();
+        com->setCommissioner(coms->index(0, 1));
+        qDebug() << com->getCommissionerEditable()->model()->index(0, 1).data().toString();
+        QVERIFY(coms->index(0, 1).data().toString() == "TestCommissioner");
+        QVERIFY(coms->index(1, 1).data().toString() == "TestCommissioner2");
+        QVERIFY(coms->index(2, 1).data().toString() == "TestCommissioner3");
+        QVERIFY(coms->index(0, 2).data().toDateTime().toString("MM/dd/yyyy")
+            == QDateTime::currentDateTime().toString("MM/dd/yyyy"));
+        QVERIFY(coms->index(1, 2).data().toDateTime().toString("MM/dd/yyyy")
+            == QDateTime::currentDateTime().toString("MM/dd/yyyy"));
+        QVERIFY(coms->index(2, 2).data().toDateTime().toString("MM/dd/yyyy")
+            == QDateTime::currentDateTime().toString("MM/dd/yyyy"));
+        QVERIFY(coms->index(0, 3).data().toDouble() == 0);
+        QVERIFY(coms->index(1, 3).data().toDouble() == 1.0);
+        QVERIFY(coms->index(2, 3).data().toDouble() == 2.0);
+        com->insertPaymentType("TestPaymentType");
+        com->insertPayment(2, 1, 2.0, "");
+        QVERIFY(coms->index(2, 3).data().toDouble() == 0.0);
+    }
+    
+    void ComModelTest::commissionerTest() {
+        QDataWidgetMapper *comsE = com->getCommissionerEditable();
+        QDataWidgetMapper *comsG = com->getCommissionerGenerated();
+        com->insertCommissioner("TestCommissioner", "TestNotes");
+        com->insertProduct("TestProduct", 1.0);
+        com->insertCommission(2, QDateTime::currentDateTime(), "");
+        com->insertPiece(1, 1, "TestPiece", "");
+        com->setCommissioner(com->getCommissioners()->index(1, 0));
+        QLabel *name = new QLabel();
+        QLabel *customerSince = new QLabel();
+        QLabel *moneyOwed = new QLabel();
+        QLabel *notes = new QLabel();
+        comsE->addMapping(name, 0);
+        comsG->addMapping(customerSince, 0);
+        comsG->addMapping(moneyOwed, 1);
+        comsE->addMapping(notes, 1);
+        QVERIFY(name->text() == "TestCommissioner");
+        QVERIFY(QDateTime::fromString(customerSince->text()).toString("MM/dd/yyyy")
+            == QDateTime::currentDateTime().toString("MM/dd/yyyy"));
+        QVERIFY(moneyOwed->text().toDouble() == 1.0);
+        QVERIFY(notes->text() == "TestNotes");
+        notes->text() = "TestNotes2";
+        name->text() = "TestCommissioner2";
+        QLabel *notes2 = new QLabel();
+        comsE->addMapping(notes2, 1);
+        QVERIFY(notes2->text() == "TestNotes2");
+        QVERIFY(name->text() == "TestCommissioner2");
+        com->insertPaymentType("TypeName");
+        com->insertPayment(1, 1, 1.0, "");
+        QVERIFY(moneyOwed->text().toDouble() == 0.0);
+        delete name;
+        delete customerSince;
+        delete moneyOwed;
+        delete notes;
+        delete notes2;
+    }
+    */
+    void ComModelTest::commissionerContactsTest() {
+        QAbstractItemModel *contacts = com->getCommissionerContacts();
+        com->insertCommissioner("TestCommissioner", "");
+        com->setCommissioner(com->getCommissioners()->index(0, 0));
+        com->insertContactType("TestType");
+        com->insertContactType("TestType2");
+        com->insertContact(1, 1, "TestEntry");
+        com->insertContact(1, 1, "TestEntry2");
+        com->insertContact(1, 2, "TestEntry3");
+        QVERIFY(contacts->index(0, 0).data().toString() == "TestType");
+        QVERIFY(contacts->index(0, 1).data().toString() == "TestEntry");
+        QVERIFY(contacts->index(1, 0).data().toString() == "TestType");
+        QVERIFY(contacts->index(1, 1).data().toString() == "TestEntry2");
+        QVERIFY(contacts->index(2, 0).data().toString() == "TestType2");
+        QVERIFY(contacts->index(2, 1).data().toString() == "TestEntry3");
+        com->insertCommissioner("TestCommissioner2", "");
+        com->insertContact(2, 1, "TestEntry4");
+        com->setCommissioner(com->getCommissioners()->index(1, 0));
+        QVERIFY(contacts->index(0, 0).data().toString() == "TestType");
+        QVERIFY(contacts->index(0, 1).data().toString() == "TestEntry4");
+    }
 
-TEST(V2Test, setPieceDescription) {
-    ComModel *com = new ComModel();
-    com->insertCommissioner("testCommissioner");
-    com->insertProduct("testProduct", 1.0);
-    com->insertCommission(1, "01/01/2001", "05/05/2005");
-    com->insertPiece(1, 1);
-    std::vector<const std::tuple<const int, const int, const int, const std::string>> pieList;
-    pieList.push_back(std::tuple<const int, const int, const int, const std::string>(1, 1, 1, ""));
-    EXPECT_EQ(pieList, com->getPieces());
-    pieList.clear();
-    pieList.push_back(std::tuple<const int, const int, const int, const std::string>(1, 1, 1, "test"));
-    com->setPieceDescription(1, "test");
-    EXPECT_EQ(pieList, com->getPieces());
-    pieList.clear();
+    void ComModelTest::commissionerCommissionsTest() {
+        com->insertCommissioner("TestCommissioner", "");
+        com->insertProduct("TestProduct", 1.0);
+        com->insertCommission(1, QDateTime::currentDateTime(), "");
+        com->insertCommission(1, QDateTime::currentDateTime(), "");
+        com->insertPiece(1, 1, "TestPiece", "");
+        com->insertPiece(1, 1, "TestPiece2", "");
+        com->insertPiece(2, 1, "TestPiece3", "");
+        com->setCommissioner(com->getCommissioners()->index(0, 0));
+        QAbstractItemModel *commissions = com->getCommissionerCommissions();
+<<<<<<< HEAD
+        qDebug() << "Commissioners";
+        for (int i = 0; i < com->getCommissioners()->rowCount(); ++i)
+            for (int j = 0; j < com->getCommissioners()->columnCount(); ++j)
+                qDebug() << com->getCommissioners()->index(i, j).data().toString();
+        qDebug() << "Commissions";
+        for (int i = 0; i < com->getCommissions()->rowCount(); ++i)
+            for (int j = 0; j < com->getCommissions()->columnCount(); ++j)
+                qDebug() << com->getCommissions()->index(i, j).data().toString();
+        qDebug() << "Combo";
+        for (int i = 0; i < commissions->rowCount(); ++i)
+            for (int j = 0; j < commissions->columnCount(); ++j)
+                qDebug() << commissions->index(i, j).data().toString();
+        qDebug() << "Pieces";
+        for (int i = 0; i < com->getPieces()->rowCount(); ++i)
+            for (int j = 0; j < com->getPieces()->columnCount(); ++j)
+                qDebug() << com->getPieces()->index(i, j).data().toString();
+=======
+        for (int i = 0; i < commissions->rowCount(); i++) {
+            qDebug() << commissions->index(i, 0).data().toString();
+            qDebug() << commissions->index(i, 1).data().toString();
+            qDebug() << commissions->index(i, 2).data().toDouble();
+            qDebug() << commissions->index(i, 3).data().toString();
+        }
+>>>>>>> origin/dev
+        QVERIFY(commissions->index(0, 0).data().toString()
+            == QDateTime::currentDateTime().toString("MM/dd/yyyy"));
+        QVERIFY(commissions->index(0, 1).data().toString() == "Unpaid");
+        QVERIFY(commissions->index(0, 2).data().toDouble() == 2.0);
+        QVERIFY(commissions->index(0, 3).data().toString() == "Unfinished");
+        QVERIFY(commissions->index(1, 0).data().toString()
+            == QDateTime::currentDateTime().toString("MM/dd/yyyy"));
+        QVERIFY(commissions->index(1, 1).data().toString() == "Unpaid");
+        QVERIFY(commissions->index(1, 2).data().toDouble() == 1.0);
+        QVERIFY(commissions->index(1, 3).data().toString() == "Unfinished");
+        com->insertPaymentType("TestType");
+        com->insertPayment(1, 1, 2.0, "");
+        qDebug() << commissions->index(0, 1).data().toString();
+        qDebug() << commissions->index(1, 1).data().toString();
+        QVERIFY(commissions->index(0, 1).data().toString()
+            == QDateTime::currentDateTime().toString("MM/dd/yyyy"));
+        QVERIFY(commissions->index(1, 1).data().toString() == "Unpaid");
+    }
+    
+    void ComModelTest::cleanup() {
+        com->close();
+    }
 
-    delete com;
-}
-
-TEST(V3Test, getPaymentMethods) {
-    ComModel *com = new ComModel();
-    com->insertPaymentMethod("testPaymentMethod");
-    com->insertPaymentMethod("testPaymentMethod2");
-    std::vector<const std::tuple<const int, const std::string>> methodList;
-    methodList.push_back(std::tuple<const int, const std::string>(1, "testPaymentMethod"));
-    methodList.push_back(std::tuple<const int, const std::string>(2, "testPaymentMethod2"));
-    EXPECT_EQ(methodList, com->getPaymentMethods());
-    EXPECT_EQ("testPaymentMethod", com->getPaymentMethod(1));
-    EXPECT_EQ("testPaymentMethod2", com->getPaymentMethod(2));
-    methodList.clear();
-
-    delete com;
-}
-
-TEST(V3Test, deletePaymentMethod) {
-    ComModel *com = new ComModel();
-    com->insertPaymentMethod("testPaymentMethod");
-    std::vector<const std::tuple<const int, const std::string>> methodList;
-    methodList.push_back(std::tuple<const int, const std::string>(1, "testPaymentMethod"));
-    EXPECT_EQ(methodList, com->getPaymentMethods());
-    methodList.clear();
-    com->deletePaymentMethod(1);
-    EXPECT_EQ(methodList, com->getPaymentMethods());
-
-    delete com;
-}
-
-TEST(V3Test, setPaymentMethodName) {
-    ComModel *com = new ComModel();
-    com->insertPaymentMethod("testPaymentMethod");
-    std::vector<const std::tuple<const int, const std::string>> methodList;
-    methodList.push_back(std::tuple<const int, const std::string>(1, "testPaymentMethod"));
-    EXPECT_EQ(methodList, com->getPaymentMethods());
-    methodList.clear();
-    methodList.push_back(std::tuple<const int, const std::string>(1, "testPaymentMethod2"));
-    com->setPaymentMethodName(1, "testPaymentMethod2");
-    EXPECT_EQ(methodList, com->getPaymentMethods());
-    methodList.clear();
-
-    delete com;
-}
-
-TEST(V3Test, getPayments) {
-    ComModel *com = new ComModel();
-    com->insertPaymentMethod("testPaymentMethod");
-    com->insertPaymentMethod("testPaymentMethod2");
-    com->insertCommissioner("testCommissioner");
-    com->insertCommissioner("testCommissioner2");
-    com->insertPayment(1, 1, "01/01/2001", 10);
-    com->insertPayment(2, 2, "02/02/2001", 15, "note stuff");
-    com->insertPayment(1, 2, "02/02/2050", 500.05, "more note stuff");
-    std::vector < const std::tuple < const int, const int, const int,
-        const std::string, const double, const std::string >> paymentList;
-    paymentList.push_back(std::tuple < const int, const int, const int,
-        const std::string, const double, const std::string >(1, 1, 1, 
-        "01/01/2001", 10, ""));
-    paymentList.push_back(std::tuple < const int, const int, const int,
-        const std::string, const double, const std::string >(2, 2, 2, 
-        "02/02/2001", 15, "note stuff"));
-    paymentList.push_back(std::tuple < const int, const int, const int,
-        const std::string, const double, const std::string >(3, 1, 2,
-        "02/02/2050", 500.05, "more note stuff"));
-    EXPECT_EQ(paymentList, com->getPayments());
-    paymentList.clear();
-    std::tuple <const int, const int,
-        const std::string, const double, const std::string > payment(1, 1,
-        "01/01/2001", 10, "");
-    EXPECT_EQ(payment, com->getPaymentById(1));
-
-    delete com;
-}
-
-TEST(V3Test, setPaymentMethod) {
-    ComModel *com = new ComModel();
-    com->insertPaymentMethod("testPaymentMethod");
-    com->insertPaymentMethod("testPaymentMethod2");
-    com->insertCommissioner("testCommissioner");
-    com->insertPayment(1, 1, "01/01/2001", 10);
-    std::vector < const std::tuple < const int, const int, const int,
-        const std::string, const double, const std::string >> paymentList;
-    paymentList.push_back(std::tuple < const int, const int, const int,
-        const std::string, const double, const std::string >(1, 1, 1,
-        "01/01/2001", 10, ""));
-    EXPECT_EQ(paymentList, com->getPayments());
-    paymentList.clear();
-    com->setPaymentMethod(1, 2);
-    paymentList.push_back(std::tuple < const int, const int, const int,
-        const std::string, const double, const std::string >(1, 1, 2,
-        "01/01/2001", 10, ""));
-    EXPECT_EQ(paymentList, com->getPayments());
-    paymentList.clear();
-
-    delete com;
-}
-
-TEST(V3Test, setPaymentDate) {
-    ComModel *com = new ComModel();
-    com->insertPaymentMethod("testPaymentMethod");
-    com->insertCommissioner("testCommissioner");
-    com->insertPayment(1, 1, "01/01/2001", 10);
-    std::vector < const std::tuple < const int, const int, const int,
-        const std::string, const double, const std::string >> paymentList;
-    paymentList.push_back(std::tuple < const int, const int, const int,
-        const std::string, const double, const std::string >(1, 1, 1,
-        "01/01/2001", 10, ""));
-    EXPECT_EQ(paymentList, com->getPayments());
-    paymentList.clear();
-    com->setPaymentDate(1, "02/02/2002");
-    paymentList.push_back(std::tuple < const int, const int, const int,
-        const std::string, const double, const std::string >(1, 1, 1,
-        "02/02/2002", 10, ""));
-    EXPECT_EQ(paymentList, com->getPayments());
-    paymentList.clear();
-
-    delete com;
-}
-
-TEST(V3Test, setPaymentAmount) {
-    ComModel *com = new ComModel();
-    com->insertPaymentMethod("testPaymentMethod");
-    com->insertCommissioner("testCommissioner");
-    com->insertPayment(1, 1, "01/01/2001", 10);
-    std::vector < const std::tuple < const int, const int, const int,
-        const std::string, const double, const std::string >> paymentList;
-    paymentList.push_back(std::tuple < const int, const int, const int,
-        const std::string, const double, const std::string >(1, 1, 1,
-        "01/01/2001", 10, ""));
-    EXPECT_EQ(paymentList, com->getPayments());
-    paymentList.clear();
-    com->setPaymentAmount(1, 20);
-    paymentList.push_back(std::tuple < const int, const int, const int,
-        const std::string, const double, const std::string >(1, 1, 1,
-        "01/01/2001", 20, ""));
-    EXPECT_EQ(paymentList, com->getPayments());
-    paymentList.clear();
-
-    delete com;
-}
-
-TEST(V3Test, setPaymentCommissioner) {
-    ComModel *com = new ComModel();
-    com->insertPaymentMethod("testPaymentMethod");
-    com->insertCommissioner("testCommissioner");
-    com->insertCommissioner("testCommissioner2");
-    com->insertPayment(1, 1, "01/01/2001", 10);
-    std::vector < const std::tuple < const int, const int, const int,
-        const std::string, const double, const std::string >> paymentList;
-    paymentList.push_back(std::tuple < const int, const int, const int,
-        const std::string, const double, const std::string >(1, 1, 1,
-        "01/01/2001", 10, ""));
-    EXPECT_EQ(paymentList, com->getPayments());
-    paymentList.clear();
-    com->setPaymentCommissioner(1, 2);
-    paymentList.push_back(std::tuple < const int, const int, const int,
-        const std::string, const double, const std::string >(1, 2, 1,
-        "01/01/2001", 10, ""));
-    EXPECT_EQ(paymentList, com->getPayments());
-    paymentList.clear();
-
-    delete com;
-}
-
-TEST(V3Test, getPaymentsByCommissioner) {
-    ComModel *com = new ComModel();
-    com->insertPaymentMethod("testPaymentMethod");
-    com->insertPaymentMethod("testPaymentMethod2");
-    com->insertCommissioner("testCommissioner");
-    com->insertCommissioner("testCommissioner2");
-    com->insertPayment(1, 1, "01/01/2001", 10);
-    com->insertPayment(2, 2, "02/02/2001", 15, "note stuff");
-    com->insertPayment(1, 2, "02/02/2050", 500.05, "more note stuff");
-    std::vector < const std::tuple <const int, const int,
-        const std::string, const double, const std::string >> paymentList;
-    paymentList.push_back(std::tuple <const int, const int,
-        const std::string, const double, const std::string >(1, 1,
-        "01/01/2001", 10, ""));
-    paymentList.push_back(std::tuple <const int, const int,
-        const std::string, const double, const std::string >(3, 2,
-        "02/02/2050", 500.05, "more note stuff"));
-    EXPECT_EQ(paymentList, com->getPaymentsByCommissioner(1));
-    paymentList.clear();
-
-    delete com;
-}
-
-int main(int argc, char **argv) {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+    void ComModelTest::cleanupTestCase() {
+        delete com;
+    }
+    
 }

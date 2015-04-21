@@ -5,7 +5,7 @@
 #include <QStackedWidget>
 #include "TestLayouts.h"
 #include "LeftPanel.h"
-#include "TestModel.h"
+#include "ComModel.h"
 
 namespace Commissionator {
 
@@ -64,7 +64,7 @@ namespace Commissionator {
         QStackedWidget *leftPanel;
         QStackedWidget *rightPanel;
 
-        TestModel *model;
+        ComModel *model;
 
         LeftPanel *lp1;
         LeftPanel2 *lp2;
