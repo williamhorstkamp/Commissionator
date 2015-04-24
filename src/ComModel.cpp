@@ -138,7 +138,7 @@ namespace Commissionator {
     void ComModel::setPiece(const QModelIndex &index) {
         pieceModel->query().bindValue(0, getValue(index, 0).toInt());
         pieceModel->query().exec();
-        pieceModel->setQuery(pieceModel->query());
+        pieceModel->setQuery(pieceModel->query());  
     }
 
     void ComModel::insertCommission(const int commissionerId, 
@@ -206,7 +206,6 @@ namespace Commissionator {
         wasJustPaid.bindValue(0, commissionId);
         wasJustPaid.exec();
         wasJustPaid.next();
-        qDebug() << wasJustPaid.value(0).toBool();
         if (wasJustPaid.value(0).toBool() == true) {
             QSqlQuery setPaidDate("UPDATE Commission SET paidDate = (?) "
                 "WHERE Commission.id = (?)", sql);
@@ -232,10 +231,10 @@ namespace Commissionator {
         insertPieceQuery->bindValue(2, name);
         insertPieceQuery->bindValue(3, description);
         insertPieceQuery->bindValue(4, QDateTime::currentDateTime().toMSecsSinceEpoch());
-        //insertPieceQuery->bindValue(5, 0);
         insertPieceQuery->bindValue(5, QVariant(QVariant::String));
         insertPieceQuery->exec();
         searchPieces("", "", "", "");
+        searchCommissioners("", "", "");
     }
 
     void ComModel::insertProduct(const QString productName, const double basePrice) {
@@ -405,7 +404,7 @@ namespace Commissionator {
             "INNER JOIN ProductPrices ON Piece.product = ProductPrices.product "
             "INNER JOIN Commissioner ON "
             "Commission.commissioner = Commissioner.id "
-            "WHERE Commissioner.id = (?) "
+            "WHERE Commissioner.id = 1 "
             "AND ProductPrices.date < Commission.createDate "
             "GROUP BY Piece.id HAVING date = max(date)) "
             "GROUP BY ComID;", sql));
@@ -467,8 +466,8 @@ namespace Commissionator {
             "WHERE C.id = (?);", sql));
         commissionersModel = new QSqlQueryModel(this);
         commissionersModel->setQuery(QSqlQuery("SELECT C.id, C.name, "
-            "CASE WHEN max(Commission.createDate) IS NULL THEN 'No Commissions' "
-            "ELSE datetime(max(Commission.createDate), 'unixepoch', 'localtime') "
+            "CASE WHEN count(Commission.createDate) IS 0 THEN 'No Commissions' "
+            "ELSE datetime(max(Commission.createDate)/1000, 'unixepoch', 'localtime') "
             "END AS firstCommission, "
             "CASE WHEN(SELECT SUM(a.price) - b.fee FROM "
             "(SELECT ProductPrices.price price FROM Commission "
@@ -524,7 +523,7 @@ namespace Commissionator {
             "STRFTIME('%m/%d/%Y', Commission.dueDate/1000, 'unixepoch', 'localtime'), "
             "COUNT(Piece.id), "
             "CASE WHEN MIN(Piece.finishDate) LIKE '0' THEN 'Unfinished' "
-            "WHEN MIN(Piece.finishDate) IS NULL THEN 'No Pieces'"
+            "WHEN MIN(Piece.finishDate) IS NULL THEN 'No Pieces' "
             "ELSE MAX(Piece.finishDate) "
             "END "
             "FROM Commission INNER JOIN "

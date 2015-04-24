@@ -108,7 +108,7 @@ namespace Commissionator {
         QVERIFY(contacts->index(0, 0).data().toString() == "TestContactType");
         QVERIFY(contacts->index(0, 1).data().toString() == "TestEntry");
     }
-    /*
+    
     void ComModelTest::commissionersTest() {
         QAbstractItemModel *coms = com->getCommissioners();
         com->insertCommissioner("TestCommissioner", "");
@@ -122,7 +122,6 @@ namespace Commissionator {
         com->insertPiece(2, 1, "TestPiece3", "");
         qDebug() << coms->index(0, 1).data().toString();
         com->setCommissioner(coms->index(0, 1));
-        qDebug() << com->getCommissionerEditable()->model()->index(0, 1).data().toString();
         QVERIFY(coms->index(0, 1).data().toString() == "TestCommissioner");
         QVERIFY(coms->index(1, 1).data().toString() == "TestCommissioner2");
         QVERIFY(coms->index(2, 1).data().toString() == "TestCommissioner3");
@@ -141,42 +140,22 @@ namespace Commissionator {
     }
     
     void ComModelTest::commissionerTest() {
-        QDataWidgetMapper *comsE = com->getCommissionerEditable();
-        QDataWidgetMapper *comsG = com->getCommissionerGenerated();
+        QSqlQueryModel *coms = com->getCommissioner();
         com->insertCommissioner("TestCommissioner", "TestNotes");
         com->insertProduct("TestProduct", 1.0);
         com->insertCommission(2, QDateTime::currentDateTime(), "");
         com->insertPiece(1, 1, "TestPiece", "");
         com->setCommissioner(com->getCommissioners()->index(1, 0));
-        QLabel *name = new QLabel();
-        QLabel *customerSince = new QLabel();
-        QLabel *moneyOwed = new QLabel();
-        QLabel *notes = new QLabel();
-        comsE->addMapping(name, 0);
-        comsG->addMapping(customerSince, 0);
-        comsG->addMapping(moneyOwed, 1);
-        comsE->addMapping(notes, 1);
-        QVERIFY(name->text() == "TestCommissioner");
-        QVERIFY(QDateTime::fromString(customerSince->text()).toString("MM/dd/yyyy")
+        QVERIFY(coms->index(0, 0).data().toString() == "TestCommissioner");
+        QVERIFY(coms->index(0, 1).data().toString()
             == QDateTime::currentDateTime().toString("MM/dd/yyyy"));
-        QVERIFY(moneyOwed->text().toDouble() == 1.0);
-        QVERIFY(notes->text() == "TestNotes");
-        notes->text() = "TestNotes2";
-        name->text() = "TestCommissioner2";
-        QLabel *notes2 = new QLabel();
-        comsE->addMapping(notes2, 1);
-        QVERIFY(notes2->text() == "TestNotes2");
-        QVERIFY(name->text() == "TestCommissioner2");
+        QVERIFY(coms->index(0, 2).data().toDouble() == 1.0);
+        QVERIFY(coms->index(0, 3).data().toString() == "TestNotes");
         com->insertPaymentType("TypeName");
         com->insertPayment(1, 1, 1.0, "");
-        QVERIFY(moneyOwed->text().toDouble() == 0.0);
-        delete name;
-        delete customerSince;
-        delete moneyOwed;
-        delete notes;
-        delete notes2;
+        QVERIFY(coms->index(0, 2).data().toDouble() == 0.0);
     }
-    */
+    
     void ComModelTest::commissionerContactsTest() {
         QAbstractItemModel *contacts = com->getCommissionerContacts();
         com->insertCommissioner("TestCommissioner", "");
@@ -209,7 +188,6 @@ namespace Commissionator {
         com->insertPiece(2, 1, "TestPiece3", "");
         com->setCommissioner(com->getCommissioners()->index(0, 0));
         QAbstractItemModel *commissions = com->getCommissionerCommissions();
-<<<<<<< HEAD
         qDebug() << "Commissioners";
         for (int i = 0; i < com->getCommissioners()->rowCount(); ++i)
             for (int j = 0; j < com->getCommissioners()->columnCount(); ++j)
@@ -226,14 +204,6 @@ namespace Commissionator {
         for (int i = 0; i < com->getPieces()->rowCount(); ++i)
             for (int j = 0; j < com->getPieces()->columnCount(); ++j)
                 qDebug() << com->getPieces()->index(i, j).data().toString();
-=======
-        for (int i = 0; i < commissions->rowCount(); i++) {
-            qDebug() << commissions->index(i, 0).data().toString();
-            qDebug() << commissions->index(i, 1).data().toString();
-            qDebug() << commissions->index(i, 2).data().toDouble();
-            qDebug() << commissions->index(i, 3).data().toString();
-        }
->>>>>>> origin/dev
         QVERIFY(commissions->index(0, 0).data().toString()
             == QDateTime::currentDateTime().toString("MM/dd/yyyy"));
         QVERIFY(commissions->index(0, 1).data().toString() == "Unpaid");
