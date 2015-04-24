@@ -120,8 +120,12 @@ namespace Commissionator {
         com->insertCommission(3, QDateTime::currentDateTime(), "");
         com->insertPiece(2, 1, "TestPiece2", "");
         com->insertPiece(2, 1, "TestPiece3", "");
-        qDebug() << coms->index(0, 1).data().toString();
-        com->setCommissioner(coms->index(0, 1));
+        for (int i = 0; i < coms->rowCount(); ++i)
+            for (int j = 0; j < coms->columnCount(); ++j)
+                qDebug() << coms->index(i, j).data().toString();
+        for (int i = 0; i < com->getPieces()->rowCount(); ++i)
+            for (int j = 0; j < com->getPieces()->columnCount(); ++j)
+                qDebug() << com->getPieces()->index(i, j).data().toString();
         QVERIFY(coms->index(0, 1).data().toString() == "TestCommissioner");
         QVERIFY(coms->index(1, 1).data().toString() == "TestCommissioner2");
         QVERIFY(coms->index(2, 1).data().toString() == "TestCommissioner3");

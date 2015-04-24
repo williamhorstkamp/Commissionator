@@ -234,7 +234,7 @@ namespace Commissionator {
         insertPieceQuery->bindValue(5, QVariant(QVariant::String));
         insertPieceQuery->exec();
         searchPieces("", "", "", "");
-        searchCommissioners("", "", "");
+        //searchCommissioners("", "", "");  //creates bugs
     }
 
     void ComModel::insertProduct(const QString productName, const double basePrice) {
@@ -465,7 +465,8 @@ namespace Commissionator {
             "LEFT JOIN Commission ON C.id = Commission.commissioner "
             "WHERE C.id = (?);", sql));
         commissionersModel = new QSqlQueryModel(this);
-        commissionersModel->setQuery(QSqlQuery("SELECT C.id, C.name, "
+        QSqlQuery commissionersQuery;
+        commissionersQuery.prepare("SELECT C.id, C.name, "
             "CASE WHEN count(Commission.createDate) IS 0 THEN 'No Commissions' "
             "ELSE datetime(max(Commission.createDate)/1000, 'unixepoch', 'localtime') "
             "END AS firstCommission, "
@@ -506,8 +507,9 @@ namespace Commissionator {
             "LEFT JOIN Commission ON C.id = Commission.commissioner "
             "WHERE name LIKE (?) "
             "GROUP BY C.id HAVING firstCommission like (?) "
-            "AND amountOwed like (?);", sql));
-        searchCommissioners("", "", "");
+            "AND amountOwed like (?);");
+        commissionersModel->setQuery(commissionersQuery);
+        //searchCommissioners("", "", "");
 		commissionPaymentsModel = new QSqlQueryModel(this);
         commissionPaymentsModel->setQuery(QSqlQuery("SELECT PaymentType.name, "
             "strftime('%m/%d/%Y', Payment.date/1000, 'unixepoch', 'localtime'), Payment.fee, "
