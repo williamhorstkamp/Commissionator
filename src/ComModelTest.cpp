@@ -120,6 +120,7 @@ namespace Commissionator {
         com->insertCommission(3, QDateTime::currentDateTime(), "");
         com->insertPiece(2, 1, "TestPiece2", "");
         com->insertPiece(2, 1, "TestPiece3", "");
+        com->searchCommissioners("", "", "");
         for (int i = 0; i < coms->rowCount(); ++i)
             for (int j = 0; j < coms->columnCount(); ++j)
                 qDebug() << coms->index(i, j).data().toString();
@@ -159,6 +160,8 @@ namespace Commissionator {
         QVERIFY(coms->index(0, 3).data().toString() == "TestNotes");
         com->insertPaymentType("TypeName");
         com->insertPayment(1, 1, 1.0, "");
+        com->setCommissioner(com->getCommissioners()->index(0, 0));
+        qDebug() << coms->index(0, 2).data().toString();
         QVERIFY(coms->index(0, 2).data().toDouble() == 0.0);
     }
     
