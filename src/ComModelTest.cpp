@@ -147,9 +147,11 @@ namespace Commissionator {
         QSqlQueryModel *coms = com->getCommissioner();
         com->insertCommissioner("TestCommissioner", "TestNotes");
         com->insertProduct("TestProduct", 1.0);
-        com->insertCommission(2, QDateTime::currentDateTime(), "");
+        com->insertCommission(1, QDateTime::currentDateTime(), "");
         com->insertPiece(1, 1, "TestPiece", "");
-        com->setCommissioner(com->getCommissioners()->index(1, 0));
+        com->setCommissioner(com->getCommissioners()->index(0, 0));
+        for (int i = 0; i < coms->columnCount(); ++i)
+            qDebug() << coms->index(0, i).data().toString();
         QVERIFY(coms->index(0, 0).data().toString() == "TestCommissioner");
         QVERIFY(coms->index(0, 1).data().toString()
             == QDateTime::currentDateTime().toString("MM/dd/yyyy"));
