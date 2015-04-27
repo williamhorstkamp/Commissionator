@@ -109,8 +109,7 @@ namespace Commissionator {
         QVERIFY(contacts->index(0, 1).data().toString() == "TestEntry");
     }
     
-    void ComModelTest::commissionersTest() {
-        QAbstractItemModel *coms = com->getCommissioners();
+    void ComModelTest::commissionersTest() {  
         com->insertCommissioner("TestCommissioner", "");
         com->insertCommissioner("TestCommissioner2", "");
         com->insertCommissioner("TestCommissioner3", "");
@@ -121,6 +120,7 @@ namespace Commissionator {
         com->insertPiece(2, 1, "TestPiece2", "");
         com->insertPiece(2, 1, "TestPiece3", "");
         com->searchCommissioners("", "", "");
+        QAbstractItemModel *coms = com->getCommissioners();
         for (int i = 0; i < coms->rowCount(); ++i)
             for (int j = 0; j < coms->columnCount(); ++j)
                 qDebug() << coms->index(i, j).data().toString();
@@ -128,16 +128,15 @@ namespace Commissionator {
             for (int j = 0; j < com->getPieces()->columnCount(); ++j)
                 qDebug() << com->getPieces()->index(i, j).data().toString();
         QVERIFY(coms->index(0, 1).data().toString() == "TestCommissioner");
+        QVERIFY(coms->index(0, 2).data().toString() == "No Commissions");
+        QVERIFY(coms->index(0, 3).data().toString() == "No Commissioned Pieces");
         QVERIFY(coms->index(1, 1).data().toString() == "TestCommissioner2");
-        QVERIFY(coms->index(2, 1).data().toString() == "TestCommissioner3");
-        QVERIFY(coms->index(0, 2).data().toDateTime().toString("MM/dd/yyyy")
+        QVERIFY(coms->index(1, 2).data().toString()
             == QDateTime::currentDateTime().toString("MM/dd/yyyy"));
-        QVERIFY(coms->index(1, 2).data().toDateTime().toString("MM/dd/yyyy")
-            == QDateTime::currentDateTime().toString("MM/dd/yyyy"));
-        QVERIFY(coms->index(2, 2).data().toDateTime().toString("MM/dd/yyyy")
-            == QDateTime::currentDateTime().toString("MM/dd/yyyy"));
-        QVERIFY(coms->index(0, 3).data().toDouble() == 0);
         QVERIFY(coms->index(1, 3).data().toDouble() == 1.0);
+        QVERIFY(coms->index(2, 1).data().toString() == "TestCommissioner3");
+        QVERIFY(coms->index(2, 2).data().toString()
+            == QDateTime::currentDateTime().toString("MM/dd/yyyy"));
         QVERIFY(coms->index(2, 3).data().toDouble() == 2.0);
         com->insertPaymentType("TestPaymentType");
         com->insertPayment(2, 1, 2.0, "");
