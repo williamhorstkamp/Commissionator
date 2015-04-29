@@ -214,6 +214,8 @@ namespace Commissionator {
             setPaidDate.exec();
             commissionerCommissionsModel->query().exec();
             commissionerCommissionsModel->setQuery(commissionerCommissionsModel->query());
+            commissionersModel->query().exec();
+            commissionersModel->setQuery(commissionersModel->query());
         }
     }
 
@@ -469,8 +471,8 @@ namespace Commissionator {
         QSqlQuery commissionersQuery;
         commissionersQuery.prepare("SELECT C.id, C.name, "
             "CASE WHEN count(Commission.createDate) IS 0 THEN 'No Commissions' "
-            "ELSE STRFTIME('%m/%d/%Y', min(Commission.createDate)/1000, 'unixepoch', 'localtime') "
-            "END AS firstCommission, "
+            "ELSE STRFTIME('%m/%d/%Y', max(Commission.createDate) / 1000, "
+            "'unixepoch', 'localtime') END AS firstCommission, "
             "CASE WHEN(SELECT SUM(a.price) - b.fee FROM "
             "(SELECT ProductPrices.price price FROM Commission "
             "INNER JOIN Piece ON Commission.id = Piece.commission "
@@ -478,10 +480,9 @@ namespace Commissionator {
             "WHERE Commission.commissioner = C.id "
             "AND ProductPrices.date < Commission.createDate "
             "GROUP BY Piece.id HAVING date = max(date)) a "
-            "INNER JOIN (SELECT SUM(Payment.fee) fee FROM Payment "
-            "LEFT JOIN Commission ON Payment.commission = Commission.id "
-            "INNER JOIN Commissioner ON "
-            "Commission.commissioner = Commissioner.id "
+            "LEFT JOIN(SELECT SUM(Payment.fee) fee FROM Commissioner "
+            "INNER JOIN Commission ON Commissioner.id = Commission.commissioner "
+            "INNER JOIN Payment ON Commission.id = Payment.commission "
             "WHERE Commissioner.id = C.id) b) = 0 THEN 'Paid off' "
             "WHEN(SELECT SUM(a.price) FROM "
             "(SELECT ProductPrices.price price FROM Commission "
@@ -491,24 +492,32 @@ namespace Commissionator {
             "AND ProductPrices.date < Commission.createDate "
             "GROUP BY Piece.id "
             "HAVING date = max(date)) a) IS NULL THEN 'No Commissioned Pieces' "
-            "ELSE (SELECT SUM(a.price) - b.fee FROM "
+            "WHEN(SELECT COUNT(Payment.fee) FROM Commission "
+            "INNER JOIN Payment ON Commission.id = Payment.commission "
+            "WHERE Commission.commissioner = C.id) is 0 THEN(SELECT SUM(a.price) FROM "
+            "(SELECT ProductPrices.price price FROM Commission "
+            "INNER JOIN Piece ON Commission.id = Piece.commission "
+            "INNER JOIN ProductPrices ON Piece.product = ProductPrices.product "
+            "WHERE Commission.commissioner = C.id "
+            "AND ProductPrices.date < Commission.createDate "
+            "GROUP BY Piece.id HAVING date = max(date)) a) "
+            "ELSE(SELECT SUM(a.price) - b.fee FROM "
             "(SELECT ProductPrices.price price FROM Commission "
             "INNER JOIN Piece ON Commission.id = Piece.commission "
             "INNER JOIN ProductPrices ON Piece.product = ProductPrices.product "
             "WHERE Commission.commissioner = C.id "
             "AND ProductPrices.date < Commission.createDate "
             "GROUP BY Piece.id HAVING date = max(date)) a "
-            "INNER JOIN (SELECT SUM(Payment.fee) fee FROM Payment "
-            "LEFT JOIN Commission ON Payment.commission = Commission.id "
-            "INNER JOIN Commissioner ON "
-            "Commission.commissioner = Commissioner.id "
+            "INNER JOIN(SELECT SUM(Payment.fee) fee FROM Commissioner "
+            "INNER JOIN Commission ON Commissioner.id = Commission.commissioner "
+            "INNER JOIN Payment ON Commission.id = Payment.commission "
             "WHERE Commissioner.id = C.id) b) "
             "END AS amountOwed "
             "FROM Commissioner C "
             "LEFT JOIN Commission ON C.id = Commission.commissioner "
-            "WHERE name LIKE (?) "
-            "GROUP BY C.id HAVING firstCommission like (?) "
-            "AND amountOwed like (?);");
+            "WHERE name LIKE(?) "
+            "GROUP BY C.id HAVING firstCommission like(?) "
+            "AND amountOwed like(?);");
         commissionersModel->setQuery(commissionersQuery);
         searchCommissioners("", "", "");
 		commissionPaymentsModel = new QSqlQueryModel(this);

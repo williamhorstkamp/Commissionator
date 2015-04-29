@@ -139,8 +139,10 @@ namespace Commissionator {
             == QDateTime::currentDateTime().toString("MM/dd/yyyy"));
         QVERIFY(coms->index(2, 3).data().toDouble() == 2.0);
         com->insertPaymentType("TestPaymentType");
-        com->insertPayment(2, 1, 2.0, "");
-        QVERIFY(coms->index(2, 3).data().toDouble() == 0.0);
+        com->insertPayment(1, 1, 2.0, "");
+        com->searchCommissioners("", "", "");
+        qDebug() << coms->index(2, 3).data().toString();
+        QVERIFY(coms->index(2, 3).data().toString() == "Paid Off");
     }
     
     void ComModelTest::commissionerTest() {
