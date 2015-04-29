@@ -469,7 +469,7 @@ namespace Commissionator {
         QSqlQuery commissionersQuery;
         commissionersQuery.prepare("SELECT C.id, C.name, "
             "CASE WHEN count(Commission.createDate) IS 0 THEN 'No Commissions' "
-            "ELSE datetime(max(Commission.createDate)/1000, 'unixepoch', 'localtime') "
+            "ELSE STRFTIME('%m/%d/%Y', min(Commission.createDate)/1000, 'unixepoch', 'localtime') "
             "END AS firstCommission, "
             "CASE WHEN(SELECT SUM(a.price) - b.fee FROM "
             "(SELECT ProductPrices.price price FROM Commission "
