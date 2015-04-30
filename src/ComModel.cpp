@@ -392,7 +392,8 @@ namespace Commissionator {
 
     void ComModel::prepareModels() {
 		commissionerCommissionsModel = new QSqlQueryModel(this);
-        commissionerCommissionsModel->setQuery(QSqlQuery("SELECT createDate, "
+        QSqlQuery commissionerCommissionsQuery(sql);
+        commissionerCommissionsQuery.prepare("SELECT createDate, "
             "paidDate, SUM(price), finishDate FROM (SELECT Commission.id comID, "
             "strftime('%m/%d/%Y', Commission.createDate/1000, "
             "'unixepoch', 'localtime') createDate, "
@@ -409,14 +410,18 @@ namespace Commissionator {
             "WHERE Commissioner.id = (?) "
             "AND ProductPrices.date < Commission.createDate "
             "GROUP BY Piece.id HAVING date = max(date)) "
-            "GROUP BY ComID;", sql));
+            "GROUP BY ComID;");
+        commissionerCommissionsModel->setQuery(commissionerCommissionsQuery);
 		commissionerContactsModel = new QSqlQueryModel(this);
-        commissionerContactsModel->setQuery(QSqlQuery("SELECT ContactType.type, "
+        QSqlQuery commissionerContactsQuery(sql);
+        commissionerContactsQuery.prepare("SELECT ContactType.type, "
             "Contact.entry FROM Contact "
             "INNER JOIN ContactType ON Contact.type = ContactType.id "
-            "WHERE Contact.commissioner = (?);", sql));
+            "WHERE Contact.commissioner = (?);");
+        commissionerContactsModel->setQuery(commissionerContactsQuery);
         commissionerModel = new QSqlQueryModel(this);
-        commissionerModel->setQuery(QSqlQuery("SELECT C.name, "
+        QSqlQuery commissionerQuery(sql);
+        commissionerQuery.prepare("SELECT C.name, "
             "COALESCE(STRFTIME('%m/%d/%Y', min(Commission.createDate)/1000, "
             "'unixepoch', 'localtime'),'No Commissions'), "
             "CASE WHEN(SELECT SUM(a.price) - b.fee FROM "
@@ -466,12 +471,13 @@ namespace Commissionator {
             "END AS amountOwed, C.notes "
             "FROM Commissioner C "
             "LEFT JOIN Commission ON C.id = Commission.commissioner "
-            "WHERE C.id = (?);", sql));
+            "WHERE C.id = (?);");
+        commissionerModel->setQuery(commissionerQuery);
         commissionersModel = new QSqlQueryModel(this);
-        QSqlQuery commissionersQuery;
+        QSqlQuery commissionersQuery(sql);
         commissionersQuery.prepare("SELECT C.id, C.name, "
             "CASE WHEN count(Commission.createDate) IS 0 THEN 'No Commissions' "
-            "ELSE STRFTIME('%m/%d/%Y', max(Commission.createDate) / 1000, "
+            "ELSE STRFTIME('%m/%d/%Y', max(Commission.createDate)/1000, "
             "'unixepoch', 'localtime') END AS firstCommission, "
             "CASE WHEN(SELECT SUM(a.price) - b.fee FROM "
             "(SELECT ProductPrices.price price FROM Commission "
@@ -521,13 +527,16 @@ namespace Commissionator {
         commissionersModel->setQuery(commissionersQuery);
         searchCommissioners("", "", "");
 		commissionPaymentsModel = new QSqlQueryModel(this);
-        commissionPaymentsModel->setQuery(QSqlQuery("SELECT PaymentType.name, "
+        QSqlQuery commissionPaymentsQuery(sql);
+        commissionPaymentsQuery.prepare("SELECT PaymentType.name, "
             "strftime('%m/%d/%Y', Payment.date/1000, 'unixepoch', 'localtime'), Payment.fee, "
             "Payment.note FROM Payment "
             "INNER JOIN PaymentType ON Payment.method = PaymentType.id "
-            "WHERE Payment.commission = (?);", sql));
+            "WHERE Payment.commission = (?);");
+        commissionPaymentsModel->setQuery(commissionPaymentsQuery);
         commissionsModel = new QSqlQueryModel(this);
-        commissionsModel->setQuery(QSqlQuery("SELECT Commission.id, "
+        QSqlQuery commissionsQuery(sql);
+        commissionsQuery.prepare("SELECT Commission.id, "
             "Commissioner.name, STRFTIME('%m/%d/%Y', "
             "Commission.createDate/1000, 'unixepoch', 'localtime'), "
             "COALESCE(STRFTIME('%m/%d/%Y', Commission.paidDate/1000, "
@@ -546,47 +555,60 @@ namespace Commissionator {
             "COALESCE(Commission.paidDate, '') LIKE (?) AND Commission.dueDate LIKE (?) "
             "GROUP BY Commission.id "
             "HAVING COUNT(Piece.id) LIKE (?) AND "
-            "COALESCE(MAX(Piece.finishDate), '') LIKE (?);", sql));
+            "COALESCE(MAX(Piece.finishDate), '') LIKE (?);");
+        commissionsModel->setQuery(commissionsQuery);
         searchCommissions("", "", "", "", "", "");
         contactTypesModel = new QSqlQueryModel(this);
         contactTypesModel->setQuery(QSqlQuery("SELECT id, type FROM ContactType;", sql));
         contactTypesModel->query().exec();
-        insertCommissionerQuery = new QSqlQuery("INSERT INTO "
-            "Commissioner(name, notes) VALUES (?, ?);", sql);
-        insertCommissionQuery = new QSqlQuery("INSERT INTO "
+        insertCommissionerQuery = new QSqlQuery(sql);
+        insertCommissionerQuery->prepare("INSERT INTO "
+            "Commissioner(name, notes) VALUES (?, ?);");
+        insertCommissionQuery = new QSqlQuery(sql);
+        insertCommissionQuery->prepare("INSERT INTO "
             "Commission(commissioner, dueDate, notes, createDate) "
-            "VALUES (?, ?, ?, ?);", sql);
-        insertContactTypeQuery = new QSqlQuery("INSERT INTO "
-            "ContactType(type) VALUES (?);", sql);
-        insertContactQuery = new QSqlQuery("INSERT INTO "
-            "Contact(commissioner, type, entry) VALUES(?, ?, ?);", sql);
-        insertPaymentTypeQuery = new QSqlQuery("INSERT INTO "
-            "PaymentType(name) VALUES (?);", sql);
-        insertPaymentQuery = new QSqlQuery("INSERT INTO "
+            "VALUES (?, ?, ?, ?);");
+        insertContactTypeQuery = new QSqlQuery(sql);
+        insertContactTypeQuery->prepare("INSERT INTO "
+            "ContactType(type) VALUES (?);");
+        insertContactQuery = new QSqlQuery(sql);
+        insertContactQuery->prepare("INSERT INTO "
+            "Contact(commissioner, type, entry) VALUES(?, ?, ?);");
+        insertPaymentTypeQuery = new QSqlQuery(sql);
+        insertPaymentTypeQuery->prepare("INSERT INTO "
+            "PaymentType(name) VALUES (?);");
+        insertPaymentQuery = new QSqlQuery(sql);
+        insertPaymentQuery->prepare("INSERT INTO "
             "Payment(commission, method, fee, note, date) "
-            "VALUES (?, ?, ?, ?, ?);", sql);
-        insertPieceQuery = new QSqlQuery("INSERT INTO "
+            "VALUES (?, ?, ?, ?, ?);");
+        insertPieceQuery = new QSqlQuery(sql);
+        insertPieceQuery->prepare("INSERT INTO "
             "Piece(commission, product, name, notes, createDate, finishDate) "
-            "VALUES(?, ?, ?, ?, ?, ?);", sql);
-        insertProductPriceQuery = new QSqlQuery("INSERT INTO "
+            "VALUES(?, ?, ?, ?, ?, ?);");
+        insertProductPriceQuery = new QSqlQuery(sql);
+        insertProductPriceQuery->prepare("INSERT INTO "
             "ProductPrices(product, price, date) "
-            "VALUES (?, ?, ?);", sql);
-        insertProductQuery = new QSqlQuery("INSERT INTO "
-            "Product(name) VALUES(?);", sql);
+            "VALUES (?, ?, ?);");
+        insertProductQuery = new QSqlQuery(sql);
+        insertProductQuery->prepare("INSERT INTO "
+            "Product(name) VALUES(?);");
         paymentTypesModel = new QSqlQueryModel(this);
         paymentTypesModel->setQuery(QSqlQuery("SELECT id, name FROM PaymentType", sql));
         paymentTypesModel->query().exec();
         pieceModel = new QSqlQueryModel(this);
-        pieceModel->setQuery(QSqlQuery("SELECT Commissioner.name, Piece.name, "
+        QSqlQuery pieceQuery(sql);
+        pieceQuery.prepare("SELECT Commissioner.name, Piece.name, "
             "STRFTIME('%m/%d/%Y', Piece.createDate/1000, 'unixepoch', "
             "'localtime'), COALESCE(STRFTIME('%m/%d/%Y', Piece.finishDate/1000, "
             "'unixepoch', 'localtime'), 'Unfinished'), Piece.notes FROM Piece "
             "INNER JOIN Product ON Piece.product = Product.id "
             "INNER JOIN Commission ON Piece.commission = Commission.id "
             "INNER JOIN Commissioner ON Commission.commissioner = Commissioner.id "
-            "WHERE Piece.id = (?)"));
+            "WHERE Piece.id = (?)");
+        pieceModel->setQuery(pieceQuery);
         piecesModel = new QSqlQueryModel(this);
-        piecesModel->setQuery(QSqlQuery("SELECT Piece.id, Commissioner.name, "
+        QSqlQuery piecesQuery(sql);
+        piecesQuery.prepare("SELECT Piece.id, Commissioner.name, "
             "Piece.name, STRFTIME('%m/%d/%Y',Piece.createDate/1000, 'unixepoch', "
             "'localtime'), "
             "COALESCE(STRFTIME('%m/%d/%Y', Piece.finishDate/1000, 'unixepoch', "
@@ -598,10 +620,12 @@ namespace Commissionator {
             "AND Piece.name LIKE (?) "
             "AND STRFTIME('%m/%d/%Y', Piece.createDate/1000, 'unixepoch', 'localtime') LIKE (?) "
             "AND COALESCE(STRFTIME('%m/%d/%Y', Piece.finishDate/1000, 'unixepoch', "
-            "'localtime'), 0) LIKE (?);", sql));
+            "'localtime'), 0) LIKE (?);");
+        piecesModel->setQuery(piecesQuery);
         searchPieces("", "", "", "");
         productsModel = new QSqlQueryModel(this);
-        productsModel->setQuery(QSqlQuery("SELECT Product.id, Product.name, "
+        QSqlQuery productsQuery(sql);
+        productsQuery.prepare("SELECT Product.id, Product.name, "
             "ProductPrices.price, COUNT(DISTINCT Piece.id) "
             "FROM Product "
             "LEFT JOIN ProductPrices ON Product.id = ProductPrices.product "
@@ -610,7 +634,8 @@ namespace Commissionator {
             "AND ProductPrices.price LIKE (?) "
             "GROUP BY Product.id "
             "HAVING ProductPrices.date = MAX(ProductPrices.date) "
-            "AND COALESCE(COUNT(Piece.id), 0) LIKE (?);", sql));
+            "AND COALESCE(COUNT(Piece.id), 0) LIKE (?);");
+        productsModel->setQuery(productsQuery);
         searchProducts("", "", "");
     }
 }
