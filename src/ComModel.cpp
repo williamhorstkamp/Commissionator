@@ -260,7 +260,7 @@ namespace Commissionator {
 
     void ComModel::build() {
         sql = QSqlDatabase::addDatabase("QSQLITE");
-        sql.setDatabaseName(":memory:");
+        sql.setDatabaseName("memory.db3");
         sql.open();
         sql.exec("PRAGMA foreign_keys = ON;");
         sql.exec("CREATE TABLE IF NOT EXISTS ContactType("
@@ -489,7 +489,7 @@ namespace Commissionator {
             "LEFT JOIN(SELECT SUM(Payment.fee) fee FROM Commissioner "
             "INNER JOIN Commission ON Commissioner.id = Commission.commissioner "
             "INNER JOIN Payment ON Commission.id = Payment.commission "
-            "WHERE Commissioner.id = C.id) b) = 0 THEN 'Paid off' "
+            "WHERE Commissioner.id = C.id) b) = 0 THEN 'Paid Off' "
             "WHEN(SELECT SUM(a.price) FROM "
             "(SELECT ProductPrices.price price FROM Commission "
             "INNER JOIN Piece ON Commission.id = Piece.commission "

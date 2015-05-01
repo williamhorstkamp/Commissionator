@@ -25,7 +25,7 @@ namespace Commissionator {
         //void salesTest();
 
         //void commissionTest();
-        void commissionerTest();
+        //void commissionerTest();
         //void pieceTest();
         //void productTest();
         //void saleTest();
@@ -34,8 +34,8 @@ namespace Commissionator {
         //void commissionPaymentsTest();
         //void commissionNotesTest();
 
-        void commissionerContactsTest();
-        void commissionerCommissionsTest();
+        //void commissionerContactsTest();
+        //void commissionerCommissionsTest();
 
         //void pieceEventsTest();
         //void pieceReferencesTest();
@@ -48,18 +48,18 @@ namespace Commissionator {
         //void saleDealsTest();
         //void salePiecesSoldTest();
 
-        void insertCommissionerTest();
-        void insertContactTest();
+        //void insertCommissionerTest();
+        //void insertContactTest();
         //void insertPieceReferenceTest();
-        void insertProductTest();
+        //void insertProductTest();
         //void insertProductOptionTest();
         //void insertSaleTest();
         //void insertDealTest();
-        void insertPieceTest();
-        void insertPaymentTest();
-        void insertCommissionTest();
-        void insertPaymentTypeTest();
-        void insertContactTypeTest();
+        //void insertPieceTest();
+        //void insertPaymentTest();
+        //void insertCommissionTest();
+        //void insertPaymentTypeTest();
+        //void insertContactTypeTest();
 
         //void searchCommissionsTest();
         //void searchCommissionersTest();

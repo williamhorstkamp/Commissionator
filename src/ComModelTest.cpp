@@ -21,7 +21,7 @@ namespace Commissionator {
     void ComModelTest::init() {
         com->newRecord();
     }
-    
+    /*
     void ComModelTest::insertCommissionerTest() {
         com->insertCommissioner("TestName", "");
         com->insertCommissioner("TestName2", "Test Notes");
@@ -108,7 +108,7 @@ namespace Commissionator {
         QVERIFY(contacts->index(0, 0).data().toString() == "TestContactType");
         QVERIFY(contacts->index(0, 1).data().toString() == "TestEntry");
     }
-    
+    */
     void ComModelTest::commissionersTest() {  
         com->insertCommissioner("TestCommissioner", "");
         com->insertCommissioner("TestCommissioner2", "");
@@ -139,12 +139,12 @@ namespace Commissionator {
             == QDateTime::currentDateTime().toString("MM/dd/yyyy"));
         QVERIFY(coms->index(2, 3).data().toDouble() == 2.0);
         com->insertPaymentType("TestPaymentType");
-        com->insertPayment(1, 1, 2.0, "");
+        com->insertPayment(2, 1, 2.0, "");
         com->searchCommissioners("", "", "");
         qDebug() << coms->index(2, 3).data().toString();
         QVERIFY(coms->index(2, 3).data().toString() == "Paid Off");
     }
-    
+    /*
     void ComModelTest::commissionerTest() {
         QSqlQueryModel *coms = com->getCommissioner();
         com->insertCommissioner("TestCommissioner", "TestNotes");
@@ -187,7 +187,7 @@ namespace Commissionator {
         QVERIFY(contacts->index(0, 0).data().toString() == "TestType");
         QVERIFY(contacts->index(0, 1).data().toString() == "TestEntry4");
     }
-
+    
     void ComModelTest::commissionerCommissionsTest() {
         com->insertCommissioner("TestCommissioner", "");
         com->insertProduct("TestProduct", 1.0);
@@ -232,7 +232,7 @@ namespace Commissionator {
             == QDateTime::currentDateTime().toString("MM/dd/yyyy"));
         QVERIFY(commissions->index(1, 1).data().toString() == "Unpaid");
     }
-    
+    */
     void ComModelTest::cleanup() {
         com->close();
     }
