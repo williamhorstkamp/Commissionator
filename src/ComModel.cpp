@@ -260,7 +260,7 @@ namespace Commissionator {
 
     void ComModel::build() {
         sql = QSqlDatabase::addDatabase("QSQLITE");
-        sql.setDatabaseName("memory.db3");
+        sql.setDatabaseName(":memory:");
         sql.open();
         sql.exec("PRAGMA foreign_keys = ON;");
         sql.exec("CREATE TABLE IF NOT EXISTS ContactType("
@@ -274,27 +274,23 @@ namespace Commissionator {
             "entry	TEXT NOT NULL, "
             "FOREIGN KEY(type) REFERENCES ContactType(id), "
             "FOREIGN KEY(commissioner) REFERENCES Commissioner(id)"
-            ");"
-            );
+            ");");
         sql.exec("CREATE TABLE IF NOT EXISTS Commissioner("
             "id	INTEGER PRIMARY KEY AUTOINCREMENT, "
             "name	TEXT NOT NULL, "
             "notes  TEXT NOT NULL"
-            ");"
-            );
+            ");");
         sql.exec("CREATE TABLE IF NOT EXISTS Product("
             "id	INTEGER PRIMARY KEY AUTOINCREMENT, "
             "name	TEXT NOT NULL"
-            ");"
-            );
+            ");");
         sql.exec("CREATE TABLE IF NOT EXISTS ProductPrices("
             "id INTEGER PRIMARY KEY AUTOINCREMENT, "
             "product INTEGER NOT NULL, "
             "price REAL NOT NULL, "
             "date TEXT NOT NULL, "
             "FOREIGN KEY(product) REFERENCES Product(id)"
-            ");"
-            );
+            ");");
         sql.exec("CREATE TABLE IF NOT EXISTS ProductOption("
             "id	INTEGER PRIMARY KEY AUTOINCREMENT, "
             "name	TEXT NOT NULL, "
@@ -302,16 +298,14 @@ namespace Commissionator {
             "isInt	BOOL NOT NULL, "
             "product	INTEGER NOT NULL, "
             "FOREIGN KEY(product) REFERENCES Product(id)"
-            ");"
-            );
+            ");");
         sql.exec("CREATE TABLE IF NOT EXISTS ProductOptionPrices("
             "id INTEGER PRIMARY KEY AUTOINCREMENT, "
             "productOption INTEGER NOT NULL, "
             "price REAL NOT NULL, "
             "date TEXT NOT NULL, "
             "FOREIGN KEY(productOption)REFERENCES ProductOption(id)"
-            ");"
-            );
+            ");");
         sql.exec("CREATE TABLE IF NOT EXISTS Piece("
             "id INTEGER PRIMARY KEY AUTOINCREMENT, "
             "name   TEXT NOT NULL, "
@@ -322,16 +316,14 @@ namespace Commissionator {
             "notes TEXT NOT NULL, "
             "FOREIGN KEY(commission) REFERENCES Commission(id), "
             "FOREIGN KEY(product) REFERENCES Product(id)"
-            ");"
-            );
+            ");");
         sql.exec("CREATE TABLE IF NOT EXISTS PieceOption("
             "field	TEXT NOT NULL, "
             "piece	INTEGER NOT NULL, "
             "option	INTEGER NOT NULL, "
             "FOREIGN KEY(piece) REFERENCES Piece(id), "
             "FOREIGN KEY(option) REFERENCES ProductOption(id)"
-            ");"
-            );
+            ");");
         sql.exec("CREATE TABLE IF NOT EXISTS Commission("
             "id	INTEGER PRIMARY KEY AUTOINCREMENT, "
             "createDate	TEXT NOT NULL, "
@@ -340,13 +332,11 @@ namespace Commissionator {
             "commissioner INTEGER NOT NULL, "
             "notes TEXT NOT NULL, "
             "FOREIGN KEY(commissioner) REFERENCES Commissioner(id)"
-            ");"
-            );
+            ");");
         sql.exec("CREATE TABLE IF NOT EXISTS PaymentType("
             "id INTEGER PRIMARY KEY AUTOINCREMENT, "
             "name	TEXT NOT NULL"
-            ");"
-            );
+            ");");
         sql.exec("CREATE TABLE IF NOT EXISTS Payment("
             "id	INTEGER PRIMARY KEY AUTOINCREMENT, "
             "commission	INTEGER NOT NULL, "
