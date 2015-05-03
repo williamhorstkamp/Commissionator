@@ -43,6 +43,5 @@ namespace Commissionator {
         foreach(int col, hiddenColumns) {
             view->setColumnHidden(col, true);
         }
-        
     }
 }

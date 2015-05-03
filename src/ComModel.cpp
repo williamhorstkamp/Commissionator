@@ -250,7 +250,7 @@ namespace Commissionator {
     }
 
     void ComModel::insertProductPrice(const int productId, const double basePrice) {
-        insertProductPriceQuery->bindValue(0, basePrice);
+        insertProductPriceQuery->bindValue(0, productId);
         insertProductPriceQuery->bindValue(1, basePrice);
         insertProductPriceQuery->bindValue(2,
             QDateTime::currentDateTime().toMSecsSinceEpoch());
