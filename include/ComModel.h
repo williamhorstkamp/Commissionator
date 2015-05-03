@@ -19,6 +19,11 @@ namespace Commissionator {
         Q_OBJECT
 
     public:
+        /**
+         *  Default constructor sets the QObject given as argument to the
+         *  ComModel's parent.
+         *  Initializes ComModel components by calling build and prepareModels
+         */
         ComModel(QObject *parent = 0);
 
         ~ComModel();

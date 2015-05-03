@@ -239,7 +239,8 @@ namespace Commissionator {
          *  Emitted when the box button is clicked or enter is struck while
          *  editting one of the box's columns
          *
-         *  @param searchQuery - QList of QVariants containing the query
+         *  @param searchQuery - QList of QVariants that each represent a field
+         *      in the query
          */
         void boxQuery(const QList<QVariant> query);
 

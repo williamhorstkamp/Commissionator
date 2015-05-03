@@ -19,7 +19,7 @@ namespace Commissionator {
         void init();
 
         //void commissionsTest();
-        void commissionersTest();
+        //void commissionersTest();
         //void piecesTest();
         //void productsTest();
         //void salesTest();

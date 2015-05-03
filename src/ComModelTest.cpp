@@ -108,7 +108,7 @@ namespace Commissionator {
         QVERIFY(contacts->index(0, 0).data().toString() == "TestContactType");
         QVERIFY(contacts->index(0, 1).data().toString() == "TestEntry");
     }
-    */
+    
     void ComModelTest::commissionersTest() {  
         com->insertCommissioner("TestCommissioner", "");
         com->insertCommissioner("TestCommissioner2", "");
@@ -144,7 +144,7 @@ namespace Commissionator {
         qDebug() << coms->index(2, 3).data().toString();
         QVERIFY(coms->index(2, 3).data().toString() == "Paid Off");
     }
-    /*
+    
     void ComModelTest::commissionerTest() {
         QSqlQueryModel *coms = com->getCommissioner();
         com->insertCommissioner("TestCommissioner", "TestNotes");

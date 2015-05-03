@@ -16,8 +16,27 @@ namespace Commissionator {
         Q_OBJECT
 
     public:
+        
+        /**
+         *  Default constructor accepts QSqlQueryModels for the selected
+         *  commissioner, their contacts, and their commissions. Will use these
+         *  models to populate the panels various fields.
+         *
+         *  @param commissionerModel - QSqlQueryModel containing data about the
+         *      selected commissioner
+         *  @param contactModel - QSqlQueryModel containing data about the
+         *      selected commissioner's contacts
+         *  @param commissionsModel - QSqlQueryModel containing data about the
+         *      selected commissioner's commissions
+         *
+         */
         CommissionerPanel(QSqlQueryModel *commissionerModel, 
             QSqlQueryModel *contactModel, QSqlQueryModel *commissionsModel);
+
+        /**
+         *  Destructor removes resources from the free store, cleaning up
+         *  the panel
+         */
         ~CommissionerPanel();
 
     private:
@@ -35,7 +54,18 @@ namespace Commissionator {
         QTextEdit *notesEdit;
 
     signals:
-        void insertContact(const QList<QVariant> query);
+        /**
+         *  Signal thrown when the contactInfoTable's button is clicked.
+         *  Is forwarded from FixedRowTable::boxQuery and is to be forwarded to
+         *  MainWindow::insertContact
+         */
+        void insertContact(const QString commissioner, const QString type, 
+            const QString entry);
+
+        /**
+         *  Signal thrown when the newCommissionButton is clicked.
+         *  Is to be forwarded to MainWindow::newCommission.
+         */
         void newCommission();
 
     };
