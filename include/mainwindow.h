@@ -5,6 +5,7 @@
 #include <QStackedWidget>
 #include "TestLayouts.h"
 #include "LeftPanel.h"
+#include "CommissionerPanel.h"
 #include "ComModel.h"
 
 namespace Commissionator {
@@ -17,6 +18,20 @@ namespace Commissionator {
         MainWindow();
 
     public slots:
+        /**
+         *  Function opens the dialog window to create a new commission.
+         *  Takes control away from the MainWindow for the duration of the
+         *  new commission window's lifetime. Depending on whether a commission
+         *  is created or not, the models may be refreshed.
+         */
+        void newCommission();
+
+        /**
+         *  Functions inserts a contact into the model with the given arguments
+         */
+        void insertContact(const QString commissioner, const QString type,
+            const QString entry);
+
         //temp slots for testing
         void page1();
         void page2();
@@ -66,9 +81,9 @@ namespace Commissionator {
 
         ComModel *model;
 
-        LeftPanel *lp1;
+        LeftPanel *commissionerLeftPanel;
         LeftPanel2 *lp2;
-        RightPanel *rp1;
+        CommissionerPanel *commissionerRightPanel;
         RightPanel2 *rp2;
 
         QMenu *fileMenu;
@@ -78,7 +93,7 @@ namespace Commissionator {
 
         QToolBar *mainToolBar;
         QToolBar *contextToolBar;
-        QToolBar *panelToolBar1;
+        QToolBar *commissionerToolBar;
         QToolBar *panelToolBar2;
 
         QAction *newAct;

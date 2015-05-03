@@ -39,6 +39,21 @@ namespace Commissionator {
          */
         ~CommissionerPanel();
 
+    signals:
+        /**
+        *  Signal thrown when the newCommissionButton is clicked.
+        *  Is to be forwarded to MainWindow::newCommission.
+        */
+        void newCommission();
+
+        /**
+         *  Signal thrown when the contactInfoTable's button is clicked.
+         *  Is forwarded from FixedRowTable::boxQuery and is to be forwarded to
+         *  MainWindow::insertContact
+         */
+        void insertContact(const QString commissioner, const QString type, 
+            const QString entry);
+
     private:
         QVBoxLayout *layout;
         QDataWidgetMapper *commissionerMapper;
@@ -52,22 +67,6 @@ namespace Commissionator {
         QPushButton *newCommissionButton;
         QLabel *notesLabel;
         QTextEdit *notesEdit;
-
-    signals:
-        /**
-         *  Signal thrown when the contactInfoTable's button is clicked.
-         *  Is forwarded from FixedRowTable::boxQuery and is to be forwarded to
-         *  MainWindow::insertContact
-         */
-        void insertContact(const QString commissioner, const QString type, 
-            const QString entry);
-
-        /**
-         *  Signal thrown when the newCommissionButton is clicked.
-         *  Is to be forwarded to MainWindow::newCommission.
-         */
-        void newCommission();
-
     };
 }
 

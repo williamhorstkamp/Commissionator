@@ -10,6 +10,7 @@ namespace Commissionator{
         createToolBars();
         createModel();
         createPanels();
+        model->insertCommissioner("Test", "");
     }
 
     void MainWindow::createMenus() {
@@ -49,7 +50,6 @@ namespace Commissionator{
     void MainWindow::createActions() {
         newAct = new QAction(QIcon(":/NewFile.png"), tr("&New"), this);
         newAct->setStatusTip(tr("Create a new set of records"));
-        
 
         openAct = new QAction(QIcon(":/OpenFile.png"), tr("&Open"), this);
         openAct->setStatusTip(tr("Open a set of records"));
@@ -67,13 +67,14 @@ namespace Commissionator{
 
         exitAct = new QAction(tr("&Exit"), this);
         exitAct->setStatusTip(tr("Exits the program"));
-        connect(exitAct, SIGNAL(triggered()), this, SLOT(close()));
+        connect(exitAct, &QAction::triggered, this, &MainWindow::close);
         
         newCommissionerAct = new QAction(QIcon(":/CommissionerPlus.png"), tr("&Commissioner"), this);
         newCommissionerAct->setStatusTip(tr("Create a new commissioner"));
 
         newCommissionAct = new QAction(QIcon(":/CommissionPlus.png"), tr("&Commission"), this);
         newCommissionAct->setStatusTip(tr("Create a new commission"));
+        connect(newCommissionAct, &QAction::triggered, this, &MainWindow::newCommission);
 
         newProductAct = new QAction(QIcon(":/ProductPlus.png"), tr("&Product"), this);
         newProductAct->setStatusTip(tr("Create a new product"));
@@ -117,9 +118,9 @@ namespace Commissionator{
         mainToolBar = addToolBar(tr("Main"));
         mainToolBar->addAction(openAct);
         mainToolBar->addAction(saveAct);
-        panelToolBar1 = addToolBar(tr("Panel1"));
-        panelToolBar1->addAction(newCommissionAct);
-        contextToolBar = panelToolBar1;
+        commissionerToolBar = addToolBar(tr("Commissioner"));
+        commissionerToolBar->addAction(newCommissionAct);
+        contextToolBar = commissionerToolBar;
         panelToolBar2 = addToolBar(tr("Panel2"));
         panelToolBar2->addAction(newCommissionerAct);
         panelToolBar2->setVisible(false);
@@ -136,20 +137,22 @@ namespace Commissionator{
         rightPanel = new QStackedWidget();
         QList<int> hidden;
         hidden.append(0);
-        lp1 = new LeftPanel("Commissioner", model->getCommissioners(), hidden);
+        commissionerLeftPanel = new LeftPanel("Commissioner", 
+            model->getCommissioners(), hidden);
         lp2 = new LeftPanel2();
-        rp1 = new RightPanel(model->getCommissionerContacts());
+        commissionerRightPanel = new CommissionerPanel(model->getCommissioner(), 
+            model->getCommissionerContacts(), model->getCommissionerCommissions());
         rp2 = new RightPanel2();
-        leftPanel->addWidget(lp1);
+        leftPanel->addWidget(commissionerLeftPanel);
         leftPanel->addWidget(lp2);
-        rightPanel->addWidget(rp1);
+        rightPanel->addWidget(commissionerRightPanel);
         rightPanel->addWidget(rp2);
 
         QFrame *line = new QFrame();
         line->setFrameShape(QFrame::VLine);
         line->setFrameShadow(QFrame::Sunken);
 
-        //connect(lp1, &LeftPanel::tableClicked, model, &TestModel::updateRight);
+        connect(commissionerLeftPanel, &LeftPanel::tableClicked, model, &ComModel::setCommissioner);
         //connect(lp1, &LeftPanel::search, model, &TestModel::search);
         //connect(lp1, &LeftPanel::iconClicked, model, &TestModel::deleteRecord);
 
@@ -160,10 +163,20 @@ namespace Commissionator{
         setCentralWidget(window);
     }
 
+    void MainWindow::insertContact(const QString commissioner, 
+        const QString type, const QString entry) {
+        model->insertContact(commissioner.toInt(), type.toInt(), entry);
+    }
+
+    void MainWindow::newCommission() {
+        QDialog dialog(this);
+        dialog.exec();
+    }
+
     void MainWindow::page1() {
-        leftPanel->setCurrentWidget(lp1);
-        rightPanel->setCurrentWidget(rp1);
-        swapContextToolBar(panelToolBar1);
+        leftPanel->setCurrentWidget(commissionerLeftPanel);
+        rightPanel->setCurrentWidget(commissionerRightPanel);
+        swapContextToolBar(commissionerToolBar);
     }
 
     void MainWindow::page2() {
