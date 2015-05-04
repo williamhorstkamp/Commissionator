@@ -11,6 +11,9 @@ namespace Commissionator{
         createModel();
         createPanels();
         model->insertCommissioner("Test", "");
+        model->insertCommission(1, QDateTime::currentDateTime(), "");
+        model->insertContactType("type");
+        model->insertContact(1, 1, "entry");
     }
 
     void MainWindow::createMenus() {

@@ -14,3 +14,12 @@ test.db3
 GeneratedFiles/qrc_commissionator.cpp
 GeneratedFiles/Debug/moc_ComModelTest.cpp
 GeneratedFiles/Debug/moc_ComModel.cpp
+GeneratedFiles/Debug/moc_CommissionerContactDelegate.cpp
+GeneratedFiles/Debug/moc_TestModel.cpp
+GeneratedFiles/Debug/moc_FixedRowBox.cpp
+GeneratedFiles/Debug/moc_TestLayouts.cpp
+GeneratedFiles/Debug/moc_LeftPanel.cpp
+GeneratedFiles/Debug/moc_FixedRowTableDelegate.cpp
+GeneratedFiles/Debug/moc_FixedRowProxyModel.cpp
+GeneratedFiles/Debug/moc_FixedRowTable.cpp
+GeneratedFiles/Debug/moc_CommissionerPanel.cpp
