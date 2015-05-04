@@ -383,24 +383,28 @@ namespace Commissionator {
     void ComModel::prepareModels() {
 		commissionerCommissionsModel = new QSqlQueryModel(this);
         QSqlQuery commissionerCommissionsQuery(sql);
-        commissionerCommissionsQuery.prepare("SELECT createDate, "
-            "paidDate, SUM(price), finishDate FROM (SELECT Commission.id comID, "
-            "strftime('%m/%d/%Y', Commission.createDate/1000, "
-            "'unixepoch', 'localtime') createDate, "
-            "COALESCE(strftime('%m/%d/%Y', Commission.paidDate/1000, "
+        commissionerCommissionsQuery.prepare("SELECT strftime('%m/%d/%Y', "
+            "Commission.createDate / 1000, 'unixepoch', 'localtime') createDate, "
+            "COALESCE(strftime('%m/%d/%Y', Commission.paidDate / 1000, "
             "'unixepoch', 'localtime'), 'Unpaid') paidDate, "
-            "ProductPrices.price price, "
-            "COALESCE(strftime('%m/%d/%Y', max(Piece.finishDate)/1000, "
+            "COALESCE(SUM(price), 'No pieces'), "
+            "COALESCE(strftime('%m/%d/%Y', max(Piece.finishDate) / 1000, "
             "'unixepoch', 'localtime'), 'Unfinished') finishDate "
             "FROM Commission "
-            "INNER JOIN Piece ON Commission.id = Piece.commission "
-            "INNER JOIN ProductPrices ON Piece.product = ProductPrices.product "
-            "INNER JOIN Commissioner ON "
+            "LEFT JOIN Piece ON Commission.id = Piece.commission "
+            "LEFT JOIN(SELECT Commission.id comID, "
+            "ProductPrices.price price "
+            "FROM Commission "
+            "LEFT JOIN Piece ON Commission.id = Piece.commission "
+            "LEFT JOIN ProductPrices ON Piece.product = ProductPrices.product "
+            "LEFT JOIN Commissioner ON "
             "Commission.commissioner = Commissioner.id "
-            "WHERE Commissioner.id = (?) "
+            "WHERE Commissioner.id = 1 "
             "AND ProductPrices.date < Commission.createDate "
-            "GROUP BY Piece.id HAVING date = max(date)) "
-            "GROUP BY ComID;");
+            "GROUP BY Piece.id HAVING date = max(date)) Prices "
+            "ON Commission.id = Prices.comId "
+            "WHERE Commission.commissioner = (?) "
+            "GROUP BY Commission.id;");
         commissionerCommissionsModel->setQuery(commissionerCommissionsQuery);
 		commissionerContactsModel = new QSqlQueryModel(this);
         QSqlQuery commissionerContactsQuery(sql);

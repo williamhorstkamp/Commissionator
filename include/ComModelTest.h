@@ -35,7 +35,7 @@ namespace Commissionator {
         //void commissionNotesTest();
 
         //void commissionerContactsTest();
-        //void commissionerCommissionsTest();
+        void commissionerCommissionsTest();
 
         //void pieceEventsTest();
         //void pieceReferencesTest();
