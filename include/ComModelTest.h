@@ -55,7 +55,7 @@ namespace Commissionator {
         //void insertProductOptionTest();
         //void insertSaleTest();
         //void insertDealTest();
-        //void insertPieceTest();
+        void insertPieceTest();
         //void insertPaymentTest();
         //void insertCommissionTest();
         //void insertPaymentTypeTest();

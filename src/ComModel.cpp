@@ -120,6 +120,7 @@ namespace Commissionator {
         commissionPaymentsModel->query().bindValue(0, getValue(index, 0).toInt());
         commissionPaymentsModel->query().exec();
         commissionPaymentsModel->setQuery(commissionPaymentsModel->query());
+        emit commissionChanged();
     }
 
     void ComModel::setCommissioner(const QModelIndex &index) {
@@ -133,12 +134,14 @@ namespace Commissionator {
         commissionerContactsModel->query().bindValue(0, comId);
         commissionerContactsModel->query().exec();
         commissionerContactsModel->setQuery(commissionerContactsModel->query());
+        emit commissionerChanged();
     }
 
     void ComModel::setPiece(const QModelIndex &index) {
         pieceModel->query().bindValue(0, getValue(index, 0).toInt());
         pieceModel->query().exec();
         pieceModel->setQuery(pieceModel->query());  
+        emit pieceChanged();
     }
 
     void ComModel::insertCommission(const int commissionerId, 
@@ -399,8 +402,7 @@ namespace Commissionator {
             "INNER JOIN ProductPrices ON Piece.product = ProductPrices.product "
             "INNER JOIN Commissioner ON "
             "Commission.commissioner = Commissioner.id "
-            "WHERE Commissioner.id = 1 "
-            "AND ProductPrices.date < Commission.createDate "
+            "WHERE ProductPrices.date < Commission.createDate "
             "GROUP BY Piece.id HAVING date = max(date)) Prices "
             "ON Commission.id = Prices.comId "
             "WHERE Commission.commissioner = (?) "
@@ -429,7 +431,7 @@ namespace Commissionator {
             "INNER JOIN Commission ON Payment.commission = Commission.id "
             "INNER JOIN Commissioner ON "
             "Commission.commissioner = Commissioner.id "
-            "WHERE Commissioner.id = C.id) b) = 0 THEN 'Paid off' "
+            "WHERE Commissioner.id = C.id) b) = 0 THEN 'Paid Off' "
             "WHEN(SELECT SUM(a.price) FROM "
             "(SELECT ProductPrices.price price FROM Commission "
             "INNER JOIN Piece ON Commission.id = Piece.commission "
@@ -515,9 +517,9 @@ namespace Commissionator {
             "END AS amountOwed "
             "FROM Commissioner C "
             "LEFT JOIN Commission ON C.id = Commission.commissioner "
-            "WHERE name LIKE(?) "
-            "GROUP BY C.id HAVING firstCommission like(?) "
-            "AND amountOwed like(?);");
+            "WHERE name LIKE (?) "
+            "GROUP BY C.id HAVING firstCommission like (?) "
+            "AND amountOwed like (?);");
         commissionersModel->setQuery(commissionersQuery);
         searchCommissioners("", "", "");
 		commissionPaymentsModel = new QSqlQueryModel(this);

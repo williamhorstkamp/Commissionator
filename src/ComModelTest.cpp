@@ -59,7 +59,7 @@ namespace Commissionator {
         QVERIFY(pays->index(0, 1).data().toString() == "PaymentType");
         QVERIFY(pays->index(1, 1).data().toString() == "PaymentType2");
     }
-    
+    */
     void ComModelTest::insertPieceTest() {
         com->insertCommissioner("TestCommissioner", "");
         com->insertCommission(1, QDateTime::currentDateTime(), "");
@@ -74,7 +74,7 @@ namespace Commissionator {
             == "Unfinished");
         QVERIFY(com->getPiece()->index(0, 4).data().toString() == "");
     }
-    
+    /*
     void ComModelTest::insertPaymentTest() {
         com->insertCommissioner("TestCommissioner", "");
         com->insertPaymentType("PaymentType");

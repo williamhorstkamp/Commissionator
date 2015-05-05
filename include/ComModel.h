@@ -272,6 +272,25 @@ namespace Commissionator {
          */
         //QSqlQueryModel *getSalePiecesSold();
 
+    signals:
+        /**
+         *  Signal emmitted whenever the currently selected commission is 
+         *  changed.
+         */
+        void commissionChanged();
+
+        /**
+         *  Signal emmitted whenever the currently selected commissioner is
+         *  changed.
+         */
+        void commissionerChanged();
+
+        /**
+         *  Signal emmitted whenever the currently selected piece is
+         *  changed.
+         */
+        void pieceChanged();
+
     public slots:
 
         /**

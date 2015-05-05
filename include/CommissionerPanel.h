@@ -54,9 +54,24 @@ namespace Commissionator {
         void insertContact(const QString commissioner, const QString type, 
             const QString entry);
 
+
+    public slots:
+        /**
+         *  Slot connects to ComModel::commissionerChanged.
+         *  If the signal is of type "Commissioner", then the slot should
+         *  refresh the Widgets that display the Commissioner data to match the 
+         *  newly selected commissioner.
+         */
+        void updatePanel();
+
     private:
+        /**
+         *  Helper function creates QFonts and paid QPalette
+         */
+        void createFonts();
+
         QVBoxLayout *layout;
-        QDataWidgetMapper *commissionerMapper;
+        QSqlQueryModel *commissionerModel;
         QLabel *commissionerName;
         QLabel *commissionerDate;
         QLabel *commissionerPaid;
@@ -67,6 +82,8 @@ namespace Commissionator {
         QPushButton *newCommissionButton;
         QLabel *notesLabel;
         QTextEdit *notesEdit;
+        QFont *titleFont;
+        QFont *standardFont;
     };
 }
 

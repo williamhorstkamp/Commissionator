@@ -10,10 +10,15 @@ namespace Commissionator{
         createToolBars();
         createModel();
         createPanels();
-        model->insertCommissioner("Test", "");
+        model->insertCommissioner("Test", "wutdo");
         model->insertCommission(1, QDateTime::currentDateTime(), "");
         model->insertContactType("type");
         model->insertContact(1, 1, "entry");
+        model->insertProduct("thing", 1.0);
+        model->insertPiece(1, 1, "piece", "");
+        model->insertPaymentType("payment type");
+        model->insertPayment(1, 1, 1.0, "");
+        model->searchCommissioners("", "", "");
     }
 
     void MainWindow::createMenus() {
@@ -156,6 +161,7 @@ namespace Commissionator{
         line->setFrameShadow(QFrame::Sunken);
 
         connect(commissionerLeftPanel, &LeftPanel::tableClicked, model, &ComModel::setCommissioner);
+        connect(model, &ComModel::commissionerChanged, commissionerRightPanel, &CommissionerPanel::updatePanel);
         //connect(lp1, &LeftPanel::search, model, &TestModel::search);
         //connect(lp1, &LeftPanel::iconClicked, model, &TestModel::deleteRecord);
 
