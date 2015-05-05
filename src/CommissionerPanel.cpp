@@ -30,7 +30,8 @@ namespace Commissionator {
         commissionsLabel = new QLabel(tr("Commissions:"));
         layout->addWidget(commissionsLabel);
 
-        commissionsTable = new FixedRowTable(commissionsModel);
+        commissionsTable = new QTableView(this);
+        commissionsTable->setModel(commissionsModel);
         layout->addWidget(commissionsTable);
 
         newCommissionButton = new QPushButton(tr("New Commission"));

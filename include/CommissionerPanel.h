@@ -63,7 +63,7 @@ namespace Commissionator {
         QLabel *contactInfoLabel;
         FixedRowTable *contactInfoTable;
         QLabel *commissionsLabel;
-        FixedRowTable *commissionsTable;
+        QTableView *commissionsTable;
         QPushButton *newCommissionButton;
         QLabel *notesLabel;
         QTextEdit *notesEdit;
