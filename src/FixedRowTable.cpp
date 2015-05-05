@@ -158,29 +158,57 @@ namespace Commissionator {
             setRowHidden(0, true);  //hides the search row from the top
             if (boxButtonOn) {
                 if (boxButtonWidth == 0) {
-                    box->setGeometry(verticalHeader()->width() + frameWidth(),
-                        contentsRect().bottom() - box->rowHeight(0),
-                        viewport()->width() + verticalHeader()->width() - columnWidth(columnAt(
+                    if (horizontalScrollBar()->isVisible()) {
+                        box->setGeometry(verticalHeader()->width() + frameWidth(),
+                            contentsRect().bottom() - box->rowHeight(0) - horizontalScrollBar()->height(),
+                            viewport()->width() + verticalHeader()->width() - columnWidth(columnAt(
                             viewport()->width() + verticalHeader()->width() - 1)),
-                        box->rowHeight(0));
-                    boxButton->setGeometry(
-                        viewport()->width() + verticalHeader()->width() - columnWidth(columnAt(
+                            box->rowHeight(0));
+                        boxButton->setGeometry(
+                            viewport()->width() + verticalHeader()->width() - columnWidth(columnAt(
                             viewport()->width() + verticalHeader()->width() - 1)),
-                        contentsRect().bottom() - box->rowHeight(0) - 1,
-                        columnWidth(columnAt(viewport()->width() + verticalHeader()->width() - 1)) + 2,
-                        box->rowHeight(0) + 2);
+                            contentsRect().bottom() - box->rowHeight(0) - 1 - horizontalScrollBar()->height(),
+                            columnWidth(columnAt(viewport()->width() + verticalHeader()->width() - 1)) + 2,
+                            box->rowHeight(0) + 2);
+                    } else {
+                        box->setGeometry(verticalHeader()->width() + frameWidth(),
+                            contentsRect().bottom() - box->rowHeight(0),
+                            viewport()->width() + verticalHeader()->width() - columnWidth(columnAt(
+                            viewport()->width() + verticalHeader()->width() - 1)),
+                            box->rowHeight(0));
+                        boxButton->setGeometry(
+                            viewport()->width() + verticalHeader()->width() - columnWidth(columnAt(
+                            viewport()->width() + verticalHeader()->width() - 1)),
+                            contentsRect().bottom() - box->rowHeight(0) - 1,
+                            columnWidth(columnAt(viewport()->width() + verticalHeader()->width() - 1)) + 2,
+                            box->rowHeight(0) + 2);
+                    }
                 } else {
-                    box->setGeometry(verticalHeader()->width() + frameWidth(),
-                        contentsRect().bottom() - box->rowHeight(0),
-                        viewport()->width() + verticalHeader()->width() 
-                        - box->rowHeight(0)*boxButtonWidth,
-                        box->rowHeight(0));
-                    boxButton->setGeometry(
-                        viewport()->width() + verticalHeader()->width() 
-                        - box->rowHeight(0)*boxButtonWidth,
-                        contentsRect().bottom() - box->rowHeight(0) - 1,
-                        box->rowHeight(0)*boxButtonWidth + 2,
-                        box->rowHeight(0) + 2);
+                    if (horizontalScrollBar()->isVisible()) {
+                        box->setGeometry(verticalHeader()->width() + frameWidth(),
+                            contentsRect().bottom() - box->rowHeight(0) - horizontalScrollBar()->height(),
+                            viewport()->width() + verticalHeader()->width()
+                            - box->rowHeight(0)*boxButtonWidth,
+                            box->rowHeight(0));
+                        boxButton->setGeometry(
+                            viewport()->width() + verticalHeader()->width()
+                            - box->rowHeight(0)*boxButtonWidth,
+                            contentsRect().bottom() - box->rowHeight(0) - 1 - horizontalScrollBar()->height(),
+                            box->rowHeight(0)*boxButtonWidth + 2,
+                            box->rowHeight(0) + 2);
+                    } else {
+                        box->setGeometry(verticalHeader()->width() + frameWidth(),
+                            contentsRect().bottom() - box->rowHeight(0),
+                            viewport()->width() + verticalHeader()->width()
+                            - box->rowHeight(0)*boxButtonWidth,
+                            box->rowHeight(0));
+                        boxButton->setGeometry(
+                            viewport()->width() + verticalHeader()->width()
+                            - box->rowHeight(0)*boxButtonWidth,
+                            contentsRect().bottom() - box->rowHeight(0) - 1,
+                            box->rowHeight(0)*boxButtonWidth + 2,
+                            box->rowHeight(0) + 2);
+                    }
                 }
                 boxButton->show();
             } else {
