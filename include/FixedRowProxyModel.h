@@ -94,7 +94,6 @@ namespace Commissionator {
         //List of QStrings containing the value to use with the query
         QList<QVariant> queryStrings;
         QString text;
-        //bool bottom;
 
     signals:
         /**

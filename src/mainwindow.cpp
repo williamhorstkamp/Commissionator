@@ -17,7 +17,7 @@ namespace Commissionator{
         model->insertProduct("thing", 1.0);
         model->insertPiece(1, 1, "piece", "");
         model->insertPaymentType("payment type");
-        model->insertPayment(1, 1, 1.0, "");
+        //model->insertPayment(1, 1, 1.0, "");
         model->searchCommissioners("", "", "");
     }
 

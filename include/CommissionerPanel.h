@@ -66,9 +66,24 @@ namespace Commissionator {
 
     private:
         /**
-         *  Helper function creates QFonts and paid QPalette
+         *  Helper function creates QFonts
          */
         void createFonts();
+
+        /**
+         *  Helper function creates QLabels and QTextEdit
+         */
+        void createLabels();
+
+        /**
+         *  Helper function builds panel by placing widgets into the layout and applying it
+         */
+        void createPanel();
+
+        /**
+         *  Helper function creates tables
+         */
+        void createTables(QSqlQueryModel *contactModel, QSqlQueryModel *commissionsModel);
 
         QVBoxLayout *layout;
         QSqlQueryModel *commissionerModel;

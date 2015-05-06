@@ -7,56 +7,11 @@ namespace Commissionator {
     CommissionerPanel::CommissionerPanel(QSqlQueryModel *commissionerModel, 
         QSqlQueryModel *contactModel, QSqlQueryModel *commissionsModel) {
         this->commissionerModel = commissionerModel;
-        layout = new QVBoxLayout(this);
+        
         createFonts();
-
-        commissionerName = new QLabel();
-        commissionerName->setAlignment(Qt::AlignCenter);
-        commissionerName->setFont(*titleFont);
-        layout->addWidget(commissionerName);
-
-        commissionerDate = new QLabel();
-        commissionerDate->setAlignment(Qt::AlignCenter);
-        commissionerDate->setFont(*standardFont);
-        layout->addWidget(commissionerDate);
-
-        commissionerPaid = new QLabel();
-        commissionerPaid->setAlignment(Qt::AlignCenter);
-        commissionerPaid->setFont(*standardFont);
-        layout->addWidget(commissionerPaid);
-
-        contactInfoLabel = new QLabel(tr("Contact Info:"));
-        contactInfoLabel->setAlignment(Qt::AlignCenter);
-        contactInfoLabel->setFont(*standardFont);
-        layout->addWidget(contactInfoLabel);
-
-        contactInfoTable = new FixedRowTable(contactModel); 
-        contactInfoTable->setBoxBottom(true);
-        contactInfoTable->setBoxButtonActivated(true);
-        contactInfoTable->setBoxButtonWidth(2.5);
-        contactInfoTable->setBoxButtonText(tr("Insert"));
-        layout->addWidget(contactInfoTable);
-
-        commissionsLabel = new QLabel(tr("Commissions:"));
-        commissionsLabel->setAlignment(Qt::AlignCenter);
-        commissionsLabel->setFont(*standardFont);
-        layout->addWidget(commissionsLabel);
-
-        commissionsTable = new QTableView(this);
-        commissionsTable->setModel(commissionsModel);
-        layout->addWidget(commissionsTable);
-
-        newCommissionButton = new QPushButton(tr("New Commission"));
-        layout->addWidget(newCommissionButton);
-
-        notesLabel = new QLabel(tr("Notes"));
-        notesLabel->setAlignment(Qt::AlignCenter);
-        notesLabel->setFont(*standardFont);
-        layout->addWidget(notesLabel);
-
-        notesEdit = new QTextEdit();
-        layout->addWidget(notesEdit);
-        setLayout(layout);
+        createLabels();
+        createTables(contactModel, commissionsModel);
+        createPanel();
     }
 
     CommissionerPanel::~CommissionerPanel() {
@@ -82,6 +37,66 @@ namespace Commissionator {
 
         standardFont = new QFont();
         standardFont->setPointSize(10);
+    }
+
+    void CommissionerPanel::createLabels() {
+        commissionerName = new QLabel();
+        commissionerName->setAlignment(Qt::AlignCenter);
+        commissionerName->setFont(*titleFont);
+        
+
+        commissionerDate = new QLabel();
+        commissionerDate->setAlignment(Qt::AlignCenter);
+        commissionerDate->setFont(*standardFont);
+       
+
+        commissionerPaid = new QLabel();
+        commissionerPaid->setAlignment(Qt::AlignCenter);
+        commissionerPaid->setFont(*standardFont);
+        
+
+        contactInfoLabel = new QLabel(tr("Contact Info:"));
+        contactInfoLabel->setAlignment(Qt::AlignCenter);
+        contactInfoLabel->setFont(*standardFont);
+
+        commissionsLabel = new QLabel(tr("Commissions:"));
+        commissionsLabel->setAlignment(Qt::AlignCenter);
+        commissionsLabel->setFont(*standardFont);
+
+        notesLabel = new QLabel(tr("Notes"));
+        notesLabel->setAlignment(Qt::AlignCenter);
+        notesLabel->setFont(*standardFont);
+
+        notesEdit = new QTextEdit();
+    }
+
+    void CommissionerPanel::createPanel() {
+        layout = new QVBoxLayout(this);
+
+        layout->addWidget(commissionerName);
+        layout->addWidget(commissionerDate);
+        layout->addWidget(commissionerPaid);
+        layout->addWidget(contactInfoLabel);
+        layout->addWidget(contactInfoTable);
+        layout->addWidget(commissionsLabel);
+        layout->addWidget(commissionsTable);
+        layout->addWidget(newCommissionButton);
+        layout->addWidget(notesLabel);
+        layout->addWidget(notesEdit);
+        setLayout(layout);
+    }
+
+    void CommissionerPanel::createTables(QSqlQueryModel *contactModel, QSqlQueryModel *commissionsModel) {
+        contactInfoTable = new FixedRowTable(contactModel);
+        contactInfoTable->setBoxBottom(true);
+        contactInfoTable->setBoxButtonActivated(true);
+        contactInfoTable->setBoxButtonWidth(2.5);
+        contactInfoTable->setBoxButtonText(tr("Insert"));
+
+        commissionsTable = new QTableView(this);
+        commissionsTable->setModel(commissionsModel);
+
+        newCommissionButton = new QPushButton(tr("New Commission"));
     }
 
     void CommissionerPanel::updatePanel() {

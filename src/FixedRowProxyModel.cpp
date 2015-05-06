@@ -33,10 +33,10 @@ namespace Commissionator {
         if (index.isValid()) {
             if (role == Qt::DisplayRole) {
                 if (index.row() == 0) {
-                    if (index.row() < queryStrings.count())
+                    if (index.row() < queryStrings.count()) {
                         return QVariant(queryStrings.at(index.column()));
-                    else
-                        return QVariant();
+                    }
+                    return QVariant();
                 }
                 return QIdentityProxyModel::data(this->index(index.row() - 1, index.column(), index.parent()), role);
             }
