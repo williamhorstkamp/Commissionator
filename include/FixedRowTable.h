@@ -23,7 +23,7 @@ namespace Commissionator {
          *  @param model - Pointer to QAbstractItemModel based model on use
          *      for the proxy model and views.
          */
-        FixedRowTable(QAbstractItemModel *model);
+        FixedRowTable(QAbstractItemModel *model, QWidget *parent = nullptr);
 
         /**
          *  Destructor cleans up internal objects.

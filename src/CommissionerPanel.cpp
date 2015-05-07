@@ -15,17 +15,6 @@ namespace Commissionator {
     }
 
     CommissionerPanel::~CommissionerPanel() {
-        delete commissionerName;
-        delete commissionerDate;
-        delete commissionerPaid;
-        delete contactInfoLabel;
-        delete contactInfoTable;
-        delete commissionsLabel;
-        delete commissionsTable;
-        delete newCommissionButton;
-        delete notesLabel;
-        delete notesEdit;
-        delete layout;
         delete titleFont;
         delete standardFont;
     }
@@ -40,34 +29,34 @@ namespace Commissionator {
     }
 
     void CommissionerPanel::createLabels() {
-        commissionerName = new QLabel();
+        commissionerName = new QLabel(this);
         commissionerName->setAlignment(Qt::AlignCenter);
         commissionerName->setFont(*titleFont);
         
 
-        commissionerDate = new QLabel();
+        commissionerDate = new QLabel(this);
         commissionerDate->setAlignment(Qt::AlignCenter);
         commissionerDate->setFont(*standardFont);
        
 
-        commissionerPaid = new QLabel();
+        commissionerPaid = new QLabel(this);
         commissionerPaid->setAlignment(Qt::AlignCenter);
         commissionerPaid->setFont(*standardFont);
         
 
-        contactInfoLabel = new QLabel(tr("Contact Info:"));
+        contactInfoLabel = new QLabel(tr("Contact Info:"), this);
         contactInfoLabel->setAlignment(Qt::AlignCenter);
         contactInfoLabel->setFont(*standardFont);
 
-        commissionsLabel = new QLabel(tr("Commissions:"));
+        commissionsLabel = new QLabel(tr("Commissions:"), this);
         commissionsLabel->setAlignment(Qt::AlignCenter);
         commissionsLabel->setFont(*standardFont);
 
-        notesLabel = new QLabel(tr("Notes"));
+        notesLabel = new QLabel(tr("Notes"), this);
         notesLabel->setAlignment(Qt::AlignCenter);
         notesLabel->setFont(*standardFont);
 
-        notesEdit = new QTextEdit();
+        notesEdit = new QTextEdit(this);
     }
 
     void CommissionerPanel::createPanel() {
@@ -86,8 +75,9 @@ namespace Commissionator {
         setLayout(layout);
     }
 
-    void CommissionerPanel::createTables(QSqlQueryModel *contactModel, QSqlQueryModel *commissionsModel) {
-        contactInfoTable = new FixedRowTable(contactModel);
+    void CommissionerPanel::createTables(QSqlQueryModel *contactModel, 
+        QSqlQueryModel *commissionsModel) {
+        contactInfoTable = new FixedRowTable(contactModel, this);
         contactInfoTable->setBoxBottom(true);
         contactInfoTable->setBoxButtonActivated(true);
         contactInfoTable->setBoxButtonWidth(2.5);
@@ -96,22 +86,36 @@ namespace Commissionator {
         commissionsTable = new QTableView(this);
         commissionsTable->setModel(commissionsModel);
 
-        newCommissionButton = new QPushButton(tr("New Commission"));
+        newCommissionButton = new QPushButton(tr("New Commission"), this);
     }
 
     void CommissionerPanel::updatePanel() {
-        commissionerName->setText(commissionerModel->record(0).value(0).toString());
-        if (commissionerModel->record(0).value(1).toString() == "No Commissions")
-            commissionerDate->setText(commissionerModel->record(0).value(1).toString());
+        commissionerName->setText(
+            commissionerModel->record(0).value(0).toString());
+        if (commissionerModel->record(0).value(1).toString() 
+            == "No Commissions")
+            commissionerDate->setText(
+                commissionerModel->record(0).value(1).toString());
         else
-            commissionerDate->setText("Customer since " + commissionerModel->record(0).value(1).toString());
-        if (commissionerModel->record(0).value(2).toString() == "Paid Off")
+            commissionerDate->setText(
+                "Customer since " + 
+                commissionerModel->record(0).value(1).toString());
+        if (commissionerModel->record(0).value(2).toString() == "Paid Off") {
             commissionerPaid->setStyleSheet("QLabel { color : green; }");
-        else if (commissionerModel->record(0).value(2).toString() == "No Commissioned Pieces")
+            commissionerPaid->setText(
+                commissionerModel->record(0).value(2).toString());
+        } else if (commissionerModel->record(0).value(2).toString() 
+            == "No Commissioned Pieces") {
             commissionerPaid->setStyleSheet("QLabel { color : blue; }");
-        else
+            commissionerPaid->setText(
+                commissionerModel->record(0).value(2).toString());
+        } else {
             commissionerPaid->setStyleSheet("QLabel { color : red; }");
-        commissionerPaid->setText(commissionerModel->record(0).value(2).toString());
+            commissionerPaid->setText(
+                commissionerModel->record(0).value(2).toString());
+        }
+        commissionerPaid->setText(
+            commissionerModel->record(0).value(2).toString());
         notesEdit->setText(commissionerModel->record(0).value(3).toString());
     }
 }

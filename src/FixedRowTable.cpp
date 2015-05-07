@@ -5,7 +5,8 @@
 #include "FixedRowTable.h"
 
 namespace Commissionator {
-    FixedRowTable::FixedRowTable(QAbstractItemModel *model) {
+    FixedRowTable::FixedRowTable(QAbstractItemModel *model, QWidget *parent) :
+    QTableView(parent) {
         createProxy();
         proxy->setSourceModel(model);
 
