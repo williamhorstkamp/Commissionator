@@ -263,7 +263,7 @@ namespace Commissionator {
 
     void ComModel::build() {
         sql = QSqlDatabase::addDatabase("QSQLITE");
-        sql.setDatabaseName(":memory:");
+        sql.setDatabaseName("memory.db3");
         sql.open();
         sql.exec("PRAGMA foreign_keys = ON;");
         sql.exec("CREATE TABLE IF NOT EXISTS ContactType("
@@ -395,7 +395,7 @@ namespace Commissionator {
             "'unixepoch', 'localtime'), 'Unfinished') finishDate "
             "FROM Commission "
             "LEFT JOIN Piece ON Commission.id = Piece.commission "
-            "LEFT JOIN (SELECT DISTINCT Commission.id comID, "
+            "LEFT JOIN (SELECT Piece.id pId, "
             "ProductPrices.price price "
             "FROM Commission "
             "INNER JOIN Piece ON Commission.id = Piece.commission "
@@ -404,7 +404,7 @@ namespace Commissionator {
             "Commission.commissioner = Commissioner.id "
             "WHERE ProductPrices.date < Commission.createDate "
             "GROUP BY Piece.id HAVING date = max(date)) Prices "
-            "ON Commission.id = Prices.comId "
+            "ON Piece.id = Prices.pId "
             "WHERE Commission.commissioner = (?) "
             "GROUP BY Commission.id;");
         commissionerCommissionsModel->setQuery(commissionerCommissionsQuery);
