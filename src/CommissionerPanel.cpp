@@ -111,11 +111,12 @@ namespace Commissionator {
                 commissionerModel->record(0).value(2).toString());
         } else {
             commissionerPaid->setStyleSheet("QLabel { color : red; }");
+            QLocale dollarConverter = QLocale();
             commissionerPaid->setText(
-                commissionerModel->record(0).value(2).toString());
+                dollarConverter.toCurrencyString(
+                    commissionerModel->record(0).value(2).toDouble())
+                + " owed");
         }
-        commissionerPaid->setText(
-            commissionerModel->record(0).value(2).toString());
         notesEdit->setText(commissionerModel->record(0).value(3).toString());
     }
 }
