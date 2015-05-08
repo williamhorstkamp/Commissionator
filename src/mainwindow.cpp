@@ -17,8 +17,7 @@ namespace Commissionator{
         model->insertCommission(1, QDateTime::currentDateTime(), "");
         model->insertPiece(1, 1, "piece", "");
         model->insertPaymentType("payment type");
-        //model->insertPayment(1, 1, 1.0, "");
-        model->searchCommissioners("", "", "");
+        model->insertPayment(1, 1, 1.0, "");
     }
 
     void MainWindow::createMenus() {
@@ -162,6 +161,7 @@ namespace Commissionator{
 
         connect(commissionerLeftPanel, &LeftPanel::tableClicked, model, &ComModel::setCommissioner);
         connect(model, &ComModel::commissionerChanged, commissionerRightPanel, &CommissionerPanel::updatePanel);
+        connect(commissionerRightPanel, &CommissionerPanel::newCommission, this, &MainWindow::newCommission);
         //connect(lp1, &LeftPanel::search, model, &TestModel::search);
         //connect(lp1, &LeftPanel::iconClicked, model, &TestModel::deleteRecord);
 

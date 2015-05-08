@@ -384,7 +384,11 @@ namespace Commissionator {
     }
 
     void ComModel::prepareModels() {
-		commissionerCommissionsModel = new QSqlQueryModel(this);
+        /**
+         *  initialized as a QSqlTableModel so that any proxy models created
+         *  using this model can contain editable fields.
+         */
+		commissionerCommissionsModel = new QSqlTableModel(this);
         QSqlQuery commissionerCommissionsQuery(sql);
         commissionerCommissionsQuery.prepare("SELECT strftime('%m/%d/%Y', "
             "Commission.createDate / 1000, 'unixepoch', 'localtime') createDate, "
@@ -469,7 +473,11 @@ namespace Commissionator {
             "LEFT JOIN Commission ON C.id = Commission.commissioner "
             "WHERE C.id = (?);");
         commissionerModel->setQuery(commissionerQuery);
-        commissionersModel = new QSqlQueryModel(this);
+        /**
+         *  initialized as a QSqlTableModel so that any proxy models created
+         *  using this model can contain editable fields.
+         */
+        commissionersModel = new QSqlTableModel(this);
         QSqlQuery commissionersQuery(sql);
         commissionersQuery.prepare("SELECT C.id, C.name, "
             "CASE WHEN count(Commission.createDate) IS 0 THEN 'No Commissions' "

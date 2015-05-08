@@ -31,18 +31,15 @@ namespace Commissionator {
     void CommissionerPanel::createLabels() {
         commissionerName = new QLabel(this);
         commissionerName->setAlignment(Qt::AlignCenter);
-        commissionerName->setFont(*titleFont);
-        
+        commissionerName->setFont(*titleFont); 
 
         commissionerDate = new QLabel(this);
         commissionerDate->setAlignment(Qt::AlignCenter);
         commissionerDate->setFont(*standardFont);
-       
 
         commissionerPaid = new QLabel(this);
         commissionerPaid->setAlignment(Qt::AlignCenter);
         commissionerPaid->setFont(*standardFont);
-        
 
         contactInfoLabel = new QLabel(tr("Contact Info:"), this);
         contactInfoLabel->setAlignment(Qt::AlignCenter);
@@ -87,6 +84,8 @@ namespace Commissionator {
         commissionsTable->setModel(commissionsModel);
 
         newCommissionButton = new QPushButton(tr("New Commission"), this);
+        connect(newCommissionButton, &QPushButton::clicked, 
+            this, &CommissionerPanel::newCommission);
     }
 
     void CommissionerPanel::updatePanel() {
