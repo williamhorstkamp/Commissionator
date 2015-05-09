@@ -384,11 +384,7 @@ namespace Commissionator {
     }
 
     void ComModel::prepareModels() {
-        /**
-         *  initialized as a QSqlTableModel so that any proxy models created
-         *  using this model can contain editable fields.
-         */
-		commissionerCommissionsModel = new QSqlTableModel(this);
+		commissionerCommissionsModel = new QSqlQueryModel(this);
         QSqlQuery commissionerCommissionsQuery(sql);
         commissionerCommissionsQuery.prepare("SELECT strftime('%m/%d/%Y', "
             "Commission.createDate / 1000, 'unixepoch', 'localtime') createDate, "
@@ -412,7 +408,11 @@ namespace Commissionator {
             "WHERE Commission.commissioner = (?) "
             "GROUP BY Commission.id;");
         commissionerCommissionsModel->setQuery(commissionerCommissionsQuery);
-		commissionerContactsModel = new QSqlQueryModel(this);
+        /**
+         *  initialized as a QSqlTableModel so that any proxy models created
+         *  using this model can contain editable fields.
+         */
+		commissionerContactsModel = new QSqlTableModel(this);
         QSqlQuery commissionerContactsQuery(sql);
         commissionerContactsQuery.prepare("SELECT ContactType.type, "
             "Contact.entry FROM Contact "

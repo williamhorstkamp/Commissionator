@@ -33,7 +33,7 @@ namespace Commissionator {
         if (index.isValid()) {
             if (role == Qt::DisplayRole) {
                 if (index.row() == 0) {
-                    if (index.row() < queryStrings.count()) {
+                    if (index.column() < queryStrings.count()) {
                         return QVariant(queryStrings.at(index.column()));
                     }
                     return QVariant();
@@ -53,8 +53,11 @@ namespace Commissionator {
 
     bool FixedRowProxyModel::setData(const QModelIndex &index, const QVariant &value, int role) {
         if (index.row() == 0) {
-            if (!value.toString().isEmpty())
+            if (!value.toString().isEmpty()) {
+                while (index.column() >= queryStrings.count())
+                    queryStrings.append(text);
                 queryStrings.replace(index.column(), value.toString());
+            }
             emit QIdentityProxyModel::dataChanged(this->index(0, 0), this->index(0, columnCount() - 1));
             return true;
         }
