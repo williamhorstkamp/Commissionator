@@ -1,5 +1,7 @@
 #include <QLabel>
 #include <QSqlRecord>
+#include "FixedRowTable.h"
+#include "QHeaderView"
 #include "CommissionerPanel.h"
 
 namespace Commissionator {
@@ -117,5 +119,11 @@ namespace Commissionator {
                 + " owed");
         }
         notesEdit->setText(commissionerModel->record(0).value(3).toString());
+
+        for (int i = 0; i < contactInfoTable->model()->columnCount(); i++)
+            contactInfoTable->horizontalHeader()->setSectionResizeMode(i, QHeaderView::Stretch);
+
+        for (int i = 0; i < commissionsTable->model()->columnCount(); i++)
+            commissionsTable->horizontalHeader()->setSectionResizeMode(i, QHeaderView::Stretch);
     }
 }

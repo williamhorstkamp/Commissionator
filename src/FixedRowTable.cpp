@@ -139,9 +139,6 @@ namespace Commissionator {
         setHorizontalScrollMode(ScrollPerPixel);
         setVerticalScrollMode(ScrollPerPixel);
         verticalHeader()->hide();
-
-        for (int col = 0; col < horizontalHeader()->count(); col++)
-            horizontalHeader()->setSectionResizeMode(col, QHeaderView::Stretch);
     }
 
     void FixedRowTable::init() {
