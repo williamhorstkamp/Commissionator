@@ -217,9 +217,8 @@ namespace Commissionator {
             setPaidDate.exec();
             commissionerCommissionsModel->query().exec();
             commissionerCommissionsModel->setQuery(commissionerCommissionsModel->query());
-            commissionersModel->query().exec();
-            commissionersModel->setQuery(commissionersModel->query());
         }
+        searchCommissioners("", "", "");
     }
 
     void ComModel::insertPaymentType(const QString typeName) {
@@ -239,7 +238,7 @@ namespace Commissionator {
         insertPieceQuery->bindValue(5, QVariant(QVariant::String));
         insertPieceQuery->exec();
         searchPieces("", "", "", "");
-        //searchCommissioners("", "", "");  //creates bugs
+        searchCommissioners("", "", "");
     }
 
     void ComModel::insertProduct(const QString productName, const double basePrice) {

@@ -15,7 +15,9 @@ namespace Commissionator{
         model->insertContact(1, 1, "entry");
         model->insertProduct("thing", 1.0);
         model->insertCommission(1, QDateTime::currentDateTime(), "");
+        model->insertCommission(2, QDateTime::currentDateTime(), "");
         model->insertPiece(1, 1, "piece", "");
+        model->insertPiece(2, 1, "piece", "");
         model->insertPaymentType("payment type");
         model->insertPayment(1, 1, 1.0, "");
     }
