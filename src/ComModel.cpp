@@ -192,7 +192,8 @@ namespace Commissionator {
         insertPaymentQuery->exec();
         commissionPaymentsModel->query().exec();
         commissionPaymentsModel->setQuery(commissionPaymentsModel->query());
-        QSqlQuery wasJustPaid("SELECT CASE WHEN Commission.paidDate IS NULL "
+        QSqlQuery wasJustPaid(sql);
+        wasJustPaid.prepare("SELECT CASE WHEN Commission.paidDate IS NULL "
             "AND totalPrices.price = sum(Payment.fee) "
             "THEN 'true' ELSE 'false' END "
             "FROM Commission "
@@ -205,7 +206,7 @@ namespace Commissionator {
             "GROUP BY prices.com) as totalPrices "
             "ON Commission.id = totalPrices.comId "
             "LEFT JOIN Payment ON Commission.id = Payment.commission "
-            "WHERE Commission.id = (?)", sql);
+            "WHERE Commission.id = (?)");
         wasJustPaid.bindValue(0, commissionId);
         wasJustPaid.exec();
         wasJustPaid.next();
@@ -218,6 +219,7 @@ namespace Commissionator {
             commissionerCommissionsModel->query().exec();
             commissionerCommissionsModel->setQuery(commissionerCommissionsModel->query());
         }
+        wasJustPaid.finish();
         searchCommissioners("", "", "");
     }
 
@@ -237,6 +239,21 @@ namespace Commissionator {
         insertPieceQuery->bindValue(4, QDateTime::currentDateTime().toMSecsSinceEpoch());
         insertPieceQuery->bindValue(5, QVariant(QVariant::String));
         insertPieceQuery->exec();
+        QSqlQuery isPaid("SELECT CASE WHEN Commission.paidDate IS NULL "
+            "THEN 'false' ELSE 'true' END "
+            "FROM Commission "
+            "WHERE Commission.id = (?);");
+        isPaid.bindValue(0, commission);
+        isPaid.exec();
+        isPaid.next();
+        if (isPaid.value(0).toBool() == true) {
+            QSqlQuery setPaidDate("UPDATE Commission SET paidDate = NULL "
+                "WHERE Commission.id = (?)", sql);
+            setPaidDate.bindValue(0, commission);
+            setPaidDate.exec();
+            commissionerCommissionsModel->query().exec();
+            commissionerCommissionsModel->setQuery(commissionerCommissionsModel->query());
+        }
         searchPieces("", "", "", "");
         searchCommissioners("", "", "");
     }

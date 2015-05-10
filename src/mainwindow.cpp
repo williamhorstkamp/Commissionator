@@ -19,7 +19,7 @@ namespace Commissionator{
         model->insertPiece(1, 1, "piece", "");
         model->insertPiece(2, 1, "piece", "");
         model->insertPaymentType("payment type");
-        model->insertPayment(1, 1, 1.0, "");
+        //model->insertPayment(1, 1, 1.0, "");
     }
 
     void MainWindow::createMenus() {
