@@ -1,6 +1,7 @@
 #include <QtWidgets>
-#include "mainwindow.h"
+#include <QComboBox>
 #include <QSqlQueryModel>
+#include "mainwindow.h"
 
 namespace Commissionator{
     MainWindow::MainWindow() {
@@ -19,7 +20,7 @@ namespace Commissionator{
         model->insertPiece(1, 1, "piece", "");
         model->insertPiece(2, 1, "piece", "");
         model->insertPaymentType("payment type");
-        //model->insertPayment(1, 1, 1.0, "");
+        model->insertPayment(1, 1, 1.0, "");
     }
 
     void MainWindow::createMenus() {
@@ -180,8 +181,60 @@ namespace Commissionator{
     }
 
     void MainWindow::newCommission() {
-        QDialog dialog(this);
-        dialog.exec();
+        QDialog comDialog(this);
+        QVBoxLayout mainLayout(this);
+        QGridLayout comLayout(this);
+
+        QFont titleFont;
+        titleFont.setPointSize(12);
+        titleFont.setBold(true);
+
+        QFont font;
+        font.setPointSize(10);
+
+        QLabel newComLabel(this);
+        newComLabel.setAlignment(Qt::AlignCenter);
+        newComLabel.setFont(titleFont);
+        newComLabel.setText("Insert Commission");
+
+        QLabel comLabel(this);
+        comLabel.setFont(font);
+        comLabel.setText("Commissioner:");
+
+        QLabel dueLabel(this);
+        dueLabel.setFont(font);
+        dueLabel.setText("Due Date:");
+
+        QLabel notesLabel(this);
+        notesLabel.setFont(font);
+        notesLabel.setText("Notes:");
+
+        QComboBox comBox(this); //just for testing purposes, going to have to eventually subclass combobox to get desired functionality
+        comBox.setModel(model->getCommissionerNames());
+        comBox.setModelColumn(1);
+        //comBox.setEnabled(false);
+
+        QLineEdit calendarEdit(this);   //for testing purposes, need to subclass lineedit to add calendar functionality
+
+        QLineEdit notesEdit(this);
+
+        QPushButton submitButton(this);
+        submitButton.setText("Submit Commission");
+
+        mainLayout.addWidget(&newComLabel);
+        mainLayout.addLayout(&comLayout);
+        mainLayout.addWidget(&submitButton);
+
+        comLayout.addWidget(&comLabel, 0, 0);
+        comLayout.addWidget(&dueLabel, 1, 0);
+        comLayout.addWidget(&notesLabel, 2, 0);
+        comLayout.addWidget(&comBox, 0, 1);
+        comLayout.addWidget(&calendarEdit, 1, 1);
+        comLayout.addWidget(&notesEdit, 2, 1);
+
+        comDialog.setLayout(&mainLayout);
+
+        comDialog.exec();
     }
 
     void MainWindow::page1() {

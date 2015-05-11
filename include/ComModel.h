@@ -96,6 +96,16 @@ namespace Commissionator {
 
         /**
          *  Function returns a pointer to a model containing data for the
+         *  commissioner combobox to be displayed on the new commission dialog.
+         *
+         *  @return - pointer to QSqlQueryModel containing the commissioner names
+         *  Display order:
+         *  Commissioner Id, Name
+         */
+        QSqlQueryModel *getCommissionerNames();
+
+        /**
+         *  Function returns a pointer to a model containing data for the
          *  contact type slider to be displayed on the commissioner panel.
          *
          *  @return - pointer to QSqlQueryModel containing contact types
@@ -674,6 +684,7 @@ namespace Commissionator {
 		QSqlQueryModel *commissionerCommissionsModel;
 		QSqlQueryModel *commissionerContactsModel;
         QSqlQueryModel *commissionerModel;
+        QSqlQueryModel *commissionerNamesModel;
         QSqlQueryModel *commissionersModel;
 		QSqlQueryModel *commissionmodel;
 		QSqlQueryModel *commissionPaymentsModel;

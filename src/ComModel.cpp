@@ -41,6 +41,10 @@ namespace Commissionator {
 		return commissionerContactsModel;
     }
 
+    QSqlQueryModel *ComModel::getCommissionerNames() {
+        return commissionerNamesModel;
+    }
+
     QSqlQueryModel *ComModel::getCommissioners() {
         return commissionersModel;
     }
@@ -160,6 +164,7 @@ namespace Commissionator {
         insertCommissionerQuery->bindValue(0, commissionerName);
         insertCommissionerQuery->bindValue(1, commissionerNotes);
         insertCommissionerQuery->exec();
+        commissionerNamesModel->query().exec();
         searchCommissioners("", "", "");
     }
 
@@ -169,9 +174,11 @@ namespace Commissionator {
         insertContactQuery->bindValue(1, contactType);
         insertContactQuery->bindValue(2, contactEntry);
         insertContactQuery->exec();
+        /*
         commissionerContactsModel->query().bindValue(0, commissionerId);
         commissionerContactsModel->query().exec();
         commissionerContactsModel->setQuery(commissionerContactsModel->query());
+        */
     }
 
     void ComModel::insertContactType(const QString contactTypeName) {
@@ -489,6 +496,11 @@ namespace Commissionator {
             "LEFT JOIN Commission ON C.id = Commission.commissioner "
             "WHERE C.id = (?);");
         commissionerModel->setQuery(commissionerQuery);
+        commissionerNamesModel = new QSqlQueryModel(this);
+        QSqlQuery commissionerNamesQuery("SELECT Commissioner.id, "
+            "Commissioner.name FROM Commissioner", sql);
+        commissionerNamesQuery.exec();
+        commissionerNamesModel->setQuery(commissionerNamesQuery);
         /**
          *  initialized as a QSqlTableModel so that any proxy models created
          *  using this model can contain editable fields.
