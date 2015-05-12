@@ -78,11 +78,11 @@ namespace Commissionator {
     }
 
     void FixedRowProxyModel::query() {
-        for (int i = 0; i < columnCount(); i++)     //replace any place that the set text is stored 
+        for (int i = 0; i < queryStrings.length(); i++)     //replace any place that the set text is stored 
             if (queryStrings[i].toString() == text)   //with an empty string
                 queryStrings.replace(i, QVariant(""));   // to show that there was no entry to that field
         emit querySignal(queryStrings);
-        for (int i = 0; i < columnCount(); i++)
+        for (int i = 0; i < queryStrings.length(); i++)
             queryStrings.replace(i, text);
     }
 }
