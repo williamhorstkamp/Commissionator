@@ -111,6 +111,11 @@ namespace Commissionator {
          *  of the search strings.
          */
         void query();
+
+        /**
+        *  Function 
+        */
+        void refreshText();
     };
 }
 #endif
