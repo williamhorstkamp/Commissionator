@@ -74,6 +74,10 @@ namespace Commissionator {
         delete temp;
     }
 
+    void FixedRowTable::setColumnCount(const int count) {
+        proxy->setColumnCount(count);
+    }
+
     void FixedRowTable::setColumnHidden(int column, bool hide) {
         QTableView::setColumnHidden(column, hide);
         box->setColumnHidden(column, hide);

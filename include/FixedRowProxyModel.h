@@ -94,6 +94,7 @@ namespace Commissionator {
         //List of QStrings containing the value to use with the query
         QList<QVariant> queryStrings;
         QString text;
+        int columnNumber;
 
     signals:
         /**
@@ -107,13 +108,23 @@ namespace Commissionator {
 
     public slots:
         /**
+         *  Function sets the number of expectant columns. This is used to 
+         *  guarentee the correct number of strings exist before a model is
+         *  initialized in cases where the source model may be linked to
+         *  FixedRowTable before the model is initialized.
+         *
+         *  @param count - number of columns
+         */
+        void setColumnCount(const int count);
+
+        /**
          *  Search slot that performs a search based on the current values
          *  of the search strings.
          */
         void query();
 
         /**
-        *  Function 
+        *  Function enforces integrity in queryStrings size and contents
         */
         void refreshText();
     };

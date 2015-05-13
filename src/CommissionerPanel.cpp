@@ -82,6 +82,7 @@ namespace Commissionator {
         contactInfoTable->setBoxButtonWidth(1.25);
         contactInfoTable->setBoxButtonText(tr("Insert"));
         contactInfoTable->setBoxText("Enter Contact");
+        contactInfoTable->setColumnCount(2);
 
         commissionsTable = new QTableView(this);
         commissionsTable->setModel(commissionsModel);

@@ -87,6 +87,16 @@ namespace Commissionator {
         void setBoxText(QString newText);
 
         /**
+         *  Function sets the number of expectant columns. This is used to
+         *  guarentee the correct number of strings exist before a model is
+         *  initialized in cases where the source model may be linked to
+         *  FixedRowTable before the model is initialized.
+         *
+         *  @param count - number of columns
+         */
+        void setColumnCount(const int count);
+
+        /**
          *  Overrides default setColumnHidden function to call the same
          *  function with the same parameters on box as well.
          */
