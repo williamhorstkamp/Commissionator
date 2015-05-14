@@ -28,10 +28,12 @@ namespace Commissionator {
          *      selected commissioner's contacts
          *  @param commissionsModel - QSqlQueryModel containing data about the
          *      selected commissioner's commissions
-         *
+         *  @param contactTypesModel - QSqlQueryModel containing a list of
+         *      contact types
          */
         CommissionerPanel(QSqlQueryModel *commissionerModel, 
-            QSqlQueryModel *contactModel, QSqlQueryModel *commissionsModel);
+            QSqlQueryModel *contactModel, QSqlQueryModel *commissionsModel,
+            QSqlQueryModel *contactTypesModel);
 
         /**
          *  Destructor removes resources from the free store, cleaning up
@@ -82,8 +84,17 @@ namespace Commissionator {
 
         /**
          *  Helper function creates tables
+         *
+         *  @param contactModel - QSqlQueryModel containing data about the
+         *      selected commissioner's contacts
+         *  @param commissionsModel - QSqlQueryModel containing data about the
+         *      selected commissioner's commissions
+         *  @param contactTypesModel - QSqlQueryModel containing a list of
+         *      contact types
          */
-        void createTables(QSqlQueryModel *contactModel, QSqlQueryModel *commissionsModel);
+        void createTables(QSqlQueryModel *contactModel, 
+            QSqlQueryModel *commissionsModel, 
+            QSqlQueryModel *commissionerNamesModel);
 
         QVBoxLayout *layout;
         QSqlQueryModel *commissionerModel;

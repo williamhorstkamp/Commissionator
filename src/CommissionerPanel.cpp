@@ -2,17 +2,19 @@
 #include <QSqlRecord>
 #include "FixedRowTable.h"
 #include "QHeaderView"
+#include "ComboEditorDelegate.h"
 #include "CommissionerPanel.h"
 
 namespace Commissionator {
 
     CommissionerPanel::CommissionerPanel(QSqlQueryModel *commissionerModel, 
-        QSqlQueryModel *contactModel, QSqlQueryModel *commissionsModel) {
+        QSqlQueryModel *contactModel, QSqlQueryModel *commissionsModel,
+        QSqlQueryModel *contactTypesModel) {
         this->commissionerModel = commissionerModel;
         
         createFonts();
         createLabels();
-        createTables(contactModel, commissionsModel);
+        createTables(contactModel, commissionsModel, contactTypesModel);
         createPanel();
     }
 
@@ -75,8 +77,12 @@ namespace Commissionator {
     }
 
     void CommissionerPanel::createTables(QSqlQueryModel *contactModel, 
-        QSqlQueryModel *commissionsModel) {
+        QSqlQueryModel *commissionsModel, 
+        QSqlQueryModel *contactTypesModel) {
         contactInfoTable = new FixedRowTable(contactModel, this);
+        ComboEditorDelegate *contactDelegate = new ComboEditorDelegate(this);
+        contactDelegate->setEditorModel(contactTypesModel);
+        contactInfoTable->setBoxDelegate(contactDelegate);
         contactInfoTable->setBoxBottom(true);
         contactInfoTable->setBoxButtonActivated(true);
         contactInfoTable->setBoxButtonWidth(1.25);
@@ -123,9 +129,11 @@ namespace Commissionator {
         notesEdit->setText(commissionerModel->record(0).value(3).toString());
 
         for (int i = 0; i < contactInfoTable->model()->columnCount(); i++)
-            contactInfoTable->horizontalHeader()->setSectionResizeMode(i, QHeaderView::Stretch);
+            contactInfoTable->horizontalHeader()->setSectionResizeMode(i, 
+                QHeaderView::Stretch);
 
         for (int i = 0; i < commissionsTable->model()->columnCount(); i++)
-            commissionsTable->horizontalHeader()->setSectionResizeMode(i, QHeaderView::Stretch);
+            commissionsTable->horizontalHeader()->setSectionResizeMode(i, 
+                QHeaderView::Stretch);
     }
 }

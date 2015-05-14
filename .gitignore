@@ -23,3 +23,5 @@ GeneratedFiles/Debug/moc_FixedRowTableDelegate.cpp
 GeneratedFiles/Debug/moc_FixedRowProxyModel.cpp
 GeneratedFiles/Debug/moc_FixedRowTable.cpp
 GeneratedFiles/Debug/moc_CommissionerPanel.cpp
+GeneratedFiles/Debug/moc_ComboEditorDelegate.cpp
+GeneratedFiles/Debug/moc_CustomEditorDelegate.cpp

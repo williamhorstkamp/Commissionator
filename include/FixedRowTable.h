@@ -214,7 +214,7 @@ namespace Commissionator {
         FixedRowBox *box;
         QPushButton *boxButton;
         double boxButtonWidth;
-        //delegate that handles the icons displayed in on the table
+        //delegate that handles the icons displayed on the table
         FixedRowTableDelegate *tableDelegate;
         bool boxButtonOn;
         bool boxOnBottom;

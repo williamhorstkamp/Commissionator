@@ -5,7 +5,7 @@
 
 namespace Commissionator {
 
-    class CustomEditorDelegate : public FixedRowTableDelegate {
+    class CustomEditorDelegate : public QStyledItemDelegate {
 
         Q_OBJECT
 
@@ -36,6 +36,15 @@ namespace Commissionator {
          */
         QWidget* createEditor(QWidget *parent, 
             const QStyleOptionViewItem &option, const QModelIndex &index) const;
+
+        /**
+         *  Overrides the default destroyEditor(...) function to prevent the
+         *  custom editor from being deleted
+         *
+         *  @param editor - pointer to the editor to be deleted
+         *  @param index - reference to the index that is currently selected
+         */
+        void destroyEditor(QWidget *editor, const QModelIndex &index) const;
 
         /**
          *  Function allows the user to set the custom editor's model.

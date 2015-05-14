@@ -150,8 +150,10 @@ namespace Commissionator{
         commissionerLeftPanel = new LeftPanel("Commissioner", 
             model->getCommissioners(), hidden);
         lp2 = new LeftPanel2();
-        commissionerRightPanel = new CommissionerPanel(model->getCommissioner(), 
-            model->getCommissionerContacts(), model->getCommissionerCommissions());
+        commissionerRightPanel = new CommissionerPanel(model->getCommissioner(),
+            model->getCommissionerContacts(),
+            model->getCommissionerCommissions(),
+            model->getContactTypes());
         rp2 = new RightPanel2();
         leftPanel->addWidget(commissionerLeftPanel);
         leftPanel->addWidget(lp2);
