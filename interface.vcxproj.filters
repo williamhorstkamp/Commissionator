@@ -120,15 +120,6 @@
     <ClCompile Include="GeneratedFiles\Release\moc_FixedRowTable.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_CommissionerContactDelegate.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_CommissionerContactDelegate.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
-    <ClCompile Include="src\CommissionerContactDelegate.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_ComModel.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
@@ -136,6 +127,15 @@
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
     <ClCompile Include="src\ComModel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_CustomEditorDelegate.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_CustomEditorDelegate.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CustomEditorDelegate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -170,10 +170,10 @@
     <CustomBuild Include="include\FixedRowTable.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="include\CommissionerContactDelegate.h">
+    <CustomBuild Include="include\ComModel.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="include\ComModel.h">
+    <CustomBuild Include="include\CustomEditorDelegate.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>
