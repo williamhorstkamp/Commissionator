@@ -19,22 +19,4 @@ namespace Commissionator {
     void CustomEditorDelegate::setColumn(const int column) {
         editorColumn = column;
     }
-    /*
-    void CustomEditorDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const {
-        if (customEditor == editor) {
-            QString text = index.data(Qt::EditRole).toString();
-            int customIndex = editor->findText(text);
-            if (customIndex >= 0)
-                custom->setCurrentIndex(comboIndex);
-        } else
-            QStyledItemDelegate::setEditorData(editor, index);
-    }
-
-    void CustomEditorDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const {
-        if (customEditor == editor)
-            model->setData(index, customEditor->currentText(), Qt::EditRole);
-        else
-            QStyledItemDelegate::setModelData(editor, model, index);
-    }
-    */
 }
