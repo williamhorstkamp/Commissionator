@@ -174,11 +174,10 @@ namespace Commissionator {
         insertContactQuery->bindValue(1, contactType);
         insertContactQuery->bindValue(2, contactEntry);
         insertContactQuery->exec();
-        /*
+        
         commissionerContactsModel->query().bindValue(0, commissionerId);
         commissionerContactsModel->query().exec();
         commissionerContactsModel->setQuery(commissionerContactsModel->query());
-        */
     }
 
     void ComModel::insertContactType(const QString contactTypeName) {
@@ -444,7 +443,7 @@ namespace Commissionator {
         commissionerContactsModel->setQuery(commissionerContactsQuery);
         commissionerModel = new QSqlQueryModel(this);
         QSqlQuery commissionerQuery(sql);
-        commissionerQuery.prepare("SELECT C.name, "
+        commissionerQuery.prepare("SELECT C.id, C.name, "
             "COALESCE(STRFTIME('%m/%d/%Y', min(Commission.createDate)/1000, "
             "'unixepoch', 'localtime'),'No Commissions'), "
             "CASE WHEN(SELECT SUM(a.price) - b.fee FROM "
@@ -528,7 +527,7 @@ namespace Commissionator {
             "WHERE Commission.commissioner = C.id "
             "AND ProductPrices.date < Commission.createDate "
             "GROUP BY Piece.id "
-            "HAVING date = max(date)) a) IS NULL THEN 'No Commissioned Pieces' "
+            "HAVING date = max(date)) a) IS NULL THEN 'N/A' "
             "WHEN(SELECT COUNT(Payment.fee) FROM Commission "
             "INNER JOIN Payment ON Commission.id = Payment.commission "
             "WHERE Commission.commissioner = C.id) is 0 THEN(SELECT SUM(a.price) FROM "
@@ -557,7 +556,7 @@ namespace Commissionator {
             "AND AmountedOwed like (?);");
         commissionersModel->setQuery(commissionersQuery);
         searchCommissioners("", "", "");
-        commissionersModel->setHeaderData(2, Qt::Horizontal,
+                commissionersModel->setHeaderData(2, Qt::Horizontal, 
             QVariant("Customer Since"), Qt::DisplayRole);
         commissionersModel->setHeaderData(3, Qt::Horizontal,
             QVariant("Amount Owed"), Qt::DisplayRole);

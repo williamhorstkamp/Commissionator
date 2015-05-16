@@ -231,6 +231,7 @@ namespace Commissionator {
         FixedRowTableDelegate *tableDelegate;
         bool boxButtonOn;
         bool boxOnBottom;
+        QList<int> persistentEditors;
 
     private slots:
         /**
@@ -275,6 +276,13 @@ namespace Commissionator {
          *   @param index - index whose button was clicked
          */
         void tableButtonClicked(const QModelIndex &index);
+
+    public slots:
+        /**
+         *  Slot accepts FixedRowBox::boxQuery and emits FixedRowTable::boxQuery.
+         *  Also enforces open persistent editor functionality
+         */
+        void boxQuerySlot(const QList<QVariant> query);
     };
 }
 #endif

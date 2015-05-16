@@ -27,16 +27,6 @@ namespace Commissionator {
         void newCommission();
 
         /**
-         *  Functions inserts a contact into the model with the given arguments
-         *
-         *  @param commissioner - commissioner id
-         *  @param type - contact type id
-         *  @param entry - text containing id
-         */
-        void insertContact(const QString commissioner, const QString type,
-            const QString entry);
-
-        /**
          *  Functions searches for commissioners with given arguements
          *
          *  Argument order:

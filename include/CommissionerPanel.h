@@ -43,21 +43,26 @@ namespace Commissionator {
 
     signals:
         /**
-        *  Signal thrown when the newCommissionButton is clicked.
-        *  Is to be forwarded to MainWindow::newCommission.
-        */
-        void newCommission();
-
-        /**
          *  Signal thrown when the contactInfoTable's button is clicked.
-         *  Is forwarded from FixedRowTable::boxQuery and is to be forwarded to
+         *  Is a modification of FixedRowTable::boxQuery and is to be forwarded to
          *  MainWindow::insertContact
          */
-        void insertContact(const QString commissioner, const QString type, 
+        void insertContact(const int commissioner, const int type, 
             const QString entry);
 
+        /**
+         *  Signal thrown when the newCommissionButton is clicked.
+         *  Is to be forwarded to MainWindow::newCommission.
+         */
+        void newCommission();
 
     public slots:
+        /**
+         *  Slot captures FixedRowTable::boxQuery and emits the corresponding
+         *  insertContact signal
+         */
+        void insertContactSlot(const QList<QVariant> query);
+
         /**
          *  Slot connects to ComModel::commissionerChanged.
          *  If the signal is of type "Commissioner", then the slot should

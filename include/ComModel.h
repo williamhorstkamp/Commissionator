@@ -133,7 +133,7 @@ namespace Commissionator {
          *  @return - pointer to QSqlQueryModel containing data about the
          *      commissioner
          *   Data order:
-         *   Commissioner Name, Customer Since, Amount Owed, Notes
+         *   Commissioner Id, Commissioner Name, Customer Since, Amount Owed, Notes
          */
         QSqlQueryModel *getCommissioner();
 

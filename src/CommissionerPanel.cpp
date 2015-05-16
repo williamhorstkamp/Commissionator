@@ -96,37 +96,45 @@ namespace Commissionator {
         newCommissionButton = new QPushButton(tr("New Commission"), this);
         connect(newCommissionButton, &QPushButton::clicked, 
             this, &CommissionerPanel::newCommission);
+        connect(contactInfoTable, &FixedRowTable::boxQuery, 
+            this, &CommissionerPanel::insertContactSlot);
+    }
+
+    void CommissionerPanel::insertContactSlot(const QList<QVariant> query) {
+        if (query.length() == 2)    //contact type id, entry
+            emit insertContact(commissionerModel->record(0).value(0).toInt(),
+            query[0].toInt(), query[1].toString());
     }
 
     void CommissionerPanel::updatePanel() {
         commissionerName->setText(
-            commissionerModel->record(0).value(0).toString());
-        if (commissionerModel->record(0).value(1).toString() 
+            commissionerModel->record(0).value(1).toString());
+        if (commissionerModel->record(0).value(2).toString() 
             == "No Commissions")
             commissionerDate->setText(
-                commissionerModel->record(0).value(1).toString());
+                commissionerModel->record(0).value(2).toString());
         else
             commissionerDate->setText(
                 "Customer since " + 
-                commissionerModel->record(0).value(1).toString());
-        if (commissionerModel->record(0).value(2).toString() == "Paid Off") {
+                commissionerModel->record(0).value(2).toString());
+        if (commissionerModel->record(0).value(3).toString() == "Paid Off") {
             commissionerPaid->setStyleSheet("QLabel { color : green; }");
             commissionerPaid->setText(
-                commissionerModel->record(0).value(2).toString());
-        } else if (commissionerModel->record(0).value(2).toString() 
+                commissionerModel->record(0).value(3).toString());
+        } else if (commissionerModel->record(0).value(3).toString() 
             == "No Commissioned Pieces") {
             commissionerPaid->setStyleSheet("QLabel { color : blue; }");
             commissionerPaid->setText(
-                commissionerModel->record(0).value(2).toString());
+                commissionerModel->record(0).value(3).toString());
         } else {
             commissionerPaid->setStyleSheet("QLabel { color : red; }");
             QLocale dollarConverter = QLocale();
             commissionerPaid->setText(
                 dollarConverter.toCurrencyString(
-                    commissionerModel->record(0).value(2).toDouble())
+                    commissionerModel->record(0).value(3).toDouble())
                 + " owed");
         }
-        notesEdit->setText(commissionerModel->record(0).value(3).toString());
+        notesEdit->setText(commissionerModel->record(0).value(4).toString());
 
         for (int i = 0; i < contactInfoTable->model()->columnCount(); i++)
             contactInfoTable->horizontalHeader()->setSectionResizeMode(i, 

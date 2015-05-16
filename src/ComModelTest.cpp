@@ -129,7 +129,7 @@ namespace Commissionator {
                 qDebug() << com->getPieces()->index(i, j).data().toString();
         QVERIFY(coms->index(0, 1).data().toString() == "TestCommissioner");
         QVERIFY(coms->index(0, 2).data().toString() == "No Commissions");
-        QVERIFY(coms->index(0, 3).data().toString() == "No Commissioned Pieces");
+        QVERIFY(coms->index(0, 3).data().toString() == "N/A");
         QVERIFY(coms->index(1, 1).data().toString() == "TestCommissioner2");
         QVERIFY(coms->index(1, 2).data().toString()
             == QDateTime::currentDateTime().toString("MM/dd/yyyy"));
@@ -154,16 +154,17 @@ namespace Commissionator {
         com->setCommissioner(com->getCommissioners()->index(0, 0));
         for (int i = 0; i < coms->columnCount(); ++i)
             qDebug() << coms->index(0, i).data().toString();
-        QVERIFY(coms->index(0, 0).data().toString() == "TestCommissioner");
-        QVERIFY(coms->index(0, 1).data().toString()
+        QVERIFY(coms->index(0, 0).data().toInt() == 1);
+        QVERIFY(coms->index(0, 1).data().toString() == "TestCommissioner");
+        QVERIFY(coms->index(0, 2).data().toString()
             == QDateTime::currentDateTime().toString("MM/dd/yyyy"));
-        QVERIFY(coms->index(0, 2).data().toDouble() == 1.0);
-        QVERIFY(coms->index(0, 3).data().toString() == "TestNotes");
+        QVERIFY(coms->index(0, 3).data().toDouble() == 1.0);
+        QVERIFY(coms->index(0, 4).data().toString() == "TestNotes");
         com->insertPaymentType("TypeName");
         com->insertPayment(1, 1, 1.0, "");
         com->setCommissioner(com->getCommissioners()->index(0, 0));
         qDebug() << coms->index(0, 2).data().toString();
-        QVERIFY(coms->index(0, 2).data().toDouble() == 0.0);
+        QVERIFY(coms->index(0, 3).data().toDouble() == 0.0);
     }
     
     void ComModelTest::commissionerContactsTest() {

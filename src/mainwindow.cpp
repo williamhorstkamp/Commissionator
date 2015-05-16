@@ -11,6 +11,9 @@ namespace Commissionator{
         createToolBars();
         createModel();
         createPanels();
+
+        setMinimumSize(700, 550);
+
         model->insertCommissioner("Test", "wutdo");
         model->insertContactType("type");
         model->insertContact(1, 1, "entry");
@@ -164,21 +167,22 @@ namespace Commissionator{
         line->setFrameShape(QFrame::VLine);
         line->setFrameShadow(QFrame::Sunken);
 
-        connect(commissionerLeftPanel, &LeftPanel::tableClicked, model, &ComModel::setCommissioner);
-        connect(commissionerLeftPanel, &LeftPanel::search, this, &MainWindow::searchCommissioner);
-        connect(model, &ComModel::commissionerChanged, commissionerRightPanel, &CommissionerPanel::updatePanel);
-        connect(commissionerRightPanel, &CommissionerPanel::newCommission, this, &MainWindow::newCommission);
+        connect(commissionerLeftPanel, &LeftPanel::tableClicked, 
+            model, &ComModel::setCommissioner);
+        connect(commissionerLeftPanel, &LeftPanel::search, 
+            this, &MainWindow::searchCommissioner);
+        connect(model, &ComModel::commissionerChanged, 
+            commissionerRightPanel, &CommissionerPanel::updatePanel);
+        connect(commissionerRightPanel, &CommissionerPanel::newCommission, 
+            this, &MainWindow::newCommission);
+        connect(commissionerRightPanel, &CommissionerPanel::insertContact,
+            model, &ComModel::insertContact);
 
         layout->addWidget(leftPanel);
         layout->addWidget(line);
         layout->addWidget(rightPanel);
         window->setLayout(layout);
         setCentralWidget(window);
-    }
-
-    void MainWindow::insertContact(const QString commissioner, 
-        const QString type, const QString entry) {
-        model->insertContact(commissioner.toInt(), type.toInt(), entry);
     }
 
     void MainWindow::searchCommissioner(const QList<QVariant> query) {
