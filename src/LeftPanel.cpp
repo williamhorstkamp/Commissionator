@@ -5,7 +5,7 @@
 
 namespace Commissionator {
     LeftPanel::LeftPanel(QString title, QSqlQueryModel *model, QList<int> hiddenColumns) {
-        layout = new QVBoxLayout();
+        layout = new QVBoxLayout(this);
         createTitle(title);
         createTable(model, hiddenColumns);
         layout->addWidget(titleLabel);
@@ -16,14 +16,8 @@ namespace Commissionator {
         connect(view, &FixedRowTable::clicked, this, &LeftPanel::tableClicked);
     }
 
-    LeftPanel::~LeftPanel() {
-        delete layout;
-        delete view;
-        delete titleLabel;
-    }
-
     void LeftPanel::createTitle(QString title) {
-        titleLabel = new QLabel(title);
+        titleLabel = new QLabel(title, this);
         titleLabel->setAlignment(Qt::AlignCenter);
         QFont font;
         font.setPointSize(12);
@@ -32,7 +26,7 @@ namespace Commissionator {
     }
 
     void LeftPanel::createTable(QSqlQueryModel *model, QList<int> hiddenColumns) {
-        view = new FixedRowTable(model);
+        view = new FixedRowTable(model, this);
         view->setTableButtonActivated(true);
         view->setTableButtonIcon(":/Delete.png");
         view->setTableButtonSize(24);

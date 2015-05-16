@@ -29,8 +29,6 @@ namespace Commissionator {
          */
         LeftPanel(QString title, QSqlQueryModel *model, QList<int> hiddenColumns);
 
-        ~LeftPanel();
-
     private:
         QVBoxLayout *layout;
         FixedRowTable *view;
