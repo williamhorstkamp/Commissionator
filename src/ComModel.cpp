@@ -507,9 +507,9 @@ namespace Commissionator {
          */
         commissionersModel = new QSqlTableModel(this);
         QSqlQuery commissionersQuery(sql);
-        commissionersQuery.prepare("SELECT C.id, C.name 'Commissioner Name', "
+        commissionersQuery.prepare("SELECT C.id, C.name as 'Name', "
             "COALESCE(STRFTIME('%m/%d/%Y', min(Commission.createDate)/1000, "
-            "'unixepoch', 'localtime'),'No Commissions') AS 'Commissioner Since', "
+            "'unixepoch', 'localtime'),'No Commissions') AS CommissionerSince, "
             "CASE WHEN(SELECT SUM(a.price) - b.fee FROM "
             "(SELECT ProductPrices.price price FROM Commission "
             "INNER JOIN Piece ON Commission.id = Piece.commission "
@@ -549,14 +549,18 @@ namespace Commissionator {
             "INNER JOIN Commission ON Commissioner.id = Commission.commissioner "
             "INNER JOIN Payment ON Commission.id = Payment.commission "
             "WHERE Commissioner.id = C.id) b) "
-            "END AS 'Amounted Owed' "
+            "END AS AmountedOwed "
             "FROM Commissioner C "
             "LEFT JOIN Commission ON C.id = Commission.commissioner "
             "WHERE name LIKE (?) "
-            "GROUP BY C.id HAVING 'Commissioner Since' like (?) "
-            "AND 'Amounted Owed' like (?);");
+            "GROUP BY C.id HAVING CommissionerSince like (?) "
+            "AND AmountedOwed like (?);");
         commissionersModel->setQuery(commissionersQuery);
         searchCommissioners("", "", "");
+        commissionersModel->setHeaderData(2, Qt::Horizontal,
+            QVariant("Customer Since"), Qt::DisplayRole);
+        commissionersModel->setHeaderData(3, Qt::Horizontal,
+            QVariant("Amount Owed"), Qt::DisplayRole);
 		commissionPaymentsModel = new QSqlQueryModel(this);
         QSqlQuery commissionPaymentsQuery(sql);
         commissionPaymentsQuery.prepare("SELECT PaymentType.name, "

@@ -137,5 +137,7 @@ namespace Commissionator {
         for (int i = 0; i < commissionsTable->model()->columnCount(); i++)
             commissionsTable->horizontalHeader()->setSectionResizeMode(i, 
                 QHeaderView::Stretch);
+
+        
     }
 }

@@ -165,10 +165,9 @@ namespace Commissionator{
         line->setFrameShadow(QFrame::Sunken);
 
         connect(commissionerLeftPanel, &LeftPanel::tableClicked, model, &ComModel::setCommissioner);
+        connect(commissionerLeftPanel, &LeftPanel::search, this, &MainWindow::searchCommissioner);
         connect(model, &ComModel::commissionerChanged, commissionerRightPanel, &CommissionerPanel::updatePanel);
         connect(commissionerRightPanel, &CommissionerPanel::newCommission, this, &MainWindow::newCommission);
-        //connect(lp1, &LeftPanel::search, model, &TestModel::search);
-        //connect(lp1, &LeftPanel::iconClicked, model, &TestModel::deleteRecord);
 
         layout->addWidget(leftPanel);
         layout->addWidget(line);
@@ -180,6 +179,12 @@ namespace Commissionator{
     void MainWindow::insertContact(const QString commissioner, 
         const QString type, const QString entry) {
         model->insertContact(commissioner.toInt(), type.toInt(), entry);
+    }
+
+    void MainWindow::searchCommissioner(const QList<QVariant> query) {
+        if (query.length() == 4)    //id, name, commissioner since, amounted owed
+        model->searchCommissioners(query[1].toString(), query[2].toString(),
+            query[3].toString());
     }
 
     void MainWindow::newCommission() {
