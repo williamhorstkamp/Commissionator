@@ -129,23 +129,14 @@
     <ClCompile Include="src\ComModel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_CustomEditorDelegate.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_CustomEditorDelegate.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
-    <ClCompile Include="src\CustomEditorDelegate.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="include\ComboEditorDelegate.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_ComboEditorDelegate.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Release\moc_ComboEditorDelegate.cpp">
       <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ComboEditorDelegate.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -180,9 +171,6 @@
       <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="include\ComModel.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="include\CustomEditorDelegate.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="include\ComboEditorDelegate.h">

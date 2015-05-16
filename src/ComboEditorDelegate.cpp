@@ -3,8 +3,21 @@
 
 namespace Commissionator {
 
-    ComboEditorDelegate::ComboEditorDelegate(QObject *parent) : CustomEditorDelegate(parent) {
-        customEditor = new QComboBox();
+    ComboEditorDelegate::ComboEditorDelegate(QObject *parent) : QStyledItemDelegate(parent) {
+        editorColumn = 0;
+    }
+
+    QWidget* ComboEditorDelegate::createEditor(QWidget *parent,
+        const QStyleOptionViewItem &option, const QModelIndex &index) const {
+        if (index.column() != editorColumn)
+            return QStyledItemDelegate::createEditor(parent, option, index);
+        QComboBox *combo = new QComboBox(parent);
+        combo->setModel(editorModel);
+        return combo;
+    }
+
+    void ComboEditorDelegate::setColumn(const int column) {
+        editorColumn = column;
     }
 
     void ComboEditorDelegate::setEditorData(QWidget *editor, 
@@ -19,7 +32,7 @@ namespace Commissionator {
     }
 
     void ComboEditorDelegate::setEditorModel(QAbstractItemModel *model) {
-        qobject_cast<QComboBox *>(customEditor)->setModel(model);
+        editorModel = model;
     }
 
     void ComboEditorDelegate::setModelData(QWidget *editor, 

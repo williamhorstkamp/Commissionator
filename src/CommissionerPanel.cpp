@@ -132,6 +132,8 @@ namespace Commissionator {
             contactInfoTable->horizontalHeader()->setSectionResizeMode(i, 
                 QHeaderView::Stretch);
 
+        contactInfoTable->openBoxPersistentEditor(0);
+
         for (int i = 0; i < commissionsTable->model()->columnCount(); i++)
             commissionsTable->horizontalHeader()->setSectionResizeMode(i, 
                 QHeaderView::Stretch);

@@ -26,9 +26,18 @@ namespace Commissionator {
         FixedRowTable(QAbstractItemModel *model, QWidget *parent = nullptr);
 
         /**
-         *  Destructor cleans up internal objects.
+         *  Opens a persistent editor in the ItemView at the given column.
+         *
+         *  @param column - column to open the editor in
          */
-        ~FixedRowTable();
+        void openBoxPersistentEditor(const int column);
+
+        /**
+         *  Closes a persistent editor in the ItemView at the given column.
+         *
+         *  @param column - column to close the editor in
+         */
+        void closeBoxPersistentEditor(const int column);
 
         /**
          *  Sets the bottom box to the bottom of the window if set to true
@@ -150,8 +159,10 @@ namespace Commissionator {
         /**
          *  Initializes proxy.
          *  Exists to allow for easier use of derived classes.
+         *
+         *  @param model - pointer to model to proxy
          */
-        void createProxy();
+        void createProxy(QAbstractItemModel *model);
 
         /**
          *  Initializes search box.
@@ -167,8 +178,10 @@ namespace Commissionator {
 
         /**
          *  Initializes the object and all its sub objects.
+         *
+         *  @param model - pointer to model to proxy
          */
-        void init();
+        void init(QAbstractItemModel *model);
 
         /**
          *  Overrides the default moveCursor function so that the user can not

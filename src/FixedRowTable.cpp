@@ -7,16 +7,15 @@
 namespace Commissionator {
     FixedRowTable::FixedRowTable(QAbstractItemModel *model, QWidget *parent) :
     QTableView(parent) {
-        createProxy();
-        proxy->setSourceModel(model);
-
-        init();
+        init(model);
     }
 
-    FixedRowTable::~FixedRowTable() {
-        delete box;
-        delete proxy;
-        delete tableDelegate;
+    void FixedRowTable::closeBoxPersistentEditor(const int column) {
+        box->closePersistentEditor(box->indexAt(QPoint(column, 0)));
+    }
+
+    void FixedRowTable::openBoxPersistentEditor(const int column) {
+        box->openPersistentEditor(box->indexAt(QPoint(column, 0)));
     }
 
     void FixedRowTable::setBoxBottom(const bool newOnBottom) {
@@ -113,14 +112,15 @@ namespace Commissionator {
     }
 
     void FixedRowTable::createDelegates() {
-        tableDelegate = new FixedRowTableDelegate();
+        tableDelegate = new FixedRowTableDelegate(this);
         setItemDelegate(tableDelegate);
         setTableButtonActivated(false);
         setBoxButtonActivated(false);
     }
 
-    void FixedRowTable::createProxy() {
+    void FixedRowTable::createProxy(QAbstractItemModel *model) {
         proxy = new FixedRowProxyModel(this);
+        proxy->setSourceModel(model);
     }
 
     void FixedRowTable::createBox() {
@@ -145,7 +145,8 @@ namespace Commissionator {
         verticalHeader()->hide();
     }
 
-    void FixedRowTable::init() {
+    void FixedRowTable::init(QAbstractItemModel *model) {
+        createProxy(model);
         createTable();
         createBox();
         createDelegates();
