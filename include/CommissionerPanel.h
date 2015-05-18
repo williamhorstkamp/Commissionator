@@ -16,7 +16,6 @@ namespace Commissionator {
         Q_OBJECT
 
     public:
-        
         /**
          *  Default constructor accepts QSqlQueryModels for the selected
          *  commissioner, their contacts, and their commissions. Will use these
@@ -46,6 +45,10 @@ namespace Commissionator {
          *  Signal thrown when the contactInfoTable's button is clicked.
          *  Is a modification of FixedRowTable::boxQuery and is to be forwarded to
          *  MainWindow::insertContact
+         *
+         *  @param commissioner - commissioner id
+         *  @param type - type id
+         *  @param entry - entry text
          */
         void insertContact(const int commissioner, const int type, 
             const QString entry);
@@ -58,18 +61,21 @@ namespace Commissionator {
 
     public slots:
         /**
-         *  Slot captures FixedRowTable::boxQuery and emits the corresponding
-         *  insertContact signal
-         */
-        void insertContactSlot(const QList<QVariant> query);
-
-        /**
          *  Slot connects to ComModel::commissionerChanged.
          *  If the signal is of type "Commissioner", then the slot should
          *  refresh the Widgets that display the Commissioner data to match the 
          *  newly selected commissioner.
          */
         void updatePanel();
+
+    private slots:
+        /**
+         *  Slot captures FixedRowTable::boxQuery from contactInfoTable and
+         *  emits the corresponding insertContact signal
+         *
+         *  @param query - QList of Qvariants containing the query variables
+         */
+    void insertContactSlot(const QList<QVariant> query);
 
     private:
         /**
