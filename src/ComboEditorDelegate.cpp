@@ -4,20 +4,31 @@
 namespace Commissionator {
 
     ComboEditorDelegate::ComboEditorDelegate(QObject *parent) : QStyledItemDelegate(parent) {
-        editorColumn = 0;
+       comboColumn = 0;
+       editColumn = 0;
+       displayColumn = 0;
     }
 
     QWidget* ComboEditorDelegate::createEditor(QWidget *parent,
         const QStyleOptionViewItem &option, const QModelIndex &index) const {
-        if (index.column() != editorColumn)
+        if (index.column() !=comboColumn)
             return QStyledItemDelegate::createEditor(parent, option, index);
         QComboBox *combo = new QComboBox(parent);
         combo->setModel(editorModel);
+        combo->setModelColumn(displayColumn);
         return combo;
     }
 
     void ComboEditorDelegate::setColumn(const int column) {
-        editorColumn = column;
+       comboColumn = column;
+    }
+
+    void ComboEditorDelegate::setDisplayColumn(const int column) {
+        displayColumn = column;
+    }
+
+    void ComboEditorDelegate::setEditColumn(const int column) {
+        editColumn = column;
     }
 
     void ComboEditorDelegate::setEditorData(QWidget *editor, 
@@ -37,11 +48,14 @@ namespace Commissionator {
 
     void ComboEditorDelegate::setModelData(QWidget *editor, 
         QAbstractItemModel *model, const QModelIndex &index) const {
-        if (auto *combo = qobject_cast<QComboBox *>(editor))
-            model->setData(index, 
-            combo->currentText(), 
-            Qt::EditRole);
-        else
+        if (auto *combo = qobject_cast<QComboBox *>(editor)) {
+            model->setData(index,
+                combo->currentIndex(),
+                Qt::DisplayRole);
+            model->setData(index,
+                combo->model()->index(0, editColumn),
+                Qt::EditRole);
+        } else
             QStyledItemDelegate::setModelData(editor, model, index);
     }
 }

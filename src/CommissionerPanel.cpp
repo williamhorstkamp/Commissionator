@@ -82,6 +82,7 @@ namespace Commissionator {
         contactInfoTable = new FixedRowTable(contactModel, this);
         ComboEditorDelegate *contactDelegate = new ComboEditorDelegate(this);
         contactDelegate->setEditorModel(contactTypesModel);
+        contactDelegate->setDisplayColumn(1);
         contactInfoTable->setBoxDelegate(contactDelegate);
         contactInfoTable->setBoxBottom(true);
         contactInfoTable->setBoxButtonActivated(true);

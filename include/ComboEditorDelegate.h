@@ -38,6 +38,24 @@ namespace Commissionator {
         void setColumn(const int column);
 
         /**
+         *  Functions sets the column that is displayed on the combobox.
+         *  Defaults to 0
+         *
+         *  @param column - int representing the column of the model to 
+         *      display on the combobox
+         */
+        void setDisplayColumn(const int column);
+
+        /**
+         *  Functions sets the column that is stored for data on the combobox.
+         *  Defaults to 0
+         *
+         *  @param column - int representing the column of the model to
+         *      use as data
+         */
+        void setEditColumn(const int column);
+
+        /**
          *  Function sets the data for the current editor
          *
          *  @param editor - editor that is being manipulated
@@ -64,7 +82,9 @@ namespace Commissionator {
             const QModelIndex &index) const;
 
     private:
-        int editorColumn;
+        int comboColumn;
+        int editColumn;
+        int displayColumn;
         QAbstractItemModel *editorModel;
     };
 }
