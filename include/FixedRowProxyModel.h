@@ -19,7 +19,7 @@ namespace Commissionator {
          *
          *  @param parent - pointer to parent
          */
-        FixedRowProxyModel(QObject *parent);
+        FixedRowProxyModel(QObject *parent = nullptr);
 
         /**
          *  Overrides the default setSourceModel. Provides default functionality

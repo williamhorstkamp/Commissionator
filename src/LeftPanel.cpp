@@ -4,7 +4,7 @@
 
 
 namespace Commissionator {
-    LeftPanel::LeftPanel(QString title, QSqlQueryModel *model, QList<int> hiddenColumns) {
+    LeftPanel::LeftPanel(QString title, QSqlQueryModel *model, QList<int> hiddenColumns, QWidget *parent) : QWidget(parent) {
         layout = new QVBoxLayout(this);
         createTitle(title);
         createTable(model, hiddenColumns);

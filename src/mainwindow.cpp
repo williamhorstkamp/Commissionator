@@ -225,7 +225,8 @@ namespace Commissionator{
         comBox.setModelColumn(1);
         //comBox.setEnabled(false);
 
-        QLineEdit calendarEdit(this);   //for testing purposes, need to subclass lineedit to add calendar functionality
+        QDateEdit calendarEdit(this);
+        calendarEdit.setCalendarPopup(true);
 
         QLineEdit notesEdit(this);
 

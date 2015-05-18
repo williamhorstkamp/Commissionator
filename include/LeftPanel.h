@@ -27,7 +27,7 @@ namespace Commissionator {
          *      view. Not Implemented during testing, but functionality is
          *      written and tested.
          */
-        LeftPanel(QString title, QSqlQueryModel *model, QList<int> hiddenColumns);
+        LeftPanel(QString title, QSqlQueryModel *model, QList<int> hiddenColumns, QWidget *parent = nullptr);
 
     private:
         QVBoxLayout *layout;

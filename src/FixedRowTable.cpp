@@ -53,8 +53,9 @@ namespace Commissionator {
 
     void FixedRowTable::boxQuerySlot(const QList<QVariant> query) {
         emit boxQuery(query);
-        foreach(int i, persistentEditors)
+        foreach(int i, persistentEditors) {
             box->openPersistentEditor(box->indexAt(QPoint(i, 0)));
+        }
     }
 
     void FixedRowTable::setTableButtonActivated(const bool isEnabled) {

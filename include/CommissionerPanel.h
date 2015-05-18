@@ -33,7 +33,7 @@ namespace Commissionator {
          */
         CommissionerPanel(QSqlQueryModel *commissionerModel, 
             QSqlQueryModel *contactModel, QSqlQueryModel *commissionsModel,
-            QSqlQueryModel *contactTypesModel);
+            QSqlQueryModel *contactTypesModel, QWidget *parent = nullptr);
 
         /**
          *  Destructor removes resources from the free store, cleaning up

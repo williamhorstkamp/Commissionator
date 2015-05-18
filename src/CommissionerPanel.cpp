@@ -9,7 +9,7 @@ namespace Commissionator {
 
     CommissionerPanel::CommissionerPanel(QSqlQueryModel *commissionerModel, 
         QSqlQueryModel *contactModel, QSqlQueryModel *commissionsModel,
-        QSqlQueryModel *contactTypesModel) {
+        QSqlQueryModel *contactTypesModel, QWidget *parent) : QWidget(parent) {
         this->commissionerModel = commissionerModel;
         
         createFonts();

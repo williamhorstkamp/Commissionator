@@ -24,7 +24,7 @@ namespace Commissionator {
          *  ComModel's parent.
          *  Initializes ComModel components by calling build and prepareModels
          */
-        ComModel(QObject *parent = 0);
+        ComModel(QObject *parent = nullptr);
 
         ~ComModel();
 
