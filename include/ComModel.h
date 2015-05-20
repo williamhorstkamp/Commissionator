@@ -163,7 +163,7 @@ namespace Commissionator {
          *  Function returns a QDataWidgetMapper that can be connected to
          *  multiple views. The current record can be set by
          *  setSale(const QModelIndex &)
-         *  Contains the data about the sale, all of which is editable
+         *  Contains the data about the sale
          *
          *  @return - pointer to QDataWidgetMapper containing data about the
          *      sale
