@@ -16,6 +16,7 @@ namespace Commissionator {
         QComboBox *combo = new QComboBox(parent);
         combo->setModel(editorModel);
         combo->setModelColumn(displayColumn);
+        combo->setCurrentIndex(-1);
         return combo;
     }
 

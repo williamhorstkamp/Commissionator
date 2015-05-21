@@ -76,7 +76,7 @@ namespace Commissionator {
          */
         void init(QAbstractItemModel *namesModel);
 
-        QVBoxLayout *mainLayout;
+        QVBoxLayout *mainLayout; 
         QGridLayout *comLayout;
         QFont *titleFont;
         QFont *font;

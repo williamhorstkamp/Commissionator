@@ -174,11 +174,13 @@ namespace Commissionator {
 
     void ComModel::insertContact(const int commissionerId,
         const int contactType, const QString contactEntry) {
-        insertContactQuery->bindValue(0, commissionerId);
-        insertContactQuery->bindValue(1, contactType);
-        insertContactQuery->bindValue(2, contactEntry);
-        insertContactQuery->exec();
-        
+        if (contactEntry != "") {
+            insertContactQuery->bindValue(0, commissionerId);
+            insertContactQuery->bindValue(1, contactType);
+            insertContactQuery->bindValue(2, contactEntry);
+            insertContactQuery->exec();
+        }
+
         if (commissionerContactsModel->columnCount() > 0) {
             commissionerContactsModel->query().bindValue(0, commissionerId);
             commissionerContactsModel->query().exec();

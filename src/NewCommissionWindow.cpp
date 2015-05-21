@@ -50,6 +50,7 @@ namespace Commissionator {
         comBox->setModelColumn(1);
         
         calendarEdit = new QDateEdit(this);
+        calendarEdit->setDate(QDate::currentDate());
         calendarEdit->setCalendarPopup(true);
 
         notesEdit = new QLineEdit(this);
