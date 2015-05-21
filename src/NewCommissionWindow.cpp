@@ -84,8 +84,10 @@ namespace Commissionator {
     void NewCommissionWindow::setCommissioner(const QVariant &commissioner) {
         comBox->setModelColumn(0);
         int index = comBox->findText(commissioner.toString());
-        comBox->setCurrentIndex(index);
-        comBox->setEnabled(false);
+        if (index >= 0) {
+            comBox->setCurrentIndex(index);
+            comBox->setEnabled(false);
+        }
         comBox->setModelColumn(1);
     }
 }
