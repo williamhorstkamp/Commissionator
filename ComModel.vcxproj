@@ -37,7 +37,7 @@
     </ClCompile>
     <ClCompile Include="src\ComModel.cpp" />
     <ClCompile Include="src\ComModelTest.cpp" />
-    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\testmain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="include\ComModelTest.h">

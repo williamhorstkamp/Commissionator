@@ -5,6 +5,7 @@
 #include <QStackedWidget>
 #include "TestLayouts.h"
 #include "LeftPanel.h"
+#include "NewCommissionWindow.h"
 #include "CommissionerPanel.h"
 #include "ComModel.h"
 
@@ -25,6 +26,18 @@ namespace Commissionator {
          *  is created or not, the models may be refreshed.
          */
         void newCommission();
+
+        /**
+         *  Function opens the dialog window to create a new commission.
+         *  Takes control away from the MainWindow for the duration of the
+         *  new commission window's lifetime. Depending on whether a commission
+         *  is created or not, the models may be refreshed. Prevents editing
+         *  the commissioner and sets it to the given commissioner id
+         *
+         *  @param frozen - commissioner id if the commission is for a specific
+         *      commissioner
+         */
+        void newCommissionWithCommissioner(const QVariant &commissioner);
 
         /**
          *  Functions searches for commissioners with given arguements
@@ -70,6 +83,11 @@ namespace Commissionator {
         void createPanels();
 
         /**
+         *  Initiliazes popups
+         */
+        void createPopups();
+
+        /**
          *  Switches the context toolbar to what is pointed to in newBar
          *
          *  @param newBar - pointer to the bar to set the context bar to
@@ -87,6 +105,8 @@ namespace Commissionator {
         LeftPanel2 *lp2;
         CommissionerPanel *commissionerRightPanel;
         RightPanel2 *rp2;
+
+        NewCommissionWindow *commissionPopup;
 
         QMenu *fileMenu;
         QMenu *newMenu;

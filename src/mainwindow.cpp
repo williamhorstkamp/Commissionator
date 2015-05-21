@@ -11,6 +11,7 @@ namespace Commissionator{
         createToolBars();
         createModel();
         createPanels();
+        createPopups();
 
         setMinimumSize(700, 550);
 
@@ -174,7 +175,7 @@ namespace Commissionator{
         connect(model, &ComModel::commissionerChanged, 
             commissionerRightPanel, &CommissionerPanel::updatePanel);
         connect(commissionerRightPanel, &CommissionerPanel::newCommission, 
-            this, &MainWindow::newCommission);
+            this, &MainWindow::newCommissionWithCommissioner);
         connect(commissionerRightPanel, &CommissionerPanel::insertContact,
             model, &ComModel::insertContact);
 
@@ -185,6 +186,12 @@ namespace Commissionator{
         setCentralWidget(window);
     }
 
+    void MainWindow::createPopups() {
+        commissionPopup = new NewCommissionWindow(model->getCommissionerNames(), this);
+        connect(commissionPopup, &NewCommissionWindow::newCommission, 
+            model, &ComModel::insertCommission);
+    }
+
     void MainWindow::searchCommissioner(const QList<QVariant> query) {
         if (query.length() == 4)    //id, name, commissioner since, amounted owed
         model->searchCommissioners(query[1].toString(), query[2].toString(),
@@ -192,61 +199,12 @@ namespace Commissionator{
     }
 
     void MainWindow::newCommission() {
-        QDialog comDialog(this);
-        QVBoxLayout mainLayout(this);
-        QGridLayout comLayout(this);
+        commissionPopup->exec();
+    }
 
-        QFont titleFont;
-        titleFont.setPointSize(12);
-        titleFont.setBold(true);
-
-        QFont font;
-        font.setPointSize(10);
-
-        QLabel newComLabel(this);
-        newComLabel.setAlignment(Qt::AlignCenter);
-        newComLabel.setFont(titleFont);
-        newComLabel.setText("Insert Commission");
-
-        QLabel comLabel(this);
-        comLabel.setFont(font);
-        comLabel.setText("Commissioner:");
-
-        QLabel dueLabel(this);
-        dueLabel.setFont(font);
-        dueLabel.setText("Due Date:");
-
-        QLabel notesLabel(this);
-        notesLabel.setFont(font);
-        notesLabel.setText("Notes:");
-
-        QComboBox comBox(this); //just for testing purposes, going to have to eventually subclass combobox to get desired functionality
-        comBox.setModel(model->getCommissionerNames());
-        comBox.setModelColumn(1);
-        //comBox.setEnabled(false);
-
-        QDateEdit calendarEdit(this);
-        calendarEdit.setCalendarPopup(true);
-
-        QLineEdit notesEdit(this);
-
-        QPushButton submitButton(this);
-        submitButton.setText("Submit Commission");
-
-        mainLayout.addWidget(&newComLabel);
-        mainLayout.addLayout(&comLayout);
-        mainLayout.addWidget(&submitButton);
-
-        comLayout.addWidget(&comLabel, 0, 0);
-        comLayout.addWidget(&dueLabel, 1, 0);
-        comLayout.addWidget(&notesLabel, 2, 0);
-        comLayout.addWidget(&comBox, 0, 1);
-        comLayout.addWidget(&calendarEdit, 1, 1);
-        comLayout.addWidget(&notesEdit, 2, 1);
-
-        comDialog.setLayout(&mainLayout);
-
-        comDialog.exec();
+    void MainWindow::newCommissionWithCommissioner(const QVariant &commissioner) {
+        commissionPopup->setCommissioner(commissioner);
+        newCommission();
     }
 
     void MainWindow::page1() {

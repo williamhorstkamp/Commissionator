@@ -96,7 +96,7 @@ namespace Commissionator {
 
         newCommissionButton = new QPushButton(tr("New Commission"), this);
         connect(newCommissionButton, &QPushButton::clicked, 
-            this, &CommissionerPanel::newCommission);
+            this, &CommissionerPanel::newCommissionSlot);
         connect(contactInfoTable, &FixedRowTable::boxQuery, 
             this, &CommissionerPanel::insertContactSlot);
     }
@@ -105,6 +105,10 @@ namespace Commissionator {
         if (query.length() == 2)    //contact type id, entry
             emit insertContact(commissionerModel->record(0).value(0).toInt(),
             query[0].toInt(), query[1].toString());
+    }
+
+    void CommissionerPanel::newCommissionSlot() {
+        emit newCommission(commissionerModel->record(0).value(0));
     }
 
     void CommissionerPanel::updatePanel() {

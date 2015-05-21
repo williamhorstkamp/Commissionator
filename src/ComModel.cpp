@@ -156,7 +156,10 @@ namespace Commissionator {
         insertCommissionQuery->bindValue(3, 
             QDateTime::currentDateTime().toMSecsSinceEpoch());
         insertCommissionQuery->exec();
+        commissionerCommissionsModel->query().exec();
+        commissionerCommissionsModel->setQuery(commissionerCommissionsModel->query());
         searchCommissions("", "", "", "", "", "");
+        searchCommissioners("", "", "");
     }
 
     void ComModel::insertCommissioner(const QString commissionerName,
@@ -164,8 +167,9 @@ namespace Commissionator {
         insertCommissionerQuery->bindValue(0, commissionerName);
         insertCommissionerQuery->bindValue(1, commissionerNotes);
         insertCommissionerQuery->exec();
-        commissionerNamesModel->query().exec();
         searchCommissioners("", "", "");
+        commissionerNamesModel->query().exec();
+        commissionerNamesModel->setQuery(commissionerNamesModel->query());
     }
 
     void ComModel::insertContact(const int commissionerId,

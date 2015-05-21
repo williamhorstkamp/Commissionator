@@ -163,6 +163,9 @@
     <ClCompile Include="GeneratedFiles\Debug\moc_mainwindow.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_NewCommissionWindow.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_TestLayouts.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
@@ -212,6 +215,9 @@
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
     </CustomBuild>
+    <ClCompile Include="GeneratedFiles\Release\moc_NewCommissionWindow.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="GeneratedFiles\Release\moc_TestLayouts.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
@@ -227,6 +233,7 @@
     <ClCompile Include="src\FixedRowBox.cpp" />
     <ClCompile Include="src\FixedRowTableDelegate.cpp" />
     <ClCompile Include="src\FixedRowTable.cpp" />
+    <ClCompile Include="src\NewCommissionWindow.cpp" />
     <ClCompile Include="src\uimain.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -443,6 +450,18 @@
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SQL_LIB "-I.\include" "-IC:\qt\qt5.4.0\5.4\msvc2013\include" "-IC:\qt\qt5.4.0\5.4\msvc2013\include\QtWidgets" "-IC:\qt\qt5.4.0\5.4\msvc2013\include\QtGui" "-IC:\qt\qt5.4.0\5.4\msvc2013\include\QtANGLE" "-IC:\qt\qt5.4.0\5.4\msvc2013\include\QtCore" "-I.\debug" "-IC:\qt\qt5.4.0\5.4\msvc2013\mkspecs\win32-msvc2013" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtSql" "-I$(QTDIR)\include\QtWidgets"</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing ComboEditorDelegate.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG -DQT_SQL_LIB "-I.\include" "-IC:\qt\qt5.4.0\5.4\msvc2013\include" "-IC:\qt\qt5.4.0\5.4\msvc2013\include\QtWidgets" "-IC:\qt\qt5.4.0\5.4\msvc2013\include\QtGui" "-IC:\qt\qt5.4.0\5.4\msvc2013\include\QtANGLE" "-IC:\qt\qt5.4.0\5.4\msvc2013\include\QtCore" "-I.\release" "-IC:\qt\qt5.4.0\5.4\msvc2013\mkspecs\win32-msvc2013" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtSql" "-I$(QTDIR)\include\QtWidgets"</Command>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="include\NewCommissionWindow.h">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing NewCommissionWindow.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SQL_LIB "-I.\include" "-IC:\qt\qt5.4.0\5.4\msvc2013\include" "-IC:\qt\qt5.4.0\5.4\msvc2013\include\QtWidgets" "-IC:\qt\qt5.4.0\5.4\msvc2013\include\QtGui" "-IC:\qt\qt5.4.0\5.4\msvc2013\include\QtANGLE" "-IC:\qt\qt5.4.0\5.4\msvc2013\include\QtCore" "-I.\debug" "-IC:\qt\qt5.4.0\5.4\msvc2013\mkspecs\win32-msvc2013" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtSql" "-I$(QTDIR)\include\QtWidgets"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing NewCommissionWindow.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG -DQT_SQL_LIB "-I.\include" "-IC:\qt\qt5.4.0\5.4\msvc2013\include" "-IC:\qt\qt5.4.0\5.4\msvc2013\include\QtWidgets" "-IC:\qt\qt5.4.0\5.4\msvc2013\include\QtGui" "-IC:\qt\qt5.4.0\5.4\msvc2013\include\QtANGLE" "-IC:\qt\qt5.4.0\5.4\msvc2013\include\QtCore" "-I.\release" "-IC:\qt\qt5.4.0\5.4\msvc2013\mkspecs\win32-msvc2013" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtSql" "-I$(QTDIR)\include\QtWidgets"</Command>
     </CustomBuild>

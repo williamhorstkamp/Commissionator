@@ -57,7 +57,7 @@ namespace Commissionator {
          *  Signal thrown when the newCommissionButton is clicked.
          *  Is to be forwarded to MainWindow::newCommission.
          */
-        void newCommission();
+        void newCommission(const QVariant &commissioner);
 
     public slots:
         /**
@@ -76,6 +76,13 @@ namespace Commissionator {
          *  @param query - QList of Qvariants containing the query variables
          */
     void insertContactSlot(const QList<QVariant> query);
+
+        /**
+         *  Slot captures QPushButton::clicked from newCommissionButton and
+         *  emits the corresponding newCommission signal
+         *
+         */
+    void newCommissionSlot();
 
     private:
         /**
