@@ -79,6 +79,8 @@ namespace Commissionator {
             calendarEdit->dateTime(),
             notesEdit->text());
         comBox->setEnabled(true);
+        calendarEdit->setDate(QDate::currentDate());
+        notesEdit->clear();
         emit done(0);
     }
 

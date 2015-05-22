@@ -178,6 +178,10 @@ namespace Commissionator{
             this, &MainWindow::newCommissionWithCommissioner);
         connect(commissionerRightPanel, &CommissionerPanel::insertContact,
             model, &ComModel::insertContact);
+        connect(commissionerRightPanel, &CommissionerPanel::editName,
+            model, &ComModel::editCommissionerName);
+        connect(commissionerRightPanel, &CommissionerPanel::editNotes,
+            model, &ComModel::editCommissionerNotes);
 
         layout->addWidget(leftPanel);
         layout->addWidget(line);

@@ -77,6 +77,24 @@ namespace Commissionator {
         return productsModel;
     }
 
+    void ComModel::editCommissionerName(const int commissioner, const QString name) {
+        editCommissionerNameQuery->bindValue(0, name);
+        editCommissionerNameQuery->bindValue(1, commissioner);
+        editCommissionerNameQuery->exec();
+        commissionerModel->query().exec();
+        commissionerModel->setQuery(commissionerModel->query());
+        searchCommissioners("", "", "");
+    }
+
+    void ComModel::editCommissionerNotes(const int commissioner, const QString notes) {
+        editCommissionerNotesQuery->bindValue(0, notes);
+        editCommissionerNotesQuery->bindValue(1, commissioner);
+        editCommissionerNotesQuery->exec();
+        commissionerModel->query().exec();
+        commissionerModel->setQuery(commissionerModel->query());
+        searchCommissioners("", "", "");
+    }
+
     void ComModel::searchCommissioners(const QString name, const QString dateOldest,
         const QString balance) {
         commissionersModel->query().bindValue(0, "%" + name + "%");
@@ -387,10 +405,14 @@ namespace Commissionator {
         commissionerCommissionsModel->query().finish();
         commissionerContactsModel->query().finish();
         commissionerModel->query().finish();
+        commissionerNamesModel->query().finish();
         commissionersModel->query().finish();
+        commissionmodel->query().finish();
         commissionPaymentsModel->query().finish();
         commissionsModel->query().finish();
         contactTypesModel->query().exec();
+        editCommissionerNameQuery->finish();
+        editCommissionerNotesQuery->finish();
         insertCommissionerQuery->finish();
         insertCommissionQuery->finish();
         insertContactTypeQuery->finish();
@@ -403,6 +425,7 @@ namespace Commissionator {
         paymentTypesModel->query().finish();
         pieceModel->query().finish();
         piecesModel->query().finish();
+        productModel->query().finish();
         productsModel->query().finish();
     }
 
@@ -603,6 +626,12 @@ namespace Commissionator {
         contactTypesModel = new QSqlQueryModel(this);
         contactTypesModel->setQuery(QSqlQuery("SELECT id, type FROM ContactType;", sql));
         contactTypesModel->query().exec();
+        editCommissionerNameQuery = new QSqlQuery(sql);
+        editCommissionerNameQuery->prepare("UPDATE Commissioner "
+            "SET name = (?) WHERE id = (?)");
+        editCommissionerNotesQuery = new QSqlQuery(sql);
+        editCommissionerNotesQuery->prepare("UPDATE Commissioner "
+            "SET notes = (?) WHERE id = (?)");
         insertCommissionerQuery = new QSqlQuery(sql);
         insertCommissionerQuery->prepare("INSERT INTO "
             "Commissioner(name, notes) VALUES (?, ?);");

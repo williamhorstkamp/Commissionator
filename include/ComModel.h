@@ -329,6 +329,22 @@ namespace Commissionator {
         //void save(QString fileName);
 
         /**
+         *  Function edits the name of the commissioner with the given id.
+         *
+         *  @param commissioner - commissioner id
+         *  @param name - commissioner name
+         */
+        void editCommissionerName(const int commissioner, const QString name);
+
+        /**
+         *  Function edits the notes of the commissioner with the given id.
+         *
+         *  @param commissioner - commissioner id
+         *  @param nnotes - commissioner nnotes
+         */
+        void editCommissionerNotes(const int commissioner, const QString notes);
+
+        /**
          *  Slot limits the results of getCommissions() based on the inputs
          *  given in the searchQuery.
          *  
@@ -690,6 +706,8 @@ namespace Commissionator {
 		QSqlQueryModel *commissionPaymentsModel;
         QSqlQueryModel *commissionsModel;
         QSqlQueryModel *contactTypesModel;
+        QSqlQuery *editCommissionerNameQuery;
+        QSqlQuery *editCommissionerNotesQuery;
         QSqlQuery *insertCommissionerQuery;
         QSqlQuery *insertCommissionQuery;
         QSqlQuery *insertContactQuery;

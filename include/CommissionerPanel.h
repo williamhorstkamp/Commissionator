@@ -41,8 +41,20 @@ namespace Commissionator {
         ~CommissionerPanel();
 
     signals:
+        /** 
+         *  Signal emit when the commissioner's name has been edited during the
+         *  edit mode of the panel
+         */
+        void editName(const int commissioner, const QString name);
+
         /**
-         *  Signal thrown when the contactInfoTable's button is clicked.
+         *  Signal emit when the commissioner's notes has been edited during the
+         *  edit mode of the panel
+         */
+        void editNotes(const int commissioner, const QString notes);
+
+        /**
+         *  Signal emit when the contactInfoTable's button is clicked.
          *  Is a modification of FixedRowTable::boxQuery and is to be forwarded to
          *  MainWindow::insertContact
          *
@@ -54,7 +66,7 @@ namespace Commissionator {
             const QString entry);
 
         /**
-         *  Signal thrown when the newCommissionButton is clicked.
+         *  Signal emit when the newCommissionButton is clicked.
          *  Is to be forwarded to MainWindow::newCommission.
          */
         void newCommission(const QVariant &commissioner);
@@ -75,16 +87,27 @@ namespace Commissionator {
          *
          *  @param query - QList of Qvariants containing the query variables
          */
-    void insertContactSlot(const QList<QVariant> query);
+        void insertContactSlot(const QList<QVariant> query);
 
         /**
          *  Slot captures QPushButton::clicked from newCommissionButton and
          *  emits the corresponding newCommission signal
          *
          */
-    void newCommissionSlot();
+        void newCommissionSlot();
+
+        /**
+         *  Slot toggles between the panel's edit and display modes.
+         *  Has the unlockButton plugged into it.
+         */
+        void toggleEdit();
 
     private:
+        /**
+         *  Helpers function creates buttons and connections
+         */
+        void createButtons();
+
         /**
          *  Helper function creates QFonts
          */
@@ -117,6 +140,8 @@ namespace Commissionator {
         QVBoxLayout *layout;
         QSqlQueryModel *commissionerModel;
         QLabel *commissionerName;
+        QLineEdit *commissionerNameEdit;
+        QPushButton *unlockButton;
         QLabel *commissionerDate;
         QLabel *commissionerPaid;
         QLabel *contactInfoLabel;
@@ -125,7 +150,8 @@ namespace Commissionator {
         QTableView *commissionsTable;
         QPushButton *newCommissionButton;
         QLabel *notesLabel;
-        QTextEdit *notesEdit;
+        QLabel *commissionerNotes;
+        QLineEdit *commissionerNotesEdit;
         QFont *titleFont;
         QFont *standardFont;
     };

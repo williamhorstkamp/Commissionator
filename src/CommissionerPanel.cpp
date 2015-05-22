@@ -1,7 +1,8 @@
 #include <QLabel>
 #include <QSqlRecord>
 #include "FixedRowTable.h"
-#include "QHeaderView"
+#include <QHeaderView>
+#include <QLineEdit>
 #include "ComboEditorDelegate.h"
 #include "CommissionerPanel.h"
 
@@ -15,12 +16,26 @@ namespace Commissionator {
         createFonts();
         createLabels();
         createTables(contactModel, commissionsModel, contactTypesModel);
+        createButtons();
         createPanel();
     }
 
     CommissionerPanel::~CommissionerPanel() {
         delete titleFont;
         delete standardFont;
+    }
+
+    void CommissionerPanel::createButtons() {
+        unlockButton = new QPushButton(this);
+        unlockButton->setIcon(QIcon(":/NewFile.png"));
+        unlockButton->hide();
+        connect(unlockButton, &QPushButton::clicked,
+            this, &CommissionerPanel::toggleEdit);
+
+        newCommissionButton = new QPushButton(tr("New Commission"), this);
+        newCommissionButton->hide();
+        connect(newCommissionButton, &QPushButton::clicked,
+            this, &CommissionerPanel::newCommissionSlot);
     }
 
     void CommissionerPanel::createFonts() {
@@ -37,6 +52,9 @@ namespace Commissionator {
         commissionerName->setAlignment(Qt::AlignCenter);
         commissionerName->setFont(*titleFont); 
 
+        commissionerNameEdit = new QLineEdit(this);
+        commissionerNameEdit->hide();
+
         commissionerDate = new QLabel(this);
         commissionerDate->setAlignment(Qt::AlignCenter);
         commissionerDate->setFont(*standardFont);
@@ -48,22 +66,44 @@ namespace Commissionator {
         contactInfoLabel = new QLabel(tr("Contact Info:"), this);
         contactInfoLabel->setAlignment(Qt::AlignCenter);
         contactInfoLabel->setFont(*standardFont);
+        contactInfoLabel->hide();
 
         commissionsLabel = new QLabel(tr("Commissions:"), this);
         commissionsLabel->setAlignment(Qt::AlignCenter);
         commissionsLabel->setFont(*standardFont);
+        commissionsLabel->hide();
 
         notesLabel = new QLabel(tr("Notes"), this);
         notesLabel->setAlignment(Qt::AlignCenter);
         notesLabel->setFont(*standardFont);
+        notesLabel->hide();
 
-        notesEdit = new QTextEdit(this);
+        commissionerNotes = new QLabel(this);
+        notesLabel->setAlignment(Qt::AlignCenter);
+        notesLabel->setFont(*standardFont);
+
+        commissionerNotesEdit = new QLineEdit(this);
+        commissionerNotesEdit->hide();
     }
 
     void CommissionerPanel::createPanel() {
         layout = new QVBoxLayout(this);
+        QGridLayout *titleLayout = new QGridLayout(this);
 
-        layout->addWidget(commissionerName);
+        titleLayout->addWidget(commissionerName, 0, 4);
+        titleLayout->addWidget(commissionerNameEdit, 0, 4);
+        titleLayout->addWidget(unlockButton, 0, 8);
+        titleLayout->setColumnStretch(0, 1);
+        titleLayout->setColumnStretch(1, 1);
+        titleLayout->setColumnStretch(2, 1);
+        titleLayout->setColumnStretch(3, 1); 
+        titleLayout->setColumnStretch(4, 1);
+        titleLayout->setColumnStretch(5, 1);
+        titleLayout->setColumnStretch(6, 1);
+        titleLayout->setColumnStretch(7, 1);
+        titleLayout->setColumnStretch(8, 1);
+
+        layout->addLayout(titleLayout);
         layout->addWidget(commissionerDate);
         layout->addWidget(commissionerPaid);
         layout->addWidget(contactInfoLabel);
@@ -72,7 +112,8 @@ namespace Commissionator {
         layout->addWidget(commissionsTable);
         layout->addWidget(newCommissionButton);
         layout->addWidget(notesLabel);
-        layout->addWidget(notesEdit);
+        layout->addWidget(commissionerNotes);
+        layout->addWidget(commissionerNotesEdit);
         setLayout(layout);
     }
 
@@ -90,15 +131,13 @@ namespace Commissionator {
         contactInfoTable->setBoxButtonText(tr("Insert"));
         contactInfoTable->setBoxText("Enter Contact");
         contactInfoTable->setColumnCount(2);
+        contactInfoTable->hide();
+        connect(contactInfoTable, &FixedRowTable::boxQuery,
+            this, &CommissionerPanel::insertContactSlot);
 
         commissionsTable = new QTableView(this);
         commissionsTable->setModel(commissionsModel);
-
-        newCommissionButton = new QPushButton(tr("New Commission"), this);
-        connect(newCommissionButton, &QPushButton::clicked, 
-            this, &CommissionerPanel::newCommissionSlot);
-        connect(contactInfoTable, &FixedRowTable::boxQuery, 
-            this, &CommissionerPanel::insertContactSlot);
+        commissionsTable->hide();
     }
 
     void CommissionerPanel::insertContactSlot(const QList<QVariant> query) {
@@ -139,7 +178,7 @@ namespace Commissionator {
                     commissionerModel->record(0).value(3).toDouble())
                 + " owed");
         }
-        notesEdit->setText(commissionerModel->record(0).value(4).toString());
+        commissionerNotes->setText(commissionerModel->record(0).value(4).toString());
 
         for (int i = 0; i < contactInfoTable->model()->columnCount(); i++)
             contactInfoTable->horizontalHeader()->setSectionResizeMode(i, 
@@ -150,7 +189,35 @@ namespace Commissionator {
         for (int i = 0; i < commissionsTable->model()->columnCount(); i++)
             commissionsTable->horizontalHeader()->setSectionResizeMode(i, 
                 QHeaderView::Stretch);
+        unlockButton->show();
+        commissionerName->show();
+        commissionerNameEdit->hide();
+        commissionerNameEdit->setText(commissionerName->text());
+        contactInfoLabel->show();
+        contactInfoTable->show();
+        commissionsLabel->show();
+        commissionsTable->show();
+        newCommissionButton->show();
+        notesLabel->show();
+        commissionerNotes->show();
+        commissionerNotesEdit->hide();
+        commissionerNotesEdit->setText(commissionerNotes->text());
+    }
 
-        
+    void CommissionerPanel::toggleEdit() {
+        if (commissionerName->isHidden()) { 
+            if (commissionerNameEdit->text() != commissionerName->text())
+                emit editName(commissionerModel->record(0).value(0).toInt(),
+                    commissionerNameEdit->text());
+            if (commissionerNotesEdit->text() != commissionerNotes->text())
+                emit editNotes(commissionerModel->record(0).value(0).toInt(),
+                commissionerNotesEdit->text());
+            updatePanel();
+        } else {
+            commissionerName->hide();
+            commissionerNameEdit->show();
+            commissionerNotes->hide();
+            commissionerNotesEdit->show();
+        }
     }
 }
