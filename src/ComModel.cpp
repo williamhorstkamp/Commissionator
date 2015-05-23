@@ -165,6 +165,13 @@ namespace Commissionator {
         pieceModel->setQuery(pieceModel->query());  
         emit pieceChanged();
     }
+    
+    void ComModel::deleteContact(const int contact) {
+        deleteContactQuery->bindValue(0, contact);
+        deleteContactQuery->exec();
+        commissionerContactsModel->query().exec();
+        commissionerContactsModel->setQuery(commissionerContactsModel->query());
+    }
 
     void ComModel::insertCommission(const int commissionerId, 
         const QDateTime dueDate, const QString notes) {
@@ -411,6 +418,7 @@ namespace Commissionator {
         commissionPaymentsModel->query().finish();
         commissionsModel->query().finish();
         contactTypesModel->query().exec();
+        deleteContactQuery->finish();
         editCommissionerNameQuery->finish();
         editCommissionerNotesQuery->finish();
         insertCommissionerQuery->finish();
@@ -467,8 +475,9 @@ namespace Commissionator {
          */
 		commissionerContactsModel = new QSqlTableModel(this);
         QSqlQuery commissionerContactsQuery(sql);
-        commissionerContactsQuery.prepare("SELECT ContactType.type "
-            "'Contact Type', Contact.entry 'Entry' FROM Contact "
+        commissionerContactsQuery.prepare("SELECT Contact.id, "
+            "ContactType.type 'Contact Type', "
+            "Contact.entry 'Entry' FROM Contact "
             "INNER JOIN ContactType ON Contact.type = ContactType.id "
             "WHERE Contact.commissioner = (?);");
         commissionerContactsModel->setQuery(commissionerContactsQuery);
@@ -626,6 +635,9 @@ namespace Commissionator {
         contactTypesModel = new QSqlQueryModel(this);
         contactTypesModel->setQuery(QSqlQuery("SELECT id, type FROM ContactType;", sql));
         contactTypesModel->query().exec();
+        deleteContactQuery = new QSqlQuery(sql);
+        deleteContactQuery->prepare("DELETE FROM Contact WHERE "
+            "Contact.id = (?);");
         editCommissionerNameQuery = new QSqlQuery(sql);
         editCommissionerNameQuery->prepare("UPDATE Commissioner "
             "SET name = (?) WHERE id = (?)");

@@ -12,12 +12,12 @@ namespace Commissionator {
 
     void FixedRowTable::closeBoxPersistentEditor(const int column) {
         persistentEditors.removeAll(column);
-        box->closePersistentEditor(box->indexAt(QPoint(column, 0)));
+        box->closePersistentEditor(box->model()->index(0, column));
     }
 
     void FixedRowTable::openBoxPersistentEditor(const int column) {
         persistentEditors.append(column);
-        box->openPersistentEditor(box->indexAt(QPoint(column, 0)));
+        box->openPersistentEditor(box->model()->index(0, column));
     }
 
     void FixedRowTable::setBoxBottom(const bool newOnBottom) {
@@ -53,6 +53,13 @@ namespace Commissionator {
 
     void FixedRowTable::boxQuerySlot(const QList<QVariant> query) {
         emit boxQuery(query);
+        foreach(int i, persistentEditors) {
+            box->openPersistentEditor(box->indexAt(QPoint(i, 0)));
+        }
+    }
+
+    void FixedRowTable::tableButtonSlot(const QModelIndex &index) {
+        emit tableButtonClicked(index);
         foreach(int i, persistentEditors) {
             box->openPersistentEditor(box->indexAt(QPoint(i, 0)));
         }
@@ -115,7 +122,7 @@ namespace Commissionator {
         connect(box->horizontalScrollBar(), &QScrollBar::valueChanged, horizontalScrollBar(), &QScrollBar::setValue);
         connect(horizontalScrollBar(), &QScrollBar::valueChanged, box->horizontalScrollBar(), &QScrollBar::setValue);
         connect(proxy, &FixedRowProxyModel::querySignal, this, &FixedRowTable::boxQuerySlot);
-        connect(tableDelegate, &FixedRowTableDelegate::buttonClicked, this, &FixedRowTable::tableButtonClicked);
+        connect(tableDelegate, &FixedRowTableDelegate::buttonClicked, this, &FixedRowTable::tableButtonSlot);
         connect(box, &FixedRowBox::boxQuery, proxy, &FixedRowProxyModel::query);
         connect(boxButton, &QPushButton::clicked, proxy, &FixedRowProxyModel::query);
     }

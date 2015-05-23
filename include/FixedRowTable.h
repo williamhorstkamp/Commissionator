@@ -277,12 +277,19 @@ namespace Commissionator {
          */
         void tableButtonClicked(const QModelIndex &index);
 
-    public slots:
+    private slots:
         /**
          *  Slot accepts FixedRowBox::boxQuery and emits FixedRowTable::boxQuery.
          *  Also enforces open persistent editor functionality
          */
         void boxQuerySlot(const QList<QVariant> query);
+
+        /**
+         *  Slot accepts FixedRowTableDelegate::buttonClicked and emits 
+         *  FixedRowTable::tableButtonClicked.
+         *  Also enforces open persistent editor functionality
+         */
+        void tableButtonSlot(const QModelIndex &index);
     };
 }
 #endif

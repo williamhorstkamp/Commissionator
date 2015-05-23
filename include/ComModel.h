@@ -201,7 +201,7 @@ namespace Commissionator {
          *
          *  @return - pointer to QSqlQueryModel containing commissioner contacts
          *  Display order:
-         *  Contact Type, Entry
+         *  Id, Contact Type, Entry
          */
         QSqlQueryModel *getCommissionerContacts();
 
@@ -458,9 +458,9 @@ namespace Commissionator {
         /**
          *  Deletes the contact at the given index.
          *
-         *  @param index - index from the Contact table to delete
+         *  @param contact - contact id of the contact to delete
          */
-        //void deleteContact(const QModelIndex &index);
+        void deleteContact(const int contact);
 
         /**
          *  Deletes the contact type at the given index.
@@ -706,6 +706,7 @@ namespace Commissionator {
 		QSqlQueryModel *commissionPaymentsModel;
         QSqlQueryModel *commissionsModel;
         QSqlQueryModel *contactTypesModel;
+        QSqlQuery *deleteContactQuery;
         QSqlQuery *editCommissionerNameQuery;
         QSqlQuery *editCommissionerNotesQuery;
         QSqlQuery *insertCommissionerQuery;

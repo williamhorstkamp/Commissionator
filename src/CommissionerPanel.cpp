@@ -124,26 +124,37 @@ namespace Commissionator {
         ComboEditorDelegate *contactDelegate = new ComboEditorDelegate(this);
         contactDelegate->setEditorModel(contactTypesModel);
         contactDelegate->setDisplayColumn(1);
+        contactDelegate->setColumn(1);
         contactInfoTable->setBoxDelegate(contactDelegate);
         contactInfoTable->setBoxBottom(true);
         contactInfoTable->setBoxButtonActivated(true);
         contactInfoTable->setBoxButtonWidth(1.25);
         contactInfoTable->setBoxButtonText(tr("Insert"));
         contactInfoTable->setBoxText("Enter Contact");
-        contactInfoTable->setColumnCount(2);
+        contactInfoTable->setColumnCount(3);
+        contactInfoTable->setTableButtonActivated(true);
+        contactInfoTable->setTableButtonIcon(":/Delete.png");
+        contactInfoTable->setTableButtonSize(24);
         contactInfoTable->hide();
         connect(contactInfoTable, &FixedRowTable::boxQuery,
             this, &CommissionerPanel::insertContactSlot);
+        connect(contactInfoTable, &FixedRowTable::tableButtonClicked,
+            this, &CommissionerPanel::deleteContactSlot);
 
         commissionsTable = new QTableView(this);
         commissionsTable->setModel(commissionsModel);
         commissionsTable->hide();
     }
 
+    void CommissionerPanel::deleteContactSlot(const QModelIndex &index) {
+        emit deleteContact(
+            contactInfoTable->model()->index(index.row(), 0).data().toInt());
+    }
+
     void CommissionerPanel::insertContactSlot(const QList<QVariant> query) {
-        if (query.length() == 2)    //contact type id, entry
+        if (query.length() == 3)    //contact id, contact type, entry
             emit insertContact(commissionerModel->record(0).value(0).toInt(),
-            query[0].toInt(), query[1].toString());
+            query[1].toInt(), query[2].toString());
     }
 
     void CommissionerPanel::newCommissionSlot() {
@@ -184,11 +195,14 @@ namespace Commissionator {
             contactInfoTable->horizontalHeader()->setSectionResizeMode(i, 
                 QHeaderView::Stretch);
 
-        contactInfoTable->openBoxPersistentEditor(0);
+        contactInfoTable->openBoxPersistentEditor(1);
 
         for (int i = 0; i < commissionsTable->model()->columnCount(); i++)
             commissionsTable->horizontalHeader()->setSectionResizeMode(i, 
                 QHeaderView::Stretch);
+
+        contactInfoTable->setColumnHidden(0, true);
+
         unlockButton->show();
         commissionerName->show();
         commissionerNameEdit->hide();

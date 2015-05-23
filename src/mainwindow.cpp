@@ -182,6 +182,8 @@ namespace Commissionator{
             this, &MainWindow::newCommissionWithCommissioner);
         connect(commissionerRightPanel, &CommissionerPanel::insertContact,
             model, &ComModel::insertContact);
+        connect(commissionerRightPanel, &CommissionerPanel::deleteContact,
+            model, &ComModel::deleteContact);
         connect(commissionerRightPanel, &CommissionerPanel::editName,
             model, &ComModel::editCommissionerName);
         connect(commissionerRightPanel, &CommissionerPanel::editNotes,

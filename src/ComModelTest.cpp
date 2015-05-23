@@ -105,8 +105,8 @@ namespace Commissionator {
         com->insertContact(1, 1, "TestEntry");
         com->setCommissioner(com->getCommissioners()->index(0, 1));
         QAbstractItemModel *contacts = com->getCommissionerContacts();
-        QVERIFY(contacts->index(0, 0).data().toString() == "TestContactType");
-        QVERIFY(contacts->index(0, 1).data().toString() == "TestEntry");
+        QVERIFY(contacts->index(0, 1).data().toString() == "TestContactType");
+        QVERIFY(contacts->index(0, 2).data().toString() == "TestEntry");
     }
     
     void ComModelTest::commissionersTest() {  
@@ -176,17 +176,17 @@ namespace Commissionator {
         com->insertContact(1, 1, "TestEntry");
         com->insertContact(1, 1, "TestEntry2");
         com->insertContact(1, 2, "TestEntry3");
-        QVERIFY(contacts->index(0, 0).data().toString() == "TestType");
-        QVERIFY(contacts->index(0, 1).data().toString() == "TestEntry");
-        QVERIFY(contacts->index(1, 0).data().toString() == "TestType");
-        QVERIFY(contacts->index(1, 1).data().toString() == "TestEntry2");
-        QVERIFY(contacts->index(2, 0).data().toString() == "TestType2");
-        QVERIFY(contacts->index(2, 1).data().toString() == "TestEntry3");
+        QVERIFY(contacts->index(0, 1).data().toString() == "TestType");
+        QVERIFY(contacts->index(0, 2).data().toString() == "TestEntry");
+        QVERIFY(contacts->index(1, 1).data().toString() == "TestType");
+        QVERIFY(contacts->index(1, 2).data().toString() == "TestEntry2");
+        QVERIFY(contacts->index(2, 1).data().toString() == "TestType2");
+        QVERIFY(contacts->index(2, 2).data().toString() == "TestEntry3");
         com->insertCommissioner("TestCommissioner2", "");
         com->insertContact(2, 1, "TestEntry4");
         com->setCommissioner(com->getCommissioners()->index(1, 0));
-        QVERIFY(contacts->index(0, 0).data().toString() == "TestType");
-        QVERIFY(contacts->index(0, 1).data().toString() == "TestEntry4");
+        QVERIFY(contacts->index(0, 1).data().toString() == "TestType");
+        QVERIFY(contacts->index(0, 2).data().toString() == "TestEntry4");
     }
     */
     void ComModelTest::commissionerCommissionsTest() {
