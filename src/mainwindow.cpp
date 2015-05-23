@@ -132,12 +132,16 @@ namespace Commissionator{
         mainToolBar = addToolBar(tr("Main"));
         mainToolBar->addAction(openAct);
         mainToolBar->addAction(saveAct);
+        mainToolBar->setMovable(false);
         commissionerToolBar = addToolBar(tr("Commissioner"));
         commissionerToolBar->addAction(newCommissionAct);
+        commissionerToolBar->setMovable(false);
         contextToolBar = commissionerToolBar;
         panelToolBar2 = addToolBar(tr("Panel2"));
         panelToolBar2->addAction(newCommissionerAct);
+        panelToolBar2->setMovable(false);
         panelToolBar2->setVisible(false);
+        setContextMenuPolicy(Qt::NoContextMenu);
     }
 
     void MainWindow::createModel() {
