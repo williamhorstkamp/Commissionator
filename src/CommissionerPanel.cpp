@@ -53,6 +53,8 @@ namespace Commissionator {
         commissionerName->setFont(*titleFont); 
 
         commissionerNameEdit = new QLineEdit(this);
+        connect(commissionerNameEdit, &QLineEdit::returnPressed,
+            this, &CommissionerPanel::toggleEdit);
         commissionerNameEdit->hide();
 
         commissionerDate = new QLabel(this);
@@ -83,6 +85,8 @@ namespace Commissionator {
         notesLabel->setFont(*standardFont);
 
         commissionerNotesEdit = new QLineEdit(this);
+        connect(commissionerNotesEdit, &QLineEdit::returnPressed,
+            this, &CommissionerPanel::toggleEdit);
         commissionerNotesEdit->hide();
     }
 
@@ -135,20 +139,17 @@ namespace Commissionator {
         contactInfoTable->setTableButtonActivated(true);
         contactInfoTable->setTableButtonIcon(":/Delete.png");
         contactInfoTable->setTableButtonSize(24);
+        contactInfoTable->setSelectionMode(QAbstractItemView::NoSelection);
         contactInfoTable->hide();
         connect(contactInfoTable, &FixedRowTable::boxQuery,
             this, &CommissionerPanel::insertContactSlot);
         connect(contactInfoTable, &FixedRowTable::tableButtonClicked,
-            this, &CommissionerPanel::deleteContactSlot);
+            this, &CommissionerPanel::deleteContact);
 
         commissionsTable = new QTableView(this);
         commissionsTable->setModel(commissionsModel);
+        commissionsTable->setSelectionMode(QAbstractItemView::NoSelection);
         commissionsTable->hide();
-    }
-
-    void CommissionerPanel::deleteContactSlot(const QModelIndex &index) {
-        emit deleteContact(
-            contactInfoTable->model()->index(index.row(), 0).data().toInt());
     }
 
     void CommissionerPanel::insertContactSlot(const QList<QVariant> query) {
@@ -203,19 +204,39 @@ namespace Commissionator {
 
         contactInfoTable->setColumnHidden(0, true);
 
-        unlockButton->show();
-        commissionerName->show();
-        commissionerNameEdit->hide();
-        commissionerNameEdit->setText(commissionerName->text());
-        contactInfoLabel->show();
-        contactInfoTable->show();
-        commissionsLabel->show();
-        commissionsTable->show();
-        newCommissionButton->show();
-        notesLabel->show();
-        commissionerNotes->show();
-        commissionerNotesEdit->hide();
-        commissionerNotesEdit->setText(commissionerNotes->text());
+        if (commissionerModel->record(0).value(0).toInt() == 0) {
+            unlockButton->hide();
+            commissionerName->hide();
+            commissionerNameEdit->hide();
+            commissionerNameEdit->setText(commissionerName->text());
+            commissionerDate->hide();
+            commissionerPaid->hide();
+            contactInfoLabel->hide();
+            contactInfoTable->hide();
+            commissionsLabel->hide();
+            commissionsTable->hide();
+            newCommissionButton->hide();
+            notesLabel->hide();
+            commissionerNotes->hide();
+            commissionerNotesEdit->hide();
+            commissionerNotesEdit->setText(commissionerNotes->text());
+        } else {
+            unlockButton->show();
+            commissionerName->show();
+            commissionerNameEdit->hide();
+            commissionerNameEdit->setText(commissionerName->text());
+            commissionerDate->show();
+            commissionerPaid->show();
+            contactInfoLabel->show();
+            contactInfoTable->show();
+            commissionsLabel->show();
+            commissionsTable->show();
+            newCommissionButton->show();
+            notesLabel->show();
+            commissionerNotes->show();
+            commissionerNotesEdit->hide();
+            commissionerNotesEdit->setText(commissionerNotes->text());
+        }
     }
 
     void CommissionerPanel::toggleEdit() {

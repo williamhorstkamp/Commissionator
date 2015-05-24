@@ -46,18 +46,26 @@ namespace Commissionator {
          *  Signal emit when the contactInfoTable's delete button is clicked.
          *  Is a a modification of FixedRowTable::tableButtonClicked and is
          *  fowarded to 
+         *
+         *  @param index - index of the contact to delete
          */
-        void deleteContact(const int contact);
+        void deleteContact(const QModelIndex &index);
 
         /** 
          *  Signal emit when the commissioner's name has been edited during the
          *  edit mode of the panel
+         *
+         *  @param commissioner - id of the commissioner
+         *  @param name - new name for the commissioner
          */
         void editName(const int commissioner, const QString name);
 
         /**
          *  Signal emit when the commissioner's notes has been edited during the
          *  edit mode of the panel
+         *
+         *  @param commissioner - id of the commissioner
+         *  @param notes - new notes for the commissioner
          */
         void editNotes(const int commissioner, const QString notes);
 
@@ -76,6 +84,9 @@ namespace Commissionator {
         /**
          *  Signal emit when the newCommissionButton is clicked.
          *  Is to be forwarded to MainWindow::newCommission.
+         *
+         *  @param commissioner - the id of the commissioner to create
+         *      a commissioner for
          */
         void newCommission(const QVariant &commissioner);
 
@@ -89,12 +100,6 @@ namespace Commissionator {
         void updatePanel();
 
     private slots:
-        /**
-         *  Slot captures FixedRowTable::tableButtonClicked from 
-         *  contactInfoTable and emits the corresponding deleteContact signal.
-         */
-        void deleteContactSlot(const QModelIndex &index);
-
         /**
          *  Slot captures FixedRowTable::boxQuery from contactInfoTable and
          *  emits the corresponding insertContact signal.

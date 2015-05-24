@@ -176,6 +176,8 @@ namespace Commissionator{
             model, &ComModel::setCommissioner);
         connect(commissionerLeftPanel, &LeftPanel::search, 
             this, &MainWindow::searchCommissioner);
+        connect(commissionerLeftPanel, &LeftPanel::iconClicked,
+            model, &ComModel::deleteCommissioner);
         connect(model, &ComModel::commissionerChanged, 
             commissionerRightPanel, &CommissionerPanel::updatePanel);
         connect(commissionerRightPanel, &CommissionerPanel::newCommission, 

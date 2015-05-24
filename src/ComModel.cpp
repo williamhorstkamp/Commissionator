@@ -166,8 +166,15 @@ namespace Commissionator {
         emit pieceChanged();
     }
     
-    void ComModel::deleteContact(const int contact) {
-        deleteContactQuery->bindValue(0, contact);
+    void ComModel::deleteCommissioner(const QModelIndex &index) {
+        deleteCommissionerQuery->bindValue(0, getValue(index, 0));
+        deleteCommissionerQuery->exec();
+        searchCommissioners("", "", "");
+        emit commissionerChanged();
+    }
+
+    void ComModel::deleteContact(const QModelIndex &index) {
+        deleteContactQuery->bindValue(0, getValue(index, 0));
         deleteContactQuery->exec();
         commissionerContactsModel->query().exec();
         commissionerContactsModel->setQuery(commissionerContactsModel->query());
@@ -405,7 +412,21 @@ namespace Commissionator {
             "FOREIGN KEY(commission) REFERENCES Commission(id), "
             "FOREIGN KEY(method) REFERENCES PaymentType(id)"
             ");");
-        //needs to add generics (product, commissioner, ?)
+        sql.exec("INSERT INTO Commissioner(id, name, notes) "
+            "VALUES(0, 'Commissioner Deleted', '');");
+        sql.exec("CREATE TRIGGER IF NOT EXISTS deleteCommissionerContacts "
+            "AFTER DELETE ON Commissioner "
+            "FOR EACH ROW "
+            "BEGIN "
+            "DELETE FROM Contact WHERE commissioner = OLD.id; "
+            "END");
+        sql.exec("CREATE TRIGGER IF NOT EXISTS updateCommissionerCommissions "
+            "AFTER DELETE ON Commissioner "
+            "FOR EACH ROW "
+            "BEGIN "
+            "UPDATE Commission SET commissioner = 0 "
+            "WHERE commissioner = OLD.id; "
+            "END");
     }
 
     void ComModel::cleanupQueries() {
@@ -591,7 +612,7 @@ namespace Commissionator {
             "END AS AmountedOwed "
             "FROM Commissioner C "
             "LEFT JOIN Commission ON C.id = Commission.commissioner "
-            "WHERE name LIKE (?) "
+            "WHERE name LIKE (?) AND C.id IS NOT 0 "
             "GROUP BY C.id HAVING CommissionerSince like (?) "
             "AND AmountedOwed like (?);");
         commissionersModel->setQuery(commissionersQuery);
@@ -635,6 +656,9 @@ namespace Commissionator {
         contactTypesModel = new QSqlQueryModel(this);
         contactTypesModel->setQuery(QSqlQuery("SELECT id, type FROM ContactType;", sql));
         contactTypesModel->query().exec();
+        deleteCommissionerQuery = new QSqlQuery(sql);
+        deleteCommissionerQuery->prepare("DELETE FROM Commissioner WHERE "
+            "Commissioner.id = (?);");
         deleteContactQuery = new QSqlQuery(sql);
         deleteContactQuery->prepare("DELETE FROM Contact WHERE "
             "Contact.id = (?);");

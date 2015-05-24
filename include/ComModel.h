@@ -451,28 +451,28 @@ namespace Commissionator {
         /**
          *  Deletes the commissioner at the given index.
          *
-         *  @param index - index from the Commissioner table to delete
+         *  @param commissioner - index of the Commissioner to delete
          */
-        //void deleteCommissioner(const QModelIndex &index);
+        void deleteCommissioner(const QModelIndex &index);
 
         /**
          *  Deletes the contact at the given index.
          *
          *  @param contact - contact id of the contact to delete
          */
-        void deleteContact(const int contact);
+        void deleteContact(const QModelIndex &index);
 
         /**
          *  Deletes the contact type at the given index.
          *
-         *  @param index - index from the Contact Type table to delete
+         *  @param index - index of the Contact Type to delete
          */
         //void deleteContactType(const QModelIndex &index);
 
         /**
          *  Deletes the piece reference at the given index.
          *
-         *  @param index - index from the reference table to delete
+         *  @param index - index of the reference to delete
          */
         //void deletePieceReference(const QModelIndex &index);
 
@@ -480,7 +480,7 @@ namespace Commissionator {
          *  Deletes the product at the given index. Product is hidden, not
          *  actually deleted, so old records aren't broken.
          *
-         *  @param index - index from the product table to delete
+         *  @param index - index of the product to delete
          */
         //void deleteProduct(const QModelIndex &index);
 
@@ -488,35 +488,35 @@ namespace Commissionator {
          *  Deletes the product option at the given index. Option is hidden, not
          *  actually deleted, so old records aren't broken.
          *
-         *  @param index - index from the product option table to delete
+         *  @param index - index of the product option to delete
          */
         //void deleteProductOption(const QModelIndex &index);
 
         /**
          *  Deletes the sale at the given index.
          *
-         *  @param index - index from the sale table to delete
+         *  @param index - index of the sale to delete
          */
         //void deleteSale(const QModelIndex &index);
 
         /**
          *  Deletes the deal at the given index.
          *
-         *  @param index - index from the sale deal table to delete
+         *  @param index - index of the sale deal to delete
          */
         //void deleteDeal(const QModelIndex &index);
 
         /**
          *  Deletes the piece at the given index.
          *
-         *  @param index - index from the piece table to delete
+         *  @param index - index of the piece to delete
          */
         //void deletePiece(const QModelIndex &index);
 
         /**
          *  Deletes the payment at the given index.
          *
-         *  @param index - index from the payment table to delete
+         *  @param index - index of the payment to delete
          */
         //void deletePayment(const QModelIndex &index);
 
@@ -524,7 +524,7 @@ namespace Commissionator {
          *  Deletes the commission at the given index. Pieces are reassigned
          *  to a generic commission.
          *
-         *  @param index - index from the commission table to delete
+         *  @param index - index of the commission to delete
          */
         //void deleteCommission(const QModelIndex &index);
 
@@ -532,7 +532,7 @@ namespace Commissionator {
          *  Deletes the payment type at the given index. Payment type is hidden,
          *  not actually deleted, so as to not break old records.
          *
-         *  @param index - index from the sale table to delete
+         *  @param index - index of the sale to delete
          */
         //void deletePaymentType(const QModelIndex &index);
 
@@ -706,6 +706,7 @@ namespace Commissionator {
 		QSqlQueryModel *commissionPaymentsModel;
         QSqlQueryModel *commissionsModel;
         QSqlQueryModel *contactTypesModel;
+        QSqlQuery *deleteCommissionerQuery;
         QSqlQuery *deleteContactQuery;
         QSqlQuery *editCommissionerNameQuery;
         QSqlQuery *editCommissionerNotesQuery;
