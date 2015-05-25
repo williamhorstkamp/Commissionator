@@ -75,14 +75,15 @@ namespace Commissionator {
         commissionsLabel->setFont(*standardFont);
         commissionsLabel->hide();
 
-        notesLabel = new QLabel(tr("Notes"), this);
+        notesLabel = new QLabel(tr("Notes:"), this);
         notesLabel->setAlignment(Qt::AlignCenter);
         notesLabel->setFont(*standardFont);
         notesLabel->hide();
 
         commissionerNotes = new QLabel(this);
-        notesLabel->setAlignment(Qt::AlignCenter);
-        notesLabel->setFont(*standardFont);
+        commissionerNotes->setAlignment(Qt::AlignCenter);
+        commissionerNotes->setFont(*standardFont);
+        commissionerNotes->setWordWrap(true);
 
         commissionerNotesEdit = new QLineEdit(this);
         connect(commissionerNotesEdit, &QLineEdit::returnPressed,
