@@ -57,7 +57,8 @@ namespace Commissionator {
 
         submitButton = new QPushButton(this);
         submitButton->setText("Submit Commission");
-        connect(submitButton, &QPushButton::clicked, this, &NewCommissionWindow::newCommissionSlot);
+        connect(submitButton, &QPushButton::clicked, 
+            this, &NewCommissionWindow::newCommissionSlot);
 
         mainLayout->addWidget(newComLabel);
         mainLayout->addLayout(comLayout);

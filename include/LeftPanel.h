@@ -30,10 +30,6 @@ namespace Commissionator {
         LeftPanel(QString title, QSqlQueryModel *model, QList<int> hiddenColumns, QWidget *parent = nullptr);
 
     private:
-        QVBoxLayout *layout;
-        FixedRowTable *view;
-        QLabel *titleLabel;
-
         /**
         *  Initializes the panels title label based on QString input
         *
@@ -51,6 +47,10 @@ namespace Commissionator {
         *      written and tested.
         */
         void createTable(QSqlQueryModel *model, QList<int> hiddenColumns);
+
+        QVBoxLayout *layout;
+        FixedRowTable *view;
+        QLabel *titleLabel;
 
     signals:
         /**

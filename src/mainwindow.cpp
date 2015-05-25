@@ -85,6 +85,7 @@ namespace Commissionator{
         
         newCommissionerAct = new QAction(QIcon(":/CommissionerPlus.png"), tr("&Commissioner"), this);
         newCommissionerAct->setStatusTip(tr("Create a new commissioner"));
+        connect(newCommissionerAct, &QAction::triggered, this, &MainWindow::newCommissioner);
 
         newCommissionAct = new QAction(QIcon(":/CommissionPlus.png"), tr("&Commission"), this);
         newCommissionAct->setStatusTip(tr("Create a new commission"));
@@ -202,6 +203,9 @@ namespace Commissionator{
         commissionPopup = new NewCommissionWindow(model->getCommissionerNames(), this);
         connect(commissionPopup, &NewCommissionWindow::newCommission, 
             model, &ComModel::insertCommission);
+        commissionerPopup = new NewCommissionerWindow(this);
+        connect(commissionerPopup, &NewCommissionerWindow::newCommissioner,
+            model, &ComModel::insertCommissioner);
     }
 
     void MainWindow::searchCommissioner(const QList<QVariant> query) {
@@ -212,6 +216,10 @@ namespace Commissionator{
 
     void MainWindow::newCommission() {
         commissionPopup->exec();
+    }
+
+    void MainWindow::newCommissioner() {
+        commissionerPopup->exec();
     }
 
     void MainWindow::newCommissionWithCommissioner(const QVariant &commissioner) {

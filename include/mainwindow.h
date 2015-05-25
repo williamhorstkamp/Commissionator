@@ -6,6 +6,7 @@
 #include "TestLayouts.h"
 #include "LeftPanel.h"
 #include "NewCommissionWindow.h"
+#include "NewCommissionerWindow.h"
 #include "CommissionerPanel.h"
 #include "ComModel.h"
 
@@ -26,6 +27,14 @@ namespace Commissionator {
          *  is created or not, the models may be refreshed.
          */
         void newCommission();
+
+        /**
+         *  Function opens the dialog window to create a new commissioner.
+         *  Takes control away from the MainWindow for the duration of the
+         *  new commissioner window's lifetime. Depending on whether a commissioner
+         *  is created or not, the models may be refreshed.
+         */
+        void newCommissioner();
 
         /**
          *  Function opens the dialog window to create a new commission.
@@ -107,6 +116,7 @@ namespace Commissionator {
         RightPanel2 *rp2;
 
         NewCommissionWindow *commissionPopup;
+        NewCommissionerWindow *commissionerPopup;
 
         QMenu *fileMenu;
         QMenu *newMenu;

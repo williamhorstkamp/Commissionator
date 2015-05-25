@@ -35,7 +35,7 @@ namespace Commissionator {
         /**
          *  Overrides default function and makes it so the combobox is enabled.
          *
-         *  @param e - QCloseEvent to handle by the overriden function
+         *  @param e - QCloseEvent to handle by the overridden function
          */
         virtual void closeEvent(QCloseEvent *e);
 
@@ -62,8 +62,8 @@ namespace Commissionator {
 
     private slots:
         /**
-         *  Function intercepts the QPushButton::clicked signal from the insert
-         *  commissin button and emits the newCommission signal.
+         *  Slot intercepts the QPushButton::clicked signal from the insert
+         *  commission button and emits the newCommission signal.
          */
         void newCommissionSlot();
 
