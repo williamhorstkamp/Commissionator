@@ -558,7 +558,8 @@ namespace Commissionator {
         commissionerModel->setQuery(commissionerQuery);
         commissionerNamesModel = new QSqlQueryModel(this);
         QSqlQuery commissionerNamesQuery("SELECT Commissioner.id, "
-            "Commissioner.name FROM Commissioner", sql);
+            "Commissioner.name FROM Commissioner "
+            "WHERE Commissioner.id IS NOT 0", sql);
         commissionerNamesQuery.exec();
         commissionerNamesModel->setQuery(commissionerNamesQuery);
         /**
