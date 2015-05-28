@@ -77,6 +77,10 @@ namespace Commissionator {
         return productsModel;
     }
 
+    QSqlQueryModel *ComModel::getProductNames() {
+        return productNamesModel;
+    }
+
     void ComModel::editCommissionerName(const int commissioner, const QString name) {
         editCommissionerNameQuery->bindValue(0, name);
         editCommissionerNameQuery->bindValue(1, commissioner);
@@ -454,7 +458,7 @@ namespace Commissionator {
         paymentTypesModel->query().finish();
         pieceModel->query().finish();
         piecesModel->query().finish();
-        productModel->query().finish();
+        productNamesModel->query().finish();
         productsModel->query().finish();
     }
 
@@ -731,6 +735,11 @@ namespace Commissionator {
             "'localtime'), 0) LIKE (?);");
         piecesModel->setQuery(piecesQuery);
         searchPieces("", "", "", "");
+        productNamesModel = new QSqlQueryModel(this);
+        QSqlQuery productNamesQuery("SELECT Product.id, Product.name "
+            "FROM Product;", sql);
+        productNamesQuery.exec();
+        productNamesModel->setQuery(productNamesQuery);
         productsModel = new QSqlQueryModel(this);
         QSqlQuery productsQuery(sql);
         productsQuery.prepare("SELECT Product.id, Product.name, "

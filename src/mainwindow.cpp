@@ -200,7 +200,10 @@ namespace Commissionator{
     }
 
     void MainWindow::createPopups() {
-        commissionPopup = new NewCommissionWindow(model->getCommissionerNames(), this);
+        commissionPopup = new NewCommissionWindow(
+            model->getCommissionerNames(),
+            model->getProductNames(),
+            this);
         connect(commissionPopup, &NewCommissionWindow::newCommission, 
             model, &ComModel::insertCommission);
         commissionerPopup = new NewCommissionerWindow(this);

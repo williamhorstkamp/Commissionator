@@ -8,6 +8,7 @@
 #include <QPushButton>
 #include <QSqlQueryModel>
 #include <QDataWidgetMapper>
+#include "ComboEditorDelegate.h"
 #include "FixedRowTable.h"
 
 namespace Commissionator {
@@ -105,6 +106,8 @@ namespace Commissionator {
          *  emits the corresponding insertContact signal.
          *
          *  @param query - QList of Qvariants containing the query variables
+         *  Data order:
+         *  Commissioner Id, Contact Type, Entry
          */
         void insertContactSlot(const QList<QVariant> query);
 
@@ -165,6 +168,7 @@ namespace Commissionator {
         QLabel *commissionerPaid;
         QLabel *contactInfoLabel;
         FixedRowTable *contactInfoTable;
+        ComboEditorDelegate *contactDelegate;
         QLabel *commissionsLabel;
         QTableView *commissionsTable;
         QPushButton *newCommissionButton;

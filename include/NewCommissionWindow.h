@@ -8,6 +8,9 @@
 #include <QDateEdit>
 #include <QLineEdit>
 #include <QPushButton>
+#include <QStandardItemModel>
+#include "ComboEditorDelegate.h"
+#include "FixedRowTable.h"
 
 namespace Commissionator {
 
@@ -22,9 +25,12 @@ namespace Commissionator {
          *
          *  @param namesModel - model containing the commissioner names
          *  First column should be the commissioner id, second should be name
+         *  @param productsModel - model containing the product names
+         *  First column should be the product id, second should be name
+         *  @param parent - pointer to parent widget
          */
-        NewCommissionWindow(QAbstractItemModel *namesModel, 
-            QWidget *parent = nullptr);
+        NewCommissionWindow(QAbstractItemModel *namesModel,
+            QAbstractItemModel *productsModel, QWidget *parent = nullptr);
 
         /**
          *  Destructor cleans up the NewCommissionWindow
@@ -67,14 +73,31 @@ namespace Commissionator {
          */
         void newCommissionSlot();
 
+        /**
+         *  Slot adds a new piece to the newPieceView based on given parameters
+         *
+         *  @param query - QList of Qvariants containing the query variables
+         *  Data order:
+         *  Product Id, Product Name, Piece Name, Piece Notes
+         */
+        void newPieceSlot(const QList<QVariant> query);
+
     private:
+        /**
+         *  Function resets the window to default settings.
+         */
+        void clear();
+
         /**
          *  Private function initializes the window with the given names model
          *
          *  @param namesModel - model containing the commissioner names
          *  First column should be the commissioner id, second should be name
+         *  @param productsModel - model containing the product names
+         *  First column should be the product id, second should be name
          */
-        void init(QAbstractItemModel *namesModel);
+        void init(QAbstractItemModel *namesModel,
+            QAbstractItemModel *productsModel);
 
         QVBoxLayout *mainLayout; 
         QGridLayout *comLayout;
@@ -84,10 +107,15 @@ namespace Commissionator {
         QLabel *comLabel;
         QLabel *dueLabel;
         QLabel *notesLabel;
+        QLabel *pieceLabel;
         QComboBox *comBox;
         QDateEdit *calendarEdit;
         QLineEdit *notesEdit;
         QPushButton *submitButton;
+        QAbstractItemModel *pieceProductsModel;
+        QStandardItemModel *newPieceModel;
+        ComboEditorDelegate *pieceTypeDelegate;
+        FixedRowTable *newPieceView;
     };
 
 }

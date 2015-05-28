@@ -160,6 +160,16 @@ namespace Commissionator {
         QSqlQueryModel *getProduct();
 
         /**
+        *  Function returns a pointer to a model containing data for the
+        *  product combobox to be displayed on the new commission dialog.
+        *
+        *  @return - pointer to QSqlQueryModel containing the product names
+        *  Display order:
+        *  Commissioner Id, Name
+        */
+        QSqlQueryModel *getProductNames();
+
+        /**
          *  Function returns a QDataWidgetMapper that can be connected to
          *  multiple views. The current record can be set by
          *  setSale(const QModelIndex &)
@@ -722,7 +732,7 @@ namespace Commissionator {
         QSqlQueryModel *paymentTypesModel;
         QSqlQueryModel *pieceModel;
         QSqlQueryModel *piecesModel;
-        QSqlQueryModel *productModel;
+        QSqlQueryModel *productNamesModel;
         QSqlQueryModel *productsModel;
     };
 }

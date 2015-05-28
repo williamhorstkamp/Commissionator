@@ -3,7 +3,6 @@
 #include "FixedRowTable.h"
 #include <QHeaderView>
 #include <QLineEdit>
-#include "ComboEditorDelegate.h"
 #include "CommissionerPanel.h"
 
 namespace Commissionator {
@@ -126,7 +125,7 @@ namespace Commissionator {
         QSqlQueryModel *commissionsModel, 
         QSqlQueryModel *contactTypesModel) {
         contactInfoTable = new FixedRowTable(contactModel, this);
-        ComboEditorDelegate *contactDelegate = new ComboEditorDelegate(this);
+        contactDelegate = new ComboEditorDelegate(this);
         contactDelegate->setEditorModel(contactTypesModel);
         contactDelegate->setDisplayColumn(1);
         contactDelegate->setColumn(1);
