@@ -75,7 +75,7 @@ namespace Commissionator {
         newPieceModel = new QStandardItemModel(this);
         newPieceModel->setHorizontalHeaderLabels(QStringList() 
             << "Product Id"
-            << "Product Type"
+            << "Product"
             << "Name"
             << "Notes");
 
@@ -85,7 +85,7 @@ namespace Commissionator {
         pieceTypeDelegate->setDisplayColumn(1);
         pieceTypeDelegate->setColumn(1);
         newPieceView->setBoxDelegate(pieceTypeDelegate);
-        newPieceView->setBoxBottom(true);
+        //newPieceView->setBoxBottom(true);
         newPieceView->setBoxButtonActivated(true);
         newPieceView->setBoxButtonWidth(1.25);
         newPieceView->setBoxButtonText(tr("Insert"));
@@ -98,6 +98,8 @@ namespace Commissionator {
         newPieceView->setColumnHidden(0, true);
         connect(newPieceView, &FixedRowTable::boxQuery,
             this, &NewCommissionWindow::newPieceSlot);
+        connect(newPieceView, &FixedRowTable::tableButtonClicked,
+            this, &NewCommissionWindow::deletePieceSlot);
 
         for (int i = 0; i < newPieceView->model()->columnCount(); i++)
             newPieceView->horizontalHeader()->setSectionResizeMode(i,
@@ -124,6 +126,10 @@ namespace Commissionator {
         setLayout(mainLayout);
     }
 
+    void NewCommissionWindow::deletePieceSlot(const QModelIndex &index) {
+        newPieceModel->removeRow(index.row());
+    }
+
     void NewCommissionWindow::newCommissionSlot() {
         emit newCommission(
             comBox->model()->index(comBox->currentIndex(), 0).data().toInt(),
@@ -135,18 +141,28 @@ namespace Commissionator {
 
     void NewCommissionWindow::newPieceSlot(const QList<QVariant> query) {
         if (query.length() == 4) {  //Product Id, Product Id (as name), Piece Name, Piece Notes
-            int rowCount = newPieceModel->rowCount() + 1;
-            newPieceModel->setItem(rowCount, 0, 
+            int rowCount = newPieceModel->rowCount();
+            newPieceModel->setItem(rowCount, 0,
                 new QStandardItem(query[1].toString()));
-            newPieceModel->setItem(rowCount, 1, 
+            newPieceModel->setItem(rowCount, 1,
                 new QStandardItem(pieceProductsModel->index(
                 pieceProductsModel->match(
                     pieceProductsModel->index(0, 0),
                     Qt::EditRole,
                     query[1])[0].data().toInt(), 1).data().toString()));
             newPieceModel->setItem(rowCount, 2, new QStandardItem(query[2].toString()));
-            newPieceModel->setItem(rowCount, 3, new QStandardItem(query[3].toString()));
-            newPieceView->setModel(newPieceModel);
+            newPieceModel->setItem(rowCount, 3, new QStandardItem(query[3].toString())); 
+            /*QList<QStandardItem *> row;
+            row << new QStandardItem(query[1].toString());
+            row << new QStandardItem(pieceProductsModel->index(
+                pieceProductsModel->match(
+                pieceProductsModel->index(0, 0),
+                Qt::DisplayRole,
+                query[1])[0].data().toInt(), 1).data().toString());
+            row << new QStandardItem(query[2].toString());
+            row << new QStandardItem(query[3].toString());
+            newPieceModel->insertRow(0, row);*/
+            //newPieceView->setModel(newPieceModel);
         }
     }
 

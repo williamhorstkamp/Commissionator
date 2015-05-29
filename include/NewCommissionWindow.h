@@ -67,6 +67,13 @@ namespace Commissionator {
         void setCommissioner(const QVariant &commissioner);
 
     private slots:
+        /** 
+         *  Slot deletes the piece at the given index.
+         *
+         *  @param index - index of the piece to delete
+         */
+        void deletePieceSlot(const QModelIndex &index);
+
         /**
          *  Slot intercepts the QPushButton::clicked signal from the insert
          *  commission button and emits the newCommission signal.

@@ -153,7 +153,6 @@ namespace Commissionator {
     }
     
     void FixedRowTable::createTable() {
-        
         setModel(proxy);
         setFocusPolicy(Qt::StrongFocus);
         setHorizontalScrollMode(ScrollPerPixel);
