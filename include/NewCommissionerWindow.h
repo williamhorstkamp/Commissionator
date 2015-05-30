@@ -1,14 +1,14 @@
 #ifndef NEWCOMMISSIONERWINDOW_H
 #define NEWCOMMISSIONERWINDOW_H
 
-#include <QDialog>
+#include "BaseNewWindow.h"
 #include <QLabel>
 #include <QLineEdit>
 #include <QVBoxLayout>
 
 namespace Commissionator {
 
-    class NewCommissionerWindow : public QDialog {
+    class NewCommissionerWindow : public BaseNewWindow {
 
         Q_OBJECT
 
@@ -20,11 +20,6 @@ namespace Commissionator {
          */
         NewCommissionerWindow(QWidget *parent = nullptr);
 
-        /**
-         *  Destructor cleans up NewCommissionerWindow
-         */
-        ~NewCommissionerWindow();
-
     signals:
         /**
          *  Signal contains commissioner name and notes for the new 
@@ -35,24 +30,22 @@ namespace Commissionator {
          */
         void newCommissioner(const QString name, const QString notes);
 
-    private slots:
+    protected slots:
         /** 
          *  Slot intercepts the QPushButton::clicked signal from the insert
          *  commissioner button and emits the newCommissioner signal.
          */
-        void newCommissionerSlot();
+        virtual void newItemSlot();
 
     private:
+
         /**
-         *  Private function initializes the window
-         *
+         *  Function resets the window to default settings.
          */
-        void init();
+        virtual void clear();
 
         QVBoxLayout *mainLayout;
         QGridLayout *comLayout;
-        QFont *titleFont;
-        QFont *font;
         QLabel *newComLabel;
         QLabel *nameLabel;
         QLabel *notesLabel;

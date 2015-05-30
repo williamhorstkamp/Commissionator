@@ -1,7 +1,7 @@
 #ifndef NEWCOMMISSIONWINDOW_H
 #define NEWCOMMISSIONWINDOW_H
 
-#include <QDialog>
+#include "BaseNewWindow.h"
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QComboBox>
@@ -14,7 +14,7 @@
 
 namespace Commissionator {
 
-    class NewCommissionWindow : public QDialog {
+    class NewCommissionWindow : public BaseNewWindow {
 
         Q_OBJECT
 
@@ -31,19 +31,6 @@ namespace Commissionator {
          */
         NewCommissionWindow(QAbstractItemModel *namesModel,
             QAbstractItemModel *productsModel, QWidget *parent = nullptr);
-
-        /**
-         *  Destructor cleans up the NewCommissionWindow
-         */
-        ~NewCommissionWindow();
-
-    protected:
-        /**
-         *  Overrides default function and makes it so the combobox is enabled.
-         *
-         *  @param e - QCloseEvent to handle by the overridden function
-         */
-        virtual void closeEvent(QCloseEvent *e);
 
     signals:
         /**
@@ -66,6 +53,13 @@ namespace Commissionator {
          */
         void setCommissioner(const QVariant &commissioner);
 
+    protected slots:
+        /**
+         *  Slot intercepts the QPushButton::clicked signal from the insert
+         *  commission button and emits the newCommission signal.
+         */
+        virtual void newItemSlot();
+
     private slots:
         /** 
          *  Slot deletes the piece at the given index.
@@ -73,12 +67,6 @@ namespace Commissionator {
          *  @param index - index of the piece to delete
          */
         void deletePieceSlot(const QModelIndex &index);
-
-        /**
-         *  Slot intercepts the QPushButton::clicked signal from the insert
-         *  commission button and emits the newCommission signal.
-         */
-        void newCommissionSlot();
 
         /**
          *  Slot adds a new piece to the newPieceView based on given parameters
@@ -95,21 +83,8 @@ namespace Commissionator {
          */
         void clear();
 
-        /**
-         *  Private function initializes the window with the given names model
-         *
-         *  @param namesModel - model containing the commissioner names
-         *  First column should be the commissioner id, second should be name
-         *  @param productsModel - model containing the product names
-         *  First column should be the product id, second should be name
-         */
-        void init(QAbstractItemModel *namesModel,
-            QAbstractItemModel *productsModel);
-
         QVBoxLayout *mainLayout; 
         QGridLayout *comLayout;
-        QFont *titleFont;
-        QFont *font;
         QLabel *newComLabel;
         QLabel *comLabel;
         QLabel *dueLabel;

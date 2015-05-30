@@ -3,25 +3,10 @@
 
 namespace Commissionator {
     
-    NewCommissionerWindow::NewCommissionerWindow(QWidget *parent) : QDialog(parent) {
-        init();
-    }
-
-    NewCommissionerWindow::~NewCommissionerWindow() {
-        delete titleFont;
-        delete font;
-    }
-
-    void NewCommissionerWindow::init() {
+    NewCommissionerWindow::NewCommissionerWindow(QWidget *parent) :
+        BaseNewWindow(parent) {
         mainLayout = new QVBoxLayout(this);
         comLayout = new QGridLayout(this);
-
-        titleFont = new QFont();
-        titleFont->setPointSize(12);
-        titleFont->setBold(true);
-
-        font = new QFont();
-        font->setPointSize(10);
 
         newComLabel = new QLabel(this);
         newComLabel->setAlignment(Qt::AlignCenter);
@@ -42,8 +27,8 @@ namespace Commissionator {
 
         submitButton = new QPushButton(this);
         submitButton->setText("Submit Commissioner");
-        connect(submitButton, &QPushButton::clicked, 
-            this, &NewCommissionerWindow::newCommissionerSlot);
+        connect(submitButton, &QPushButton::clicked,
+            this, &NewCommissionerWindow::newItemSlot);
 
         mainLayout->addWidget(newComLabel);
         mainLayout->addLayout(comLayout);
@@ -55,10 +40,14 @@ namespace Commissionator {
         comLayout->addWidget(notesEdit, 1, 1);
     }
 
-    void NewCommissionerWindow::newCommissionerSlot() {
-        emit newCommissioner(nameEdit->text(), notesEdit->text());
+    void NewCommissionerWindow::clear() {
         nameEdit->clear();
         notesEdit->clear();
-        emit done(0);
+    }
+
+    void NewCommissionerWindow::newItemSlot() {
+        if (nameEdit->text() != "")
+            emit newCommissioner(nameEdit->text(), notesEdit->text());
+        BaseNewWindow::newItemSlot();
     }
 }

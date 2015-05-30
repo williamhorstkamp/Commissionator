@@ -4,41 +4,12 @@
 namespace Commissionator {
 
     NewCommissionWindow::NewCommissionWindow(QAbstractItemModel *namesModel,
-        QAbstractItemModel *productsModel, QWidget *parent) : QDialog(parent) {
-        init(namesModel, productsModel);
-    }
-
-    NewCommissionWindow::~NewCommissionWindow() {
-        delete titleFont;
-        delete font;
-    }
-
-    void NewCommissionWindow::closeEvent(QCloseEvent *e) {
-        clear();
-        QDialog::closeEvent(e);
-    }
-
-    void NewCommissionWindow::clear() {
-        comBox->setEnabled(true);
-        comBox->setCurrentIndex(-1);
-        calendarEdit->setDate(QDate::currentDate());
-        notesEdit->setText("");
-        newPieceModel->removeRows(0, newPieceModel->rowCount());
-    }
-
-    void NewCommissionWindow::init(QAbstractItemModel *namesModel,
-        QAbstractItemModel *productsModel) {
+        QAbstractItemModel *productsModel, QWidget *parent) :
+        BaseNewWindow(parent) {
         pieceProductsModel = productsModel;
 
         mainLayout = new QVBoxLayout(this);
         comLayout = new QGridLayout(this);
-
-        titleFont = new QFont();
-        titleFont->setPointSize(12);
-        titleFont->setBold(true);
-
-        font = new QFont();
-        font->setPointSize(10);
 
         newComLabel = new QLabel(this);
         newComLabel->setAlignment(Qt::AlignCenter);
@@ -65,7 +36,7 @@ namespace Commissionator {
         comBox = new QComboBox(this); //just for testing purposes, going to have to eventually subclass combobox to get desired functionality
         comBox->setModel(namesModel);
         comBox->setModelColumn(1);
-        
+
         calendarEdit = new QDateEdit(this);
         calendarEdit->setDate(QDate::currentDate());
         calendarEdit->setCalendarPopup(true);
@@ -73,7 +44,7 @@ namespace Commissionator {
         notesEdit = new QLineEdit(this);
 
         newPieceModel = new QStandardItemModel(this);
-        newPieceModel->setHorizontalHeaderLabels(QStringList() 
+        newPieceModel->setHorizontalHeaderLabels(QStringList()
             << "Product Id"
             << "Product"
             << "Name"
@@ -107,8 +78,8 @@ namespace Commissionator {
 
         submitButton = new QPushButton(this);
         submitButton->setText("Submit Commission");
-        connect(submitButton, &QPushButton::clicked, 
-            this, &NewCommissionWindow::newCommissionSlot);
+        connect(submitButton, &QPushButton::clicked,
+            this, &NewCommissionWindow::newItemSlot);
 
         mainLayout->addWidget(newComLabel);
         mainLayout->addLayout(comLayout);
@@ -126,17 +97,24 @@ namespace Commissionator {
         setLayout(mainLayout);
     }
 
+    void NewCommissionWindow::clear() {
+        comBox->setEnabled(true);
+        comBox->setCurrentIndex(-1);
+        calendarEdit->setDate(QDate::currentDate());
+        notesEdit->setText("");
+        newPieceModel->removeRows(0, newPieceModel->rowCount());
+    }
+
     void NewCommissionWindow::deletePieceSlot(const QModelIndex &index) {
         newPieceModel->removeRow(index.row());
     }
 
-    void NewCommissionWindow::newCommissionSlot() {
+    void NewCommissionWindow::newItemSlot() {
         emit newCommission(
             comBox->model()->index(comBox->currentIndex(), 0).data().toInt(),
             calendarEdit->dateTime(),
             notesEdit->text());
-        clear();
-        emit done(0);
+        BaseNewWindow::newItemSlot();
     }
 
     void NewCommissionWindow::newPieceSlot(const QList<QVariant> query) {
