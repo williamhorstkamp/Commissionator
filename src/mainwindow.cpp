@@ -219,6 +219,7 @@ namespace Commissionator{
             model->insertPiece(id, std::get<0>(pieces[i]),
             std::get<1>(pieces[i]), std::get<2>(pieces[i]),
             std::get<3>(pieces[i]));
+        commissionerRightPanel->updatePanel();
     }
 
     void MainWindow::newCommission() {
