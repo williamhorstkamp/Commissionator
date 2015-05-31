@@ -184,7 +184,7 @@ namespace Commissionator {
         commissionerContactsModel->setQuery(commissionerContactsModel->query());
     }
 
-    void ComModel::insertCommission(const int commissionerId, 
+    int ComModel::insertCommission(const int commissionerId, 
         const QDateTime dueDate, const QString notes) {
         insertCommissionQuery->bindValue(0, commissionerId);
         insertCommissionQuery->bindValue(1, dueDate.toMSecsSinceEpoch());
@@ -192,10 +192,12 @@ namespace Commissionator {
         insertCommissionQuery->bindValue(3, 
             QDateTime::currentDateTime().toMSecsSinceEpoch());
         insertCommissionQuery->exec();
+        const int id = insertCommissionQuery->lastInsertId().toInt();
         commissionerCommissionsModel->query().exec();
         commissionerCommissionsModel->setQuery(commissionerCommissionsModel->query());
         searchCommissions("", "", "", "", "", "");
         searchCommissioners("", "", "");
+        return id;
     }
 
     void ComModel::insertCommissioner(const QString commissionerName,
@@ -281,13 +283,18 @@ namespace Commissionator {
     }
 
     void ComModel::insertPiece(const int commission, const int product,
-        const QString name, const QString description) {
+        const QString name, const QString description, 
+        const double overridePrice) {
         insertPieceQuery->bindValue(0, commission);
         insertPieceQuery->bindValue(1, product);
         insertPieceQuery->bindValue(2, name);
         insertPieceQuery->bindValue(3, description);
         insertPieceQuery->bindValue(4, QDateTime::currentDateTime().toMSecsSinceEpoch());
         insertPieceQuery->bindValue(5, QVariant(QVariant::String));
+        if (overridePrice > -1)
+            insertPieceQuery->bindValue(6, overridePrice);
+        else
+            insertPieceQuery->bindValue(6, QVariant(QVariant::Double));
         insertPieceQuery->exec();
         QSqlQuery isPaid("SELECT CASE WHEN Commission.paidDate IS NULL "
             "THEN 'false' ELSE 'true' END "
@@ -304,8 +311,11 @@ namespace Commissionator {
             commissionerCommissionsModel->query().exec();
             commissionerCommissionsModel->setQuery(commissionerCommissionsModel->query());
         }
+        commissionerCommissionsModel->query().exec();
+        commissionerCommissionsModel->setQuery(commissionerCommissionsModel->query());
         searchPieces("", "", "", "");
         searchCommissioners("", "", "");
+
     }
 
     void ComModel::insertProduct(const QString productName, const double basePrice) {
@@ -347,7 +357,7 @@ namespace Commissionator {
         sql.exec("CREATE TABLE IF NOT EXISTS Commissioner("
             "id	INTEGER PRIMARY KEY AUTOINCREMENT, "
             "name	TEXT NOT NULL, "
-            "notes  TEXT NOT NULL"
+            "notes  TEXT "
             ");");
         sql.exec("CREATE TABLE IF NOT EXISTS Product("
             "id	INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -383,6 +393,7 @@ namespace Commissionator {
             "createDate TEXT NOT NULL, "
             "finishDate TEXT, "
             "notes TEXT NOT NULL, "
+            "overridePrice REAL, "
             "FOREIGN KEY(commission) REFERENCES Commission(id), "
             "FOREIGN KEY(product) REFERENCES Product(id)"
             ");");
@@ -439,19 +450,20 @@ namespace Commissionator {
         commissionerModel->query().finish();
         commissionerNamesModel->query().finish();
         commissionersModel->query().finish();
-        commissionmodel->query().finish();
+        commissionModel->query().finish();
         commissionPaymentsModel->query().finish();
         commissionsModel->query().finish();
         contactTypesModel->query().exec();
+        deleteCommissionerQuery->finish();
         deleteContactQuery->finish();
         editCommissionerNameQuery->finish();
         editCommissionerNotesQuery->finish();
         insertCommissionerQuery->finish();
         insertCommissionQuery->finish();
-        insertContactTypeQuery->finish();
         insertContactQuery->finish();
-        insertPaymentTypeQuery->finish();
+        insertContactTypeQuery->finish();
         insertPaymentQuery->finish();
+        insertPaymentTypeQuery->finish();
         insertPieceQuery->finish();
         insertProductPriceQuery->finish();
         insertProductQuery->finish();
@@ -626,6 +638,7 @@ namespace Commissionator {
             QVariant("Customer Since"), Qt::DisplayRole);
         commissionersModel->setHeaderData(3, Qt::Horizontal,
             QVariant("Amount Owed"), Qt::DisplayRole);
+        commissionerCommissionsModel->query().exec();
 		commissionPaymentsModel = new QSqlQueryModel(this);
         QSqlQuery commissionPaymentsQuery(sql);
         commissionPaymentsQuery.prepare("SELECT PaymentType.name, "
@@ -695,8 +708,8 @@ namespace Commissionator {
             "VALUES (?, ?, ?, ?, ?);");
         insertPieceQuery = new QSqlQuery(sql);
         insertPieceQuery->prepare("INSERT INTO "
-            "Piece(commission, product, name, notes, createDate, finishDate) "
-            "VALUES(?, ?, ?, ?, ?, ?);");
+            "Piece(commission, product, name, notes, createDate, finishDate, overridePrice) "
+            "VALUES(?, ?, ?, ?, ?, ?, ?);");
         insertProductPriceQuery = new QSqlQuery(sql);
         insertProductPriceQuery->prepare("INSERT INTO "
             "ProductPrices(product, price, date) "

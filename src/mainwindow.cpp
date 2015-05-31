@@ -21,8 +21,8 @@ namespace Commissionator{
         model->insertProduct("thing", 1.0);
         model->insertCommission(1, QDateTime::currentDateTime(), "");
         model->insertCommission(2, QDateTime::currentDateTime(), "");
-        model->insertPiece(1, 1, "piece", "");
-        model->insertPiece(2, 1, "piece", "");
+        model->insertPiece(1, 1, "piece", "", -1);
+        model->insertPiece(2, 1, "piece", "", -1);
         model->insertPaymentType("payment type");
         model->insertPayment(1, 1, 1.0, "");
     }
@@ -169,7 +169,7 @@ namespace Commissionator{
         rightPanel->addWidget(commissionerRightPanel);
         rightPanel->addWidget(rp2);
 
-        QFrame *line = new QFrame();
+        QFrame *line = new QFrame(this);
         line->setFrameShape(QFrame::VLine);
         line->setFrameShadow(QFrame::Sunken);
 
@@ -205,16 +205,20 @@ namespace Commissionator{
             model->getProductNames(),
             this);
         connect(commissionPopup, &NewCommissionWindow::newCommission, 
-            model, &ComModel::insertCommission);
+            this, &MainWindow::insertCommission);
         commissionerPopup = new NewCommissionerWindow(this);
         connect(commissionerPopup, &NewCommissionerWindow::newCommissioner,
             model, &ComModel::insertCommissioner);
     }
 
-    void MainWindow::searchCommissioner(const QList<QVariant> query) {
-        if (query.length() == 4)    //id, name, commissioner since, amounted owed
-        model->searchCommissioners(query[1].toString(), query[2].toString(),
-            query[3].toString());
+    void MainWindow::insertCommission(const int commissionerId,
+        const QDateTime dueDate, const QString notes,
+        QList<std::tuple<int, QString, QString, double>> pieces) {
+        const int id = model->insertCommission(commissionerId, dueDate, notes);
+        for (int i = 0; i < pieces.length(); i++)
+            model->insertPiece(id, std::get<0>(pieces[i]),
+            std::get<1>(pieces[i]), std::get<2>(pieces[i]),
+            std::get<3>(pieces[i]));
     }
 
     void MainWindow::newCommission() {
@@ -228,6 +232,12 @@ namespace Commissionator{
     void MainWindow::newCommissionWithCommissioner(const QVariant &commissioner) {
         commissionPopup->setCommissioner(commissioner);
         newCommission();
+    }
+
+    void MainWindow::searchCommissioner(const QList<QVariant> query) {
+        if (query.length() == 4)    //id, name, commissioner since, amounted owed
+            model->searchCommissioners(query[1].toString(), query[2].toString(),
+            query[3].toString());
     }
 
     void MainWindow::page1() {

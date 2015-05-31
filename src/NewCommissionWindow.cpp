@@ -6,10 +6,9 @@ namespace Commissionator {
     NewCommissionWindow::NewCommissionWindow(QAbstractItemModel *namesModel,
         QAbstractItemModel *productsModel, QWidget *parent) :
         BaseNewWindow(parent) {
-        pieceProductsModel = productsModel;
 
         mainLayout = new QVBoxLayout(this);
-        comLayout = new QGridLayout(this);
+        comLayout = new QGridLayout();
 
         newComLabel = new QLabel(this);
         newComLabel->setAlignment(Qt::AlignCenter);
@@ -33,7 +32,7 @@ namespace Commissionator {
         pieceLabel->setFont(*font);
         pieceLabel->setText("Commissioned Pieces:");
 
-        comBox = new QComboBox(this); //just for testing purposes, going to have to eventually subclass combobox to get desired functionality
+        comBox = new QComboBox(this);
         comBox->setModel(namesModel);
         comBox->setModelColumn(1);
 
@@ -48,33 +47,32 @@ namespace Commissionator {
             << "Product Id"
             << "Product"
             << "Name"
-            << "Notes");
+            << "Notes"
+            << "Override");
 
-        newPieceView = new FixedRowTable(newPieceModel, this);
-        pieceTypeDelegate = new ComboEditorDelegate(this);
-        pieceTypeDelegate->setEditorModel(productsModel);
-        pieceTypeDelegate->setDisplayColumn(1);
-        pieceTypeDelegate->setColumn(1);
-        newPieceView->setBoxDelegate(pieceTypeDelegate);
-        //newPieceView->setBoxBottom(true);
-        newPieceView->setBoxButtonActivated(true);
-        newPieceView->setBoxButtonWidth(1.25);
-        newPieceView->setBoxButtonText(tr("Insert"));
-        newPieceView->setBoxText("Empty");
-        newPieceView->setTableButtonActivated(true);
-        newPieceView->setTableButtonIcon(":/Delete.png");
-        newPieceView->setTableButtonSize(24);
+        newPieceView = new QTableView(this);
+        newPieceView->setModel(newPieceModel);
+        delegate = new FixedRowTableDelegate(this);
+        delegate->setIcon(":/Delete.png");
+        delegate->setIconSize(24);
+        newPieceView->setItemDelegate(delegate);
         newPieceView->setSelectionMode(QAbstractItemView::NoSelection);
-        newPieceView->openBoxPersistentEditor(1);
         newPieceView->setColumnHidden(0, true);
-        connect(newPieceView, &FixedRowTable::boxQuery,
-            this, &NewCommissionWindow::newPieceSlot);
-        connect(newPieceView, &FixedRowTable::tableButtonClicked,
+        connect(delegate, &FixedRowTableDelegate::buttonClicked,
             this, &NewCommissionWindow::deletePieceSlot);
 
         for (int i = 0; i < newPieceView->model()->columnCount(); i++)
             newPieceView->horizontalHeader()->setSectionResizeMode(i,
             QHeaderView::Stretch);
+
+        piecePopup = new NewPieceWindow(productsModel, this);
+        connect(piecePopup, &NewPieceWindow::newPiece,
+            this, &NewCommissionWindow::newPieceSlot);
+
+        newPieceButton = new QPushButton(this);
+        newPieceButton->setText("Add Piece");
+        connect(newPieceButton, &QPushButton::clicked,
+            piecePopup, &NewPieceWindow::exec);
 
         submitButton = new QPushButton(this);
         submitButton->setText("Submit Commission");
@@ -85,6 +83,7 @@ namespace Commissionator {
         mainLayout->addLayout(comLayout);
         mainLayout->addWidget(pieceLabel);
         mainLayout->addWidget(newPieceView);
+        mainLayout->addWidget(newPieceButton);
         mainLayout->addWidget(submitButton);
 
         comLayout->addWidget(comLabel, 0, 0);
@@ -93,8 +92,10 @@ namespace Commissionator {
         comLayout->addWidget(comBox, 0, 1);
         comLayout->addWidget(calendarEdit, 1, 1);
         comLayout->addWidget(notesEdit, 2, 1);
-
-        setLayout(mainLayout);
+    }
+    
+    NewCommissionWindow::~NewCommissionWindow() {
+        delete comLayout;
     }
 
     void NewCommissionWindow::clear() {
@@ -110,38 +111,38 @@ namespace Commissionator {
     }
 
     void NewCommissionWindow::newItemSlot() {
+        QList<std::tuple<int, QString, QString, double>> pieces;
+        for (int i = 0; i < newPieceModel->rowCount(); i++) {
+            double price = -1;
+            if (newPieceModel->index(i, 4).data().toString() != "N/A")
+                price = newPieceModel->index(i, 4).data().toString().toDouble();
+            pieces << std::make_tuple(
+                newPieceModel->index(i, 0).data().toInt(),
+                newPieceModel->index(i, 2).data().toString(),
+                newPieceModel->index(i, 3).data().toString(),
+                price);
+        }
         emit newCommission(
             comBox->model()->index(comBox->currentIndex(), 0).data().toInt(),
             calendarEdit->dateTime(),
-            notesEdit->text());
+            notesEdit->text(), 
+            pieces);
         BaseNewWindow::newItemSlot();
     }
 
-    void NewCommissionWindow::newPieceSlot(const QList<QVariant> query) {
-        if (query.length() == 4) {  //Product Id, Product Id (as name), Piece Name, Piece Notes
-            int rowCount = newPieceModel->rowCount();
-            newPieceModel->setItem(rowCount, 0,
-                new QStandardItem(query[1].toString()));
-            newPieceModel->setItem(rowCount, 1,
-                new QStandardItem(pieceProductsModel->index(
-                pieceProductsModel->match(
-                    pieceProductsModel->index(0, 0),
-                    Qt::EditRole,
-                    query[1])[0].data().toInt(), 1).data().toString()));
-            newPieceModel->setItem(rowCount, 2, new QStandardItem(query[2].toString()));
-            newPieceModel->setItem(rowCount, 3, new QStandardItem(query[3].toString())); 
-            /*QList<QStandardItem *> row;
-            row << new QStandardItem(query[1].toString());
-            row << new QStandardItem(pieceProductsModel->index(
-                pieceProductsModel->match(
-                pieceProductsModel->index(0, 0),
-                Qt::DisplayRole,
-                query[1])[0].data().toInt(), 1).data().toString());
-            row << new QStandardItem(query[2].toString());
-            row << new QStandardItem(query[3].toString());
-            newPieceModel->insertRow(0, row);*/
-            //newPieceView->setModel(newPieceModel);
-        }
+    void NewCommissionWindow::newPieceSlot(const QString pieceName, 
+        const QString pieceNotes, const int productId, 
+        const QString productName, const double price) {
+        QList<QStandardItem *> row;
+        row << new QStandardItem(QString::number(productId));
+        row << new QStandardItem(productName);
+        row << new QStandardItem(pieceName);
+        row << new QStandardItem(pieceNotes);
+        if (price > -1)
+            row << new QStandardItem(QString::number(price));
+        else 
+            row << new QStandardItem("N/A");
+        newPieceModel->appendRow(row);
     }
 
     void NewCommissionWindow::setCommissioner(const QVariant &commissioner) {

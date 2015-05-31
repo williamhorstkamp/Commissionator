@@ -7,6 +7,7 @@
 #include "LeftPanel.h"
 #include "NewCommissionWindow.h"
 #include "NewCommissionerWindow.h"
+#include "NewPieceWindow.h"
 #include "CommissionerPanel.h"
 #include "ComModel.h"
 
@@ -20,6 +21,21 @@ namespace Commissionator {
         MainWindow();
 
     public slots:
+
+        /**
+         *  Function accepts the newCommission signal from NewCommissionWindow 
+         *  and inserts both the commission and the pieces into the model.
+         *
+         *  @param pieceName - piece name
+         *  @param pieceNotes - piece notes
+         *  @param productId - product id
+         *  @param productName - product names
+         *  @param price - override price (-1 by default)
+         */
+        void insertCommission(const int commissionerId,
+            const QDateTime dueDate, const QString notes, 
+            QList<std::tuple<int, QString, QString, double>> pieces);
+
         /**
          *  Function opens the dialog window to create a new commission.
          *  Takes control away from the MainWindow for the duration of the

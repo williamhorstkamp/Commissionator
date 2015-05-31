@@ -9,8 +9,9 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <QStandardItemModel>
-#include "ComboEditorDelegate.h"
-#include "FixedRowTable.h"
+#include <QTableView>
+#include <FixedRowTableDelegate.h>
+#include "NewPieceWindow.h"
 
 namespace Commissionator {
 
@@ -32,6 +33,11 @@ namespace Commissionator {
         NewCommissionWindow(QAbstractItemModel *namesModel,
             QAbstractItemModel *productsModel, QWidget *parent = nullptr);
 
+        /**
+         *  Destructor.
+         */
+        ~NewCommissionWindow();
+
     signals:
         /**
          *  Signal contains the commissioner id, the due date, and the notes
@@ -40,9 +46,13 @@ namespace Commissionator {
          *  @param commissionerId - commissioner id
          *  @param dueDate - the due date of the commission
          *  @param notes - notes for the commission
+         *  @param pieces - list of tuples representing each piece in the commission
+         *  Tuple Order:
+         *  Product Id, Piece Name, Piece Notes, Override Price (default -1)
          */
         void newCommission(const int commissionerId,
-            const QDateTime dueDate, const QString notes);
+            const QDateTime dueDate, const QString notes, 
+            QList<std::tuple<int, QString, QString, double>> pieces);
 
     public slots:
         /**
@@ -75,7 +85,8 @@ namespace Commissionator {
          *  Data order:
          *  Product Id, Product Name, Piece Name, Piece Notes
          */
-        void newPieceSlot(const QList<QVariant> query);
+        void newPieceSlot(const QString pieceName, const QString pieceNotes,
+            const int productId, const QString productName, const double price);
 
     private:
         /**
@@ -93,11 +104,12 @@ namespace Commissionator {
         QComboBox *comBox;
         QDateEdit *calendarEdit;
         QLineEdit *notesEdit;
-        QPushButton *submitButton;
-        QAbstractItemModel *pieceProductsModel;
         QStandardItemModel *newPieceModel;
-        ComboEditorDelegate *pieceTypeDelegate;
-        FixedRowTable *newPieceView;
+        FixedRowTableDelegate *delegate;
+        QTableView *newPieceView;
+        QPushButton *newPieceButton;
+        QPushButton *submitButton;
+        NewPieceWindow *piecePopup;
     };
 
 }

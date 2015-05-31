@@ -643,9 +643,11 @@ namespace Commissionator {
          *  @param product - what type of product the piece is
          *  @param name - the name of the piece
          *  @param description - description of the piece
+         *  @param overridePrice - override price of the item (defaults to -1)
          */
         void insertPiece(const int commission, const int product,
-            const QString name, const QString description);
+            const QString name, const QString description, 
+            const double overridePrice);
 
         /**
          *  Inserts payment into the database.
@@ -665,7 +667,7 @@ namespace Commissionator {
          *  @param dueDate - due date of the commission
          *  @param notes - notes for the commission
          */
-        void insertCommission(const int commissionerId,
+        int insertCommission(const int commissionerId,
             const QDateTime dueDate, const QString notes);
 
         /**
@@ -712,7 +714,7 @@ namespace Commissionator {
         QSqlQueryModel *commissionerModel;
         QSqlQueryModel *commissionerNamesModel;
         QSqlQueryModel *commissionersModel;
-		QSqlQueryModel *commissionmodel;
+		QSqlQueryModel *commissionModel;
 		QSqlQueryModel *commissionPaymentsModel;
         QSqlQueryModel *commissionsModel;
         QSqlQueryModel *contactTypesModel;

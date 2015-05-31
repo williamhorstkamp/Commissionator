@@ -20,6 +20,11 @@ namespace Commissionator {
          */
         NewCommissionerWindow(QWidget *parent = nullptr);
 
+        /**
+         *  Destructor.
+         */
+        ~NewCommissionerWindow();
+
     signals:
         /**
          *  Signal contains commissioner name and notes for the new 

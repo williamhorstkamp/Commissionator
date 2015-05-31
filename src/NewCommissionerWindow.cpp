@@ -6,7 +6,7 @@ namespace Commissionator {
     NewCommissionerWindow::NewCommissionerWindow(QWidget *parent) :
         BaseNewWindow(parent) {
         mainLayout = new QVBoxLayout(this);
-        comLayout = new QGridLayout(this);
+        comLayout = new QGridLayout();
 
         newComLabel = new QLabel(this);
         newComLabel->setAlignment(Qt::AlignCenter);
@@ -38,6 +38,10 @@ namespace Commissionator {
         comLayout->addWidget(notesLabel, 1, 0);
         comLayout->addWidget(nameEdit, 0, 1);
         comLayout->addWidget(notesEdit, 1, 1);
+    }
+
+    NewCommissionerWindow::~NewCommissionerWindow() {
+        delete comLayout;
     }
 
     void NewCommissionerWindow::clear() {

@@ -22,6 +22,7 @@ namespace Commissionator {
     CommissionerPanel::~CommissionerPanel() {
         delete titleFont;
         delete standardFont;
+        delete titleLayout;
     }
 
     void CommissionerPanel::createButtons() {
@@ -92,7 +93,7 @@ namespace Commissionator {
 
     void CommissionerPanel::createPanel() {
         layout = new QVBoxLayout(this);
-        QGridLayout *titleLayout = new QGridLayout(this);
+        titleLayout = new QGridLayout();
 
         titleLayout->addWidget(commissionerName, 0, 4);
         titleLayout->addWidget(commissionerNameEdit, 0, 4);
