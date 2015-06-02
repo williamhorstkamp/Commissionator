@@ -53,6 +53,10 @@ namespace Commissionator {
 		return commissionPaymentsModel;
     }
 
+    QSqlQueryModel *ComModel::getCommissionPieces() {
+        return commissionPiecesModel;
+    }
+
     QSqlQueryModel *ComModel::getCommissions() {
         return commissionsModel;
     }
@@ -170,6 +174,13 @@ namespace Commissionator {
         emit pieceChanged();
     }
     
+    void ComModel::deleteCommission(const QModelIndex &index) {
+        deleteCommissionQuery->bindValue(0, getValue(index, 0));
+        deleteCommissionQuery->exec();
+        searchCommissions("", "", "", "", "", "");
+        emit commissionChanged();
+    }
+
     void ComModel::deleteCommissioner(const QModelIndex &index) {
         deleteCommissionerQuery->bindValue(0, getValue(index, 0));
         deleteCommissionerQuery->exec();
@@ -273,6 +284,7 @@ namespace Commissionator {
         }
         wasJustPaid.finish();
         searchCommissioners("", "", "");
+        searchCommissions("", "", "", "", "", "");
     }
 
     void ComModel::insertPaymentType(const QString typeName) {
@@ -317,6 +329,7 @@ namespace Commissionator {
         commissionerModel->setQuery(commissionerModel->query());
         searchPieces("", "", "", "");
         searchCommissioners("", "", "");
+        searchCommissions("", "", "", "", "", "");
 
     }
 
@@ -430,7 +443,10 @@ namespace Commissionator {
             "FOREIGN KEY(method) REFERENCES PaymentType(id)"
             ");");
         sql.exec("INSERT INTO Commissioner(id, name, notes) "
-            "VALUES(0, 'Commissioner Deleted', '');");
+            "VALUES(0, 'Deleted', '');");
+        sql.exec("INSERT INTO Commission(id, createDate, dueDate, "
+            "commissioner, notes) "
+            "VALUES(0, 0, 0, 0, '');");
         sql.exec("CREATE TRIGGER IF NOT EXISTS deleteCommissionerContacts "
             "AFTER DELETE ON Commissioner "
             "FOR EACH ROW "
@@ -444,6 +460,13 @@ namespace Commissionator {
             "UPDATE Commission SET commissioner = 0 "
             "WHERE commissioner = OLD.id; "
             "END");
+        sql.exec("CREATE TRIGGER IF NOT EXISTS updateCommissionPieces "
+            "AFTER DELETE ON Commission "
+            "FOR EACH ROW "
+            "BEGIN "
+            "UPDATE Piece SET commission = 0 "
+            "WHERE commission = OLD.id; "
+            "END");
     }
 
     void ComModel::cleanupQueries() {
@@ -454,9 +477,11 @@ namespace Commissionator {
         commissionersModel->query().finish();
         commissionModel->query().finish();
         commissionPaymentsModel->query().finish();
+        commissionPiecesModel->query().finish();
         commissionsModel->query().finish();
         contactTypesModel->query().exec();
         deleteCommissionerQuery->finish();
+        deleteCommissionQuery->finish();
         deleteContactQuery->finish();
         editCommissionerNameQuery->finish();
         editCommissionerNotesQuery->finish();
@@ -644,7 +669,7 @@ namespace Commissionator {
             "AND AmountedOwed like (?);");
         commissionersModel->setQuery(commissionersQuery);
         searchCommissioners("", "", "");
-                commissionersModel->setHeaderData(2, Qt::Horizontal, 
+        commissionersModel->setHeaderData(2, Qt::Horizontal, 
             QVariant("Customer Since"), Qt::DisplayRole);
         commissionersModel->setHeaderData(3, Qt::Horizontal,
             QVariant("Amount Owed"), Qt::DisplayRole);
@@ -657,6 +682,19 @@ namespace Commissionator {
             "INNER JOIN PaymentType ON Payment.method = PaymentType.id "
             "WHERE Payment.commission = (?);");
         commissionPaymentsModel->setQuery(commissionPaymentsQuery);
+        commissionPiecesModel = new QSqlQueryModel(this);
+        QSqlQuery commissionPiecesQuery(sql);
+        commissionPiecesQuery.prepare("SELECT Product.name, Piece.name, "
+            "COALESCE(Piece.overridePrice, ProductPrices.price), "
+            "Piece.createDate, Piece.finishDate "
+            "FROM Commission "
+            "INNER JOIN Piece ON Commission.id = Piece.commission "
+            "INNER JOIN Product ON Piece.product = Product.id "
+            "INNER JOIN ProductPrices ON Product.id = ProductPrices.product "
+            "AND ProductPrices.date < Commission.createDate "
+            "WHERE Commission.id = (?) "
+            "GROUP BY Piece.id HAVING date = max(date)");
+        commissionPiecesModel->setQuery(commissionPiecesQuery);
         commissionsModel = new QSqlQueryModel(this);
         QSqlQuery commissionsQuery(sql);
         commissionsQuery.prepare("SELECT Commission.id, "
@@ -675,12 +713,26 @@ namespace Commissionator {
             "LEFT JOIN Piece ON Commission.id = Piece.commission "
             "WHERE Commissioner.name LIKE (?) AND "
             "Commission.createDate LIKE (?) AND "
-            "COALESCE(Commission.paidDate, '') LIKE (?) AND Commission.dueDate LIKE (?) "
+            "COALESCE(Commission.paidDate, '') LIKE (?) "
+            "AND Commission.dueDate LIKE (?) "
+            "AND Commission.id NOT LIKE 0 "
             "GROUP BY Commission.id "
             "HAVING COUNT(Piece.id) LIKE (?) AND "
             "COALESCE(MAX(Piece.finishDate), '') LIKE (?);");
         commissionsModel->setQuery(commissionsQuery);
         searchCommissions("", "", "", "", "", "");
+        commissionsModel->setHeaderData(1, Qt::Horizontal,
+            QVariant("Commissioner"), Qt::DisplayRole);
+        commissionsModel->setHeaderData(2, Qt::Horizontal,
+            QVariant("Create Date"), Qt::DisplayRole);
+        commissionsModel->setHeaderData(3, Qt::Horizontal,
+            QVariant("Paid Date"), Qt::DisplayRole);
+        commissionsModel->setHeaderData(4, Qt::Horizontal,
+            QVariant("Due Date"), Qt::DisplayRole);
+        commissionsModel->setHeaderData(5, Qt::Horizontal,
+            QVariant("Piece Count"), Qt::DisplayRole);
+        commissionsModel->setHeaderData(6, Qt::Horizontal,
+            QVariant("Finish Date"), Qt::DisplayRole);
         contactTypesModel = new QSqlQueryModel(this);
         contactTypesModel->setQuery(QSqlQuery("SELECT id, type FROM ContactType;", sql));
         contactTypesModel->query().exec();
@@ -690,6 +742,9 @@ namespace Commissionator {
         deleteContactQuery = new QSqlQuery(sql);
         deleteContactQuery->prepare("DELETE FROM Contact WHERE "
             "Contact.id = (?);");
+        deleteCommissionQuery = new QSqlQuery(sql);
+        deleteCommissionQuery->prepare("DELETE FROM Commission WHERE "
+            "Commission.id = (?);");
         editCommissionerNameQuery = new QSqlQuery(sql);
         editCommissionerNameQuery->prepare("UPDATE Commissioner "
             "SET name = (?) WHERE id = (?)");

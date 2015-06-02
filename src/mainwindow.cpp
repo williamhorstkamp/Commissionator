@@ -67,11 +67,13 @@ namespace Commissionator{
 
         openAct = new QAction(QIcon(":/OpenFile.png"), tr("&Open"), this);
         openAct->setStatusTip(tr("Open a set of records"));
-        connect(openAct, &QAction::triggered, this, &MainWindow::page2);
+        connect(openAct, &QAction::triggered, 
+            this, &MainWindow::manageCommissions);
 
         saveAct = new QAction(QIcon(":/SaveFile.png"), tr("&Save"), this);
         saveAct->setStatusTip(tr("Save the current set of records"));
-        connect(saveAct, &QAction::triggered, this, &MainWindow::page1);
+        connect(saveAct, &QAction::triggered, 
+            this, &MainWindow::manageCommissioners);
 
         saveAsAct = new QAction(QIcon(":/SaveAsFile.png"), tr("&Save As"), this);
         saveAsAct->setStatusTip(tr("Save the current set of records as a new file"));
@@ -81,15 +83,18 @@ namespace Commissionator{
 
         exitAct = new QAction(tr("&Exit"), this);
         exitAct->setStatusTip(tr("Exits the program"));
-        connect(exitAct, &QAction::triggered, this, &MainWindow::close);
+        connect(exitAct, &QAction::triggered, 
+            this, &MainWindow::close);
         
         newCommissionerAct = new QAction(QIcon(":/CommissionerPlus.png"), tr("&Commissioner"), this);
         newCommissionerAct->setStatusTip(tr("Create a new commissioner"));
-        connect(newCommissionerAct, &QAction::triggered, this, &MainWindow::newCommissioner);
+        connect(newCommissionerAct, &QAction::triggered, 
+            this, &MainWindow::newCommissioner);
 
         newCommissionAct = new QAction(QIcon(":/CommissionPlus.png"), tr("&Commission"), this);
         newCommissionAct->setStatusTip(tr("Create a new commission"));
-        connect(newCommissionAct, &QAction::triggered, this, &MainWindow::newCommission);
+        connect(newCommissionAct, &QAction::triggered, 
+            this, &MainWindow::newCommission);
 
         newProductAct = new QAction(QIcon(":/ProductPlus.png"), tr("&Product"), this);
         newProductAct->setStatusTip(tr("Create a new product"));
@@ -158,14 +163,16 @@ namespace Commissionator{
         hidden.append(0);
         commissionerLeftPanel = new LeftPanel("Commissioner", 
             model->getCommissioners(), hidden);
-        lp2 = new LeftPanel2();
-        commissionerRightPanel = new CommissionerPanel(model->getCommissioner(),
+        commissionLeftPanel = new LeftPanel("Commission",
+            model->getCommissions(), hidden);
+        commissionerRightPanel = new CommissionerPanel(
+            model->getCommissioner(),
             model->getCommissionerContacts(),
             model->getCommissionerCommissions(),
             model->getContactTypes());
         rp2 = new RightPanel2();
         leftPanel->addWidget(commissionerLeftPanel);
-        leftPanel->addWidget(lp2);
+        leftPanel->addWidget(commissionLeftPanel);
         rightPanel->addWidget(commissionerRightPanel);
         rightPanel->addWidget(rp2);
 
@@ -179,6 +186,10 @@ namespace Commissionator{
             this, &MainWindow::searchCommissioner);
         connect(commissionerLeftPanel, &LeftPanel::iconClicked,
             model, &ComModel::deleteCommissioner);
+        connect(commissionLeftPanel, &LeftPanel::search,
+            this, &MainWindow::searchCommission);
+        connect(commissionLeftPanel, &LeftPanel::iconClicked,
+            model, &ComModel::deleteCommission);
         connect(model, &ComModel::commissionerChanged, 
             commissionerRightPanel, &CommissionerPanel::updatePanel);
         connect(commissionerRightPanel, &CommissionerPanel::newCommission, 
@@ -235,20 +246,27 @@ namespace Commissionator{
         newCommission();
     }
 
+    void MainWindow::searchCommission(const QList<QVariant> query) {
+        if (query.length() == 7)    //id, commissioner, create date, paid date, due date, piece count, finish date
+            model->searchCommissions(query[1].toString(), query[2].toString(),
+            query[3].toString(), query[4].toString(), query[5].toString(),
+            query[6].toString());
+    }
+
     void MainWindow::searchCommissioner(const QList<QVariant> query) {
         if (query.length() == 4)    //id, name, commissioner since, amounted owed
             model->searchCommissioners(query[1].toString(), query[2].toString(),
             query[3].toString());
     }
 
-    void MainWindow::page1() {
+    void MainWindow::manageCommissioners() {
         leftPanel->setCurrentWidget(commissionerLeftPanel);
         rightPanel->setCurrentWidget(commissionerRightPanel);
         swapContextToolBar(commissionerToolBar);
     }
 
-    void MainWindow::page2() {
-        leftPanel->setCurrentWidget(lp2);
+    void MainWindow::manageCommissions() {
+        leftPanel->setCurrentWidget(commissionLeftPanel);
         rightPanel->setCurrentWidget(rp2);
         swapContextToolBar(panelToolBar2);
     }

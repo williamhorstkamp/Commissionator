@@ -191,7 +191,7 @@ namespace Commissionator {
          *  Display order:
          *  Product, Name, Price, Sale, Start Date, Finish Date
          */
-        //QSqlQueryModel *getCommissionPieces();
+        QSqlQueryModel *getCommissionPieces();
 
         /**
          *  Function returns a pointer to a model containing data for the
@@ -536,7 +536,7 @@ namespace Commissionator {
          *
          *  @param index - index of the commission to delete
          */
-        //void deleteCommission(const QModelIndex &index);
+        void deleteCommission(const QModelIndex &index);
 
         /**
          *  Deletes the payment type at the given index. Payment type is hidden,
@@ -716,9 +716,11 @@ namespace Commissionator {
         QSqlQueryModel *commissionersModel;
 		QSqlQueryModel *commissionModel;
 		QSqlQueryModel *commissionPaymentsModel;
+        QSqlQueryModel *commissionPiecesModel;
         QSqlQueryModel *commissionsModel;
         QSqlQueryModel *contactTypesModel;
         QSqlQuery *deleteCommissionerQuery;
+        QSqlQuery *deleteCommissionQuery;
         QSqlQuery *deleteContactQuery;
         QSqlQuery *editCommissionerNameQuery;
         QSqlQuery *editCommissionerNotesQuery;

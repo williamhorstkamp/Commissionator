@@ -70,11 +70,25 @@ namespace Commissionator {
          *  Argument order:
          *  Commissioner Name, Customer Since, Amount Owed
          */
+        void searchCommission(const QList<QVariant> query);
+
+        /**
+         *  Functions searches for commissioners with given arguements
+         *
+         *  Argument order:
+         *  Commissioner Name, Customer Since, Amount Owed
+         */
         void searchCommissioner(const QList<QVariant> query);
 
-        //temp slots for testing
-        void page1();
-        void page2();
+        /**
+         *  Sets panels and toolbar to the Manage Commissioner panels
+         */
+        void manageCommissioners();
+
+        /**
+         *  Sets panels and toolbar to the Manage Commission panels
+         */
+        void manageCommissions();
 
     private:
         /**
@@ -127,7 +141,7 @@ namespace Commissionator {
         ComModel *model;
 
         LeftPanel *commissionerLeftPanel;
-        LeftPanel2 *lp2;
+        LeftPanel *commissionLeftPanel;
         CommissionerPanel *commissionerRightPanel;
         RightPanel2 *rp2;
 
