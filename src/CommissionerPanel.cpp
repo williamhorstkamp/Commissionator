@@ -9,13 +9,14 @@ namespace Commissionator {
 
     CommissionerPanel::CommissionerPanel(QSqlQueryModel *commissionerModel, 
         QSqlQueryModel *contactModel, QSqlQueryModel *commissionsModel,
-        QSqlQueryModel *contactTypesModel, QWidget *parent) : QWidget(parent) {
+        QSqlQueryModel *contactTypesModel, QWidget *parent) :
+        QWidget(parent) {
         this->commissionerModel = commissionerModel;
-        
+
         createFonts();
         createLabels();
-        createTables(contactModel, commissionsModel, contactTypesModel);
         createButtons();
+        createTables(contactModel, commissionsModel, contactTypesModel);
         createPanel();
     }
 

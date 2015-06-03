@@ -57,6 +57,10 @@ namespace Commissionator {
         return commissionPiecesModel;
     }
 
+    QSqlQueryModel *ComModel::getCommission() {
+        return commissionModel;
+    }
+
     QSqlQueryModel *ComModel::getCommissions() {
         return commissionsModel;
     }
@@ -695,7 +699,11 @@ namespace Commissionator {
             "WHERE Commission.id = (?) "
             "GROUP BY Piece.id HAVING date = max(date)");
         commissionPiecesModel->setQuery(commissionPiecesQuery);
-        commissionsModel = new QSqlQueryModel(this);
+        /**
+         *  initialized as a QSqlTableModel so that any proxy models created
+         *  using this model can contain editable fields.
+         */
+        commissionsModel = new  QSqlTableModel(this);
         QSqlQuery commissionsQuery(sql);
         commissionsQuery.prepare("SELECT Commission.id, "
             "Commissioner.name, STRFTIME('%m/%d/%Y', "

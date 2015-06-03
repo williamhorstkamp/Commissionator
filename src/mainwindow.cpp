@@ -169,12 +169,18 @@ namespace Commissionator{
             model->getCommissioner(),
             model->getCommissionerContacts(),
             model->getCommissionerCommissions(),
-            model->getContactTypes());
-        rp2 = new RightPanel2();
+            model->getContactTypes(),
+            this);
+        commissionRightPanel = new CommissionPanel(
+            model->getCommission(),
+            model->getCommissionPieces(),
+            model->getCommissionPayments(),
+            model->getCommissionerNames(),
+            this);
         leftPanel->addWidget(commissionerLeftPanel);
         leftPanel->addWidget(commissionLeftPanel);
         rightPanel->addWidget(commissionerRightPanel);
-        rightPanel->addWidget(rp2);
+        rightPanel->addWidget(commissionerRightPanel);
 
         QFrame *line = new QFrame(this);
         line->setFrameShape(QFrame::VLine);
@@ -267,7 +273,7 @@ namespace Commissionator{
 
     void MainWindow::manageCommissions() {
         leftPanel->setCurrentWidget(commissionLeftPanel);
-        rightPanel->setCurrentWidget(rp2);
+        rightPanel->setCurrentWidget(commissionRightPanel);
         swapContextToolBar(panelToolBar2);
     }
 

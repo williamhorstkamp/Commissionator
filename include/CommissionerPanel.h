@@ -3,7 +3,6 @@
 
 #include <QVBoxLayout>
 #include <QLabel>
-#include <QTableView>
 #include <QTextEdit>
 #include <QPushButton>
 #include <QSqlQueryModel>
@@ -18,9 +17,9 @@ namespace Commissionator {
 
     public:
         /**
-         *  Default constructor accepts QSqlQueryModels for the selected
-         *  commissioner, their contacts, and their commissions. Will use these
-         *  models to populate the panels various fields.
+         *  Constructor accepts QSqlQueryModels for the selected
+         *  commissioner, their contacts, and their commissions. Models used to
+         *  populate the panels various fields.
          *
          *  @param commissionerModel - QSqlQueryModel containing data about the
          *      selected commissioner
@@ -45,8 +44,8 @@ namespace Commissionator {
 
         /**
          *  Signal emit when the contactInfoTable's delete button is clicked.
-         *  Is a a modification of FixedRowTable::tableButtonClicked and is
-         *  fowarded to 
+         *  Is a modification of FixedRowTable::tableButtonClicked and is
+         *  fowarded to ComModel::deleteContact
          *
          *  @param index - index of the contact to delete
          */
@@ -94,8 +93,7 @@ namespace Commissionator {
     public slots:
         /**
          *  Slot connects to ComModel::commissionerChanged.
-         *  If the signal is of type "Commissioner", then the slot should
-         *  refresh the Widgets that display the Commissioner data to match the 
+         *  Refreshes the Widgets that display the Commissioner data to match the 
          *  newly selected commissioner.
          */
         void updatePanel();
@@ -114,7 +112,6 @@ namespace Commissionator {
         /**
          *  Slot captures QPushButton::clicked from newCommissionButton and
          *  emits the corresponding newCommission signal
-         *
          */
         void newCommissionSlot();
 
@@ -129,6 +126,7 @@ namespace Commissionator {
          *  Helpers function creates buttons and connections
          */
         void createButtons();
+
 
         /**
          *  Helper function creates QFonts

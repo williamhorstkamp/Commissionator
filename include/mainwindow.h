@@ -3,12 +3,12 @@
 
 #include <QMainWindow>
 #include <QStackedWidget>
-#include "TestLayouts.h"
 #include "LeftPanel.h"
 #include "NewCommissionWindow.h"
 #include "NewCommissionerWindow.h"
 #include "NewPieceWindow.h"
 #include "CommissionerPanel.h"
+#include "CommissionPanel.h"
 #include "ComModel.h"
 
 namespace Commissionator {
@@ -143,7 +143,7 @@ namespace Commissionator {
         LeftPanel *commissionerLeftPanel;
         LeftPanel *commissionLeftPanel;
         CommissionerPanel *commissionerRightPanel;
-        RightPanel2 *rp2;
+        CommissionPanel *commissionRightPanel;
 
         NewCommissionWindow *commissionPopup;
         NewCommissionerWindow *commissionerPopup;
