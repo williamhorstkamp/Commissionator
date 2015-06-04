@@ -1,4 +1,6 @@
 #include <QLineEdit>
+#include <QSqlRecord>
+#include <QDateTime>
 #include "CommissionPanel.h"
 
 namespace Commissionator {
@@ -55,9 +57,9 @@ namespace Commissionator {
         commissionerName->setAlignment(Qt::AlignCenter);
         commissionerName->setFont(*titleFont);
 
-        commissionerNamesCombo = new QComboBox(this);
-        commissionerNamesCombo->setModel(commissionerNamesModel);
-        commissionerNamesCombo->hide();
+        commissionerNameCombo = new QComboBox(this);
+        commissionerNameCombo->setModel(commissionerNamesModel);
+        commissionerNameCombo->hide();
 
         createDate = new QLabel(this);
         createDate->setAlignment(Qt::AlignCenter);
@@ -111,7 +113,7 @@ namespace Commissionator {
         titleLayout = new QGridLayout();
 
         titleLayout->addWidget(commissionerName, 0, 4);
-        titleLayout->addWidget(commissionerNamesCombo, 0, 4);
+        titleLayout->addWidget(commissionerNameCombo, 0, 4);
         titleLayout->addWidget(unlockButton, 0, 8);
         titleLayout->setColumnStretch(0, 1);
         titleLayout->setColumnStretch(1, 1);
@@ -148,6 +150,7 @@ namespace Commissionator {
         piecesDelegate->setIconSize(24);
         piecesTable->setItemDelegate(piecesDelegate);
         piecesTable->setSelectionMode(QAbstractItemView::NoSelection);
+        piecesTable->hideColumn(0);
         piecesTable->hide();
         connect(piecesDelegate, &FixedRowTableDelegate::buttonClicked,
             this, &CommissionPanel::deletePiece);
@@ -159,8 +162,107 @@ namespace Commissionator {
     }
 
     void CommissionPanel::updatePanel() {
+        commissionerName->setText(
+            commissionModel->record(0).value(1).toString());
+
+        createDate->setText(
+            "Created on " + commissionModel->record(0).value(2).toString());
+
+        if (commissionModel->record(0).value(3).toString() == "Unpaid")
+            paidDate->setText(commissionModel->record(0).value(3).toString());
+        else
+            paidDate->setText(
+                "Paid on " + commissionModel->record(0).value(3).toString());
+
+        dueDate->setText(
+            "Due on " + commissionModel->record(0).value(4).toString());
+        if (commissionModel->record(0).value(4).
+            toDateTime().toMSecsSinceEpoch() > 
+            QDateTime::currentMSecsSinceEpoch())
+            dueDate->setStyleSheet("QLabel { color : red; }");
+        else
+            dueDate->setStyleSheet("QLabel { color : black; }");
+
+        if (commissionModel->record(0).value(5).toString() == "Paid Off") {
+            amountOwed->setStyleSheet("QLabel { color : green; }");
+            amountOwed->setText(
+                commissionModel->record(0).value(5).toString());
+        } else if (commissionModel->record(0).value(5).toString()
+            == "No Commissioned Pieces") {
+            amountOwed->setStyleSheet("QLabel { color : blue; }");
+            amountOwed->setText(
+                commissionModel->record(0).value(5).toString());
+        } else {
+            amountOwed->setStyleSheet("QLabel { color : red; }");
+            QLocale dollarConverter = QLocale();
+            amountOwed->setText(
+                dollarConverter.toCurrencyString(
+                commissionModel->record(0).value(5).toDouble())
+                + " owed");
+        }
+
+        commissionNotes->setText(commissionModel->record(0).value(6).toString());
+
+        piecesTable->hideColumn(0);
+
+        if (commissionModel->record(0).value(0).toInt() == 0) {
+            unlockButton->hide();
+            commissionerName->hide();
+            commissionerNameCombo->hide();
+            commissionerNameCombo->setCurrentIndex(-1);
+            createDate->hide();
+            paidDate->hide();
+            dueDate->hide();
+            amountOwed->hide();
+            piecesLabel->hide();
+            piecesTable->hide();
+            newPieceButton->hide();
+            paymentsLabel->hide();
+            paymentsTable->hide();
+            newPaymentButton->hide();
+            notesLabel->hide();
+            commissionNotes->hide();
+            commissionNotesEdit->hide();
+            commissionNotesEdit->setText("");
+        } else {
+            unlockButton->show();
+            commissionerName->show();
+            commissionerNameCombo->hide();
+            //commissionerNameCombo->setCurrentIndex();
+            createDate->show();
+            paidDate->show();
+            dueDate->show();
+            amountOwed->show();
+            piecesLabel->show();
+            piecesTable->show();
+            newPieceButton->show();
+            paymentsLabel->show();
+            paymentsTable->show();
+            newPaymentButton->show();
+            notesLabel->show();
+            commissionNotes->show();
+            commissionNotesEdit->hide();
+            commissionNotesEdit->setText(commissionNotes->text());
+        }
     }
 
     void CommissionPanel::toggleEdit() {
+        if (commissionerName->isHidden()) {
+            if (commissionerNameCombo->currentData().toString() 
+                != commissionerName->text())
+                emit editCommissioner(
+                    commissionModel->record(0).value(0).toInt(),
+                    commissionerNameCombo->model()->index(
+                        commissionerNameCombo->currentIndex(), 0).data().toInt());
+            if (commissionNotesEdit->text() != commissionNotes->text())
+                emit editNotes(commissionModel->record(0).value(0).toInt(),
+                commissionNotesEdit->text());
+            updatePanel();
+        } else {
+            commissionerName->hide();
+            commissionerNameCombo->show();
+            commissionNotes->hide();
+            commissionNotesEdit->show();
+        }
     }
 }

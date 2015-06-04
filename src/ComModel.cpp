@@ -151,6 +151,9 @@ namespace Commissionator {
     }
 
     void ComModel::setCommission(const QModelIndex &index) {
+        commissionModel->query().bindValue(0, getValue(index, 0).toInt());
+        commissionModel->query().exec();
+        commissionModel->setQuery(commissionModel->query());
         commissionPaymentsModel->query().bindValue(0, getValue(index, 0).toInt());
         commissionPaymentsModel->query().exec();
         commissionPaymentsModel->setQuery(commissionPaymentsModel->query());
@@ -677,7 +680,37 @@ namespace Commissionator {
             QVariant("Customer Since"), Qt::DisplayRole);
         commissionersModel->setHeaderData(3, Qt::Horizontal,
             QVariant("Amount Owed"), Qt::DisplayRole);
-        commissionerCommissionsModel->query().exec();
+        commissionModel = new QSqlQueryModel(this);
+        QSqlQuery commissionQuery(sql);
+        commissionQuery.prepare("SELECT Commission.id, Commissioner.name, "
+            "strftime('%m/%d/%Y', Commission.createDate/1000, 'unixepoch', "
+            "'localtime'), COALESCE(strftime('%m/%d/%Y', "
+            "Commission.paidDate/1000, 'unixepoch', 'localtime'), 'Unpaid'), "
+            "strftime('%m/%d/%Y', Commission.dueDate/1000, "
+            "'unixepoch', 'localtime'), "
+            "CASE WHEN (SUM(a.price) - b.fee) = 0 THEN 'Paid Off' "
+            "ELSE (COALESCE(SUM(a.price) - b.fee, SUM(a.price), "
+            "'No Commissioned Pieces')) END "
+            "FROM Commission "
+            "INNER JOIN Commissioner "
+            "ON Commission.commissioner = Commissioner.id "
+            "LEFT JOIN(SELECT Piece.commission commission, "
+            "COALESCE(Piece.overridePrice, ProductPrices.price) price "
+            "FROM Commission "
+            "INNER JOIN Piece ON Commission.id = Piece.commission "
+            "INNER JOIN ProductPrices ON Piece.product = ProductPrices.product "
+            "WHERE ProductPrices.date < Commission.createDate "
+            "GROUP BY Piece.id HAVING date = max(date)) a "
+            "ON Commission.id = a.commission "
+            "LEFT JOIN(SELECT Payment.commission commission, "
+            "SUM(Payment.fee) fee FROM Payment "
+            "INNER JOIN Commission ON Payment.commission = Commission.id "
+            "INNER JOIN Commissioner ON "
+            "Commission.commissioner = Commissioner.id "
+            "GROUP BY Commission.id) b "
+            "ON Commission.id = b.commission "
+            "WHERE Commission.id = (?);");
+        commissionModel->setQuery(commissionQuery);
 		commissionPaymentsModel = new QSqlQueryModel(this);
         QSqlQuery commissionPaymentsQuery(sql);
         commissionPaymentsQuery.prepare("SELECT PaymentType.name, "
@@ -688,7 +721,7 @@ namespace Commissionator {
         commissionPaymentsModel->setQuery(commissionPaymentsQuery);
         commissionPiecesModel = new QSqlQueryModel(this);
         QSqlQuery commissionPiecesQuery(sql);
-        commissionPiecesQuery.prepare("SELECT Product.name, Piece.name, "
+        commissionPiecesQuery.prepare("SELECT Piece.id, Product.name, Piece.name, "
             "COALESCE(Piece.overridePrice, ProductPrices.price), "
             "Piece.createDate, Piece.finishDate "
             "FROM Commission "

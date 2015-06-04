@@ -47,6 +47,24 @@ namespace Commissionator {
          */
         void deletePiece(const QModelIndex &index);
 
+        /**
+         *  Signal emit when the commissioner's name has been edited during the
+         *  edit mode of the panel
+         *
+         *  @param commission - id of the commission
+         *  @param commissioner - id of the commission
+         */
+        void editCommissioner(const int commission, const int commissioner);
+
+        /**
+         *  Signal emit when the commissioner's name has been edited during the
+         *  edit mode of the panel
+         *
+         *  @param commission - id of the commission
+         *  @param notes - new notes for the commission
+         */
+        void editNotes(const int commission, const QString notes);
+
     private slots:
         /**
          *  Slot connects to ComModel::commissionChanged.
@@ -101,7 +119,7 @@ namespace Commissionator {
         QSqlQueryModel *commissionerNamesModel;
         QPushButton *unlockButton;
         QLabel *commissionerName;
-        QComboBox *commissionerNamesCombo;
+        QComboBox *commissionerNameCombo;
         QLabel *createDate;
         QLabel *paidDate;
         QLabel *dueDate;

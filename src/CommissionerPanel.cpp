@@ -221,7 +221,7 @@ namespace Commissionator {
             notesLabel->hide();
             commissionerNotes->hide();
             commissionerNotesEdit->hide();
-            commissionerNotesEdit->setText(commissionerNotes->text());
+            commissionerNotesEdit->setText("");
         } else {
             unlockButton->show();
             commissionerName->show();
