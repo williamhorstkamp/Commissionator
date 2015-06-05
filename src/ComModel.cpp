@@ -89,6 +89,28 @@ namespace Commissionator {
         return productNamesModel;
     }
 
+    void ComModel::editCommissionCommissioner(const int commission,
+        const int commissioner) {
+        editCommissionCommissionerQuery->bindValue(0, commissioner);
+        editCommissionCommissionerQuery->bindValue(1, commission);
+        editCommissionCommissionerQuery->exec();
+        commissionModel->query().exec();
+        commissionModel->setQuery(commissionModel->query());
+        searchCommissions("", "", "", "", "", "");
+        searchCommissioners("", "", "");
+    }
+
+    void ComModel::editCommissionNotes(const int commission, 
+        const QString notes) {
+        editCommissionNotesQuery->bindValue(0, notes);
+        editCommissionNotesQuery->bindValue(1, commission);
+        editCommissionNotesQuery->exec();
+        commissionModel->query().exec();
+        commissionModel->setQuery(commissionModel->query());
+        searchCommissions("", "", "", "", "", "");
+        searchCommissioners("", "", "");
+    }
+
     void ComModel::editCommissionerName(const int commissioner, const QString name) {
         editCommissionerNameQuery->bindValue(0, name);
         editCommissionerNameQuery->bindValue(1, commissioner);
@@ -96,6 +118,7 @@ namespace Commissionator {
         commissionerModel->query().exec();
         commissionerModel->setQuery(commissionerModel->query());
         searchCommissioners("", "", "");
+        searchCommissions("", "", "", "", "", "");
     }
 
     void ComModel::editCommissionerNotes(const int commissioner, const QString notes) {
@@ -157,6 +180,9 @@ namespace Commissionator {
         commissionPaymentsModel->query().bindValue(0, getValue(index, 0).toInt());
         commissionPaymentsModel->query().exec();
         commissionPaymentsModel->setQuery(commissionPaymentsModel->query());
+        commissionPiecesModel->query().bindValue(0, getValue(index, 0).toInt());
+        commissionPiecesModel->query().exec();
+        commissionPiecesModel->setQuery(commissionPiecesModel->query());
         emit commissionChanged();
     }
 
@@ -490,6 +516,8 @@ namespace Commissionator {
         deleteCommissionerQuery->finish();
         deleteCommissionQuery->finish();
         deleteContactQuery->finish();
+        editCommissionCommissionerQuery->finish();
+        editCommissionNotesQuery->finish();
         editCommissionerNameQuery->finish();
         editCommissionerNotesQuery->finish();
         insertCommissionerQuery->finish();
@@ -682,7 +710,8 @@ namespace Commissionator {
             QVariant("Amount Owed"), Qt::DisplayRole);
         commissionModel = new QSqlQueryModel(this);
         QSqlQuery commissionQuery(sql);
-        commissionQuery.prepare("SELECT Commission.id, Commissioner.name, "
+        commissionQuery.prepare("SELECT Commission.id, "
+            "Commissioner.name, "
             "strftime('%m/%d/%Y', Commission.createDate/1000, 'unixepoch', "
             "'localtime'), COALESCE(strftime('%m/%d/%Y', "
             "Commission.paidDate/1000, 'unixepoch', 'localtime'), 'Unpaid'), "
@@ -690,7 +719,7 @@ namespace Commissionator {
             "'unixepoch', 'localtime'), "
             "CASE WHEN (SUM(a.price) - b.fee) = 0 THEN 'Paid Off' "
             "ELSE (COALESCE(SUM(a.price) - b.fee, SUM(a.price), "
-            "'No Commissioned Pieces')) END "
+            "'No Commissioned Pieces')) END, Commission.notes "
             "FROM Commission "
             "INNER JOIN Commissioner "
             "ON Commission.commissioner = Commissioner.id "
@@ -713,17 +742,22 @@ namespace Commissionator {
         commissionModel->setQuery(commissionQuery);
 		commissionPaymentsModel = new QSqlQueryModel(this);
         QSqlQuery commissionPaymentsQuery(sql);
-        commissionPaymentsQuery.prepare("SELECT PaymentType.name, "
-            "strftime('%m/%d/%Y', Payment.date/1000, 'unixepoch', 'localtime'), Payment.fee, "
-            "Payment.note FROM Payment "
+        commissionPaymentsQuery.prepare("SELECT PaymentType.name as 'Payment Type', "
+            "strftime('%m/%d/%Y', Payment.date/1000, 'unixepoch', 'localtime') "
+            "as 'Payment Date', "
+            "Payment.fee as 'Payment Amount', "
+            "Payment.note as 'Notes' FROM Payment "
             "INNER JOIN PaymentType ON Payment.method = PaymentType.id "
             "WHERE Payment.commission = (?);");
         commissionPaymentsModel->setQuery(commissionPaymentsQuery);
         commissionPiecesModel = new QSqlQueryModel(this);
         QSqlQuery commissionPiecesQuery(sql);
-        commissionPiecesQuery.prepare("SELECT Piece.id, Product.name, Piece.name, "
-            "COALESCE(Piece.overridePrice, ProductPrices.price), "
-            "Piece.createDate, Piece.finishDate "
+        commissionPiecesQuery.prepare("SELECT Piece.id, "
+            "Product.name as 'Product Name', "
+            "Piece.name as 'Piece Name', "
+            "COALESCE(Piece.overridePrice, ProductPrices.price) as 'Price', "
+            "Piece.createDate as 'Create Date', "
+            "COALESCE(Piece.finishDate, 'Unfinished') as 'Finish Date' "
             "FROM Commission "
             "INNER JOIN Piece ON Commission.id = Piece.commission "
             "INNER JOIN Product ON Piece.product = Product.id "
@@ -786,6 +820,12 @@ namespace Commissionator {
         deleteCommissionQuery = new QSqlQuery(sql);
         deleteCommissionQuery->prepare("DELETE FROM Commission WHERE "
             "Commission.id = (?);");
+        editCommissionCommissionerQuery = new QSqlQuery(sql);
+        editCommissionCommissionerQuery->prepare("UPDATE Commission "
+            "SET commissioner = (?) WHERE id = (?)");
+        editCommissionNotesQuery = new QSqlQuery(sql);
+        editCommissionNotesQuery->prepare("UPDATE Commission "
+            "SET notes = (?) WHERE id = (?)");
         editCommissionerNameQuery = new QSqlQuery(sql);
         editCommissionerNameQuery->prepare("UPDATE Commissioner "
             "SET name = (?) WHERE id = (?)");

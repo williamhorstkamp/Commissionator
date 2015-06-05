@@ -65,7 +65,7 @@ namespace Commissionator {
          */
         void editNotes(const int commission, const QString notes);
 
-    private slots:
+    public slots:
         /**
          *  Slot connects to ComModel::commissionChanged.
          *  Refreshes the Widgets that display the Commissioner data to match the
@@ -73,6 +73,7 @@ namespace Commissionator {
          */
         virtual void updatePanel();
 
+    private slots:
         /**
          *  Slot toggles between the panel's edit and display modes.
          *  Has the unlockButton plugged into it.

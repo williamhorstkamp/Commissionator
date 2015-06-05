@@ -13,7 +13,7 @@ namespace Commissionator{
         createPanels();
         createPopups();
 
-        setMinimumSize(700, 550);
+        setMinimumSize(1020, 800);
 
         model->insertCommissioner("Test", "wutdo");
         model->insertContactType("type");
@@ -25,6 +25,8 @@ namespace Commissionator{
         model->insertPiece(2, 1, "piece", "", -1);
         model->insertPaymentType("payment type");
         model->insertPayment(1, 1, 1.0, "");
+        model->editCommissionCommissioner(1, 3);
+        model->editCommissionNotes(1, "why do");
     }
 
     void MainWindow::createMenus() {
@@ -180,7 +182,7 @@ namespace Commissionator{
         leftPanel->addWidget(commissionerLeftPanel);
         leftPanel->addWidget(commissionLeftPanel);
         rightPanel->addWidget(commissionerRightPanel);
-        rightPanel->addWidget(commissionerRightPanel);
+        rightPanel->addWidget(commissionRightPanel);
 
         QFrame *line = new QFrame(this);
         line->setFrameShape(QFrame::VLine);
@@ -192,10 +194,7 @@ namespace Commissionator{
             this, &MainWindow::searchCommissioner);
         connect(commissionerLeftPanel, &LeftPanel::iconClicked,
             model, &ComModel::deleteCommissioner);
-        connect(commissionLeftPanel, &LeftPanel::search,
-            this, &MainWindow::searchCommission);
-        connect(commissionLeftPanel, &LeftPanel::iconClicked,
-            model, &ComModel::deleteCommission);
+
         connect(model, &ComModel::commissionerChanged, 
             commissionerRightPanel, &CommissionerPanel::updatePanel);
         connect(commissionerRightPanel, &CommissionerPanel::newCommission, 
@@ -208,6 +207,20 @@ namespace Commissionator{
             model, &ComModel::editCommissionerName);
         connect(commissionerRightPanel, &CommissionerPanel::editNotes,
             model, &ComModel::editCommissionerNotes);
+
+        connect(commissionLeftPanel, &LeftPanel::tableClicked,
+            model, &ComModel::setCommission);
+        connect(commissionLeftPanel, &LeftPanel::search,
+            this, &MainWindow::searchCommission);
+        connect(commissionLeftPanel, &LeftPanel::iconClicked,
+            model, &ComModel::deleteCommission);
+
+        connect(model, &ComModel::commissionChanged,
+            commissionRightPanel, &CommissionPanel::updatePanel);
+        connect(commissionRightPanel, &CommissionPanel::editCommissioner,
+            model, &ComModel::editCommissionCommissioner);
+        connect(commissionRightPanel, &CommissionPanel::editNotes,
+            model, &ComModel::editCommissionNotes);
 
         layout->addWidget(leftPanel);
         layout->addWidget(line);

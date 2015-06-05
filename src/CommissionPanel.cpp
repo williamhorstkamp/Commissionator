@@ -1,6 +1,7 @@
 #include <QLineEdit>
 #include <QSqlRecord>
 #include <QDateTime>
+#include <QHeaderView>
 #include "CommissionPanel.h"
 
 namespace Commissionator {
@@ -32,7 +33,7 @@ namespace Commissionator {
         connect(unlockButton, &QPushButton::clicked,
             this, &CommissionPanel::toggleEdit);
 
-        newPieceButton = new QPushButton(tr("New Payment"), this);
+        newPieceButton = new QPushButton(tr("New Piece"), this);
         newPieceButton->hide();
        // connect(newPieceButton, &QPushButton::clicked,
        //     this, &CommissionPanel::newPieceSlot);
@@ -59,6 +60,7 @@ namespace Commissionator {
 
         commissionerNameCombo = new QComboBox(this);
         commissionerNameCombo->setModel(commissionerNamesModel);
+        commissionerNameCombo->setModelColumn(1);
         commissionerNameCombo->hide();
 
         createDate = new QLabel(this);
@@ -205,6 +207,19 @@ namespace Commissionator {
 
         piecesTable->hideColumn(0);
 
+        for (int i = 0; i < piecesTable->model()->columnCount() - 1; ++i)
+            piecesTable->horizontalHeader()->setSectionResizeMode(
+                i, QHeaderView::ResizeToContents);
+        piecesTable->horizontalHeader()->setSectionResizeMode(
+            piecesTable->model()->columnCount() - 1, QHeaderView::Stretch);
+
+
+        for (int i = 0; i < paymentsTable->model()->columnCount() - 1; ++i)
+            paymentsTable->horizontalHeader()->setSectionResizeMode(
+                i, QHeaderView::ResizeToContents);
+        paymentsTable->horizontalHeader()->setSectionResizeMode(
+            paymentsTable->model()->columnCount() - 1, QHeaderView::Stretch);
+
         if (commissionModel->record(0).value(0).toInt() == 0) {
             unlockButton->hide();
             commissionerName->hide();
@@ -228,7 +243,11 @@ namespace Commissionator {
             unlockButton->show();
             commissionerName->show();
             commissionerNameCombo->hide();
-            //commissionerNameCombo->setCurrentIndex();
+            commissionerNameCombo->setModelColumn(0);
+            commissionerNameCombo->setCurrentIndex(
+                commissionerNameCombo->findText(
+                    commissionModel->record(0).value(0).toString()));
+            commissionerNameCombo->setModelColumn(1);
             createDate->show();
             paidDate->show();
             dueDate->show();
@@ -248,8 +267,7 @@ namespace Commissionator {
 
     void CommissionPanel::toggleEdit() {
         if (commissionerName->isHidden()) {
-            if (commissionerNameCombo->currentData().toString() 
-                != commissionerName->text())
+            if (commissionerNameCombo->model()->index(commissionerNameCombo->currentIndex(), 0).data().toString() != commissionerName->text())
                 emit editCommissioner(
                     commissionModel->record(0).value(0).toInt(),
                     commissionerNameCombo->model()->index(

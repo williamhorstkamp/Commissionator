@@ -339,6 +339,23 @@ namespace Commissionator {
         //void save(QString fileName);
 
         /**
+         *  Function edits the commissioner of the commission with the given id.
+         *
+         *  @param commission - commission id
+         *  @param commissioner - commissioner id
+         */
+        void editCommissionCommissioner(const int commission, 
+            const int commissioner);
+
+        /**
+         *  Function edits the notes of the commission with the given id.
+         *
+         *  @param commissioner - commission id
+         *  @param notes - commission notes
+         */
+        void editCommissionNotes(const int commission, const QString notes);
+
+        /**
          *  Function edits the name of the commissioner with the given id.
          *
          *  @param commissioner - commissioner id
@@ -722,6 +739,8 @@ namespace Commissionator {
         QSqlQuery *deleteCommissionerQuery;
         QSqlQuery *deleteCommissionQuery;
         QSqlQuery *deleteContactQuery;
+        QSqlQuery *editCommissionCommissionerQuery;
+        QSqlQuery *editCommissionNotesQuery;
         QSqlQuery *editCommissionerNameQuery;
         QSqlQuery *editCommissionerNotesQuery;
         QSqlQuery *insertCommissionerQuery;
