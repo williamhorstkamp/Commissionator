@@ -1,6 +1,4 @@
-#include <QSqlQuery>
-#include <QDate>
-#include <QDebug>
+#include <QSqlTableModel>
 #include "ComModel.h"
 
 namespace Commissionator {
@@ -91,9 +89,9 @@ namespace Commissionator {
 
     void ComModel::editCommissionCommissioner(const int commission,
         const int commissioner) {
-        editCommissionCommissionerQuery->bindValue(0, commissioner);
-        editCommissionCommissionerQuery->bindValue(1, commission);
-        editCommissionCommissionerQuery->exec();
+        editCommissionCommissionerQuery.bindValue(0, commissioner);
+        editCommissionCommissionerQuery.bindValue(1, commission);
+        editCommissionCommissionerQuery.exec();
         commissionModel->query().exec();
         commissionModel->setQuery(commissionModel->query());
         searchCommissions("", "", "", "", "", "");
@@ -102,9 +100,9 @@ namespace Commissionator {
 
     void ComModel::editCommissionNotes(const int commission, 
         const QString notes) {
-        editCommissionNotesQuery->bindValue(0, notes);
-        editCommissionNotesQuery->bindValue(1, commission);
-        editCommissionNotesQuery->exec();
+        editCommissionNotesQuery.bindValue(0, notes);
+        editCommissionNotesQuery.bindValue(1, commission);
+        editCommissionNotesQuery.exec();
         commissionModel->query().exec();
         commissionModel->setQuery(commissionModel->query());
         searchCommissions("", "", "", "", "", "");
@@ -112,9 +110,9 @@ namespace Commissionator {
     }
 
     void ComModel::editCommissionerName(const int commissioner, const QString name) {
-        editCommissionerNameQuery->bindValue(0, name);
-        editCommissionerNameQuery->bindValue(1, commissioner);
-        editCommissionerNameQuery->exec();
+        editCommissionerNameQuery.bindValue(0, name);
+        editCommissionerNameQuery.bindValue(1, commissioner);
+        editCommissionerNameQuery.exec();
         commissionerModel->query().exec();
         commissionerModel->setQuery(commissionerModel->query());
         searchCommissioners("", "", "");
@@ -122,9 +120,9 @@ namespace Commissionator {
     }
 
     void ComModel::editCommissionerNotes(const int commissioner, const QString notes) {
-        editCommissionerNotesQuery->bindValue(0, notes);
-        editCommissionerNotesQuery->bindValue(1, commissioner);
-        editCommissionerNotesQuery->exec();
+        editCommissionerNotesQuery.bindValue(0, notes);
+        editCommissionerNotesQuery.bindValue(1, commissioner);
+        editCommissionerNotesQuery.exec();
         commissionerModel->query().exec();
         commissionerModel->setQuery(commissionerModel->query());
         searchCommissioners("", "", "");
@@ -208,29 +206,29 @@ namespace Commissionator {
     }
     
     void ComModel::deleteCommission(const QModelIndex &index) {
-        deleteCommissionQuery->bindValue(0, getValue(index, 0));
-        deleteCommissionQuery->exec();
+        deleteCommissionQuery.bindValue(0, getValue(index, 0));
+        deleteCommissionQuery.exec();
         searchCommissions("", "", "", "", "", "");
         emit commissionChanged();
     }
 
     void ComModel::deleteCommissioner(const QModelIndex &index) {
-        deleteCommissionerQuery->bindValue(0, getValue(index, 0));
-        deleteCommissionerQuery->exec();
+        deleteCommissionerQuery.bindValue(0, getValue(index, 0));
+        deleteCommissionerQuery.exec();
         searchCommissioners("", "", "");
         emit commissionerChanged();
     }
 
     void ComModel::deleteContact(const QModelIndex &index) {
-        deleteContactQuery->bindValue(0, getValue(index, 0));
-        deleteContactQuery->exec();
+        deleteContactQuery.bindValue(0, getValue(index, 0));
+        deleteContactQuery.exec();
         commissionerContactsModel->query().exec();
         commissionerContactsModel->setQuery(commissionerContactsModel->query());
     }
 
     void ComModel::deletePiece(const QModelIndex &index) {
-        deletePieceQuery->bindValue(0, getValue(index, 0));
-        deletePieceQuery->exec();
+        deletePieceQuery.bindValue(0, getValue(index, 0));
+        deletePieceQuery.exec();
         commissionPiecesModel->query().exec();
         commissionPiecesModel->setQuery(commissionPiecesModel->query());
         searchCommissioners("", "", "");
@@ -240,13 +238,13 @@ namespace Commissionator {
 
     int ComModel::insertCommission(const int commissionerId, 
         const QDateTime dueDate, const QString notes) {
-        insertCommissionQuery->bindValue(0, commissionerId);
-        insertCommissionQuery->bindValue(1, dueDate.toMSecsSinceEpoch());
-        insertCommissionQuery->bindValue(2, notes);
-        insertCommissionQuery->bindValue(3, 
+        insertCommissionQuery.bindValue(0, commissionerId);
+        insertCommissionQuery.bindValue(1, dueDate.toMSecsSinceEpoch());
+        insertCommissionQuery.bindValue(2, notes);
+        insertCommissionQuery.bindValue(3, 
             QDateTime::currentDateTime().toMSecsSinceEpoch());
-        insertCommissionQuery->exec();
-        const int id = insertCommissionQuery->lastInsertId().toInt();
+        insertCommissionQuery.exec();
+        const int id = insertCommissionQuery.lastInsertId().toInt();
         commissionerCommissionsModel->query().exec();
         commissionerCommissionsModel->setQuery(commissionerCommissionsModel->query());
         searchCommissions("", "", "", "", "", "");
@@ -256,9 +254,9 @@ namespace Commissionator {
 
     void ComModel::insertCommissioner(const QString commissionerName,
         const QString commissionerNotes) {
-        insertCommissionerQuery->bindValue(0, commissionerName);
-        insertCommissionerQuery->bindValue(1, commissionerNotes);
-        insertCommissionerQuery->exec();
+        insertCommissionerQuery.bindValue(0, commissionerName);
+        insertCommissionerQuery.bindValue(1, commissionerNotes);
+        insertCommissionerQuery.exec();
         searchCommissioners("", "", "");
         commissionerNamesModel->query().exec();
         commissionerNamesModel->setQuery(commissionerNamesModel->query());
@@ -267,10 +265,10 @@ namespace Commissionator {
     void ComModel::insertContact(const int commissionerId,
         const int contactType, const QString contactEntry) {
         if (contactEntry != "") {
-            insertContactQuery->bindValue(0, commissionerId);
-            insertContactQuery->bindValue(1, contactType);
-            insertContactQuery->bindValue(2, contactEntry);
-            insertContactQuery->exec();
+            insertContactQuery.bindValue(0, commissionerId);
+            insertContactQuery.bindValue(1, contactType);
+            insertContactQuery.bindValue(2, contactEntry);
+            insertContactQuery.exec();
         }
 
         if (commissionerContactsModel->columnCount() > 0) {
@@ -281,21 +279,21 @@ namespace Commissionator {
     }
 
     void ComModel::insertContactType(const QString contactTypeName) {
-        insertContactTypeQuery->bindValue(0, contactTypeName);
-        insertContactTypeQuery->exec();
+        insertContactTypeQuery.bindValue(0, contactTypeName);
+        insertContactTypeQuery.exec();
         contactTypesModel->query().exec();
         contactTypesModel->setQuery(contactTypesModel->query());
     }
 
     void ComModel::insertPayment(const int commissionId, const int paymentTypeId,
         const double paymentAmount, const QString paymentNotes) {
-        insertPaymentQuery->bindValue(0, commissionId);
-        insertPaymentQuery->bindValue(1, paymentTypeId);
-        insertPaymentQuery->bindValue(2, paymentAmount);
-        insertPaymentQuery->bindValue(3, paymentNotes);
-        insertPaymentQuery->bindValue(4, 
+        insertPaymentQuery.bindValue(0, commissionId);
+        insertPaymentQuery.bindValue(1, paymentTypeId);
+        insertPaymentQuery.bindValue(2, paymentAmount);
+        insertPaymentQuery.bindValue(3, paymentNotes);
+        insertPaymentQuery.bindValue(4, 
             QDateTime::currentDateTime().toMSecsSinceEpoch());
-        insertPaymentQuery->exec();
+        insertPaymentQuery.exec();
         commissionPaymentsModel->query().exec();
         commissionPaymentsModel->setQuery(commissionPaymentsModel->query());
         QSqlQuery wasJustPaid(sql);
@@ -331,8 +329,8 @@ namespace Commissionator {
     }
 
     void ComModel::insertPaymentType(const QString typeName) {
-        insertPaymentTypeQuery->bindValue(0, typeName);
-        insertPaymentTypeQuery->exec();
+        insertPaymentTypeQuery.bindValue(0, typeName);
+        insertPaymentTypeQuery.exec();
         paymentTypesModel->query().exec();
         paymentTypesModel->setQuery(paymentTypesModel->query());
     }
@@ -340,17 +338,17 @@ namespace Commissionator {
     void ComModel::insertPiece(const int commission, const int product,
         const QString name, const QString description, 
         const double overridePrice) {
-        insertPieceQuery->bindValue(0, commission);
-        insertPieceQuery->bindValue(1, product);
-        insertPieceQuery->bindValue(2, name);
-        insertPieceQuery->bindValue(3, description);
-        insertPieceQuery->bindValue(4, QDateTime::currentDateTime().toMSecsSinceEpoch());
-        insertPieceQuery->bindValue(5, QVariant(QVariant::String));
+        insertPieceQuery.bindValue(0, commission);
+        insertPieceQuery.bindValue(1, product);
+        insertPieceQuery.bindValue(2, name);
+        insertPieceQuery.bindValue(3, description);
+        insertPieceQuery.bindValue(4, QDateTime::currentDateTime().toMSecsSinceEpoch());
+        insertPieceQuery.bindValue(5, QVariant(QVariant::String));
         if (overridePrice > -1)
-            insertPieceQuery->bindValue(6, overridePrice);
+            insertPieceQuery.bindValue(6, overridePrice);
         else
-            insertPieceQuery->bindValue(6, QVariant(QVariant::Double));
-        insertPieceQuery->exec();
+            insertPieceQuery.bindValue(6, QVariant(QVariant::Double));
+        insertPieceQuery.exec();
         QSqlQuery isPaid("SELECT CASE WHEN Commission.paidDate IS NULL "
             "THEN 'false' ELSE 'true' END "
             "FROM Commission "
@@ -379,8 +377,8 @@ namespace Commissionator {
     }
 
     void ComModel::insertProduct(const QString productName, const double basePrice) {
-        insertProductQuery->bindValue(0, productName);
-        insertProductQuery->exec();
+        insertProductQuery.bindValue(0, productName);
+        insertProductQuery.exec();
         QSqlQuery lastId("SELECT last_insert_rowid();", sql);
         lastId.exec();
         lastId.first();
@@ -389,11 +387,11 @@ namespace Commissionator {
     }
 
     void ComModel::insertProductPrice(const int productId, const double basePrice) {
-        insertProductPriceQuery->bindValue(0, productId);
-        insertProductPriceQuery->bindValue(1, basePrice);
-        insertProductPriceQuery->bindValue(2,
+        insertProductPriceQuery.bindValue(0, productId);
+        insertProductPriceQuery.bindValue(1, basePrice);
+        insertProductPriceQuery.bindValue(2,
             QDateTime::currentDateTime().toMSecsSinceEpoch());
-        insertProductPriceQuery->exec();
+        insertProductPriceQuery.exec();
         searchProducts("", "", "");
     }
 
@@ -525,22 +523,22 @@ namespace Commissionator {
         commissionPiecesModel->query().finish();
         commissionsModel->query().finish();
         contactTypesModel->query().exec();
-        deleteCommissionerQuery->finish();
-        deleteCommissionQuery->finish();
-        deleteContactQuery->finish();
-        editCommissionCommissionerQuery->finish();
-        editCommissionNotesQuery->finish();
-        editCommissionerNameQuery->finish();
-        editCommissionerNotesQuery->finish();
-        insertCommissionerQuery->finish();
-        insertCommissionQuery->finish();
-        insertContactQuery->finish();
-        insertContactTypeQuery->finish();
-        insertPaymentQuery->finish();
-        insertPaymentTypeQuery->finish();
-        insertPieceQuery->finish();
-        insertProductPriceQuery->finish();
-        insertProductQuery->finish();
+        deleteCommissionerQuery.finish();
+        deleteCommissionQuery.finish();
+        deleteContactQuery.finish();
+        editCommissionCommissionerQuery.finish();
+        editCommissionNotesQuery.finish();
+        editCommissionerNameQuery.finish();
+        editCommissionerNotesQuery.finish();
+        insertCommissionerQuery.finish();
+        insertCommissionQuery.finish();
+        insertContactQuery.finish();
+        insertContactTypeQuery.finish();
+        insertPaymentQuery.finish();
+        insertPaymentTypeQuery.finish();
+        insertPieceQuery.finish();
+        insertProductPriceQuery.finish();
+        insertProductQuery.finish();
         paymentTypesModel->query().finish();
         pieceModel->query().finish();
         piecesModel->query().finish();
@@ -836,60 +834,60 @@ namespace Commissionator {
         contactTypesModel = new QSqlQueryModel(this);
         contactTypesModel->setQuery(QSqlQuery("SELECT id, type FROM ContactType;", sql));
         contactTypesModel->query().exec();
-        deleteCommissionerQuery = new QSqlQuery(sql);
-        deleteCommissionerQuery->prepare("DELETE FROM Commissioner WHERE "
+        deleteCommissionerQuery = QSqlQuery(sql);
+        deleteCommissionerQuery.prepare("DELETE FROM Commissioner WHERE "
             "Commissioner.id = (?);");
-        deleteContactQuery = new QSqlQuery(sql);
-        deleteContactQuery->prepare("DELETE FROM Contact WHERE "
+        deleteContactQuery = QSqlQuery(sql);
+        deleteContactQuery.prepare("DELETE FROM Contact WHERE "
             "Contact.id = (?);");
-        deleteCommissionQuery = new QSqlQuery(sql);
-        deleteCommissionQuery->prepare("DELETE FROM Commission WHERE "
+        deleteCommissionQuery = QSqlQuery(sql);
+        deleteCommissionQuery.prepare("DELETE FROM Commission WHERE "
             "Commission.id = (?);");
-        deletePieceQuery = new QSqlQuery(sql);
-        deletePieceQuery->prepare("DELETE FROM Piece WHERE "
+        deletePieceQuery = QSqlQuery(sql);
+        deletePieceQuery.prepare("DELETE FROM Piece WHERE "
             "Piece.id = (?);");
-        editCommissionCommissionerQuery = new QSqlQuery(sql);
-        editCommissionCommissionerQuery->prepare("UPDATE Commission "
+        editCommissionCommissionerQuery = QSqlQuery(sql);
+        editCommissionCommissionerQuery.prepare("UPDATE Commission "
             "SET commissioner = (?) WHERE id = (?)");
-        editCommissionNotesQuery = new QSqlQuery(sql);
-        editCommissionNotesQuery->prepare("UPDATE Commission "
+        editCommissionNotesQuery = QSqlQuery(sql);
+        editCommissionNotesQuery.prepare("UPDATE Commission "
             "SET notes = (?) WHERE id = (?)");
-        editCommissionerNameQuery = new QSqlQuery(sql);
-        editCommissionerNameQuery->prepare("UPDATE Commissioner "
+        editCommissionerNameQuery = QSqlQuery(sql);
+        editCommissionerNameQuery.prepare("UPDATE Commissioner "
             "SET name = (?) WHERE id = (?)");
-        editCommissionerNotesQuery = new QSqlQuery(sql);
-        editCommissionerNotesQuery->prepare("UPDATE Commissioner "
+        editCommissionerNotesQuery = QSqlQuery(sql);
+        editCommissionerNotesQuery.prepare("UPDATE Commissioner "
             "SET notes = (?) WHERE id = (?)");
-        insertCommissionerQuery = new QSqlQuery(sql);
-        insertCommissionerQuery->prepare("INSERT INTO "
+        insertCommissionerQuery = QSqlQuery(sql);
+        insertCommissionerQuery.prepare("INSERT INTO "
             "Commissioner(name, notes) VALUES (?, ?);");
-        insertCommissionQuery = new QSqlQuery(sql);
-        insertCommissionQuery->prepare("INSERT INTO "
+        insertCommissionQuery = QSqlQuery(sql);
+        insertCommissionQuery.prepare("INSERT INTO "
             "Commission(commissioner, dueDate, notes, createDate) "
             "VALUES (?, ?, ?, ?);");
-        insertContactTypeQuery = new QSqlQuery(sql);
-        insertContactTypeQuery->prepare("INSERT INTO "
+        insertContactTypeQuery = QSqlQuery(sql);
+        insertContactTypeQuery.prepare("INSERT INTO "
             "ContactType(type) VALUES (?);");
-        insertContactQuery = new QSqlQuery(sql);
-        insertContactQuery->prepare("INSERT INTO "
+        insertContactQuery =  QSqlQuery(sql);
+        insertContactQuery.prepare("INSERT INTO "
             "Contact(commissioner, type, entry) VALUES(?, ?, ?);");
-        insertPaymentTypeQuery = new QSqlQuery(sql);
-        insertPaymentTypeQuery->prepare("INSERT INTO "
+        insertPaymentTypeQuery = QSqlQuery(sql);
+        insertPaymentTypeQuery.prepare("INSERT INTO "
             "PaymentType(name) VALUES (?);");
-        insertPaymentQuery = new QSqlQuery(sql);
-        insertPaymentQuery->prepare("INSERT INTO "
+        insertPaymentQuery = QSqlQuery(sql);
+        insertPaymentQuery.prepare("INSERT INTO "
             "Payment(commission, method, fee, note, date) "
             "VALUES (?, ?, ?, ?, ?);");
-        insertPieceQuery = new QSqlQuery(sql);
-        insertPieceQuery->prepare("INSERT INTO "
+        insertPieceQuery = QSqlQuery(sql);
+        insertPieceQuery.prepare("INSERT INTO "
             "Piece(commission, product, name, notes, createDate, finishDate, overridePrice) "
             "VALUES(?, ?, ?, ?, ?, ?, ?);");
-        insertProductPriceQuery = new QSqlQuery(sql);
-        insertProductPriceQuery->prepare("INSERT INTO "
+        insertProductPriceQuery = QSqlQuery(sql);
+        insertProductPriceQuery.prepare("INSERT INTO "
             "ProductPrices(product, price, date) "
             "VALUES (?, ?, ?);");
-        insertProductQuery = new QSqlQuery(sql);
-        insertProductQuery->prepare("INSERT INTO "
+        insertProductQuery = QSqlQuery(sql);
+        insertProductQuery.prepare("INSERT INTO "
             "Product(name) VALUES(?);");
         paymentTypesModel = new QSqlQueryModel(this);
         paymentTypesModel->setQuery(QSqlQuery("SELECT id, name FROM PaymentType", sql));

@@ -1,17 +1,22 @@
 #ifndef NEWCOMMISSIONWINDOW_H
 #define NEWCOMMISSIONWINDOW_H
 
+#include <QDateTime>
 #include "BaseNewWindow.h"
-#include <QLabel>
-#include <QVBoxLayout>
-#include <QComboBox>
-#include <QDateEdit>
-#include <QLineEdit>
-#include <QPushButton>
-#include <QStandardItemModel>
-#include <QTableView>
-#include <FixedRowTableDelegate.h>
+#include "FixedRowTableDelegate.h"
 #include "NewPieceWindow.h"
+
+class QStandardItemModel;
+class QVBoxLayout;
+class QGridLayout;
+class QLabel;
+class QLineEdit;
+class QDateEdit;
+class QComboBox;
+class QCheckBox;
+class QDoubleSpinBox;
+class QDateTime;
+class QTableView;
 
 namespace Commissionator {
 

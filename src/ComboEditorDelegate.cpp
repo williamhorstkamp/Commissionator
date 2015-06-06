@@ -1,4 +1,4 @@
-#include "QComboBox"
+#include <QComboBox>
 #include "ComboEditorDelegate.h"
 
 namespace Commissionator {

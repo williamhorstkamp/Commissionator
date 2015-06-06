@@ -1,8 +1,11 @@
 #include <QLabel>
 #include <QSqlRecord>
-#include "FixedRowTable.h"
+#include <QVBoxLayout>
+#include <QSqlQueryModel>
 #include <QHeaderView>
 #include <QLineEdit>
+#include <QPushButton>
+#include "FixedRowTable.h"
 #include "CommissionerPanel.h"
 
 namespace Commissionator {

@@ -1,4 +1,10 @@
 #include <QPushButton>
+#include <QVBoxLayout>
+#include <QLabel>
+#include <QLineEdit>
+#include <QComboBox>
+#include <QCheckBox>
+#include <QDoubleSpinBox>
 #include "NewPieceWindow.h"
 
 namespace Commissionator {

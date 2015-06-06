@@ -1,5 +1,8 @@
 #include <QHeaderView>
 #include <QAbstractProxyModel>
+#include <QVBoxLayout>
+#include <QSqlQueryModel>
+#include <QLabel>
 #include "LeftPanel.h"
 
 

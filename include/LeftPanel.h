@@ -1,11 +1,11 @@
 #ifndef LEFTPANEL_H
 #define LEFTPANEL_H
 
-#include <QVBoxLayout>
-#include <QSqlQueryModel>
-#include <QList>
-#include <QLabel>
 #include "FixedRowTable.h"
+
+class QLabel;
+class QVBoxLayout;
+class QSqlQueryModel;
 
 namespace Commissionator {
     /**

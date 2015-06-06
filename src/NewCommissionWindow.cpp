@@ -1,4 +1,12 @@
 #include <QHeaderView>
+#include <QLabel>
+#include <QVBoxLayout>
+#include <QComboBox>
+#include <QDateEdit>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QStandardItemModel>
+#include <QTableView>
 #include "NewCommissionWindow.h"
 
 namespace Commissionator {

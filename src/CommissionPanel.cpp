@@ -1,6 +1,12 @@
+#include <QVBoxLayout>
 #include <QLineEdit>
 #include <QSqlRecord>
+#include <QLabel>
+#include <QComboBox>
+#include <QPushButton>
+#include <QSqlQueryModel>
 #include <QDateTime>
+#include <QTableView>
 #include <QHeaderView>
 #include "CommissionPanel.h"
 

@@ -1,4 +1,7 @@
 #include <QPushButton>
+#include <QLabel>
+#include <QLineEdit>
+#include <QVBoxLayout>
 #include "NewCommissionerWindow.h"
 
 namespace Commissionator {

@@ -2,7 +2,6 @@
 #define MAINWINDOW
 
 #include <QMainWindow>
-#include <QStackedWidget>
 #include "LeftPanel.h"
 #include "NewCommissionWindow.h"
 #include "NewCommissionerWindow.h"
@@ -10,6 +9,9 @@
 #include "CommissionerPanel.h"
 #include "CommissionPanel.h"
 #include "ComModel.h"
+
+class QHBoxLayout;
+class QStackedWidget;
 
 namespace Commissionator {
 

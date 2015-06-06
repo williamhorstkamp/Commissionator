@@ -2,9 +2,11 @@
 #define NEWCOMMISSIONERWINDOW_H
 
 #include "BaseNewWindow.h"
-#include <QLabel>
-#include <QLineEdit>
-#include <QVBoxLayout>
+
+class QLineEdit;
+class QLabel;
+class QVBoxLayout;
+class QGridLayout;
 
 namespace Commissionator {
 

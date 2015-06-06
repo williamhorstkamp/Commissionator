@@ -1,14 +1,15 @@
 #ifndef COMMISSIONERPANEL_H
 #define COMMISSIONERPANEL_H
 
-#include <QVBoxLayout>
-#include <QLabel>
-#include <QTextEdit>
-#include <QPushButton>
-#include <QSqlQueryModel>
-#include <QDataWidgetMapper>
 #include "ComboEditorDelegate.h"
 #include "FixedRowTable.h"
+
+class QVBoxLayout;
+class QGridLayout;
+class QLabel;
+class QTextEdit;
+class QPushButton;
+class QSqlQueryModel;
 
 namespace Commissionator {
     class CommissionerPanel : public QWidget {

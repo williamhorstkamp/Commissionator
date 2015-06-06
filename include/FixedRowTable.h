@@ -2,9 +2,10 @@
 #define FIXEDROWTABLE_H
 
 #include <QTableView>
-#include <QPushButton>
 #include "FixedRowTableDelegate.h"
 #include "FixedRowBox.h"
+
+class QPushButton;
 
 namespace Commissionator {
 

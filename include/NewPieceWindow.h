@@ -1,14 +1,16 @@
 #ifndef NEWPIECEWINDOW_H
 #define NEWPIECEWINDOW_H
 
-#include <QAbstractItemModel>
-#include <QVBoxLayout>
-#include <QLabel>
-#include <QLineEdit>
-#include <QComboBox>
-#include <QCheckBox>
-#include <QDoubleSpinBox>
 #include "BaseNewWindow.h"
+
+class QAbstractItemModel;
+class QVBoxLayout;
+class QGridLayout;
+class QLabel;
+class QLineEdit;
+class QComboBox;
+class QCheckBox;
+class QDoubleSpinBox;
 
 namespace Commissionator {
 

@@ -1,6 +1,5 @@
 #include <QApplication>
 #include <QMouseEvent>
-#include <QDialog>
 #include "FixedRowTableDelegate.h"
 
 namespace Commissionator {

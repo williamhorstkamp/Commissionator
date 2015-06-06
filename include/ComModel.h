@@ -1,10 +1,11 @@
 #ifndef COMMODEL_H
 #define COMMODEL_H
-#include <QSqlDatabase>
-#include <QSqlQueryModel>
-#include <QSqlTableModel>
-#include <QDataWidgetMapper>
+
+#include <QObject>
+#include <QSqlQuery>
 #include <QDateTime>
+
+class QSqlQueryModel;
 
 namespace Commissionator {
 
@@ -736,23 +737,23 @@ namespace Commissionator {
         QSqlQueryModel *commissionPiecesModel;
         QSqlQueryModel *commissionsModel;
         QSqlQueryModel *contactTypesModel;
-        QSqlQuery *deleteCommissionerQuery;
-        QSqlQuery *deleteCommissionQuery;
-        QSqlQuery *deleteContactQuery;
-        QSqlQuery *deletePieceQuery;
-        QSqlQuery *editCommissionCommissionerQuery;
-        QSqlQuery *editCommissionNotesQuery;
-        QSqlQuery *editCommissionerNameQuery;
-        QSqlQuery *editCommissionerNotesQuery;
-        QSqlQuery *insertCommissionerQuery;
-        QSqlQuery *insertCommissionQuery;
-        QSqlQuery *insertContactQuery;
-        QSqlQuery *insertContactTypeQuery;
-        QSqlQuery *insertPaymentQuery;
-        QSqlQuery *insertPaymentTypeQuery;
-        QSqlQuery *insertPieceQuery;
-        QSqlQuery *insertProductPriceQuery;
-        QSqlQuery *insertProductQuery;
+        QSqlQuery deleteCommissionerQuery;
+        QSqlQuery deleteCommissionQuery;
+        QSqlQuery deleteContactQuery;
+        QSqlQuery deletePieceQuery;
+        QSqlQuery editCommissionCommissionerQuery;
+        QSqlQuery editCommissionNotesQuery;
+        QSqlQuery editCommissionerNameQuery;
+        QSqlQuery editCommissionerNotesQuery;
+        QSqlQuery insertCommissionerQuery;
+        QSqlQuery insertCommissionQuery;
+        QSqlQuery insertContactQuery;
+        QSqlQuery insertContactTypeQuery;
+        QSqlQuery insertPaymentQuery;
+        QSqlQuery insertPaymentTypeQuery;
+        QSqlQuery insertPieceQuery;
+        QSqlQuery insertProductPriceQuery;
+        QSqlQuery insertProductQuery;
         QSqlQueryModel *paymentTypesModel;
         QSqlQueryModel *pieceModel;
         QSqlQueryModel *piecesModel;

@@ -1,6 +1,7 @@
 #include <QHeaderView>
 #include <QScrollBar>
 #include <QKeyEvent>
+#include <QPushButton>
 #include <QStyledItemDelegate>
 #include "FixedRowTable.h"
 

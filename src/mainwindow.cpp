@@ -1,7 +1,10 @@
-#include <QtWidgets>
-#include <QComboBox>
+#include <QStatusBar>
+#include <QMenuBar>
+#include <QHBoxLayout>
+#include <QToolBar>
 #include <QSqlQueryModel>
 #include <QSqlRecord>
+#include <QStackedWidget>
 #include "mainwindow.h"
 
 namespace Commissionator{
