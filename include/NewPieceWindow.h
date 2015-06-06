@@ -44,7 +44,8 @@ namespace Commissionator {
          *  @param price - override price (-1 by default)
          */
         void newPiece(const QString pieceName, const QString pieceNotes,
-            const int productId, const QString productName, const double price);
+            const int productId, const QString productName, 
+            const double price = -1);
 
     protected slots:
         /**

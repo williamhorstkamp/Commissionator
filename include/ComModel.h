@@ -538,7 +538,7 @@ namespace Commissionator {
          *
          *  @param index - index of the piece to delete
          */
-        //void deletePiece(const QModelIndex &index);
+        void deletePiece(const QModelIndex &index);
 
         /**
          *  Deletes the payment at the given index.
@@ -739,6 +739,7 @@ namespace Commissionator {
         QSqlQuery *deleteCommissionerQuery;
         QSqlQuery *deleteCommissionQuery;
         QSqlQuery *deleteContactQuery;
+        QSqlQuery *deletePieceQuery;
         QSqlQuery *editCommissionCommissionerQuery;
         QSqlQuery *editCommissionNotesQuery;
         QSqlQuery *editCommissionerNameQuery;

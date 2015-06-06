@@ -228,6 +228,16 @@ namespace Commissionator {
         commissionerContactsModel->setQuery(commissionerContactsModel->query());
     }
 
+    void ComModel::deletePiece(const QModelIndex &index) {
+        deletePieceQuery->bindValue(0, getValue(index, 0));
+        deletePieceQuery->exec();
+        commissionPiecesModel->query().exec();
+        commissionPiecesModel->setQuery(commissionPiecesModel->query());
+        searchCommissioners("", "", "");
+        searchCommissions("", "", "", "", "", "");
+        searchPieces("", "", "", "");
+    }
+
     int ComModel::insertCommission(const int commissionerId, 
         const QDateTime dueDate, const QString notes) {
         insertCommissionQuery->bindValue(0, commissionerId);
@@ -360,6 +370,8 @@ namespace Commissionator {
         commissionerCommissionsModel->setQuery(commissionerCommissionsModel->query());
         commissionerModel->query().exec();
         commissionerModel->setQuery(commissionerModel->query());
+        commissionPiecesModel->query().exec();
+        commissionPiecesModel->setQuery(commissionPiecesModel->query());
         searchPieces("", "", "", "");
         searchCommissioners("", "", "");
         searchCommissions("", "", "", "", "", "");
@@ -752,19 +764,32 @@ namespace Commissionator {
         commissionPaymentsModel->setQuery(commissionPaymentsQuery);
         commissionPiecesModel = new QSqlQueryModel(this);
         QSqlQuery commissionPiecesQuery(sql);
-        commissionPiecesQuery.prepare("SELECT Piece.id, "
-            "Product.name as 'Product Name', "
-            "Piece.name as 'Piece Name', "
-            "COALESCE(Piece.overridePrice, ProductPrices.price) as 'Price', "
-            "Piece.createDate as 'Create Date', "
-            "COALESCE(Piece.finishDate, 'Unfinished') as 'Finish Date' "
-            "FROM Commission "
-            "INNER JOIN Piece ON Commission.id = Piece.commission "
+        commissionPiecesQuery.prepare("SELECT a.id, a.product as 'Product Name', "
+            "a.name as 'Piece Name', "
+            "COALESCE(b.price, a.price) as 'Price', "
+            "a.createDate as 'Create Date', a.finishDate as 'Finish Date' "
+            "FROM "
+            "(SELECT Piece.id id, Piece.commission commission, "
+            "Product.name product, Piece.name name, "
+            "strftime('%m/%d/%Y', Piece.createDate / 1000, 'unixepoch', "
+            "'localtime') createDate, "
+            "COALESCE(Piece.finishDate, 'Unfinished') finishDate, "
+            "COALESCE(Piece.overridePrice, ProductPrices.price) price "
+            "FROM Piece "
             "INNER JOIN Product ON Piece.product = Product.id "
             "INNER JOIN ProductPrices ON Product.id = ProductPrices.product "
+            "GROUP BY Piece.id HAVING ProductPrices.date = "
+            "min(ProductPrices.date)) a "
+            "LEFT JOIN "
+            "(SELECT Piece.id id, "
+            "COALESCE(Piece.overridePrice, ProductPrices.price) price "
+            "FROM Commission "
+            "INNER JOIN Piece ON Commission.id = Piece.commission "
+            "INNER JOIN ProductPrices ON Piece.product = ProductPrices.product "
             "AND ProductPrices.date < Commission.createDate "
-            "WHERE Commission.id = (?) "
-            "GROUP BY Piece.id HAVING date = max(date)");
+            "GROUP BY Piece.id HAVING date = max(date)) b "
+            "ON a.id = b.id "
+            "WHERE a.commission = (?)");
         commissionPiecesModel->setQuery(commissionPiecesQuery);
         /**
          *  initialized as a QSqlTableModel so that any proxy models created
@@ -820,6 +845,9 @@ namespace Commissionator {
         deleteCommissionQuery = new QSqlQuery(sql);
         deleteCommissionQuery->prepare("DELETE FROM Commission WHERE "
             "Commission.id = (?);");
+        deletePieceQuery = new QSqlQuery(sql);
+        deletePieceQuery->prepare("DELETE FROM Piece WHERE "
+            "Piece.id = (?);");
         editCommissionCommissionerQuery = new QSqlQuery(sql);
         editCommissionCommissionerQuery->prepare("UPDATE Commission "
             "SET commissioner = (?) WHERE id = (?)");

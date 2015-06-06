@@ -23,7 +23,7 @@ namespace Commissionator {
     public slots:
 
         /**
-         *  Function accepts the newCommission signal from NewCommissionWindow 
+         *  Slot accepts the newCommission signal from NewCommissionWindow 
          *  and inserts both the commission and the pieces into the model.
          *
          *  @param pieceName - piece name
@@ -31,10 +31,27 @@ namespace Commissionator {
          *  @param productId - product id
          *  @param productName - product names
          *  @param price - override price (-1 by default)
+         *  @param pieces - list of tuples representing each piece in the commission
+         *  Tuple Order:
+         *  Product Id, Piece Name, Piece Notes, Override Price (default -1)
          */
         void insertCommission(const int commissionerId,
             const QDateTime dueDate, const QString notes, 
             QList<std::tuple<int, QString, QString, double>> pieces);
+
+        /**
+         *  Slot accepts the newPiece signal from NewPieceWindow and inserts
+         *  the piece into the currently selected commission.
+         *
+         *  @param pieceName - piece name
+         *  @param pieceNotes - piece notes
+         *  @param productId - product id
+         *  @param productName - product names
+         *  @param price - override price (-1 by default)
+         */
+        void insertPiece(const QString pieceName, const QString pieceNotes,
+            const int productId, const QString productName,
+            const double price);
 
         /**
          *  Function opens the dialog window to create a new commission.
@@ -63,6 +80,26 @@ namespace Commissionator {
          *      commissioner
          */
         void newCommissionWithCommissioner(const QVariant &commissioner);
+
+        /**
+         *  Function opens the dialog window to create a new payment.
+         *  Takes control away from the MainWindow for the duration of the
+         *  new payment window's lifetime. Depending on whether a payment
+         *  is made or not, the models may be refreshed.
+         *
+         *  @param commission - commission id for the payment
+         */
+        void newPayment(const QVariant &commission);
+
+        /**
+         *  Function opens the dialog window to create a new piece.
+         *  Takes control away from the MainWindow for the duration of the
+         *  new piece window's lifetime. Depending on whether a piece
+         *  is created or not, the models may be refreshed.
+         *
+         *  @param commission - commission id for the piece
+         */
+        void newPiece(const QVariant &commission);
 
         /**
          *  Functions searches for commissioners with given arguements
@@ -147,6 +184,7 @@ namespace Commissionator {
 
         NewCommissionWindow *commissionPopup;
         NewCommissionerWindow *commissionerPopup;
+        NewPieceWindow *piecePopup;
 
         QMenu *fileMenu;
         QMenu *newMenu;

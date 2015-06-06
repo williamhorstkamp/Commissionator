@@ -65,6 +65,24 @@ namespace Commissionator {
          */
         void editNotes(const int commission, const QString notes);
 
+        /**
+         *  Signal emit when the newCommissionButton is clicked.
+         *  Is to be forwarded to MainWindow::newCommission.
+         *
+         *  @param commission - the id of the commission to create
+         *      a payment for
+         */
+        void newPayment(const QVariant &commission);
+
+        /**
+         *  Signal emit when the newCommissionButton is clicked.
+         *  Is to be forwarded to MainWindow::newCommission.
+         *
+         *  @param commission - the id of the commission to create
+         *      a piece for
+         */
+        void newPiece(const QVariant &commission);
+
     public slots:
         /**
          *  Slot connects to ComModel::commissionChanged.
@@ -74,6 +92,18 @@ namespace Commissionator {
         virtual void updatePanel();
 
     private slots:
+        /**
+         *  Slot captures QPushButton::clicked from newCommissionButton and
+         *  emits the corresponding newCommission signal
+         */
+        void newPaymentSlot();
+
+        /**
+         *  Slot captures QPushButton::clicked from newCommissionButton and
+         *  emits the corresponding newCommission signal
+         */
+        void newPieceSlot();
+
         /**
          *  Slot toggles between the panel's edit and display modes.
          *  Has the unlockButton plugged into it.

@@ -1,6 +1,7 @@
 #include <QtWidgets>
 #include <QComboBox>
 #include <QSqlQueryModel>
+#include <QSqlRecord>
 #include "mainwindow.h"
 
 namespace Commissionator{
@@ -217,10 +218,16 @@ namespace Commissionator{
 
         connect(model, &ComModel::commissionChanged,
             commissionRightPanel, &CommissionPanel::updatePanel);
+        connect(commissionRightPanel, &CommissionPanel::deletePiece,
+            model, &ComModel::deletePiece);
         connect(commissionRightPanel, &CommissionPanel::editCommissioner,
             model, &ComModel::editCommissionCommissioner);
         connect(commissionRightPanel, &CommissionPanel::editNotes,
             model, &ComModel::editCommissionNotes);
+        connect(commissionRightPanel, &CommissionPanel::newPayment,
+            this, &MainWindow::newPayment);
+        connect(commissionRightPanel, &CommissionPanel::newPiece,
+            this, &MainWindow::newPiece);
 
         layout->addWidget(leftPanel);
         layout->addWidget(line);
@@ -239,6 +246,9 @@ namespace Commissionator{
         commissionerPopup = new NewCommissionerWindow(this);
         connect(commissionerPopup, &NewCommissionerWindow::newCommissioner,
             model, &ComModel::insertCommissioner);
+        piecePopup = new NewPieceWindow(model->getProductNames(), this);
+        connect(piecePopup, &NewPieceWindow::newPiece,
+            this, &MainWindow::insertPiece);
     }
 
     void MainWindow::insertCommission(const int commissionerId,
@@ -252,6 +262,14 @@ namespace Commissionator{
         commissionerRightPanel->updatePanel();
     }
 
+    void MainWindow::insertPiece(const QString pieceName, const QString pieceNotes,
+        const int productId, const QString productName,
+        const double price) {
+        model->insertPiece(model->getCommission()->record(0).value(0).toInt(),
+            productId, pieceName, pieceNotes, price);
+        commissionRightPanel->updatePanel();
+    }
+
     void MainWindow::newCommission() {
         commissionPopup->exec();
     }
@@ -263,6 +281,14 @@ namespace Commissionator{
     void MainWindow::newCommissionWithCommissioner(const QVariant &commissioner) {
         commissionPopup->setCommissioner(commissioner);
         newCommission();
+    }
+
+    void MainWindow::newPayment(const QVariant &commission) {
+        
+    }
+
+    void MainWindow::newPiece(const QVariant &commission) {
+        piecePopup->exec();
     }
 
     void MainWindow::searchCommission(const QList<QVariant> query) {

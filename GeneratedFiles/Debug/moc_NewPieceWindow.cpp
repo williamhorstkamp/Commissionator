@@ -54,22 +54,24 @@ static const uint qt_meta_data_Commissionator__NewPieceWindow[] = {
        7,       // revision
        0,       // classname
        0,    0, // classinfo
-       3,   14, // methods
+       4,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-       1,       // signalCount
+       2,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    5,   29,    2, 0x06 /* Public */,
+       1,    5,   34,    2, 0x06 /* Public */,
+       1,    4,   45,    2, 0x26 /* Public | MethodCloned */,
 
  // slots: name, argc, parameters, tag, flags
-       8,    0,   40,    2, 0x09 /* Protected */,
-       9,    0,   41,    2, 0x08 /* Private */,
+       8,    0,   54,    2, 0x09 /* Protected */,
+       9,    0,   55,    2, 0x08 /* Private */,
 
  // signals: parameters
     QMetaType::Void, QMetaType::QString, QMetaType::QString, QMetaType::Int, QMetaType::QString, QMetaType::Double,    3,    4,    5,    6,    7,
+    QMetaType::Void, QMetaType::QString, QMetaType::QString, QMetaType::Int, QMetaType::QString,    3,    4,    5,    6,
 
  // slots: parameters
     QMetaType::Void,
@@ -84,8 +86,9 @@ void Commissionator::NewPieceWindow::qt_static_metacall(QObject *_o, QMetaObject
         NewPieceWindow *_t = static_cast<NewPieceWindow *>(_o);
         switch (_id) {
         case 0: _t->newPiece((*reinterpret_cast< const QString(*)>(_a[1])),(*reinterpret_cast< const QString(*)>(_a[2])),(*reinterpret_cast< const int(*)>(_a[3])),(*reinterpret_cast< const QString(*)>(_a[4])),(*reinterpret_cast< const double(*)>(_a[5]))); break;
-        case 1: _t->newItemSlot(); break;
-        case 2: _t->setPriceOverride(); break;
+        case 1: _t->newPiece((*reinterpret_cast< const QString(*)>(_a[1])),(*reinterpret_cast< const QString(*)>(_a[2])),(*reinterpret_cast< const int(*)>(_a[3])),(*reinterpret_cast< const QString(*)>(_a[4]))); break;
+        case 2: _t->newItemSlot(); break;
+        case 3: _t->setPriceOverride(); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -125,13 +128,13 @@ int Commissionator::NewPieceWindow::qt_metacall(QMetaObject::Call _c, int _id, v
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 3)
+        if (_id < 4)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 3;
+        _id -= 4;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 3)
+        if (_id < 4)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 3;
+        _id -= 4;
     }
     return _id;
 }

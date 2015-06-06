@@ -35,13 +35,13 @@ namespace Commissionator {
 
         newPieceButton = new QPushButton(tr("New Piece"), this);
         newPieceButton->hide();
-       // connect(newPieceButton, &QPushButton::clicked,
-       //     this, &CommissionPanel::newPieceSlot);
+        connect(newPieceButton, &QPushButton::clicked,
+            this, &CommissionPanel::newPieceSlot);
 
         newPaymentButton = new QPushButton(tr("New Payment"), this);
         newPaymentButton->hide();
-      //  connect(newPaymentButton, &QPushButton::clicked,
-       //     this, &CommissionPanel::newPaymentSlot);
+        connect(newPaymentButton, &QPushButton::clicked,
+            this, &CommissionPanel::newPaymentSlot);
     }
 
     void CommissionPanel::createFonts() {
@@ -161,6 +161,14 @@ namespace Commissionator {
         paymentsTable->setModel(paymentsModel);
         paymentsTable->setSelectionMode(QAbstractItemView::NoSelection);
         paymentsTable->hide();
+    }
+
+    void CommissionPanel::newPaymentSlot() {
+        emit newPayment(commissionModel->record(0).value(0));
+    }
+
+    void CommissionPanel::newPieceSlot() {
+        emit newPiece(commissionModel->record(0).value(0));
     }
 
     void CommissionPanel::updatePanel() {
