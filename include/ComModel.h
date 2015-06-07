@@ -27,7 +27,20 @@ namespace Commissionator {
          */
         ComModel(QObject *parent = nullptr);
 
+        /**
+         *  Destructor cleans up objects.
+         */
         ~ComModel();
+
+        /**
+         *  Function returns a pointer to a model containing data for the
+         *  commission combobox to be displayed on the new payment window.
+         *
+         *  @return - pointer to QSqlQueryModel containing commissions
+         *  Display order:
+         *  Index, Commissioner (Create Date - Due Date) (# of pieces)
+         */
+        QSqlQueryModel *getCommissionList();
 
         /**
          *  Function returns a pointer to a model containing data for the
@@ -733,6 +746,7 @@ namespace Commissionator {
         QSqlQueryModel *commissionerNamesModel;
         QSqlQueryModel *commissionersModel;
 		QSqlQueryModel *commissionModel;
+        QSqlQueryModel *commissionListModel;
 		QSqlQueryModel *commissionPaymentsModel;
         QSqlQueryModel *commissionPiecesModel;
         QSqlQueryModel *commissionsModel;

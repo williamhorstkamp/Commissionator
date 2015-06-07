@@ -62,7 +62,7 @@ namespace Commissionator {
     public slots:
         /**
          *  Sets the commissioner to the commissioner with the id given.
-         *  Also disables comBox
+         *  Also disables the commissioner combobox
          *
          *  @param commissioner - commissioner to set the combo box to
          */

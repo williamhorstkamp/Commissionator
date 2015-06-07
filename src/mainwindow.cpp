@@ -5,6 +5,14 @@
 #include <QSqlQueryModel>
 #include <QSqlRecord>
 #include <QStackedWidget>
+#include "LeftPanel.h"
+#include "NewCommissionWindow.h"
+#include "NewCommissionerWindow.h"
+#include "NewPaymentWindow.h"
+#include "NewPieceWindow.h"
+#include "CommissionerPanel.h"
+#include "CommissionPanel.h"
+#include "ComModel.h"
 #include "mainwindow.h"
 
 namespace Commissionator{
@@ -110,6 +118,8 @@ namespace Commissionator{
 
         newPaymentAct = new QAction(QIcon(":/PaymentPlus.png"), tr("&Payment"), this);
         newPaymentAct->setStatusTip(tr("Create a new payment"));
+        connect(newPaymentAct, &QAction::triggered,
+            this, &MainWindow::newPayment);
 
         manageStorefrontAct = new QAction(QIcon(":/Storefront.png"), tr("&Storefront"), this);
         manageStorefrontAct->setStatusTip(tr("Manage existing products"));
@@ -249,6 +259,10 @@ namespace Commissionator{
         commissionerPopup = new NewCommissionerWindow(this);
         connect(commissionerPopup, &NewCommissionerWindow::newCommissioner,
             model, &ComModel::insertCommissioner);
+        paymentPopup = new NewPaymentWindow(model->getCommissionList(),
+            model->getPaymentTypes(), this);
+        connect(paymentPopup, &NewPaymentWindow::newPayment,
+            model, &ComModel::insertPayment);
         piecePopup = new NewPieceWindow(model->getProductNames(), this);
         connect(piecePopup, &NewPieceWindow::newPiece,
             this, &MainWindow::insertPiece);
@@ -287,7 +301,7 @@ namespace Commissionator{
     }
 
     void MainWindow::newPayment(const QVariant &commission) {
-        
+        paymentPopup->exec();
     }
 
     void MainWindow::newPiece(const QVariant &commission) {

@@ -119,22 +119,24 @@ namespace Commissionator {
     }
 
     void NewCommissionWindow::newItemSlot() {
-        QList<std::tuple<int, QString, QString, double>> pieces;
-        for (int i = 0; i < newPieceModel->rowCount(); i++) {
-            double price = -1;
-            if (newPieceModel->index(i, 4).data().toString() != "N/A")
-                price = newPieceModel->index(i, 4).data().toString().toDouble();
-            pieces << std::make_tuple(
-                newPieceModel->index(i, 0).data().toInt(),
-                newPieceModel->index(i, 2).data().toString(),
-                newPieceModel->index(i, 3).data().toString(),
-                price);
+        if (comBox->currentIndex() > -1) {
+            QList<std::tuple<int, QString, QString, double>> pieces;
+            for (int i = 0; i < newPieceModel->rowCount(); i++) {
+                double price = -1;
+                if (newPieceModel->index(i, 4).data().toString() != "N/A")
+                    price = newPieceModel->index(i, 4).data().toString().toDouble();
+                pieces << std::make_tuple(
+                    newPieceModel->index(i, 0).data().toInt(),
+                    newPieceModel->index(i, 2).data().toString(),
+                    newPieceModel->index(i, 3).data().toString(),
+                    price);
+            }
+            emit newCommission(
+                comBox->model()->index(comBox->currentIndex(), 0).data().toInt(),
+                calendarEdit->dateTime(),
+                notesEdit->text(),
+                pieces);
         }
-        emit newCommission(
-            comBox->model()->index(comBox->currentIndex(), 0).data().toInt(),
-            calendarEdit->dateTime(),
-            notesEdit->text(), 
-            pieces);
         BaseNewWindow::newItemSlot();
     }
 

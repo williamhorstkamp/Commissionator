@@ -59,6 +59,10 @@ namespace Commissionator {
         return commissionModel;
     }
 
+    QSqlQueryModel *ComModel::getCommissionList() {
+        return commissionListModel;
+    }
+
     QSqlQueryModel *ComModel::getCommissions() {
         return commissionsModel;
     }
@@ -750,6 +754,20 @@ namespace Commissionator {
             "ON Commission.id = b.commission "
             "WHERE Commission.id = (?);");
         commissionModel->setQuery(commissionQuery);
+        commissionListModel = new QSqlQueryModel(this);
+        QSqlQuery commissionListQuery("SELECT Commission.id, Commissioner.name "
+            "|| ' (' || strftime('%m/%d/%Y', Commission.createDate/1000, 'unixepoch', "
+            "'localtime') || ' - ' || "
+            "strftime('%m/%d/%Y', Commission.dueDate/1000, 'unixepoch', "
+            "'localtime') || ') (' || COUNT(Piece.id) ||' Pieces)' "
+            "FROM Commission "
+            "INNER JOIN Commissioner "
+            "ON Commission.commissioner = Commissioner.id "
+            "LEFT JOIN Piece ON Commission.id = Piece.commission "
+            "WHERE Commission.id IS NOT 0 "
+            "GROUP BY Commission.id", sql);
+        commissionListQuery.exec();
+        commissionListModel->setQuery(commissionListQuery);
 		commissionPaymentsModel = new QSqlQueryModel(this);
         QSqlQuery commissionPaymentsQuery(sql);
         commissionPaymentsQuery.prepare("SELECT PaymentType.name as 'Payment Type', "

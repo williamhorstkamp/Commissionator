@@ -1,17 +1,20 @@
 #ifndef MAINWINDOW
 #define MAINWINDOW
 
+#include <QDateTime>
+#include <QVariant>
 #include <QMainWindow>
-#include "LeftPanel.h"
-#include "NewCommissionWindow.h"
-#include "NewCommissionerWindow.h"
-#include "NewPieceWindow.h"
-#include "CommissionerPanel.h"
-#include "CommissionPanel.h"
-#include "ComModel.h"
 
 class QHBoxLayout;
 class QStackedWidget;
+class LeftPanel;
+class NewCommissionWindow;
+class NewCommissionerWindow;
+class NewPaymentWindow;
+class NewPieceWindow;
+class CommissionerPanel;
+class CommissionPanel;
+class ComModel;
 
 namespace Commissionator {
 
@@ -186,6 +189,7 @@ namespace Commissionator {
 
         NewCommissionWindow *commissionPopup;
         NewCommissionerWindow *commissionerPopup;
+        NewPaymentWindow *paymentPopup;
         NewPieceWindow *piecePopup;
 
         QMenu *fileMenu;
@@ -220,4 +224,4 @@ namespace Commissionator {
     };
 }
 
-#endif // MAINWINDOW
+#endif
