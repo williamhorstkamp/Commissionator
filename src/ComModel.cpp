@@ -203,6 +203,7 @@ namespace Commissionator {
     void ComModel::deleteCommission(const QModelIndex &index) {
         deleteCommissionQuery.bindValue(0, getValue(index, 0));
         deleteCommissionQuery.exec();
+        refreshCommissioners();
         refreshCommissions();
         emit commissionChanged();
     }

@@ -124,9 +124,13 @@ namespace Commissionator{
 
         manageCommissionerAct = new QAction(QIcon(":/Commissioner.png"), tr("&Commissioner"), this);
         manageCommissionerAct->setStatusTip(tr("Manage existing commissioners"));
+        connect(manageCommissionerAct, &QAction::triggered,
+            this, &MainWindow::manageCommissioners);
 
         manageCommissionAct = new QAction(QIcon(":/Commission.png"), tr("&Commission"), this);
         manageCommissionAct->setStatusTip(tr("Manage existing commissions"));
+        connect(manageCommissionAct, &QAction::triggered,
+            this, &MainWindow::manageCommissions);
 
         managePieceAct = new QAction(QIcon(":/Piece.png"), tr("&Piece"), this);
         managePieceAct->setStatusTip(tr("Manage existing pieces"));
