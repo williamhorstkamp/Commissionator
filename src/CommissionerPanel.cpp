@@ -15,6 +15,7 @@ namespace Commissionator {
         QSqlQueryModel *contactTypesModel, QWidget *parent) :
         QWidget(parent) {
         this->commissionerModel = commissionerModel;
+        this->contactTypesModel = contactTypesModel;
 
         createFonts();
         createLabels();
@@ -160,7 +161,8 @@ namespace Commissionator {
     void CommissionerPanel::insertContactSlot(const QList<QVariant> query) {
         if (query.length() == 3)    //contact id, contact type, entry
             emit insertContact(commissionerModel->record(0).value(0).toInt(),
-            query[1].toInt(), query[2].toString());
+            contactTypesModel->index(query[1].toInt(), 0).data().toInt(),
+            query[2].toString());
     }
 
     void CommissionerPanel::newCommissionSlot() {

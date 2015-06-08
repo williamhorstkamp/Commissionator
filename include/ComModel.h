@@ -735,9 +735,25 @@ namespace Commissionator {
         QVariant getValue(const QModelIndex &index, int column);
 
         /**
-        *  Prepares the various sub-models that are managed by the ComModel.
-        */
+         *  Prepares the various sub-models that are managed by the ComModel.
+         */
         void prepareModels();
+
+        void refreshCommissioners();
+
+        void refreshCommissions();
+
+        void refreshContacts();
+
+        void refreshContactTypes();
+
+        void refreshPayments();
+
+        void refreshPaymentTypes();
+
+        void refreshPieces();
+
+        void refreshProducts();
 
         QSqlDatabase sql;
 		QSqlQueryModel *commissionerCommissionsModel;

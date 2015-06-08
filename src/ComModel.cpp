@@ -96,10 +96,8 @@ namespace Commissionator {
         editCommissionCommissionerQuery.bindValue(0, commissioner);
         editCommissionCommissionerQuery.bindValue(1, commission);
         editCommissionCommissionerQuery.exec();
-        commissionModel->query().exec();
-        commissionModel->setQuery(commissionModel->query());
-        searchCommissions("", "", "", "", "", "");
-        searchCommissioners("", "", "");
+        refreshCommissions();
+        refreshCommissioners();
     }
 
     void ComModel::editCommissionNotes(const int commission, 
@@ -107,29 +105,22 @@ namespace Commissionator {
         editCommissionNotesQuery.bindValue(0, notes);
         editCommissionNotesQuery.bindValue(1, commission);
         editCommissionNotesQuery.exec();
-        commissionModel->query().exec();
-        commissionModel->setQuery(commissionModel->query());
-        searchCommissions("", "", "", "", "", "");
-        searchCommissioners("", "", "");
+        refreshCommissions();
     }
 
     void ComModel::editCommissionerName(const int commissioner, const QString name) {
         editCommissionerNameQuery.bindValue(0, name);
         editCommissionerNameQuery.bindValue(1, commissioner);
         editCommissionerNameQuery.exec();
-        commissionerModel->query().exec();
-        commissionerModel->setQuery(commissionerModel->query());
-        searchCommissioners("", "", "");
-        searchCommissions("", "", "", "", "", "");
+        refreshCommissioners();
+        refreshCommissions();
     }
 
     void ComModel::editCommissionerNotes(const int commissioner, const QString notes) {
         editCommissionerNotesQuery.bindValue(0, notes);
         editCommissionerNotesQuery.bindValue(1, commissioner);
         editCommissionerNotesQuery.exec();
-        commissionerModel->query().exec();
-        commissionerModel->setQuery(commissionerModel->query());
-        searchCommissioners("", "", "");
+        refreshCommissioners();
     }
 
     void ComModel::searchCommissioners(const QString name, const QString dateOldest,
@@ -212,32 +203,29 @@ namespace Commissionator {
     void ComModel::deleteCommission(const QModelIndex &index) {
         deleteCommissionQuery.bindValue(0, getValue(index, 0));
         deleteCommissionQuery.exec();
-        searchCommissions("", "", "", "", "", "");
+        refreshCommissions();
         emit commissionChanged();
     }
 
     void ComModel::deleteCommissioner(const QModelIndex &index) {
         deleteCommissionerQuery.bindValue(0, getValue(index, 0));
         deleteCommissionerQuery.exec();
-        searchCommissioners("", "", "");
+        refreshCommissioners();
         emit commissionerChanged();
     }
 
     void ComModel::deleteContact(const QModelIndex &index) {
         deleteContactQuery.bindValue(0, getValue(index, 0));
         deleteContactQuery.exec();
-        commissionerContactsModel->query().exec();
-        commissionerContactsModel->setQuery(commissionerContactsModel->query());
+        refreshContacts();
     }
 
     void ComModel::deletePiece(const QModelIndex &index) {
         deletePieceQuery.bindValue(0, getValue(index, 0));
         deletePieceQuery.exec();
-        commissionPiecesModel->query().exec();
-        commissionPiecesModel->setQuery(commissionPiecesModel->query());
-        searchCommissioners("", "", "");
-        searchCommissions("", "", "", "", "", "");
-        searchPieces("", "", "", "");
+        refreshCommissioners();
+        refreshCommissions();
+        refreshPieces();
     }
 
     int ComModel::insertCommission(const int commissionerId, 
@@ -248,12 +236,9 @@ namespace Commissionator {
         insertCommissionQuery.bindValue(3, 
             QDateTime::currentDateTime().toMSecsSinceEpoch());
         insertCommissionQuery.exec();
-        const int id = insertCommissionQuery.lastInsertId().toInt();
-        commissionerCommissionsModel->query().exec();
-        commissionerCommissionsModel->setQuery(commissionerCommissionsModel->query());
-        searchCommissions("", "", "", "", "", "");
-        searchCommissioners("", "", "");
-        return id;
+        refreshCommissions();
+        refreshCommissioners();
+        return insertCommissionQuery.lastInsertId().toInt();
     }
 
     void ComModel::insertCommissioner(const QString commissionerName,
@@ -261,9 +246,7 @@ namespace Commissionator {
         insertCommissionerQuery.bindValue(0, commissionerName);
         insertCommissionerQuery.bindValue(1, commissionerNotes);
         insertCommissionerQuery.exec();
-        searchCommissioners("", "", "");
-        commissionerNamesModel->query().exec();
-        commissionerNamesModel->setQuery(commissionerNamesModel->query());
+        refreshCommissioners();
     }
 
     void ComModel::insertContact(const int commissionerId,
@@ -274,19 +257,13 @@ namespace Commissionator {
             insertContactQuery.bindValue(2, contactEntry);
             insertContactQuery.exec();
         }
-
-        if (commissionerContactsModel->columnCount() > 0) {
-            commissionerContactsModel->query().bindValue(0, commissionerId);
-            commissionerContactsModel->query().exec();
-            commissionerContactsModel->setQuery(commissionerContactsModel->query());
-        }
+        refreshContacts();
     }
 
     void ComModel::insertContactType(const QString contactTypeName) {
         insertContactTypeQuery.bindValue(0, contactTypeName);
         insertContactTypeQuery.exec();
-        contactTypesModel->query().exec();
-        contactTypesModel->setQuery(contactTypesModel->query());
+        refreshContactTypes();
     }
 
     void ComModel::insertPayment(const int commissionId, const int paymentTypeId,
@@ -298,8 +275,7 @@ namespace Commissionator {
         insertPaymentQuery.bindValue(4, 
             QDateTime::currentDateTime().toMSecsSinceEpoch());
         insertPaymentQuery.exec();
-        commissionPaymentsModel->query().exec();
-        commissionPaymentsModel->setQuery(commissionPaymentsModel->query());
+        refreshPayments();
         QSqlQuery wasJustPaid(sql);
         wasJustPaid.prepare("SELECT CASE WHEN Commission.paidDate IS NULL "
             "AND totalPrices.price = sum(Payment.fee) "
@@ -324,19 +300,17 @@ namespace Commissionator {
             setPaidDate.bindValue(0, QDateTime::currentDateTime().toMSecsSinceEpoch());
             setPaidDate.bindValue(1, commissionId);
             setPaidDate.exec();
-            commissionerCommissionsModel->query().exec();
-            commissionerCommissionsModel->setQuery(commissionerCommissionsModel->query());
+            
         }
         wasJustPaid.finish();
-        searchCommissioners("", "", "");
-        searchCommissions("", "", "", "", "", "");
+        refreshCommissions();
+        refreshCommissioners();
     }
 
     void ComModel::insertPaymentType(const QString typeName) {
         insertPaymentTypeQuery.bindValue(0, typeName);
         insertPaymentTypeQuery.exec();
-        paymentTypesModel->query().exec();
-        paymentTypesModel->setQuery(paymentTypesModel->query());
+        refreshPaymentTypes();
     }
 
     void ComModel::insertPiece(const int commission, const int product,
@@ -365,19 +339,10 @@ namespace Commissionator {
                 "WHERE Commission.id = (?)", sql);
             setPaidDate.bindValue(0, commission);
             setPaidDate.exec();
-            commissionerCommissionsModel->query().exec();
-            commissionerCommissionsModel->setQuery(commissionerCommissionsModel->query());
         }
-        commissionerCommissionsModel->query().exec();
-        commissionerCommissionsModel->setQuery(commissionerCommissionsModel->query());
-        commissionerModel->query().exec();
-        commissionerModel->setQuery(commissionerModel->query());
-        commissionPiecesModel->query().exec();
-        commissionPiecesModel->setQuery(commissionPiecesModel->query());
-        searchPieces("", "", "", "");
-        searchCommissioners("", "", "");
-        searchCommissions("", "", "", "", "", "");
-
+        refreshCommissioners();
+        refreshCommissions();
+        refreshPieces();
     }
 
     void ComModel::insertProduct(const QString productName, const double basePrice) {
@@ -387,7 +352,6 @@ namespace Commissionator {
         lastId.exec();
         lastId.first();
         insertProductPrice(lastId.value(0).toInt(), basePrice);
-        searchProducts("", "", "");
     }
 
     void ComModel::insertProductPrice(const int productId, const double basePrice) {
@@ -396,12 +360,12 @@ namespace Commissionator {
         insertProductPriceQuery.bindValue(2,
             QDateTime::currentDateTime().toMSecsSinceEpoch());
         insertProductPriceQuery.exec();
-        searchProducts("", "", "");
+        refreshProducts();
     }
 
     void ComModel::build() {
         sql = QSqlDatabase::addDatabase("QSQLITE");
-        sql.setDatabaseName("memory.db3");
+        sql.setDatabaseName(":memory:");
         sql.open();
         sql.exec("PRAGMA foreign_keys = ON;");
         sql.exec("CREATE TABLE IF NOT EXISTS ContactType("
@@ -957,5 +921,63 @@ namespace Commissionator {
             "AND COALESCE(COUNT(Piece.id), 0) LIKE (?);");
         productsModel->setQuery(productsQuery);
         searchProducts("", "", "");
+    }
+
+    void ComModel::refreshCommissioners() {
+        commissionersModel->query().exec();
+        commissionersModel->setQuery(commissionersModel->query());
+        commissionerModel->query().exec();
+        commissionerModel->setQuery(commissionerModel->query());
+        commissionerNamesModel->query().exec();
+        commissionerNamesModel->setQuery(commissionerNamesModel->query());
+    }
+
+    void ComModel::refreshCommissions() {
+        commissionerCommissionsModel->query().exec();
+        commissionerCommissionsModel->setQuery(commissionsModel->query());
+        commissionsModel->query().exec();
+        commissionsModel->setQuery(commissionsModel->query());
+        commissionModel->query().exec();
+        commissionModel->setQuery(commissionModel->query());
+        commissionListModel->query().exec();
+        commissionListModel->setQuery(commissionListModel->query());
+    }
+
+    void ComModel::refreshContacts() {
+        commissionerContactsModel->query().exec();
+        commissionerContactsModel->setQuery(commissionerContactsModel->query());
+    }
+
+
+    void ComModel::refreshContactTypes() {
+        contactTypesModel->query().exec();
+        contactTypesModel->setQuery(contactTypesModel->query());
+    }
+
+    void ComModel::refreshPayments() {
+        commissionPaymentsModel->query().exec();
+        commissionPaymentsModel->setQuery(commissionPaymentsModel->query());
+    }
+
+    void ComModel::refreshPaymentTypes() {
+        paymentTypesModel->query().exec();
+        paymentTypesModel->setQuery(paymentTypesModel->query());
+    }
+
+    void ComModel::refreshPieces() {
+        commissionPiecesModel->query().exec();
+        commissionPiecesModel->setQuery(commissionPiecesModel->query());
+        pieceModel->query().exec();
+        pieceModel->setQuery(pieceModel->query());
+        piecesModel->query().exec();
+        piecesModel->setQuery(piecesModel->query());
+    }
+
+    void ComModel::refreshProducts() {
+        productNamesModel->query().exec();
+        productNamesModel->setQuery(productNamesModel->query());
+        productsModel->query().exec();
+        productsModel->setQuery(productsModel->query());
+
     }
 }

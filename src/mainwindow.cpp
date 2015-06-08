@@ -27,18 +27,16 @@ namespace Commissionator{
 
         setMinimumSize(1020, 800);
 
-        model->insertCommissioner("Test", "wutdo");
-        model->insertContactType("type");
-        model->insertContact(1, 1, "entry");
+
         model->insertProduct("thing", 1.0);
-        model->insertCommission(1, QDateTime::currentDateTime(), "");
-        model->insertCommission(2, QDateTime::currentDateTime(), "");
-        model->insertPiece(1, 1, "piece", "", -1);
-        model->insertPiece(2, 1, "piece", "", -1);
+        model->insertProduct("thing 2", 2.0);
+        model->insertProduct("thing 3", 3.50);
+        model->insertContactType("Contact Type");
+        model->insertContactType("Contact Type 2");
+        model->insertContactType("Contact Type 3");
         model->insertPaymentType("payment type");
-        model->insertPayment(1, 1, 1.0, "");
-        model->editCommissionCommissioner(1, 3);
-        model->editCommissionNotes(1, "why do");
+        model->insertPaymentType("payment type 2");
+        model->insertPaymentType("payment type 3");
     }
 
     void MainWindow::createMenus() {

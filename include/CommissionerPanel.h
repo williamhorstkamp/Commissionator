@@ -161,6 +161,7 @@ namespace Commissionator {
         QVBoxLayout *layout;
         QGridLayout *titleLayout;
         QSqlQueryModel *commissionerModel;
+        QSqlQueryModel *contactTypesModel;
         QLabel *commissionerName;
         QLineEdit *commissionerNameEdit;
         QPushButton *unlockButton;
