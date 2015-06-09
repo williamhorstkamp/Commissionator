@@ -97,7 +97,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>include;C:\qt\qt5.4.0\5.4\msvc2013\include;C:\qt\qt5.4.0\5.4\msvc2013\include\QtWidgets;C:\qt\qt5.4.0\5.4\msvc2013\include\QtGui;C:\qt\qt5.4.0\5.4\msvc2013\include\QtANGLE;C:\qt\qt5.4.0\5.4\msvc2013\include\QtCore;debug;C:\qt\qt5.4.0\5.4\msvc2013\mkspecs\win32-msvc2013;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtSql;$(QTDIR)\include\QtWidgets;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>sqlite3;include;C:\qt\qt5.4.0\5.4\msvc2013\include;C:\qt\qt5.4.0\5.4\msvc2013\include\QtWidgets;C:\qt\qt5.4.0\5.4\msvc2013\include\QtGui;C:\qt\qt5.4.0\5.4\msvc2013\include\QtANGLE;C:\qt\qt5.4.0\5.4\msvc2013\include\QtCore;debug;C:\qt\qt5.4.0\5.4\msvc2013\mkspecs\win32-msvc2013;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtSql;$(QTDIR)\include\QtWidgets;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm200 -w34100 -w34189 %(AdditionalOptions)</AdditionalOptions>
       <AssemblerListingLocation>debug\</AssemblerListingLocation>
       <BrowseInformation>false</BrowseInformation>
@@ -115,8 +115,8 @@
       <ProgramDataBaseFileName>$(IntDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>C:\qt\qt5.4.0\5.4\msvc2013\lib\qtmaind.lib;shell32.lib;C:\Qt\Qt5.4.0\5.4\msvc2013\lib\Qt5Cored.lib;C:\qt\qt5.4.0\5.4\msvc2013\lib\Qt5Widgetsd.lib;C:\qt\qt5.4.0\5.4\msvc2013\lib\Qt5Guid.lib;C:\qt\qt5.4.0\5.4\msvc2013\lib\Qt5Cored.lib;Qt5Guid.lib;Qt5Sqld.lib;Qt5Widgetsd.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\qt\qt5.4.0\5.4\msvc2013\lib;C:\Qt\Qt5.4.0\5.4\msvc2013\lib;$(QTDIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>C:\qt\qt5.4.0\5.4\msvc2013\lib\qtmaind.lib;shell32.lib;C:\Qt\Qt5.4.0\5.4\msvc2013\lib\Qt5Cored.lib;C:\qt\qt5.4.0\5.4\msvc2013\lib\Qt5Widgetsd.lib;C:\qt\qt5.4.0\5.4\msvc2013\lib\Qt5Guid.lib;C:\qt\qt5.4.0\5.4\msvc2013\lib\Qt5Cored.lib;Qt5Guid.lib;Qt5Sqld.lib;Qt5Widgetsd.lib;sqlite3/sqlite3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>sqlite3;C:\qt\qt5.4.0\5.4\msvc2013\lib;C:\Qt\Qt5.4.0\5.4\msvc2013\lib;$(QTDIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>"/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' publicKeyToken='6595b64144ccf1df' language='*' processorArchitecture='*'" %(AdditionalOptions)</AdditionalOptions>
       <DataExecutionPrevention>true</DataExecutionPrevention>
       <GenerateDebugInformation>true</GenerateDebugInformation>

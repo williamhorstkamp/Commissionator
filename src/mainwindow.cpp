@@ -5,6 +5,8 @@
 #include <QSqlQueryModel>
 #include <QSqlRecord>
 #include <QStackedWidget>
+#include <QFileDialog>
+#include <QMessageBox>
 #include "LeftPanel.h"
 #include "NewCommissionWindow.h"
 #include "NewCommissionerWindow.h"
@@ -17,17 +19,17 @@
 
 namespace Commissionator{
     MainWindow::MainWindow() {
+        createModel();
         createActions();
         createMenus();
         createStatusBar();
         createToolBars();
-        createModel();
-        createPanels();
         createPopups();
+        createPanels();
 
         setMinimumSize(1020, 800);
 
-
+        
         model->insertProduct("thing", 1.0);
         model->insertProduct("thing 2", 2.0);
         model->insertProduct("thing 3", 3.50);
@@ -37,6 +39,7 @@ namespace Commissionator{
         model->insertPaymentType("payment type");
         model->insertPaymentType("payment type 2");
         model->insertPaymentType("payment type 3");
+        
     }
 
     void MainWindow::createMenus() {
@@ -76,19 +79,23 @@ namespace Commissionator{
     void MainWindow::createActions() {
         newAct = new QAction(QIcon(":/NewFile.png"), tr("&New"), this);
         newAct->setStatusTip(tr("Create a new set of records"));
+        connect(newAct, &QAction::triggered,
+            model, &ComModel::newRecord);
 
         openAct = new QAction(QIcon(":/OpenFile.png"), tr("&Open"), this);
         openAct->setStatusTip(tr("Open a set of records"));
         connect(openAct, &QAction::triggered, 
-            this, &MainWindow::manageCommissions);
+            this, &MainWindow::open);
 
         saveAct = new QAction(QIcon(":/SaveFile.png"), tr("&Save"), this);
         saveAct->setStatusTip(tr("Save the current set of records"));
         connect(saveAct, &QAction::triggered, 
-            this, &MainWindow::manageCommissioners);
+            this, &MainWindow::save);
 
         saveAsAct = new QAction(QIcon(":/SaveAsFile.png"), tr("&Save As"), this);
         saveAsAct->setStatusTip(tr("Save the current set of records as a new file"));
+        connect(saveAsAct, &QAction::triggered,
+            this, &MainWindow::saveAs);
 
         printRecordAct = new QAction(tr("&Print Records"), this);
         printRecordAct->setStatusTip(tr("Prints the entire set of data kept in the file"));
@@ -289,6 +296,23 @@ namespace Commissionator{
         commissionRightPanel->updatePanel();
     }
 
+    void MainWindow::open() {
+        if (model->hasBeenChanged()) {
+            int ret = QMessageBox::question(this, tr("Save File?"),
+                tr("The database has been modified.\n"
+                "Would you like to save your changes?"),
+                QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel, QMessageBox::Save);
+            if (ret == QMessageBox::Save)
+                save();
+            else if (ret == QMessageBox::Cancel)
+                return;
+        }
+        QString openFile = QFileDialog::getOpenFileName(this, tr("Open File"),
+            "", tr("Commissioner Files (*.cdb)"));
+        if (openFile != NULL)
+            model->open(openFile);
+    }
+
     void MainWindow::newCommission() {
         commissionPopup->exec();
     }
@@ -308,6 +332,20 @@ namespace Commissionator{
 
     void MainWindow::newPiece(const QVariant &commission) {
         piecePopup->exec();
+    }
+
+    void MainWindow::save() {
+        if (currentFile != NULL)
+            model->save(currentFile);
+        else
+            saveAs();
+    }
+
+    void MainWindow::saveAs() {
+        currentFile = QFileDialog::getSaveFileName(this, tr("Save File"),
+            "", tr("Commissioner Files (*.cdb)"));
+        if (currentFile != NULL)
+            model->save(currentFile);
     }
 
     void MainWindow::searchCommission(const QList<QVariant> query) {

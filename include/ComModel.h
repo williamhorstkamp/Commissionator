@@ -33,6 +33,12 @@ namespace Commissionator {
         ~ComModel();
 
         /**
+         *  Function returns whether the database has been changed since being
+         *  opened.
+         */
+        bool hasBeenChanged();
+
+        /**
          *  Function returns a pointer to a model containing data for the
          *  commission combobox to be displayed on the new payment window.
          *
@@ -343,14 +349,14 @@ namespace Commissionator {
          *
          *  @param fileName - fileName to open
          */
-        //void open(QString fileName);
+        void open(QString fileName);
         
         /**
          *  Saves the currently open database to the file at the given filename.
          *
          *  @param fileName - the filename and location to save the file to
          */
-        //void save(QString fileName);
+        void save(QString fileName);
 
         /**
          *  Function edits the commissioner of the commission with the given id.
@@ -789,6 +795,7 @@ namespace Commissionator {
         QSqlQueryModel *piecesModel;
         QSqlQueryModel *productNamesModel;
         QSqlQueryModel *productsModel;
+        bool changesMade;
     };
 }
 #endif

@@ -1,4 +1,7 @@
 #include <QSqlTableModel>
+#include <QSqlDatabase>
+#include <QSqlDriver>
+#include "sqlite3.h"
 #include "ComModel.h"
 
 namespace Commissionator {
@@ -10,6 +13,10 @@ namespace Commissionator {
         close();
     }
 
+    bool ComModel::hasBeenChanged() {
+        return changesMade;
+    }
+
     void ComModel::close() {
         cleanupQueries();
         QString connection = sql.connectionName();
@@ -18,15 +25,34 @@ namespace Commissionator {
         QSqlDatabase::removeDatabase(connection);
     }
 
+    void ComModel::open(QString fileName) {
+        //to be done
+    }
+
     void ComModel::newRecord() {
-        if (sql.isOpen()) {
-            //throw error
-        } else {
-            build();
-            prepareModels();
-        } 
+        build();
+        prepareModels();
     }
     
+    void ComModel::save(QString fileName) {
+        QVariant driverVariant = sql.driver()->handle();
+        if (driverVariant.isValid()) {
+            sqlite3 *memory = *static_cast<sqlite3 **>(driverVariant.data());
+            if (memory != NULL) {
+                sqlite3 *file;
+                int rc = sqlite3_open(fileName.toLocal8Bit(), &file);
+                if (rc == SQLITE_OK) {
+                    sqlite3_backup *backup = sqlite3_backup_init(file, "main", memory, "main");
+                    if (backup) {
+                        sqlite3_backup_step(backup, -1);
+                        sqlite3_backup_finish(backup);
+                    }
+                }
+                sqlite3_close(file);
+            }
+        }
+    }
+
     QSqlQueryModel *ComModel::getCommissioner() {
         return commissionerModel;
     }
@@ -98,6 +124,7 @@ namespace Commissionator {
         editCommissionCommissionerQuery.exec();
         refreshCommissions();
         refreshCommissioners();
+        changesMade = true;
     }
 
     void ComModel::editCommissionNotes(const int commission, 
@@ -106,6 +133,7 @@ namespace Commissionator {
         editCommissionNotesQuery.bindValue(1, commission);
         editCommissionNotesQuery.exec();
         refreshCommissions();
+        changesMade = true;
     }
 
     void ComModel::editCommissionerName(const int commissioner, const QString name) {
@@ -114,6 +142,7 @@ namespace Commissionator {
         editCommissionerNameQuery.exec();
         refreshCommissioners();
         refreshCommissions();
+        changesMade = true;
     }
 
     void ComModel::editCommissionerNotes(const int commissioner, const QString notes) {
@@ -121,6 +150,7 @@ namespace Commissionator {
         editCommissionerNotesQuery.bindValue(1, commissioner);
         editCommissionerNotesQuery.exec();
         refreshCommissioners();
+        changesMade = true;
     }
 
     void ComModel::searchCommissioners(const QString name, const QString dateOldest,
@@ -205,6 +235,7 @@ namespace Commissionator {
         deleteCommissionQuery.exec();
         refreshCommissioners();
         refreshCommissions();
+        changesMade = true;
         emit commissionChanged();
     }
 
@@ -212,6 +243,7 @@ namespace Commissionator {
         deleteCommissionerQuery.bindValue(0, getValue(index, 0));
         deleteCommissionerQuery.exec();
         refreshCommissioners();
+        changesMade = true;
         emit commissionerChanged();
     }
 
@@ -219,6 +251,7 @@ namespace Commissionator {
         deleteContactQuery.bindValue(0, getValue(index, 0));
         deleteContactQuery.exec();
         refreshContacts();
+        changesMade = true;
     }
 
     void ComModel::deletePiece(const QModelIndex &index) {
@@ -227,6 +260,7 @@ namespace Commissionator {
         refreshCommissioners();
         refreshCommissions();
         refreshPieces();
+        changesMade = true;
     }
 
     int ComModel::insertCommission(const int commissionerId, 
@@ -239,6 +273,7 @@ namespace Commissionator {
         insertCommissionQuery.exec();
         refreshCommissions();
         refreshCommissioners();
+        changesMade = true;
         return insertCommissionQuery.lastInsertId().toInt();
     }
 
@@ -248,6 +283,7 @@ namespace Commissionator {
         insertCommissionerQuery.bindValue(1, commissionerNotes);
         insertCommissionerQuery.exec();
         refreshCommissioners();
+        changesMade = true;
     }
 
     void ComModel::insertContact(const int commissionerId,
@@ -259,12 +295,14 @@ namespace Commissionator {
             insertContactQuery.exec();
         }
         refreshContacts();
+        changesMade = true;
     }
 
     void ComModel::insertContactType(const QString contactTypeName) {
         insertContactTypeQuery.bindValue(0, contactTypeName);
         insertContactTypeQuery.exec();
         refreshContactTypes();
+        changesMade = true;
     }
 
     void ComModel::insertPayment(const int commissionId, const int paymentTypeId,
@@ -306,12 +344,14 @@ namespace Commissionator {
         wasJustPaid.finish();
         refreshCommissions();
         refreshCommissioners();
+        changesMade = true;
     }
 
     void ComModel::insertPaymentType(const QString typeName) {
         insertPaymentTypeQuery.bindValue(0, typeName);
         insertPaymentTypeQuery.exec();
         refreshPaymentTypes();
+        changesMade = true;
     }
 
     void ComModel::insertPiece(const int commission, const int product,
@@ -344,6 +384,7 @@ namespace Commissionator {
         refreshCommissioners();
         refreshCommissions();
         refreshPieces();
+        changesMade = true;
     }
 
     void ComModel::insertProduct(const QString productName, const double basePrice) {
@@ -353,6 +394,7 @@ namespace Commissionator {
         lastId.exec();
         lastId.first();
         insertProductPrice(lastId.value(0).toInt(), basePrice);
+        changesMade = true;
     }
 
     void ComModel::insertProductPrice(const int productId, const double basePrice) {
@@ -362,6 +404,7 @@ namespace Commissionator {
             QDateTime::currentDateTime().toMSecsSinceEpoch());
         insertProductPriceQuery.exec();
         refreshProducts();
+        changesMade = true;
     }
 
     void ComModel::build() {
@@ -479,6 +522,7 @@ namespace Commissionator {
             "UPDATE Piece SET commission = 0 "
             "WHERE commission = OLD.id; "
             "END");
+        changesMade = false;
     }
 
     void ComModel::cleanupQueries() {

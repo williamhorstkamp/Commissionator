@@ -59,6 +59,13 @@ namespace Commissionator {
             const double price);
 
         /**
+         *  Function opens the dialog window the open a record.
+         *  Takes control away from the MainWindow for the duration of the
+         *  open record window's lifetime.
+         */
+        void open();
+
+        /**
          *  Function opens the dialog window to create a new commission.
          *  Takes control away from the MainWindow for the duration of the
          *  new commission window's lifetime. Depending on whether a commission
@@ -105,6 +112,19 @@ namespace Commissionator {
          *  @param commission - commission id for the piece
          */
         void newPiece(const QVariant &commission);
+
+        /**
+         *  Function attempts to save to the last saved file. If no file has
+         *  been saved to during this session, runs saveAs.
+         */
+        void save();
+
+        /**
+         *  Function opens the dialog window to save the database.
+         *  Takes control away from the MainWindow for the duration of the
+         *  save window's lifetime. 
+         */
+        void saveAs();
 
         /**
          *  Functions searches for commissioners with given arguements
@@ -221,6 +241,8 @@ namespace Commissionator {
         QAction *managePaymentAct;
         QAction *aboutAct;
         QAction *helpAct;
+
+        QString currentFile;
     };
 }
 
