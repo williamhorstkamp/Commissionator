@@ -15,6 +15,7 @@ class NewPieceWindow;
 class CommissionerPanel;
 class CommissionPanel;
 class ComModel;
+class QFrame;
 
 namespace Commissionator {
 
@@ -57,13 +58,6 @@ namespace Commissionator {
         void insertPiece(const QString pieceName, const QString pieceNotes,
             const int productId, const QString productName,
             const double price);
-
-        /**
-         *  Function opens the dialog window the open a record.
-         *  Takes control away from the MainWindow for the duration of the
-         *  open record window's lifetime.
-         */
-        void open();
 
         /**
          *  Function opens the dialog window to create a new commission.
@@ -112,6 +106,23 @@ namespace Commissionator {
          *  @param commission - commission id for the piece
          */
         void newPiece(const QVariant &commission);
+
+        /**
+         *  Function opens the dialog window the open a record.
+         *  Takes control away from the MainWindow for the duration of the
+         *  open record window's lifetime.
+         */
+        void open();
+
+        /**
+         *  Function prepares panels and connections when a record is opened.
+         */
+        void recordClosed();
+
+        /**
+         *  Function disables buttons that can't work without a record.
+         */
+        void recordOpened();
 
         /**
          *  Function attempts to save to the last saved file. If no file has
@@ -206,6 +217,7 @@ namespace Commissionator {
         LeftPanel *commissionLeftPanel;
         CommissionerPanel *commissionerRightPanel;
         CommissionPanel *commissionRightPanel;
+        QFrame *line;
 
         NewCommissionWindow *commissionPopup;
         NewCommissionerWindow *commissionerPopup;

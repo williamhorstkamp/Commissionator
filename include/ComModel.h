@@ -331,6 +331,10 @@ namespace Commissionator {
          */
         void pieceChanged();
 
+        void recordClosed();
+
+        void recordOpened();
+
     public slots:
 
         /**
@@ -745,20 +749,44 @@ namespace Commissionator {
          */
         void prepareModels();
 
+        /**
+         *  Refreshes all models that contain commissioner information.
+         */
         void refreshCommissioners();
 
+        /**
+         *  Refreshes all models that contain commission information.
+         */
         void refreshCommissions();
 
+        /**
+         *  Refreshes all models that contain contact information.
+         */
         void refreshContacts();
 
+        /**
+         *  Refreshes all models that contain contact type information.
+         */
         void refreshContactTypes();
 
+        /**
+         *  Refreshes all models that contain payment information.
+         */
         void refreshPayments();
 
+        /**
+         *  Refreshes all models that contain payment type information.
+         */
         void refreshPaymentTypes();
 
+        /**
+         *  Refreshes all models that contain pieces information.
+         */
         void refreshPieces();
 
+        /**
+         *  Refreshes all models that contain product information.
+         */
         void refreshProducts();
 
         QSqlDatabase sql;
@@ -795,6 +823,7 @@ namespace Commissionator {
         QSqlQueryModel *piecesModel;
         QSqlQueryModel *productNamesModel;
         QSqlQueryModel *productsModel;
+
         bool changesMade;
     };
 }

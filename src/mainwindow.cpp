@@ -24,22 +24,9 @@ namespace Commissionator{
         createMenus();
         createStatusBar();
         createToolBars();
-        createPopups();
         createPanels();
 
         setMinimumSize(1020, 800);
-
-        
-        model->insertProduct("thing", 1.0);
-        model->insertProduct("thing 2", 2.0);
-        model->insertProduct("thing 3", 3.50);
-        model->insertContactType("Contact Type");
-        model->insertContactType("Contact Type 2");
-        model->insertContactType("Contact Type 3");
-        model->insertPaymentType("payment type");
-        model->insertPaymentType("payment type 2");
-        model->insertPaymentType("payment type 3");
-        
     }
 
     void MainWindow::createMenus() {
@@ -84,12 +71,12 @@ namespace Commissionator{
 
         openAct = new QAction(QIcon(":/OpenFile.png"), tr("&Open"), this);
         openAct->setStatusTip(tr("Open a set of records"));
-        connect(openAct, &QAction::triggered, 
+        connect(openAct, &QAction::triggered,
             this, &MainWindow::open);
 
         saveAct = new QAction(QIcon(":/SaveFile.png"), tr("&Save"), this);
         saveAct->setStatusTip(tr("Save the current set of records"));
-        connect(saveAct, &QAction::triggered, 
+        connect(saveAct, &QAction::triggered,
             this, &MainWindow::save);
 
         saveAsAct = new QAction(QIcon(":/SaveAsFile.png"), tr("&Save As"), this);
@@ -102,18 +89,14 @@ namespace Commissionator{
 
         exitAct = new QAction(tr("&Exit"), this);
         exitAct->setStatusTip(tr("Exits the program"));
-        connect(exitAct, &QAction::triggered, 
+        connect(exitAct, &QAction::triggered,
             this, &MainWindow::close);
         
         newCommissionerAct = new QAction(QIcon(":/CommissionerPlus.png"), tr("&Commissioner"), this);
         newCommissionerAct->setStatusTip(tr("Create a new commissioner"));
-        connect(newCommissionerAct, &QAction::triggered, 
-            this, &MainWindow::newCommissioner);
 
         newCommissionAct = new QAction(QIcon(":/CommissionPlus.png"), tr("&Commission"), this);
         newCommissionAct->setStatusTip(tr("Create a new commission"));
-        connect(newCommissionAct, &QAction::triggered, 
-            this, &MainWindow::newCommission);
 
         newProductAct = new QAction(QIcon(":/ProductPlus.png"), tr("&Product"), this);
         newProductAct->setStatusTip(tr("Create a new product"));
@@ -123,21 +106,15 @@ namespace Commissionator{
 
         newPaymentAct = new QAction(QIcon(":/PaymentPlus.png"), tr("&Payment"), this);
         newPaymentAct->setStatusTip(tr("Create a new payment"));
-        connect(newPaymentAct, &QAction::triggered,
-            this, &MainWindow::newPayment);
 
         manageStorefrontAct = new QAction(QIcon(":/Storefront.png"), tr("&Storefront"), this);
         manageStorefrontAct->setStatusTip(tr("Manage existing products"));
 
         manageCommissionerAct = new QAction(QIcon(":/Commissioner.png"), tr("&Commissioner"), this);
         manageCommissionerAct->setStatusTip(tr("Manage existing commissioners"));
-        connect(manageCommissionerAct, &QAction::triggered,
-            this, &MainWindow::manageCommissioners);
 
         manageCommissionAct = new QAction(QIcon(":/Commission.png"), tr("&Commission"), this);
         manageCommissionAct->setStatusTip(tr("Manage existing commissions"));
-        connect(manageCommissionAct, &QAction::triggered,
-            this, &MainWindow::manageCommissions);
 
         managePieceAct = new QAction(QIcon(":/Piece.png"), tr("&Piece"), this);
         managePieceAct->setStatusTip(tr("Manage existing pieces"));
@@ -177,6 +154,10 @@ namespace Commissionator{
 
     void MainWindow::createModel() {
         model = new ComModel();
+        connect(model, &ComModel::recordClosed,
+            this, &MainWindow::recordClosed);
+        connect(model, &ComModel::recordOpened,
+            this, &MainWindow::recordOpened);
     }
 
     void MainWindow::createPanels() {
@@ -184,72 +165,10 @@ namespace Commissionator{
         window = new QWidget();
         leftPanel = new QStackedWidget();
         rightPanel = new QStackedWidget();
-        QList<int> hidden;
-        hidden.append(0);
-        commissionerLeftPanel = new LeftPanel("Commissioner", 
-            model->getCommissioners(), hidden);
-        commissionLeftPanel = new LeftPanel("Commission",
-            model->getCommissions(), hidden);
-        commissionerRightPanel = new CommissionerPanel(
-            model->getCommissioner(),
-            model->getCommissionerContacts(),
-            model->getCommissionerCommissions(),
-            model->getContactTypes(),
-            this);
-        commissionRightPanel = new CommissionPanel(
-            model->getCommission(),
-            model->getCommissionPieces(),
-            model->getCommissionPayments(),
-            model->getCommissionerNames(),
-            this);
-        leftPanel->addWidget(commissionerLeftPanel);
-        leftPanel->addWidget(commissionLeftPanel);
-        rightPanel->addWidget(commissionerRightPanel);
-        rightPanel->addWidget(commissionRightPanel);
-
-        QFrame *line = new QFrame(this);
+        
+        line = new QFrame(this);
         line->setFrameShape(QFrame::VLine);
         line->setFrameShadow(QFrame::Sunken);
-
-        connect(commissionerLeftPanel, &LeftPanel::tableClicked, 
-            model, &ComModel::setCommissioner);
-        connect(commissionerLeftPanel, &LeftPanel::search, 
-            this, &MainWindow::searchCommissioner);
-        connect(commissionerLeftPanel, &LeftPanel::iconClicked,
-            model, &ComModel::deleteCommissioner);
-
-        connect(model, &ComModel::commissionerChanged, 
-            commissionerRightPanel, &CommissionerPanel::updatePanel);
-        connect(commissionerRightPanel, &CommissionerPanel::newCommission, 
-            this, &MainWindow::newCommissionWithCommissioner);
-        connect(commissionerRightPanel, &CommissionerPanel::insertContact,
-            model, &ComModel::insertContact);
-        connect(commissionerRightPanel, &CommissionerPanel::deleteContact,
-            model, &ComModel::deleteContact);
-        connect(commissionerRightPanel, &CommissionerPanel::editName,
-            model, &ComModel::editCommissionerName);
-        connect(commissionerRightPanel, &CommissionerPanel::editNotes,
-            model, &ComModel::editCommissionerNotes);
-
-        connect(commissionLeftPanel, &LeftPanel::tableClicked,
-            model, &ComModel::setCommission);
-        connect(commissionLeftPanel, &LeftPanel::search,
-            this, &MainWindow::searchCommission);
-        connect(commissionLeftPanel, &LeftPanel::iconClicked,
-            model, &ComModel::deleteCommission);
-
-        connect(model, &ComModel::commissionChanged,
-            commissionRightPanel, &CommissionPanel::updatePanel);
-        connect(commissionRightPanel, &CommissionPanel::deletePiece,
-            model, &ComModel::deletePiece);
-        connect(commissionRightPanel, &CommissionPanel::editCommissioner,
-            model, &ComModel::editCommissionCommissioner);
-        connect(commissionRightPanel, &CommissionPanel::editNotes,
-            model, &ComModel::editCommissionNotes);
-        connect(commissionRightPanel, &CommissionPanel::newPayment,
-            this, &MainWindow::newPayment);
-        connect(commissionRightPanel, &CommissionPanel::newPiece,
-            this, &MainWindow::newPiece);
 
         layout->addWidget(leftPanel);
         layout->addWidget(line);
@@ -334,8 +253,133 @@ namespace Commissionator{
         piecePopup->exec();
     }
 
+    void MainWindow::recordClosed() {
+        
+        newCommissionerAct->disconnect();
+        newCommissionAct->disconnect();
+        newProductAct->disconnect();
+        newSaleAct->disconnect();
+        newPaymentAct->disconnect();
+        manageStorefrontAct->disconnect();
+        manageCommissionerAct->disconnect();
+        manageCommissionAct->disconnect();
+        managePieceAct->disconnect();
+        manageSaleAct->disconnect();
+        managePaymentAct->disconnect();
+        aboutAct->disconnect();
+        helpAct->disconnect();
+
+        commissionerLeftPanel->disconnect();
+        commissionLeftPanel->disconnect();
+        commissionerRightPanel->disconnect();
+        commissionRightPanel->disconnect();
+        line->disconnect();
+
+        commissionPopup->disconnect();
+        commissionerPopup->disconnect();
+        paymentPopup->disconnect();
+        piecePopup->disconnect();
+
+        model->disconnect();
+        connect(model, &ComModel::recordClosed,
+            this, &MainWindow::recordClosed);
+        connect(model, &ComModel::recordOpened,
+            this, &MainWindow::recordOpened);
+    }
+
+    void MainWindow::recordOpened() {
+        QList<int> hidden;
+        hidden.append(0);
+        commissionerLeftPanel = new LeftPanel("Commissioner",
+            model->getCommissioners(), hidden);
+        commissionLeftPanel = new LeftPanel("Commission",
+            model->getCommissions(), hidden);
+        commissionerRightPanel = new CommissionerPanel(
+            model->getCommissioner(),
+            model->getCommissionerContacts(),
+            model->getCommissionerCommissions(),
+            model->getContactTypes(),
+            this);
+        commissionRightPanel = new CommissionPanel(
+            model->getCommission(),
+            model->getCommissionPieces(),
+            model->getCommissionPayments(),
+            model->getCommissionerNames(),
+            this);
+        leftPanel->addWidget(commissionerLeftPanel);
+        leftPanel->addWidget(commissionLeftPanel);
+        rightPanel->addWidget(commissionerRightPanel);
+        rightPanel->addWidget(commissionRightPanel);
+
+        connect(commissionerLeftPanel, &LeftPanel::tableClicked,
+            model, &ComModel::setCommissioner);
+        connect(commissionerLeftPanel, &LeftPanel::search,
+            this, &MainWindow::searchCommissioner);
+        connect(commissionerLeftPanel, &LeftPanel::iconClicked,
+            model, &ComModel::deleteCommissioner);
+
+        connect(model, &ComModel::commissionerChanged,
+            commissionerRightPanel, &CommissionerPanel::updatePanel);
+        connect(commissionerRightPanel, &CommissionerPanel::newCommission,
+            this, &MainWindow::newCommissionWithCommissioner);
+        connect(commissionerRightPanel, &CommissionerPanel::insertContact,
+            model, &ComModel::insertContact);
+        connect(commissionerRightPanel, &CommissionerPanel::deleteContact,
+            model, &ComModel::deleteContact);
+        connect(commissionerRightPanel, &CommissionerPanel::editName,
+            model, &ComModel::editCommissionerName);
+        connect(commissionerRightPanel, &CommissionerPanel::editNotes,
+            model, &ComModel::editCommissionerNotes);
+
+        connect(commissionLeftPanel, &LeftPanel::tableClicked,
+            model, &ComModel::setCommission);
+        connect(commissionLeftPanel, &LeftPanel::search,
+            this, &MainWindow::searchCommission);
+        connect(commissionLeftPanel, &LeftPanel::iconClicked,
+            model, &ComModel::deleteCommission);
+
+        connect(model, &ComModel::commissionChanged,
+            commissionRightPanel, &CommissionPanel::updatePanel);
+        connect(commissionRightPanel, &CommissionPanel::deletePiece,
+            model, &ComModel::deletePiece);
+        connect(commissionRightPanel, &CommissionPanel::editCommissioner,
+            model, &ComModel::editCommissionCommissioner);
+        connect(commissionRightPanel, &CommissionPanel::editNotes,
+            model, &ComModel::editCommissionNotes);
+        connect(commissionRightPanel, &CommissionPanel::newPayment,
+            this, &MainWindow::newPayment);
+        connect(commissionRightPanel, &CommissionPanel::newPiece,
+            this, &MainWindow::newPiece);
+
+        connect(newCommissionerAct, &QAction::triggered,
+            this, &MainWindow::newCommissioner);
+        connect(newCommissionAct, &QAction::triggered,
+            this, &MainWindow::newCommission);
+        connect(newPaymentAct, &QAction::triggered,
+            this, &MainWindow::newPayment);
+        connect(manageCommissionerAct, &QAction::triggered,
+            this, &MainWindow::manageCommissioners);
+        connect(manageCommissionAct, &QAction::triggered,
+            this, &MainWindow::manageCommissions);
+
+        createPopups();
+        manageCommissioners();
+        currentFile = "";
+
+        model->insertProduct("thing", 1.0);
+        model->insertProduct("thing 2", 2.0);
+        model->insertProduct("thing 3", 3.50);
+        model->insertContactType("Contact Type");
+        model->insertContactType("Contact Type 2");
+        model->insertContactType("Contact Type 3");
+        model->insertPaymentType("payment type");
+        model->insertPaymentType("payment type 2");
+        model->insertPaymentType("payment type 3");
+        
+    }
+
     void MainWindow::save() {
-        if (currentFile != NULL)
+        if (currentFile != "")
             model->save(currentFile);
         else
             saveAs();
@@ -344,7 +388,7 @@ namespace Commissionator{
     void MainWindow::saveAs() {
         currentFile = QFileDialog::getSaveFileName(this, tr("Save File"),
             "", tr("Commissioner Files (*.cdb)"));
-        if (currentFile != NULL)
+        if (currentFile != "")
             model->save(currentFile);
     }
 
