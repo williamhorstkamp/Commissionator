@@ -343,24 +343,19 @@ namespace Commissionator {
         void close();
 
         /**
-         *  Opens a new SQLite database in memory, including building the
-         *  schema and preparing queries. 
-         */
-        void newRecord();
-
-        /**
-         *  Opens the SQLite database at the given filename.
+         *  Opens the SQLite database at the given filename. 
+         *  Creates one if it doesn't exist.
          *
          *  @param fileName - fileName to open
          */
-        void open(QString fileName);
+        void open(const QString fileName);
         
         /**
          *  Saves the currently open database to the file at the given filename.
          *
          *  @param fileName - the filename and location to save the file to
          */
-        void save(QString fileName);
+        void save();
 
         /**
          *  Function edits the commissioner of the commission with the given id.
@@ -720,11 +715,11 @@ namespace Commissionator {
 
     private:
         /**
-        *  Builds the database schema into the currently managed database.
-        *  Ran during the create function before prepared statements and
-        *  individual models are dealt with.
-        */
-        void build();
+         *  Builds the database schema into the currently managed database.
+         *  Ran during the create function before prepared statements and
+         *  individual models are dealt with.
+         */
+        void build(const QString fileName);
 
         /**
          *  Function finishes all queries that were setup in the

@@ -107,6 +107,8 @@ namespace Commissionator {
          */
         void newPiece(const QVariant &commission);
 
+        void newRecord();
+
         /**
          *  Function opens the dialog window the open a record.
          *  Takes control away from the MainWindow for the duration of the
@@ -129,13 +131,6 @@ namespace Commissionator {
          *  been saved to during this session, runs saveAs.
          */
         void save();
-
-        /**
-         *  Function opens the dialog window to save the database.
-         *  Takes control away from the MainWindow for the duration of the
-         *  save window's lifetime. 
-         */
-        void saveAs();
 
         /**
          *  Functions searches for commissioners with given arguements
@@ -257,5 +252,4 @@ namespace Commissionator {
         QString currentFile;
     };
 }
-
 #endif

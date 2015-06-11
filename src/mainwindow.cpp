@@ -35,7 +35,6 @@ namespace Commissionator{
         fileMenu->addAction(openAct);
         fileMenu->addSeparator();
         fileMenu->addAction(saveAct);
-        fileMenu->addAction(saveAsAct);
         fileMenu->addSeparator();
         fileMenu->addAction(printRecordAct);
         fileMenu->addSeparator();
@@ -67,7 +66,7 @@ namespace Commissionator{
         newAct = new QAction(QIcon(":/NewFile.png"), tr("&New"), this);
         newAct->setStatusTip(tr("Create a new set of records"));
         connect(newAct, &QAction::triggered,
-            model, &ComModel::newRecord);
+            this, &MainWindow::newRecord);
 
         openAct = new QAction(QIcon(":/OpenFile.png"), tr("&Open"), this);
         openAct->setStatusTip(tr("Open a set of records"));
@@ -78,11 +77,6 @@ namespace Commissionator{
         saveAct->setStatusTip(tr("Save the current set of records"));
         connect(saveAct, &QAction::triggered,
             this, &MainWindow::save);
-
-        saveAsAct = new QAction(QIcon(":/SaveAsFile.png"), tr("&Save As"), this);
-        saveAsAct->setStatusTip(tr("Save the current set of records as a new file"));
-        connect(saveAsAct, &QAction::triggered,
-            this, &MainWindow::saveAs);
 
         printRecordAct = new QAction(tr("&Print Records"), this);
         printRecordAct->setStatusTip(tr("Prints the entire set of data kept in the file"));
@@ -253,6 +247,13 @@ namespace Commissionator{
         piecePopup->exec();
     }
 
+    void MainWindow::newRecord() {
+        QString newFile = QFileDialog::getSaveFileName(this, tr("Create a new file"),
+            "", tr("Commissioner Files (*.cdb)"));
+        if (newFile != NULL)
+            model->open(newFile);
+    }
+
     void MainWindow::recordClosed() {
         
         newCommissionerAct->disconnect();
@@ -379,17 +380,7 @@ namespace Commissionator{
     }
 
     void MainWindow::save() {
-        if (currentFile != "")
-            model->save(currentFile);
-        else
-            saveAs();
-    }
-
-    void MainWindow::saveAs() {
-        currentFile = QFileDialog::getSaveFileName(this, tr("Save File"),
-            "", tr("Commissioner Files (*.cdb)"));
-        if (currentFile != "")
-            model->save(currentFile);
+        model->save();
     }
 
     void MainWindow::searchCommission(const QList<QVariant> query) {

@@ -1,12 +1,13 @@
 #include <QSqlTableModel>
 #include <QSqlDatabase>
-#include <QSqlDriver>
-#include "sqlite3.h"
+#include <QDebug>
+#include <QFileInfo>
 #include "ComModel.h"
 
 namespace Commissionator {
     ComModel::ComModel(QObject *parent) : QObject(parent) {
         changesMade = false;
+        sql = QSqlDatabase();
     }
 
     ComModel::~ComModel() {
@@ -18,6 +19,7 @@ namespace Commissionator {
     }
 
     void ComModel::close() {
+        sql.exec("ROLLBACK TO SAVEPOINT sv");
         cleanupQueries();
         QString connection = sql.connectionName();
         sql.close();
@@ -28,67 +30,20 @@ namespace Commissionator {
     }
 
     void ComModel::open(QString fileName) {
-        QVariant driverVariant = sql.driver()->handle();
-        //if (driverVariant.isValid()) {
-            sqlite3 *memory = *static_cast<sqlite3 **>(driverVariant.data());
-            //if (memory != NULL) {
-                sqlite3_backup *backup;
-                sqlite3 *file;
-                sqlite3 *other;
-                sqlite3_open(":memory:", &other);
-                int rc = sqlite3_open("asdf.cdb", &file);
-                if (rc == SQLITE_OK) {
-                    backup = sqlite3_backup_init(
-                        other,
-                        "main", 
-                        file,
-                        "main");
-                    if (backup) {
-                        sqlite3_backup_step(backup, -1);
-                        sqlite3_backup_finish(backup);
-                        changesMade = false;
-                        prepareModels();
-                        //emit recordOpened();
-                    }
-                }
-                sqlite3_close(file);
-                sqlite3_close(other);
-            //}
-        //}     
-    }
-
-    void ComModel::newRecord() {
         if (sql.isOpen())
             close();
-        build();
+        build(fileName);
         prepareModels();
         changesMade = false;
         emit recordOpened();
     }
     
-    void ComModel::save(QString fileName) {
-        QVariant driverVariant = sql.driver()->handle();
-        if (driverVariant.isValid()) {
-            sqlite3 *memory = *static_cast<sqlite3 **>(driverVariant.data());
-            if (memory != NULL) {
-                sqlite3 *file;
-                int rc = sqlite3_open(fileName.toLocal8Bit(), &file);
-                if (rc == SQLITE_OK) {
-                    sqlite3_backup *backup = sqlite3_backup_init(
-                        file, 
-                        "main", 
-                        memory, 
-                        "main");
-                    if (backup) {
-                        sqlite3_backup_step(backup, -1);
-                        sqlite3_backup_finish(backup);
-                    }
-                }
-                sqlite3_close(file);
-            }
+    void ComModel::save() {
+        if (changesMade){
+            sql.exec("RELEASE SAVEPOINT sv");
+            sql.exec("SAVEPOINT sv");
+            changesMade = false;
         }
-        changesMade = false;
-
     }
 
     QSqlQueryModel *ComModel::getCommissioner() {
@@ -445,9 +400,9 @@ namespace Commissionator {
         changesMade = true;
     }
 
-    void ComModel::build() {
+    void ComModel::build(const QString fileName) {
         sql = QSqlDatabase::addDatabase("QSQLITE");
-        sql.setDatabaseName(":memory:");
+        sql.setDatabaseName(fileName);
         sql.open();
         sql.exec("PRAGMA foreign_keys = ON;");
         sql.exec("PRAGMA synchronous = OFF;");
@@ -561,6 +516,7 @@ namespace Commissionator {
             "UPDATE Piece SET commission = 0 "
             "WHERE commission = OLD.id; "
             "END");
+        sql.exec("SAVEPOINT sv");
     }
 
     void ComModel::cleanupQueries() {
