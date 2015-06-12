@@ -7,6 +7,7 @@
 #include <QStackedWidget>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QFileInfo>
 #include "LeftPanel.h"
 #include "NewCommissionWindow.h"
 #include "NewCommissionerWindow.h"
@@ -139,10 +140,10 @@ namespace Commissionator{
         commissionerToolBar->addAction(newCommissionAct);
         commissionerToolBar->setMovable(false);
         contextToolBar = commissionerToolBar;
-        panelToolBar2 = addToolBar(tr("Panel2"));
-        panelToolBar2->addAction(newCommissionerAct);
-        panelToolBar2->setMovable(false);
-        panelToolBar2->setVisible(false);
+        commissionToolBar = addToolBar(tr("Commission"));
+        commissionToolBar->addAction(newCommissionerAct);
+        commissionToolBar->setMovable(false);
+        commissionToolBar->setVisible(false);
         setContextMenuPolicy(Qt::NoContextMenu);
     }
 
@@ -173,6 +174,7 @@ namespace Commissionator{
 
     void MainWindow::createPopups() {
         commissionPopup = new NewCommissionWindow(
+            model->getCommissionList(),
             model->getCommissionerNames(),
             model->getProductNames(),
             this);
@@ -185,7 +187,8 @@ namespace Commissionator{
             model->getPaymentTypes(), this);
         connect(paymentPopup, &NewPaymentWindow::newPayment,
             model, &ComModel::insertPayment);
-        piecePopup = new NewPieceWindow(model->getProductNames(), this);
+        piecePopup = new NewPieceWindow(model->getCommissionList(), 
+            model->getProductNames(), this);
         connect(piecePopup, &NewPieceWindow::newPiece,
             this, &MainWindow::insertPiece);
     }
@@ -240,18 +243,23 @@ namespace Commissionator{
     }
 
     void MainWindow::newPayment(const QVariant &commission) {
+        paymentPopup->setCommission(commission);
         paymentPopup->exec();
     }
 
-    void MainWindow::newPiece(const QVariant &commission) {
+    void MainWindow::newPiece() {
         piecePopup->exec();
     }
 
     void MainWindow::newRecord() {
         QString newFile = QFileDialog::getSaveFileName(this, tr("Create a new file"),
             "", tr("Commissioner Files (*.cdb)"));
-        if (newFile != NULL)
+        if (newFile != NULL) {
+            QFileInfo file(newFile);
+            if (file.exists())
+                QFile::remove(newFile);
             model->open(newFile);
+        }
     }
 
     void MainWindow::recordClosed() {
@@ -400,12 +408,14 @@ namespace Commissionator{
         leftPanel->setCurrentWidget(commissionerLeftPanel);
         rightPanel->setCurrentWidget(commissionerRightPanel);
         swapContextToolBar(commissionerToolBar);
+        commissionerRightPanel->updatePanel();
     }
 
     void MainWindow::manageCommissions() {
         leftPanel->setCurrentWidget(commissionLeftPanel);
         rightPanel->setCurrentWidget(commissionRightPanel);
-        swapContextToolBar(panelToolBar2);
+        swapContextToolBar(commissionToolBar);
+        commissionRightPanel->updatePanel();
     }
 
     void MainWindow::swapContextToolBar(QToolBar *newBar) {

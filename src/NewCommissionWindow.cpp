@@ -11,7 +11,8 @@
 
 namespace Commissionator {
 
-    NewCommissionWindow::NewCommissionWindow(QAbstractItemModel *namesModel,
+    NewCommissionWindow::NewCommissionWindow(QAbstractItemModel *commissionsModel, 
+        QAbstractItemModel *namesModel,
         QAbstractItemModel *productsModel, QWidget *parent) :
         BaseNewWindow(parent) {
 
@@ -73,7 +74,7 @@ namespace Commissionator {
             newPieceView->horizontalHeader()->setSectionResizeMode(i,
             QHeaderView::Stretch);
 
-        piecePopup = new NewPieceWindow(productsModel, this);
+        piecePopup = new NewPieceWindow(commissionsModel, productsModel, this);
         connect(piecePopup, &NewPieceWindow::newPiece,
             this, &NewCommissionWindow::newPieceSlot);
 

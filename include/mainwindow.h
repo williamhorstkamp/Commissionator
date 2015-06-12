@@ -105,8 +105,13 @@ namespace Commissionator {
          *
          *  @param commission - commission id for the piece
          */
-        void newPiece(const QVariant &commission);
+        void newPiece();
 
+        /**
+        *  Function opens the dialog window the create a new record.
+        *  Takes control away from the MainWindow for the duration of the
+        *  new record window's lifetime.
+         */
         void newRecord();
 
         /**
@@ -227,7 +232,7 @@ namespace Commissionator {
         QToolBar *mainToolBar;
         QToolBar *contextToolBar;
         QToolBar *commissionerToolBar;
-        QToolBar *panelToolBar2;
+        QToolBar *commissionToolBar;
 
         QAction *newAct;
         QAction *openAct;

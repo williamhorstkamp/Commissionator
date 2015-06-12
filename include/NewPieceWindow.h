@@ -26,8 +26,8 @@ namespace Commissionator {
          *  First column should be product id, second product name
          *  @param parent - pointer to parent model
          */
-        NewPieceWindow(QAbstractItemModel *productsModel,
-            QWidget *parent = nullptr);
+        NewPieceWindow(QAbstractItemModel *commissionsModel,
+            QAbstractItemModel *productsModel, QWidget *parent = nullptr);
 
         /**
          *  Destructor.

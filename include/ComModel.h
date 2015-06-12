@@ -315,24 +315,33 @@ namespace Commissionator {
     signals:
         /**
          *  Signal emmitted whenever the currently selected commission is 
-         *  changed.
+         *  changed or any value has been changed that may require the
+         *  commission panel to update.
          */
         void commissionChanged();
 
         /**
          *  Signal emmitted whenever the currently selected commissioner is
-         *  changed.
+         *  changed or any value has been changed that may require the
+         *  commissioner panel to update.
          */
         void commissionerChanged();
 
         /**
          *  Signal emmitted whenever the currently selected piece is
-         *  changed.
+         *  changed or any value has been changed that may require the
+         *  piece panel to update.
          */
         void pieceChanged();
 
+        /**
+         *  Signal emitted whenever an sql record is closed.
+         */
         void recordClosed();
 
+        /**
+         *  Signal emitted whenever an sql record is opened.
+         */
         void recordOpened();
 
     public slots:

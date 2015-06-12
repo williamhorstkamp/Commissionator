@@ -1,7 +1,6 @@
 #include <QSqlTableModel>
 #include <QSqlDatabase>
 #include <QDebug>
-#include <QFileInfo>
 #include "ComModel.h"
 
 namespace Commissionator {
@@ -584,6 +583,7 @@ namespace Commissionator {
             "ON Piece.id = Prices.pId "
             "WHERE Commission.commissioner = (?) "
             "GROUP BY Commission.id;");
+        commissionerCommissionsQuery.exec();
         commissionerCommissionsModel->setQuery(commissionerCommissionsQuery);
         /**
          *  initialized as a QSqlTableModel so that any proxy models created
@@ -973,7 +973,7 @@ namespace Commissionator {
 
     void ComModel::refreshCommissions() {
         commissionerCommissionsModel->query().exec();
-        commissionerCommissionsModel->setQuery(commissionsModel->query());
+        commissionerCommissionsModel->setQuery(commissionerCommissionsModel->query());
         commissionsModel->query().exec();
         commissionsModel->setQuery(commissionsModel->query());
         commissionModel->query().exec();

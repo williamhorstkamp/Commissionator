@@ -41,6 +41,7 @@ namespace Commissionator {
         comBox = new QComboBox(this);
         comBox->setModel(commissionModel);
         comBox->setModelColumn(1);
+        comBox->setCurrentIndex(-1);
 
         typeBox = new QComboBox(this);
         typeBox->setModel(paymentModel);
@@ -104,5 +105,4 @@ namespace Commissionator {
         }
         comBox->setModelColumn(1);
     }
-
 }

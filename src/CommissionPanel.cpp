@@ -178,6 +178,7 @@ namespace Commissionator {
     }
 
     void CommissionPanel::updatePanel() {
+
         commissionerName->setText(
             commissionModel->record(0).value(1).toString());
 

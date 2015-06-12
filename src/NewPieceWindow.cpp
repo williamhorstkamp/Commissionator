@@ -9,8 +9,9 @@
 
 namespace Commissionator {
 
-    NewPieceWindow::NewPieceWindow(QAbstractItemModel *productsModel, 
-        QWidget *parent) : BaseNewWindow(parent) {
+    NewPieceWindow::NewPieceWindow(QAbstractItemModel *commissionsModel, 
+        QAbstractItemModel *productsModel, QWidget *parent) :
+        BaseNewWindow(parent) {
         mainLayout = new QVBoxLayout(this);
         pieLayout = new QGridLayout();
 
