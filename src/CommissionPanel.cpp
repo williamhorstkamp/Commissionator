@@ -200,18 +200,22 @@ namespace Commissionator {
         else
             dueDate->setStyleSheet("QLabel { color : black; }");
 
-        if (commissionModel->record(0).value(5).toString() == "Paid Off") {
+        QLocale dollarConverter = QLocale();
+        if (commissionModel->record(0).value(5).toDouble() <= 0) {
             amountOwed->setStyleSheet("QLabel { color : green; }");
-            amountOwed->setText(
-                commissionModel->record(0).value(5).toString());
+            if (commissionModel->record(0).value(5).toDouble() == 0)
+                amountOwed->setText("Paid Off");
+            else
+                amountOwed->setText(
+                "Tipped " + dollarConverter.toCurrencyString(
+                -commissionModel->record(0).value(5).toDouble()));
         } else if (commissionModel->record(0).value(5).toString()
-            == "No Commissioned Pieces") {
+            == "") {
             amountOwed->setStyleSheet("QLabel { color : blue; }");
             amountOwed->setText(
-                commissionModel->record(0).value(5).toString());
+                "No Commissioned Pieces");
         } else {
             amountOwed->setStyleSheet("QLabel { color : red; }");
-            QLocale dollarConverter = QLocale();
             amountOwed->setText(
                 dollarConverter.toCurrencyString(
                 commissionModel->record(0).value(5).toDouble())

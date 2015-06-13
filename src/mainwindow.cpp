@@ -408,14 +408,14 @@ namespace Commissionator{
         leftPanel->setCurrentWidget(commissionerLeftPanel);
         rightPanel->setCurrentWidget(commissionerRightPanel);
         swapContextToolBar(commissionerToolBar);
-        commissionerRightPanel->updatePanel();
+        //commissionerRightPanel->updatePanel();
     }
 
     void MainWindow::manageCommissions() {
         leftPanel->setCurrentWidget(commissionLeftPanel);
         rightPanel->setCurrentWidget(commissionRightPanel);
         swapContextToolBar(commissionToolBar);
-        commissionRightPanel->updatePanel();
+        //commissionRightPanel->updatePanel();
     }
 
     void MainWindow::swapContextToolBar(QToolBar *newBar) {

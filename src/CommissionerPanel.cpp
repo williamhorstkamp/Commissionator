@@ -170,6 +170,7 @@ namespace Commissionator {
     }
 
     void CommissionerPanel::updatePanel() {
+        QLocale dollarConverter = QLocale();
         commissionerName->setText(
             commissionerModel->record(0).value(1).toString());
         if (commissionerModel->record(0).value(2).toString() 
@@ -180,18 +181,21 @@ namespace Commissionator {
             commissionerDate->setText(
                 "Customer since " + 
                 commissionerModel->record(0).value(2).toString());
-        if (commissionerModel->record(0).value(3).toString() == "Paid Off") {
+        if (commissionerModel->record(0).value(3).toDouble() <= 0) {
             commissionerPaid->setStyleSheet("QLabel { color : green; }");
-            commissionerPaid->setText(
-                commissionerModel->record(0).value(3).toString());
+            if (commissionerModel->record(0).value(3).toDouble() == 0)
+                commissionerPaid->setText("Paid Off");
+            else
+                commissionerPaid->setText(
+                "Tipped " + dollarConverter.toCurrencyString(
+                -commissionerModel->record(0).value(3).toDouble()));
         } else if (commissionerModel->record(0).value(3).toString() 
-            == "No Commissioned Pieces") {
+            == "") {
             commissionerPaid->setStyleSheet("QLabel { color : blue; }");
             commissionerPaid->setText(
-                commissionerModel->record(0).value(3).toString());
+                "No Commissioned Pieces");
         } else {
             commissionerPaid->setStyleSheet("QLabel { color : red; }");
-            QLocale dollarConverter = QLocale();
             commissionerPaid->setText(
                 dollarConverter.toCurrencyString(
                     commissionerModel->record(0).value(3).toDouble())
