@@ -307,35 +307,9 @@ namespace Commissionator {
             QDateTime::currentDateTime().toMSecsSinceEpoch());
         insertPaymentQuery.exec();
         refreshPayments();
-        QSqlQuery wasJustPaid(sql);
-        wasJustPaid.prepare("SELECT CASE WHEN Commission.paidDate IS NULL "
-            "AND totalPrices.price = sum(Payment.fee) "
-            "THEN 'true' ELSE 'false' END "
-            "FROM Commission "
-            "LEFT JOIN(SELECT prices.com comId, SUM(prices.price) price "
-            "FROM(SELECT C.id com, PP.price price FROM Commission C "
-            "INNER JOIN Piece P ON C.id = P.commission "
-            "INNER JOIN ProductPrices PP ON P.product = PP.product "
-            "WHERE  PP.date <= C.createDate "
-            "GROUP BY P.id HAVING PP.date = MAX(PP.date)) as prices "
-            "GROUP BY prices.com) as totalPrices "
-            "ON Commission.id = totalPrices.comId "
-            "LEFT JOIN Payment ON Commission.id = Payment.commission "
-            "WHERE Commission.id = (?)");
-        wasJustPaid.bindValue(0, commissionId);
-        wasJustPaid.exec();
-        wasJustPaid.next();
-        if (wasJustPaid.value(0).toBool() == true) {
-            QSqlQuery setPaidDate("UPDATE Commission SET paidDate = (?) "
-                "WHERE Commission.id = (?)", sql);
-            setPaidDate.bindValue(0, QDateTime::currentDateTime().toMSecsSinceEpoch());
-            setPaidDate.bindValue(1, commissionId);
-            setPaidDate.exec();
-            
-        }
-        wasJustPaid.finish();
         refreshCommissions();
         refreshCommissioners();
+        emit commissionChanged();
         changesMade = true;
     }
 
@@ -360,19 +334,6 @@ namespace Commissionator {
         else
             insertPieceQuery.bindValue(6, QVariant(QVariant::Double));
         insertPieceQuery.exec();
-        QSqlQuery isPaid("SELECT CASE WHEN Commission.paidDate IS NULL "
-            "THEN 'false' ELSE 'true' END "
-            "FROM Commission "
-            "WHERE Commission.id = (?);");
-        isPaid.bindValue(0, commission);
-        isPaid.exec();
-        isPaid.next();
-        if (isPaid.value(0).toBool() == true) {
-            QSqlQuery setPaidDate("UPDATE Commission SET paidDate = NULL "
-                "WHERE Commission.id = (?)", sql);
-            setPaidDate.bindValue(0, commission);
-            setPaidDate.exec();
-        }
         refreshCommissioners();
         refreshCommissions();
         refreshPieces();
@@ -515,6 +476,62 @@ namespace Commissionator {
             "UPDATE Piece SET commission = 0 "
             "WHERE commission = OLD.id; "
             "END");
+        sql.exec("CREATE TRIGGER IF NOT EXISTS updateCommissionPaidDateOnPayment "
+            "AFTER INSERT ON Payment "
+            "FOR EACH ROW BEGIN "
+            "UPDATE Commission SET paidDate = STRFTIME('%s', 'now') * 1000 "
+            "WHERE Commission.id = NEW.commission AND "
+            "Commission.paidDate IS NULL AND "
+            "(SELECT COALESCE(SUM(COALESCE(a.override, a.price)) - fee, "
+            "SUM(COALESCE(a.override, a.price))) FROM Commission "
+            "INNER JOIN Commissioner "
+            "ON Commission.commissioner = Commissioner.id "
+            "LEFT JOIN "
+            "(SELECT Commission.id id, ProductPrices.price price, "
+            "Piece.overridePrice override "
+            "FROM Commission "
+            "INNER JOIN Piece ON Commission.id = Piece.commission "
+            "INNER JOIN ProductPrices ON Piece.product = ProductPrices.product "
+            "AND ProductPrices.date < Commission.createDate "
+            "GROUP BY Piece.id HAVING date = max(date)) a "
+            "ON Commission.id = a.id "
+            "LEFT JOIN "
+            "(SELECT Commission.id id, SUM(Payment.fee) fee FROM Payment "
+            "INNER JOIN Commission ON Payment.commission = Commission.id "
+            "INNER JOIN Commissioner ON "
+            "Commission.commissioner = Commissioner.id "
+            "GROUP BY Commission.id) b "
+            "ON Commission.id = b.id "
+            "WHERE Commission.id = NEW.commission) <= 0; "
+            "END");
+        sql.exec("CREATE TRIGGER IF NOT EXISTS updateCommissionPaidDateOnPiece "
+            "AFTER INSERT ON Piece "
+            "FOR EACH ROW BEGIN "
+            "UPDATE Commission SET paidDate = NULL "
+            "WHERE Commission.id = NEW.commission AND "
+            "Commission.paidDate IS NULL AND "
+            "(SELECT COALESCE(SUM(COALESCE(a.override, a.price)) - fee, "
+            "SUM(COALESCE(a.override, a.price))) FROM Commission "
+            "INNER JOIN Commissioner "
+            "ON Commission.commissioner = Commissioner.id "
+            "LEFT JOIN "
+            "(SELECT Commission.id id, ProductPrices.price price, "
+            "Piece.overridePrice override "
+            "FROM Commission "
+            "INNER JOIN Piece ON Commission.id = Piece.commission "
+            "INNER JOIN ProductPrices ON Piece.product = ProductPrices.product "
+            "AND ProductPrices.date < Commission.createDate "
+            "GROUP BY Piece.id HAVING date = max(date)) a "
+            "ON Commission.id = a.id "
+            "LEFT JOIN "
+            "(SELECT Commission.id id, SUM(Payment.fee) fee FROM Payment "
+            "INNER JOIN Commission ON Payment.commission = Commission.id "
+            "INNER JOIN Commissioner ON "
+            "Commission.commissioner = Commissioner.id "
+            "GROUP BY Commission.id) b "
+            "ON Commission.id = b.id "
+            "WHERE Commission.id = NEW.commission) > 0; "
+            "END");
         sql.exec("SAVEPOINT sv");
     }
 
@@ -602,15 +619,15 @@ namespace Commissionator {
         commissionerQuery.prepare("SELECT c.id, c.name, c.createDate, "
             "COALESCE(c.cost, ''),"
             "c.notes FROM "
-            "(SELECT Commission.id id, Commissioner.name name, "
+            "(SELECT Commissioner.id id, Commissioner.name name, "
             "COALESCE(STRFTIME('%m/%d/%Y', min(Commission.createDate) / 1000, "
             "'unixepoch', 'localtime'), 'No Commissions') createDate, "
             "Commissioner.notes notes, "
             "COALESCE(SUM(COALESCE(a.override, a.price)) - fee, "
             "SUM(COALESCE(a.override, a.price))) cost "
-            "FROM Commission "
-            "INNER JOIN Commissioner "
-            "ON Commission.commissioner = Commissioner.id "
+            "FROM Commissioner "
+            "LEFT JOIN Commission "
+            "ON Commissioner.id = Commission.commissioner "
             "LEFT JOIN "
             "(SELECT Commission.id id, ProductPrices.price price, "
             "Piece.overridePrice override "
@@ -627,7 +644,7 @@ namespace Commissionator {
             "Commission.commissioner = Commissioner.id "
             "GROUP BY Commission.id) b "
             "ON Commission.id = b.id "
-            "WHERE Commission.id > 0 GROUP BY Commission.id) c "
+            "WHERE Commissioner.id > 0 GROUP BY Commission.id) c "
             "WHERE c.id = (?)");
         commissionerModel->setQuery(commissionerQuery);
         commissionerNamesModel = new QSqlQueryModel(this);
@@ -652,9 +669,9 @@ namespace Commissionator {
             "'unixepoch', 'localtime'), 'No Commissions') commissionerSince, "
             "Commissioner.notes notes, "
             "COALESCE(SUM(COALESCE(a.override, a.price)) - fee, "
-            "SUM(COALESCE(a.override, a.price))) cost FROM Commission "
-            "INNER JOIN Commissioner "
-            "ON Commission.commissioner = Commissioner.id "
+            "SUM(COALESCE(a.override, a.price))) cost FROM Commissioner "
+            "LEFT JOIN Commission "
+            "ON Commissioner.id = Commission.commissioner "
             "LEFT JOIN "
             "(SELECT Commission.id id, ProductPrices.price price, "
             "Piece.overridePrice override "
@@ -671,7 +688,7 @@ namespace Commissionator {
             "Commission.commissioner = Commissioner.id "
             "GROUP BY Commissioner.id) b "
             "ON Commission.id = b.id "
-            "WHERE Commission.id > 0 "
+            "WHERE Commissioner.id > 0 "
             "GROUP BY Commissioner.id) c "
             "WHERE name LIKE (?) AND C.id IS NOT 0 "
             "GROUP BY C.id HAVING CommissionerSince like (?) "
@@ -780,10 +797,12 @@ namespace Commissionator {
             "Commission.createDate/1000, 'unixepoch', 'localtime'), "
             "COALESCE(STRFTIME('%m/%d/%Y', Commission.paidDate/1000, "
             "'unixepoch', 'localtime'), 'Unpaid'), "
-            "STRFTIME('%m/%d/%Y', Commission.dueDate/1000, 'unixepoch', 'localtime'), "
-            "COUNT(Piece.id), "
-            "CASE WHEN MIN(Piece.finishDate) LIKE '0' THEN 'Unfinished' "
-            "WHEN MIN(Piece.finishDate) IS NULL THEN 'No Pieces' "
+            "STRFTIME('%m/%d/%Y', Commission.dueDate/1000, 'unixepoch', "
+            "'localtime'), COUNT(Piece.id), "
+            "CASE WHEN MIN(Piece.finishDate) IS NULL AND COUNT(Piece.id) > 0 "
+            "THEN 'Unfinished' "
+            "WHEN MIN(Piece.finishDate) IS NULL AND COUNT(Piece.id) = 0 "
+            "THEN 'No Pieces' "
             "ELSE MAX(Piece.finishDate) "
             "END "
             "FROM Commission INNER JOIN "
