@@ -44,6 +44,12 @@ namespace Commissionator {
          */
         virtual void newItemSlot();
 
+        /**
+         *  Slot captures currentIndexChanged/currentTextChanged and confirms
+         *  that all necissary fields are entered before enabling the submit button.
+         */
+        virtual void setSubmitEnabled();
+
     private:
 
         /**

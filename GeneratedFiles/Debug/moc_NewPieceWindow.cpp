@@ -19,8 +19,8 @@
 
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_Commissionator__NewPieceWindow_t {
-    QByteArrayData data[10];
-    char stringdata[119];
+    QByteArrayData data[11];
+    char stringdata[136];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -38,13 +38,14 @@ QT_MOC_LITERAL(5, 62, 9), // "productId"
 QT_MOC_LITERAL(6, 72, 11), // "productName"
 QT_MOC_LITERAL(7, 84, 5), // "price"
 QT_MOC_LITERAL(8, 90, 11), // "newItemSlot"
-QT_MOC_LITERAL(9, 102, 16) // "setPriceOverride"
+QT_MOC_LITERAL(9, 102, 16), // "setSubmitEnabled"
+QT_MOC_LITERAL(10, 119, 16) // "setPriceOverride"
 
     },
     "Commissionator::NewPieceWindow\0newPiece\0"
     "\0pieceName\0pieceNotes\0productId\0"
     "productName\0price\0newItemSlot\0"
-    "setPriceOverride"
+    "setSubmitEnabled\0setPriceOverride"
 };
 #undef QT_MOC_LITERAL
 
@@ -54,7 +55,7 @@ static const uint qt_meta_data_Commissionator__NewPieceWindow[] = {
        7,       // revision
        0,       // classname
        0,    0, // classinfo
-       4,   14, // methods
+       5,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -62,18 +63,20 @@ static const uint qt_meta_data_Commissionator__NewPieceWindow[] = {
        2,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    5,   34,    2, 0x06 /* Public */,
-       1,    4,   45,    2, 0x26 /* Public | MethodCloned */,
+       1,    5,   39,    2, 0x06 /* Public */,
+       1,    4,   50,    2, 0x26 /* Public | MethodCloned */,
 
  // slots: name, argc, parameters, tag, flags
-       8,    0,   54,    2, 0x09 /* Protected */,
-       9,    0,   55,    2, 0x08 /* Private */,
+       8,    0,   59,    2, 0x09 /* Protected */,
+       9,    0,   60,    2, 0x09 /* Protected */,
+      10,    0,   61,    2, 0x08 /* Private */,
 
  // signals: parameters
     QMetaType::Void, QMetaType::QString, QMetaType::QString, QMetaType::Int, QMetaType::QString, QMetaType::Double,    3,    4,    5,    6,    7,
     QMetaType::Void, QMetaType::QString, QMetaType::QString, QMetaType::Int, QMetaType::QString,    3,    4,    5,    6,
 
  // slots: parameters
+    QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
 
@@ -88,7 +91,8 @@ void Commissionator::NewPieceWindow::qt_static_metacall(QObject *_o, QMetaObject
         case 0: _t->newPiece((*reinterpret_cast< const QString(*)>(_a[1])),(*reinterpret_cast< const QString(*)>(_a[2])),(*reinterpret_cast< const int(*)>(_a[3])),(*reinterpret_cast< const QString(*)>(_a[4])),(*reinterpret_cast< const double(*)>(_a[5]))); break;
         case 1: _t->newPiece((*reinterpret_cast< const QString(*)>(_a[1])),(*reinterpret_cast< const QString(*)>(_a[2])),(*reinterpret_cast< const int(*)>(_a[3])),(*reinterpret_cast< const QString(*)>(_a[4]))); break;
         case 2: _t->newItemSlot(); break;
-        case 3: _t->setPriceOverride(); break;
+        case 3: _t->setSubmitEnabled(); break;
+        case 4: _t->setPriceOverride(); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -128,13 +132,13 @@ int Commissionator::NewPieceWindow::qt_metacall(QMetaObject::Call _c, int _id, v
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 4)
+        if (_id < 5)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 4;
+        _id -= 5;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 4)
+        if (_id < 5)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 4;
+        _id -= 5;
     }
     return _id;
 }

@@ -26,8 +26,7 @@ namespace Commissionator {
          *  First column should be product id, second product name
          *  @param parent - pointer to parent model
          */
-        NewPieceWindow(QAbstractItemModel *commissionsModel,
-            QAbstractItemModel *productsModel, QWidget *parent = nullptr);
+        NewPieceWindow(QAbstractItemModel *productsModel, QWidget *parent = nullptr);
 
         /**
          *  Destructor.
@@ -55,6 +54,12 @@ namespace Commissionator {
          *  commissioner button and emits the newCommissioner signal.
          */
         virtual void newItemSlot();
+
+        /**
+         *  Slot captures currentIndexChanged/currentTextChanged and confirms
+         *  that all necissary fields are entered before enabling the submit button.
+         */
+        virtual void setSubmitEnabled();
 
     private slots:
         /**

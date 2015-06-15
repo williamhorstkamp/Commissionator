@@ -11,8 +11,7 @@
 
 namespace Commissionator {
 
-    NewCommissionWindow::NewCommissionWindow(QAbstractItemModel *commissionsModel, 
-        QAbstractItemModel *namesModel,
+    NewCommissionWindow::NewCommissionWindow(QAbstractItemModel *namesModel,
         QAbstractItemModel *productsModel, QWidget *parent) :
         BaseNewWindow(parent) {
 
@@ -44,6 +43,10 @@ namespace Commissionator {
         comBox = new QComboBox(this);
         comBox->setModel(namesModel);
         comBox->setModelColumn(1);
+        comBox->setCurrentIndex(-1);
+        connect(comBox, static_cast<void(QComboBox::*)(int)>
+            (&QComboBox::activated),
+            this, &NewCommissionWindow::setSubmitEnabled);
 
         calendarEdit = new QDateEdit(this);
         calendarEdit->setDate(QDate::currentDate());
@@ -74,7 +77,7 @@ namespace Commissionator {
             newPieceView->horizontalHeader()->setSectionResizeMode(i,
             QHeaderView::Stretch);
 
-        piecePopup = new NewPieceWindow(commissionsModel, productsModel, this);
+        piecePopup = new NewPieceWindow(productsModel, this);
         connect(piecePopup, &NewPieceWindow::newPiece,
             this, &NewCommissionWindow::newPieceSlot);
 
@@ -85,6 +88,7 @@ namespace Commissionator {
 
         submitButton = new QPushButton(this);
         submitButton->setText("Submit Commission");
+        submitButton->setEnabled(false);
         connect(submitButton, &QPushButton::clicked,
             this, &NewCommissionWindow::newItemSlot);
 
@@ -113,6 +117,7 @@ namespace Commissionator {
         calendarEdit->setDate(QDate::currentDate());
         notesEdit->setText("");
         newPieceModel->removeRows(0, newPieceModel->rowCount());
+        submitButton->setEnabled(false);
     }
 
     void NewCommissionWindow::deletePieceSlot(const QModelIndex &index) {
@@ -120,25 +125,23 @@ namespace Commissionator {
     }
 
     void NewCommissionWindow::newItemSlot() {
-        if (comBox->currentIndex() > -1) {
-            QList<std::tuple<const int, const QString, const QString, const double>> pieces;
-            for (int i = 0; i < newPieceModel->rowCount(); i++) {
-                double price = -1;
-                if (newPieceModel->index(i, 4).data().toString() != "N/A")
-                    price = newPieceModel->index(i, 4).data().toString().toDouble();
-                pieces << std::make_tuple(
-                    newPieceModel->index(i, 0).data().toInt(),
-                    newPieceModel->index(i, 2).data().toString(),
-                    newPieceModel->index(i, 3).data().toString(),
-                    price);
-            }
-            emit newCommission(
-                comBox->model()->index(comBox->currentIndex(), 0).data().toInt(),
-                calendarEdit->dateTime(),
-                notesEdit->text(),
-                pieces);
-            BaseNewWindow::newItemSlot();
-        }  
+        QList<std::tuple<const int, const QString, const QString, const double>> pieces;
+        for (int i = 0; i < newPieceModel->rowCount(); i++) {
+            double price = -1;
+            if (newPieceModel->index(i, 4).data().toString() != "N/A")
+                price = newPieceModel->index(i, 4).data().toString().toDouble();
+            pieces << std::make_tuple(
+                newPieceModel->index(i, 0).data().toInt(),
+                newPieceModel->index(i, 2).data().toString(),
+                newPieceModel->index(i, 3).data().toString(),
+                price);
+        }
+        emit newCommission(
+            comBox->model()->index(comBox->currentIndex(), 0).data().toInt(),
+            calendarEdit->dateTime(),
+            notesEdit->text(),
+            pieces);
+        BaseNewWindow::newItemSlot();
     }
 
     void NewCommissionWindow::newPieceSlot(const QString pieceName, 
@@ -164,5 +167,12 @@ namespace Commissionator {
             comBox->setEnabled(false);
         }
         comBox->setModelColumn(1);
+    }
+
+    void NewCommissionWindow::setSubmitEnabled() {
+        if (comBox->currentIndex() > -1)
+            submitButton->setEnabled(true);
+        else
+            submitButton->setEnabled(false);
     }
 }

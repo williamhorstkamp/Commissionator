@@ -42,21 +42,29 @@ namespace Commissionator {
         comBox->setModel(commissionModel);
         comBox->setModelColumn(1);
         comBox->setCurrentIndex(-1);
+        connect(comBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::activated),
+            this, &NewPaymentWindow::setSubmitEnabled);
 
         typeBox = new QComboBox(this);
         typeBox->setModel(paymentModel);
         typeBox->setModelColumn(1);
         typeBox->setCurrentIndex(-1);
+        connect(typeBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::activated),
+            this, &NewPaymentWindow::setSubmitEnabled);
 
         amountEdit = new QDoubleSpinBox(this);
         amountEdit->setDecimals(2);
         amountEdit->setMinimum(0);
         amountEdit->setMaximum(999999);
+        connect(amountEdit, static_cast<void(QDoubleSpinBox::*)(double)>
+            (&QDoubleSpinBox::valueChanged),
+            this, &NewPaymentWindow::setSubmitEnabled);
 
         notesEdit = new QLineEdit(this);
 
         submitButton = new QPushButton(this);
         submitButton->setText("Submit Payment");
+        submitButton->setEnabled(false);
         connect(submitButton, &QPushButton::clicked,
             this, &NewPaymentWindow::newItemSlot);
 
@@ -84,18 +92,16 @@ namespace Commissionator {
         typeBox->setCurrentIndex(-1);
         amountEdit->setValue(0);
         notesEdit->setText("");
+        submitButton->setEnabled(false);
     }
 
     void NewPaymentWindow::newItemSlot() {
-        if (comBox->currentIndex() > -1 && typeBox->currentIndex() > -1 &&
-            amountEdit->value() > 0) {
-            emit newPayment(
-                comBox->model()->index(comBox->currentIndex(), 0).data().toInt(),
-                typeBox->model()->index(typeBox->currentIndex(), 0).data().toInt(),
-                amountEdit->value(),
-                notesEdit->text());
-            BaseNewWindow::newItemSlot();
-        }
+        emit newPayment(
+            comBox->model()->index(comBox->currentIndex(), 0).data().toInt(),
+            typeBox->model()->index(typeBox->currentIndex(), 0).data().toInt(),
+            amountEdit->value(),
+            notesEdit->text());
+        BaseNewWindow::newItemSlot();
     }
 
     void NewPaymentWindow::setCommission(const QVariant &commission) {
@@ -106,5 +112,13 @@ namespace Commissionator {
             comBox->setEnabled(false);
         }
         comBox->setModelColumn(1);
+    }
+
+    void NewPaymentWindow::setSubmitEnabled() {
+        if (comBox->currentIndex() > -1 && typeBox->currentIndex() > -1 &&
+            amountEdit->value() > 0)
+            submitButton->setEnabled(true);
+        else
+            submitButton->setEnabled(false);
     }
 }

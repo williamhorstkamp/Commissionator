@@ -263,7 +263,6 @@ namespace Commissionator{
 
     void MainWindow::createPopups() {
         commissionPopup = new NewCommissionWindow(
-            model->getCommissionList(),
             model->getCommissionerNames(),
             model->getProductNames(),
             this);
@@ -276,8 +275,7 @@ namespace Commissionator{
             model->getPaymentTypes(), this);
         connect(paymentPopup, &NewPaymentWindow::newPayment,
             model, &ComModel::insertPayment);
-        piecePopup = new NewPieceWindow(model->getCommissionList(), 
-            model->getProductNames(), this);
+        piecePopup = new NewPieceWindow(model->getProductNames(), this);
         connect(piecePopup, &NewPieceWindow::newPiece,
             this, &MainWindow::insertPiece);
     }

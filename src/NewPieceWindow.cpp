@@ -9,8 +9,7 @@
 
 namespace Commissionator {
 
-    NewPieceWindow::NewPieceWindow(QAbstractItemModel *commissionsModel, 
-        QAbstractItemModel *productsModel, QWidget *parent) :
+    NewPieceWindow::NewPieceWindow(QAbstractItemModel *productsModel, QWidget *parent) :
         BaseNewWindow(parent) {
         mainLayout = new QVBoxLayout(this);
         pieLayout = new QGridLayout();
@@ -33,6 +32,8 @@ namespace Commissionator {
         proNameLabel->setText("Product Name:");
 
         pieNameEdit = new QLineEdit(this);
+        connect(pieNameEdit, &QLineEdit::textChanged,
+            this, &NewPieceWindow::setSubmitEnabled);
 
         pieNotesEdit = new QLineEdit(this);
 
@@ -40,6 +41,9 @@ namespace Commissionator {
         proBox->setModel(productsModel);
         proBox->setModelColumn(1);
         proBox->setCurrentIndex(-1);
+        connect(proBox, static_cast<void(QComboBox::*)(int)>
+            (&QComboBox::activated),
+            this, &NewPieceWindow::setSubmitEnabled);
 
         priceCheck = new QCheckBox(this);
         priceCheck->setText("Price Override");
@@ -54,6 +58,7 @@ namespace Commissionator {
 
         submitButton = new QPushButton(this);
         submitButton->setText("Submit Piece");
+        submitButton->setEnabled(false);
         connect(submitButton, &QPushButton::clicked,
             this, &NewPieceWindow::newItemSlot);
 
@@ -82,24 +87,30 @@ namespace Commissionator {
         priceCheck->setChecked(false);
         priceEdit->setEnabled(false);
         priceEdit->setValue(0);
+        submitButton->setEnabled(false);
     }
 
     void NewPieceWindow::newItemSlot() {
-        if (pieNameEdit->text() != "" && proBox->currentIndex() > -1) {
-            double price = -1;
-            if (priceCheck->isChecked())
-                price = priceEdit->value();
-            emit newPiece(pieNameEdit->text(),
-                pieNotesEdit->text(),
-                proBox->model()->index(proBox->currentIndex(), 0).data().toInt(),
-                proBox->currentText(),
-                price);
-            BaseNewWindow::newItemSlot();
-        }        
+        double price = -1;
+        if (priceCheck->isChecked())
+            price = priceEdit->value();
+        emit newPiece(pieNameEdit->text(),
+            pieNotesEdit->text(),
+            proBox->model()->index(proBox->currentIndex(), 0).data().toInt(),
+            proBox->currentText(),
+            price);
+        BaseNewWindow::newItemSlot();        
     }
 
     void NewPieceWindow::setPriceOverride() {
         priceEdit->setEnabled(priceCheck->isChecked());
         priceEdit->setValue(0);
+    }
+
+    void NewPieceWindow::setSubmitEnabled() {
+        if (pieNameEdit->text() != "" && proBox->currentIndex() > -1)
+            submitButton->setEnabled(true);
+        else
+            submitButton->setEnabled(false);
     }
 }

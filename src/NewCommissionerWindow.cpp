@@ -25,11 +25,14 @@ namespace Commissionator {
         notesLabel->setText("Notes:");
 
         nameEdit = new QLineEdit(this);
+        connect(nameEdit, &QLineEdit::textChanged,
+            this, &NewCommissionerWindow::setSubmitEnabled);
 
         notesEdit = new QLineEdit(this);
 
         submitButton = new QPushButton(this);
         submitButton->setText("Submit Commissioner");
+        submitButton->setEnabled(false);
         connect(submitButton, &QPushButton::clicked,
             this, &NewCommissionerWindow::newItemSlot);
 
@@ -50,12 +53,18 @@ namespace Commissionator {
     void NewCommissionerWindow::clear() {
         nameEdit->clear();
         notesEdit->clear();
+        submitButton->setEnabled(false);
     }
 
     void NewCommissionerWindow::newItemSlot() {
-        if (nameEdit->text() != "") {
-            emit newCommissioner(nameEdit->text(), notesEdit->text());
-            BaseNewWindow::newItemSlot();
-        }
+        emit newCommissioner(nameEdit->text(), notesEdit->text());
+        BaseNewWindow::newItemSlot();
+    }
+
+    void NewCommissionerWindow::setSubmitEnabled() {
+        if (nameEdit->text() != "")
+            submitButton->setEnabled(true);
+        else
+            submitButton->setEnabled(false);
     }
 }
