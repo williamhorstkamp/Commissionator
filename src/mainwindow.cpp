@@ -25,9 +25,22 @@ namespace Commissionator{
         createMenus();
         createStatusBar();
         createToolBars();
-        createPanels();
 
         setMinimumSize(1020, 800);
+    }
+
+    void MainWindow::closeRecord() {
+        if (model->hasBeenChanged()) {
+            int ret = QMessageBox::question(this, tr("Save File?"),
+                tr("The database has been modified.\n"
+                "Would you like to save your changes?"),
+                QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel, QMessageBox::Save);
+            if (ret == QMessageBox::Save)
+                save();
+            else if (ret == QMessageBox::Cancel)
+                return;
+        }
+        model->close();
     }
 
     void MainWindow::createMenus() {
@@ -38,6 +51,7 @@ namespace Commissionator{
         fileMenu->addAction(saveAct);
         fileMenu->addSeparator();
         fileMenu->addAction(printRecordAct);
+        fileMenu->addAction(closeAct);
         fileMenu->addSeparator();
         fileMenu->addAction(exitAct);
 
@@ -53,7 +67,6 @@ namespace Commissionator{
         manageMenu->addAction(manageCommissionerAct);
         manageMenu->addAction(manageCommissionAct);
         manageMenu->addAction(managePieceAct);
-        manageMenu->addAction(manageSaleAct);
         manageMenu->addAction(managePaymentAct);
 
         menuBar()->addSeparator();
@@ -76,11 +89,15 @@ namespace Commissionator{
 
         saveAct = new QAction(QIcon(":/SaveFile.png"), tr("&Save"), this);
         saveAct->setStatusTip(tr("Save the current set of records"));
-        connect(saveAct, &QAction::triggered,
-            this, &MainWindow::save);
+        saveAct->setEnabled(false);
 
         printRecordAct = new QAction(tr("&Print Records"), this);
         printRecordAct->setStatusTip(tr("Prints the entire set of data kept in the file"));
+        printRecordAct->setEnabled(false);
+
+        closeAct = new QAction(tr("&Close"), this);
+        closeAct->setStatusTip(tr("Closes current record"));
+        closeAct->setEnabled(false);
 
         exitAct = new QAction(tr("&Exit"), this);
         exitAct->setStatusTip(tr("Exits the program"));
@@ -89,42 +106,51 @@ namespace Commissionator{
         
         newCommissionerAct = new QAction(QIcon(":/CommissionerPlus.png"), tr("&Commissioner"), this);
         newCommissionerAct->setStatusTip(tr("Create a new commissioner"));
+        newCommissionerAct->setEnabled(false);
 
         newCommissionAct = new QAction(QIcon(":/CommissionPlus.png"), tr("&Commission"), this);
         newCommissionAct->setStatusTip(tr("Create a new commission"));
+        newCommissionAct->setEnabled(false);
 
         newProductAct = new QAction(QIcon(":/ProductPlus.png"), tr("&Product"), this);
         newProductAct->setStatusTip(tr("Create a new product"));
+        newProductAct->setEnabled(false);
 
         newSaleAct = new QAction(QIcon(":/SalePlus.png"), tr("&Sale"), this);
         newSaleAct->setStatusTip(tr("Create a new sale"));
+        newSaleAct->setEnabled(false);
 
         newPaymentAct = new QAction(QIcon(":/PaymentPlus.png"), tr("&Payment"), this);
         newPaymentAct->setStatusTip(tr("Create a new payment"));
+        newPaymentAct->setEnabled(false);
 
         manageStorefrontAct = new QAction(QIcon(":/Storefront.png"), tr("&Storefront"), this);
         manageStorefrontAct->setStatusTip(tr("Manage existing products"));
+        manageStorefrontAct->setEnabled(false);
 
         manageCommissionerAct = new QAction(QIcon(":/Commissioner.png"), tr("&Commissioner"), this);
         manageCommissionerAct->setStatusTip(tr("Manage existing commissioners"));
+        manageCommissionerAct->setEnabled(false);
 
         manageCommissionAct = new QAction(QIcon(":/Commission.png"), tr("&Commission"), this);
         manageCommissionAct->setStatusTip(tr("Manage existing commissions"));
+        manageCommissionAct->setEnabled(false);
 
         managePieceAct = new QAction(QIcon(":/Piece.png"), tr("&Piece"), this);
         managePieceAct->setStatusTip(tr("Manage existing pieces"));
-
-        manageSaleAct = new QAction(QIcon(":/Sale.png"), tr("&Sale"), this);
-        manageSaleAct->setStatusTip(tr("Manage existing sales"));
+        managePieceAct->setEnabled(false);
 
         managePaymentAct = new QAction(QIcon(":/Payment.png"), tr("&Payment"), this);
         managePaymentAct->setStatusTip(tr("Manage existing payments"));
+        managePaymentAct->setEnabled(false);
 
         helpAct = new QAction(QIcon(":/Help.png"), tr("&Help"), this);
         helpAct->setStatusTip(tr("Get help about Commissionator"));
+        helpAct->setEnabled(false); //not yet implemented
 
         aboutAct = new QAction(tr("&About Commissionator"), this);
         aboutAct->setStatusTip(tr("View important version and legal information about this program"));
+        aboutAct->setEnabled(false); //not yet implemented   
     }
 
     void MainWindow::createStatusBar() {
@@ -165,138 +191,6 @@ namespace Commissionator{
         line->setFrameShape(QFrame::VLine);
         line->setFrameShadow(QFrame::Sunken);
 
-        layout->addWidget(leftPanel);
-        layout->addWidget(line);
-        layout->addWidget(rightPanel);
-        window->setLayout(layout);
-        setCentralWidget(window);
-    }
-
-    void MainWindow::createPopups() {
-        commissionPopup = new NewCommissionWindow(
-            model->getCommissionList(),
-            model->getCommissionerNames(),
-            model->getProductNames(),
-            this);
-        connect(commissionPopup, &NewCommissionWindow::newCommission, 
-            this, &MainWindow::insertCommission);
-        commissionerPopup = new NewCommissionerWindow(this);
-        connect(commissionerPopup, &NewCommissionerWindow::newCommissioner,
-            model, &ComModel::insertCommissioner);
-        paymentPopup = new NewPaymentWindow(model->getCommissionList(),
-            model->getPaymentTypes(), this);
-        connect(paymentPopup, &NewPaymentWindow::newPayment,
-            model, &ComModel::insertPayment);
-        piecePopup = new NewPieceWindow(model->getCommissionList(), 
-            model->getProductNames(), this);
-        connect(piecePopup, &NewPieceWindow::newPiece,
-            this, &MainWindow::insertPiece);
-    }
-
-    void MainWindow::insertCommission(const int commissionerId,
-        const QDateTime dueDate, const QString notes,
-        QList<std::tuple<int, QString, QString, double>> pieces) {
-        const int id = model->insertCommission(commissionerId, dueDate, notes);
-        for (int i = 0; i < pieces.length(); i++)
-            model->insertPiece(id, std::get<0>(pieces[i]),
-            std::get<1>(pieces[i]), std::get<2>(pieces[i]),
-            std::get<3>(pieces[i]));
-        commissionerRightPanel->updatePanel();
-    }
-
-    void MainWindow::insertPiece(const QString pieceName, const QString pieceNotes,
-        const int productId, const QString productName,
-        const double price) {
-        model->insertPiece(model->getCommission()->record(0).value(0).toInt(),
-            productId, pieceName, pieceNotes, price);
-        commissionRightPanel->updatePanel();
-    }
-
-    void MainWindow::open() {
-        if (model->hasBeenChanged()) {
-            int ret = QMessageBox::question(this, tr("Save File?"),
-                tr("The database has been modified.\n"
-                "Would you like to save your changes?"),
-                QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel, QMessageBox::Save);
-            if (ret == QMessageBox::Save)
-                save();
-            else if (ret == QMessageBox::Cancel)
-                return;
-        }
-        QString openFile = QFileDialog::getOpenFileName(this, tr("Open File"),
-            "", tr("Commissioner Files (*.cdb)"));
-        if (openFile != NULL)
-            model->open(openFile);
-    }
-
-    void MainWindow::newCommission() {
-        commissionPopup->exec();
-    }
-
-    void MainWindow::newCommissioner() {
-        commissionerPopup->exec();
-    }
-
-    void MainWindow::newCommissionWithCommissioner(const QVariant &commissioner) {
-        commissionPopup->setCommissioner(commissioner);
-        newCommission();
-    }
-
-    void MainWindow::newPayment(const QVariant &commission) {
-        paymentPopup->setCommission(commission);
-        paymentPopup->exec();
-    }
-
-    void MainWindow::newPiece() {
-        piecePopup->exec();
-    }
-
-    void MainWindow::newRecord() {
-        QString newFile = QFileDialog::getSaveFileName(this, tr("Create a new file"),
-            "", tr("Commissioner Files (*.cdb)"));
-        if (newFile != NULL) {
-            QFileInfo file(newFile);
-            if (file.exists())
-                QFile::remove(newFile);
-            model->open(newFile);
-        }
-    }
-
-    void MainWindow::recordClosed() {
-        
-        newCommissionerAct->disconnect();
-        newCommissionAct->disconnect();
-        newProductAct->disconnect();
-        newSaleAct->disconnect();
-        newPaymentAct->disconnect();
-        manageStorefrontAct->disconnect();
-        manageCommissionerAct->disconnect();
-        manageCommissionAct->disconnect();
-        managePieceAct->disconnect();
-        manageSaleAct->disconnect();
-        managePaymentAct->disconnect();
-        aboutAct->disconnect();
-        helpAct->disconnect();
-
-        commissionerLeftPanel->disconnect();
-        commissionLeftPanel->disconnect();
-        commissionerRightPanel->disconnect();
-        commissionRightPanel->disconnect();
-        line->disconnect();
-
-        commissionPopup->disconnect();
-        commissionerPopup->disconnect();
-        paymentPopup->disconnect();
-        piecePopup->disconnect();
-
-        model->disconnect();
-        connect(model, &ComModel::recordClosed,
-            this, &MainWindow::recordClosed);
-        connect(model, &ComModel::recordOpened,
-            this, &MainWindow::recordOpened);
-    }
-
-    void MainWindow::recordOpened() {
         QList<int> hidden;
         hidden.append(0);
         commissionerLeftPanel = new LeftPanel("Commissioner",
@@ -360,31 +254,110 @@ namespace Commissionator{
         connect(commissionRightPanel, &CommissionPanel::newPiece,
             this, &MainWindow::newPiece);
 
-        connect(newCommissionerAct, &QAction::triggered,
-            this, &MainWindow::newCommissioner);
-        connect(newCommissionAct, &QAction::triggered,
-            this, &MainWindow::newCommission);
-        connect(newPaymentAct, &QAction::triggered,
-            this, &MainWindow::newPayment);
-        connect(manageCommissionerAct, &QAction::triggered,
-            this, &MainWindow::manageCommissioners);
-        connect(manageCommissionAct, &QAction::triggered,
-            this, &MainWindow::manageCommissions);
+        layout->addWidget(leftPanel);
+        layout->addWidget(line);
+        layout->addWidget(rightPanel);
+        window->setLayout(layout);
+        setCentralWidget(window);
+    }
 
-        createPopups();
-        manageCommissioners();
-        currentFile = "";
+    void MainWindow::createPopups() {
+        commissionPopup = new NewCommissionWindow(
+            model->getCommissionList(),
+            model->getCommissionerNames(),
+            model->getProductNames(),
+            this);
+        connect(commissionPopup, &NewCommissionWindow::newCommission, 
+            this, &MainWindow::insertCommission);
+        commissionerPopup = new NewCommissionerWindow(this);
+        connect(commissionerPopup, &NewCommissionerWindow::newCommissioner,
+            model, &ComModel::insertCommissioner);
+        paymentPopup = new NewPaymentWindow(model->getCommissionList(),
+            model->getPaymentTypes(), this);
+        connect(paymentPopup, &NewPaymentWindow::newPayment,
+            model, &ComModel::insertPayment);
+        piecePopup = new NewPieceWindow(model->getCommissionList(), 
+            model->getProductNames(), this);
+        connect(piecePopup, &NewPieceWindow::newPiece,
+            this, &MainWindow::insertPiece);
+    }
 
-        model->insertProduct("thing", 1.0);
-        model->insertProduct("thing 2", 2.0);
-        model->insertProduct("thing 3", 3.50);
-        model->insertContactType("Contact Type");
-        model->insertContactType("Contact Type 2");
-        model->insertContactType("Contact Type 3");
-        model->insertPaymentType("payment type");
-        model->insertPaymentType("payment type 2");
-        model->insertPaymentType("payment type 3");
-        
+    void MainWindow::insertCommission(const int commissionerId,
+        const QDateTime dueDate, const QString notes,
+        const QList<std::tuple<const int, const QString, const QString,
+            const double>> pieces) {
+        const int id = model->insertCommission(commissionerId, dueDate, notes);
+        for (int i = 0; i < pieces.length(); i++)
+            model->insertPiece(id, std::get<0>(pieces[i]),
+            std::get<1>(pieces[i]), std::get<2>(pieces[i]),
+            std::get<3>(pieces[i]));
+        commissionerRightPanel->updatePanel();
+    }
+
+    void MainWindow::insertPiece(const QString pieceName, const QString pieceNotes,
+        const int productId, const QString productName,
+        const double price) {
+        model->insertPiece(model->getCommission()->record(0).value(0).toInt(),
+            productId, pieceName, pieceNotes, price);
+        commissionRightPanel->updatePanel();
+    }
+
+    void MainWindow::newCommission() {
+        commissionPopup->exec();
+    }
+
+    void MainWindow::newCommissioner() {
+        commissionerPopup->exec();
+    }
+
+    void MainWindow::newCommissionWithCommissioner(const QVariant &commissioner) {
+        commissionPopup->setCommissioner(commissioner);
+        newCommission();
+    }
+
+    void MainWindow::newPayment(const QVariant &commission) {
+        paymentPopup->setCommission(commission);
+        paymentPopup->exec();
+    }
+
+    void MainWindow::newPiece() {
+        piecePopup->exec();
+    }
+
+    void MainWindow::newRecord() {
+        QString newFile = QFileDialog::getSaveFileName(this, tr("Create a new file"),
+            "", tr("Commissioner Files (*.cdb)"));
+        if (newFile != NULL) {
+            QFileInfo file(newFile);
+            if (file.exists())
+                QFile::remove(newFile);
+            model->open(newFile, true);
+        }
+    }
+
+    void MainWindow::open() {
+        if (model->hasBeenChanged()) {
+            int ret = QMessageBox::question(this, tr("Save File?"),
+                tr("The database has been modified.\n"
+                "Would you like to save your changes?"),
+                QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel, QMessageBox::Save);
+            if (ret == QMessageBox::Save)
+                save();
+            else if (ret == QMessageBox::Cancel)
+                return;
+        }
+        QString openFile = QFileDialog::getOpenFileName(this, tr("Open File"),
+            "", tr("Commissioner Files (*.cdb)"));
+        if (openFile != NULL)
+            model->open(openFile, false);
+    }
+
+    void MainWindow::recordClosed() { 
+        toggleComponents(false);
+    }
+
+    void MainWindow::recordOpened() {
+        toggleComponents(true);
     }
 
     void MainWindow::save() {
@@ -422,5 +395,75 @@ namespace Commissionator{
         contextToolBar->setVisible(false);
         contextToolBar = newBar;
         contextToolBar->setVisible(true);
+    }
+
+    void MainWindow::toggleComponents(const bool isEnabled) {
+        if (isEnabled) {
+            createPanels();
+            createPopups();
+
+            connect(saveAct, &QAction::triggered,
+                this, &MainWindow::save);
+            connect(closeAct, &QAction::triggered,
+                this, &MainWindow::closeRecord);
+            connect(newCommissionerAct, &QAction::triggered,
+                this, &MainWindow::newCommissioner);
+            connect(newCommissionAct, &QAction::triggered,
+                this, &MainWindow::newCommission);
+            connect(newPaymentAct, &QAction::triggered,
+                this, &MainWindow::newPayment);
+            connect(manageCommissionerAct, &QAction::triggered,
+                this, &MainWindow::manageCommissioners);
+            connect(manageCommissionAct, &QAction::triggered,
+                this, &MainWindow::manageCommissions);
+
+            manageCommissioners();
+            currentFile = "";
+        } else {
+            delete commissionerLeftPanel;
+            delete commissionerRightPanel;
+            delete commissionLeftPanel;
+            delete commissionRightPanel;
+            delete line;
+
+            delete commissionPopup;
+            delete commissionerPopup;
+            delete paymentPopup;
+            delete piecePopup;
+
+            saveAct->disconnect();
+            closeAct->disconnect();
+            printRecordAct->disconnect();
+            newCommissionerAct->disconnect();
+            newCommissionAct->disconnect();
+            newProductAct->disconnect();
+            newSaleAct->disconnect();
+            newPaymentAct->disconnect();
+            manageStorefrontAct->disconnect();
+            manageCommissionerAct->disconnect();
+            manageCommissionAct->disconnect();
+            managePieceAct->disconnect();
+            managePaymentAct->disconnect();
+
+            model->disconnect();
+            connect(model, &ComModel::recordClosed,
+                this, &MainWindow::recordClosed);
+            connect(model, &ComModel::recordOpened,
+                this, &MainWindow::recordOpened);
+        }
+
+        saveAct->setEnabled(isEnabled);
+        closeAct->setEnabled(isEnabled);
+        //printRecordAct->setEnabled(isEnabled);
+        newCommissionerAct->setEnabled(isEnabled);
+        newCommissionAct->setEnabled(isEnabled);
+        //newProductAct->setEnabled(isEnabled);
+        //newSaleAct->setEnabled(isEnabled);
+        newPaymentAct->setEnabled(isEnabled);
+        //manageStorefrontAct->setEnabled(isEnabled);
+        manageCommissionerAct->setEnabled(isEnabled);
+        manageCommissionAct->setEnabled(isEnabled);
+        //managePieceAct->setEnabled(isEnabled);
+        //managePaymentAct->setEnabled(isEnabled);
     }
 }

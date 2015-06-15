@@ -58,7 +58,7 @@ namespace Commissionator {
          */
         void newCommission(const int commissionerId,
             const QDateTime dueDate, const QString notes, 
-            QList<std::tuple<int, QString, QString, double>> pieces);
+            QList<std::tuple<const int, const QString, const QString, const double>> pieces);
 
     public slots:
         /**

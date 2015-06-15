@@ -121,7 +121,7 @@ namespace Commissionator {
 
     void NewCommissionWindow::newItemSlot() {
         if (comBox->currentIndex() > -1) {
-            QList<std::tuple<int, QString, QString, double>> pieces;
+            QList<std::tuple<const int, const QString, const QString, const double>> pieces;
             for (int i = 0; i < newPieceModel->rowCount(); i++) {
                 double price = -1;
                 if (newPieceModel->index(i, 4).data().toString() != "N/A")
@@ -137,8 +137,8 @@ namespace Commissionator {
                 calendarEdit->dateTime(),
                 notesEdit->text(),
                 pieces);
-        }
-        BaseNewWindow::newItemSlot();
+            BaseNewWindow::newItemSlot();
+        }  
     }
 
     void NewCommissionWindow::newPieceSlot(const QString pieceName, 

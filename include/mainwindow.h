@@ -27,6 +27,10 @@ namespace Commissionator {
         MainWindow();
 
     public slots:
+        /**
+         *  Closes the current record.
+         */
+        void closeRecord();
 
         /**
          *  Slot accepts the newCommission signal from NewCommissionWindow 
@@ -43,7 +47,8 @@ namespace Commissionator {
          */
         void insertCommission(const int commissionerId,
             const QDateTime dueDate, const QString notes, 
-            QList<std::tuple<int, QString, QString, double>> pieces);
+            QList<std::tuple
+                <const int, const QString, const QString, const double>> pieces);
 
         /**
          *  Slot accepts the newPiece signal from NewPieceWindow and inserts
@@ -58,6 +63,16 @@ namespace Commissionator {
         void insertPiece(const QString pieceName, const QString pieceNotes,
             const int productId, const QString productName,
             const double price);
+
+        /**
+         *  Sets panels and toolbar to the Manage Commissioner panels
+         */
+        void manageCommissioners();
+
+        /**
+         *  Sets panels and toolbar to the Manage Commission panels
+         */
+        void manageCommissions();
 
         /**
          *  Function opens the dialog window to create a new commission.
@@ -153,16 +168,6 @@ namespace Commissionator {
          */
         void searchCommissioner(const QList<QVariant> query);
 
-        /**
-         *  Sets panels and toolbar to the Manage Commissioner panels
-         */
-        void manageCommissioners();
-
-        /**
-         *  Sets panels and toolbar to the Manage Commission panels
-         */
-        void manageCommissions();
-
     private:
         /**
          *  Initializes menus
@@ -206,6 +211,15 @@ namespace Commissionator {
          */
         void swapContextToolBar(QToolBar *newBar);
 
+        /**
+         *  Function toggles whether actions and panels are visible or not
+         *  and manages their connections. Helper function of recordOpened and 
+         *  recordClosed.
+         *
+         *  @param isEnabled - whether the components should be enabled or not
+         */
+        void toggleComponents(const bool isEnabled);
+
         QWidget *window;
         QHBoxLayout *layout;
         QStackedWidget *leftPanel;
@@ -239,6 +253,7 @@ namespace Commissionator {
         QAction *saveAct;
         QAction *saveAsAct;
         QAction *printRecordAct;
+        QAction *closeAct;
         QAction *exitAct;
         QAction *newCommissionerAct;
         QAction *newCommissionAct;
@@ -249,7 +264,6 @@ namespace Commissionator {
         QAction *manageCommissionerAct;
         QAction *manageCommissionAct;
         QAction *managePieceAct;
-        QAction *manageSaleAct;
         QAction *managePaymentAct;
         QAction *aboutAct;
         QAction *helpAct;

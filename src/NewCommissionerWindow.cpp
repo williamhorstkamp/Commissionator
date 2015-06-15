@@ -53,8 +53,9 @@ namespace Commissionator {
     }
 
     void NewCommissionerWindow::newItemSlot() {
-        if (nameEdit->text() != "")
+        if (nameEdit->text() != "") {
             emit newCommissioner(nameEdit->text(), notesEdit->text());
-        BaseNewWindow::newItemSlot();
+            BaseNewWindow::newItemSlot();
+        }
     }
 }

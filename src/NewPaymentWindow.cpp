@@ -46,6 +46,7 @@ namespace Commissionator {
         typeBox = new QComboBox(this);
         typeBox->setModel(paymentModel);
         typeBox->setModelColumn(1);
+        typeBox->setCurrentIndex(-1);
 
         amountEdit = new QDoubleSpinBox(this);
         amountEdit->setDecimals(2);
@@ -87,13 +88,14 @@ namespace Commissionator {
 
     void NewPaymentWindow::newItemSlot() {
         if (comBox->currentIndex() > -1 && typeBox->currentIndex() > -1 &&
-            amountEdit->value() > 0)
+            amountEdit->value() > 0) {
             emit newPayment(
                 comBox->model()->index(comBox->currentIndex(), 0).data().toInt(),
                 typeBox->model()->index(typeBox->currentIndex(), 0).data().toInt(),
                 amountEdit->value(),
                 notesEdit->text());
-        BaseNewWindow::newItemSlot();
+            BaseNewWindow::newItemSlot();
+        }
     }
 
     void NewPaymentWindow::setCommission(const QVariant &commission) {

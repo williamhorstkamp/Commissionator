@@ -24,15 +24,34 @@ namespace Commissionator {
         sql.close();
         sql = QSqlDatabase();
         QSqlDatabase::removeDatabase(connection);
-        changesMade = false;
         emit recordClosed();
     }
 
-    void ComModel::open(QString fileName) {
+    void ComModel::open(QString fileName, bool newFile) {
         if (sql.isOpen())
-            close();
-        build(fileName);
-        prepareModels();
+            close();;
+        sql = QSqlDatabase::addDatabase("QSQLITE");
+        sql.setDatabaseName(fileName);
+        sql.open();
+
+        if (newFile) {
+            build();
+            prepareModels();
+
+            //this is test data that only exists because the user can not currently enter this data
+            insertProduct("thing", 1.0);
+            insertProduct("thing 2", 2.0);
+            insertProduct("thing 3", 3.50);
+            insertContactType("Contact Type");
+            insertContactType("Contact Type 2");
+            insertContactType("Contact Type 3");
+            insertPaymentType("payment type");
+            insertPaymentType("payment type 2");
+            insertPaymentType("payment type 3");
+        } else
+            prepareModels();
+
+        sql.exec("SAVEPOINT sv");
         changesMade = false;
         emit recordOpened();
     }
@@ -360,10 +379,7 @@ namespace Commissionator {
         changesMade = true;
     }
 
-    void ComModel::build(const QString fileName) {
-        sql = QSqlDatabase::addDatabase("QSQLITE");
-        sql.setDatabaseName(fileName);
-        sql.open();
+    void ComModel::build() {
         sql.exec("PRAGMA foreign_keys = ON;");
         sql.exec("PRAGMA synchronous = OFF;");
         sql.exec("CREATE TABLE IF NOT EXISTS ContactType("
@@ -532,7 +548,6 @@ namespace Commissionator {
             "ON Commission.id = b.id "
             "WHERE Commission.id = NEW.commission) > 0; "
             "END");
-        sql.exec("SAVEPOINT sv");
     }
 
     void ComModel::cleanupQueries() {

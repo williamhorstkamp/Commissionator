@@ -357,7 +357,7 @@ namespace Commissionator {
          *
          *  @param fileName - fileName to open
          */
-        void open(const QString fileName);
+        void open(const QString fileName, bool newFile);
         
         /**
          *  Saves the currently open database to the file at the given filename.
@@ -728,7 +728,7 @@ namespace Commissionator {
          *  Ran during the create function before prepared statements and
          *  individual models are dealt with.
          */
-        void build(const QString fileName);
+        void build();
 
         /**
          *  Function finishes all queries that were setup in the

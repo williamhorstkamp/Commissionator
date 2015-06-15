@@ -94,8 +94,8 @@ namespace Commissionator {
                 proBox->model()->index(proBox->currentIndex(), 0).data().toInt(),
                 proBox->currentText(),
                 price);
-        }
-        BaseNewWindow::newItemSlot();
+            BaseNewWindow::newItemSlot();
+        }        
     }
 
     void NewPieceWindow::setPriceOverride() {
