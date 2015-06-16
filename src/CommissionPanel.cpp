@@ -180,20 +180,20 @@ namespace Commissionator {
     void CommissionPanel::updatePanel() {
 
         commissionerName->setText(
-            commissionModel->record(0).value(1).toString());
+            commissionModel->record(0).value(2).toString());
 
         createDate->setText(
-            "Created on " + commissionModel->record(0).value(2).toString());
+            "Created on " + commissionModel->record(0).value(3).toString());
 
-        if (commissionModel->record(0).value(3).toString() == "Unpaid")
-            paidDate->setText(commissionModel->record(0).value(3).toString());
+        if (commissionModel->record(0).value(4).toString() == "Unpaid")
+            paidDate->setText(commissionModel->record(0).value(4).toString());
         else
             paidDate->setText(
-                "Paid on " + commissionModel->record(0).value(3).toString());
+                "Paid on " + commissionModel->record(0).value(4).toString());
 
         dueDate->setText(
-            "Due on " + commissionModel->record(0).value(4).toString());
-        if (commissionModel->record(0).value(4).
+            "Due on " + commissionModel->record(0).value(5).toString());
+        if (commissionModel->record(0).value(5).
             toDateTime().toMSecsSinceEpoch() > 
             QDateTime::currentMSecsSinceEpoch())
             dueDate->setStyleSheet("QLabel { color : red; }");
@@ -201,15 +201,15 @@ namespace Commissionator {
             dueDate->setStyleSheet("QLabel { color : black; }");
 
         QLocale dollarConverter = QLocale();
-        if (commissionModel->record(0).value(5).toDouble() <= 0) {
+        if (commissionModel->record(0).value(6).toDouble() <= 0) {
             amountOwed->setStyleSheet("QLabel { color : green; }");
-            if (commissionModel->record(0).value(5).toDouble() == 0)
+            if (commissionModel->record(0).value(6).toDouble() == 0)
                 amountOwed->setText("Paid Off");
             else
                 amountOwed->setText(
                 "Tipped " + dollarConverter.toCurrencyString(
-                -commissionModel->record(0).value(5).toDouble()));
-        } else if (commissionModel->record(0).value(5).toString()
+                -commissionModel->record(0).value(6).toDouble()));
+        } else if (commissionModel->record(0).value(6).toString()
             == "") {
             amountOwed->setStyleSheet("QLabel { color : blue; }");
             amountOwed->setText(
@@ -218,11 +218,11 @@ namespace Commissionator {
             amountOwed->setStyleSheet("QLabel { color : red; }");
             amountOwed->setText(
                 dollarConverter.toCurrencyString(
-                commissionModel->record(0).value(5).toDouble())
+                commissionModel->record(0).value(6).toDouble())
                 + " owed");
         }
 
-        commissionNotes->setText(commissionModel->record(0).value(6).toString());
+        commissionNotes->setText(commissionModel->record(0).value(7).toString());
 
         piecesTable->hideColumn(0);
 
@@ -265,7 +265,7 @@ namespace Commissionator {
             commissionerNameCombo->setModelColumn(0);
             commissionerNameCombo->setCurrentIndex(
                 commissionerNameCombo->findText(
-                    commissionModel->record(0).value(0).toString()));
+                    commissionModel->record(0).value(1).toString()));
             commissionerNameCombo->setModelColumn(1);
             createDate->show();
             paidDate->show();

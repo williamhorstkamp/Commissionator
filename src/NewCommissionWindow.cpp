@@ -45,7 +45,7 @@ namespace Commissionator {
         comBox->setModelColumn(1);
         comBox->setCurrentIndex(-1);
         connect(comBox, static_cast<void(QComboBox::*)(int)>
-            (&QComboBox::activated),
+            (&QComboBox::currentIndexChanged),
             this, &NewCommissionWindow::setSubmitEnabled);
 
         calendarEdit = new QDateEdit(this);

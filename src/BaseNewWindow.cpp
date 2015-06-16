@@ -1,3 +1,4 @@
+#include <QKeyEvent>
 #include "BaseNewWindow.h"
 
 namespace Commissionator {
@@ -19,6 +20,12 @@ namespace Commissionator {
     void BaseNewWindow::closeEvent(QCloseEvent *e) {
         clear();
         QDialog::closeEvent(e);
+    }
+
+    void BaseNewWindow::keyPressEvent(QKeyEvent *e) {
+        if (e->key() == Qt::Key_Escape)
+            clear();
+        QDialog::keyPressEvent(e);
     }
 
     void BaseNewWindow::newItemSlot() {

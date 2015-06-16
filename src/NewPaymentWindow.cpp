@@ -42,14 +42,16 @@ namespace Commissionator {
         comBox->setModel(commissionModel);
         comBox->setModelColumn(1);
         comBox->setCurrentIndex(-1);
-        connect(comBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::activated),
+        connect(comBox, static_cast<void(QComboBox::*)(int)>
+            (&QComboBox::currentIndexChanged),
             this, &NewPaymentWindow::setSubmitEnabled);
 
         typeBox = new QComboBox(this);
         typeBox->setModel(paymentModel);
         typeBox->setModelColumn(1);
         typeBox->setCurrentIndex(-1);
-        connect(typeBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::activated),
+        connect(typeBox, static_cast<void(QComboBox::*)(int)>
+            (&QComboBox::currentIndexChanged),
             this, &NewPaymentWindow::setSubmitEnabled);
 
         amountEdit = new QDoubleSpinBox(this);

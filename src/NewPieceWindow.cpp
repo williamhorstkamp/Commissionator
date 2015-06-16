@@ -42,7 +42,7 @@ namespace Commissionator {
         proBox->setModelColumn(1);
         proBox->setCurrentIndex(-1);
         connect(proBox, static_cast<void(QComboBox::*)(int)>
-            (&QComboBox::activated),
+            (&QComboBox::currentIndexChanged),
             this, &NewPieceWindow::setSubmitEnabled);
 
         priceCheck = new QCheckBox(this);

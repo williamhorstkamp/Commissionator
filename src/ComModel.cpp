@@ -525,7 +525,6 @@ namespace Commissionator {
             "FOR EACH ROW BEGIN "
             "UPDATE Commission SET paidDate = NULL "
             "WHERE Commission.id = NEW.commission AND "
-            "Commission.paidDate IS NULL AND "
             "(SELECT COALESCE(SUM(COALESCE(a.override, a.price)) - fee, "
             "SUM(COALESCE(a.override, a.price))) FROM Commission "
             "INNER JOIN Commissioner "
@@ -716,10 +715,11 @@ namespace Commissionator {
             QVariant("Amount Owed"), Qt::DisplayRole);
         commissionModel = new QSqlQueryModel(this);
         QSqlQuery commissionQuery(sql);
-        commissionQuery.prepare("SELECT c.id, c.name, c.createDate, "
+        commissionQuery.prepare("SELECT c.id, c.cid, c.name, c.createDate, "
             "c.paidDate, c.dueDate, "
             "COALESCE(c.cost, '') amountOwed, C.notes FROM "
-            "(SELECT Commission.id id, Commissioner.name name, "
+            "(SELECT Commission.id id, Commissioner.id cid, "
+            "Commissioner.name name, "
             "strftime('%m/%d/%Y', Commission.createDate / 1000, 'unixepoch', "
             "'localtime') createDate, "
             "COALESCE(strftime('%m/%d/%Y',Commission.paidDate / 1000, "

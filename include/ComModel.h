@@ -140,9 +140,9 @@ namespace Commissionator {
          *
          *  @return - pointer to QSqlQueryModel containing data about the
          *      commission
-         *   Data order:
-         *   Commissioner Name, Create Date, Paid Date, Due Date, Amount Owed,
-         *       Notes
+         *  Data order:
+         *  Commission id, Commissioner id, Commissioner Name, Create Date, 
+         *  Paid Date, Due Date, Amount Owed, Notes
          */
         QSqlQueryModel *getCommission();
 
@@ -152,8 +152,8 @@ namespace Commissionator {
          *
          *  @return - pointer to QSqlQueryModel containing data about the
          *      commissioner
-         *   Data order:
-         *   Commissioner Id, Commissioner Name, Customer Since, Amount Owed, Notes
+         *  Data order:
+         *  Commissioner Id, Commissioner Name, Customer Since, Amount Owed, Notes
          */
         QSqlQueryModel *getCommissioner();
 
@@ -163,8 +163,8 @@ namespace Commissionator {
          *
          *  @return - pointer to QSqlQueryModel containing data about the
          *      piece
-         *   Data order:
-         *   Commissioner Name, Piece Name, Start Date, End Date, Notes
+         *  Data order:
+         *  Commissioner Name, Piece Name, Start Date, End Date, Notes
         */
         QSqlQueryModel *getPiece();
 
@@ -174,8 +174,8 @@ namespace Commissionator {
          *
          *  @return - pointer to QSqlQueryModel containing data about the
          *      product
-         *   Data order:
-         *   Product Name, Number Produced, Base Price
+         *  Data order:
+         *  Product Name, Number Produced, Base Price
          */
         QSqlQueryModel *getProduct();
 

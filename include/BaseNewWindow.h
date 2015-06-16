@@ -24,12 +24,24 @@ namespace Commissionator {
 
     protected:
         /**
+         *  Function resets the window to default settings.
+         *  Must be implemented by inherited classes
+         */
+        virtual void clear() = 0;
+
+        /**
          *  Overrides default function and makes it so inherited classes
          *  clear all fields on exit.
          *
          *  @param e - QCloseEvent to handle by the overridden function
          */
         virtual void closeEvent(QCloseEvent *e);
+
+        /**
+         *  Overrides default function to make it so inherited classes use clear();
+         *
+         */
+        virtual void keyPressEvent(QKeyEvent *e);
 
     protected slots:
         /*
@@ -49,13 +61,6 @@ namespace Commissionator {
     protected:
         QFont *titleFont;
         QFont *font;
-
-    private:
-        /**
-         *  Function resets the window to default settings.
-         *  Must be implemented by inherited classes
-         */
-        virtual void clear() = 0;
     };
 }
 
