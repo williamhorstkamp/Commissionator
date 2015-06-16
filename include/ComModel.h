@@ -1,10 +1,11 @@
 #ifndef COMMODEL_H
 #define COMMODEL_H
-#include <QSqlDatabase>
-#include <QSqlQueryModel>
-#include <QSqlTableModel>
-#include <QDataWidgetMapper>
+
+#include <QObject>
+#include <QSqlQuery>
 #include <QDateTime>
+
+class QSqlQueryModel;
 
 namespace Commissionator {
 
@@ -19,9 +20,33 @@ namespace Commissionator {
         Q_OBJECT
 
     public:
-        ComModel(QObject *parent = 0);
+        /**
+         *  Default constructor sets the QObject given as argument to the
+         *  ComModel's parent.
+         *  Initializes ComModel components by calling build and prepareModels
+         */
+        ComModel(QObject *parent = nullptr);
 
+        /**
+         *  Destructor cleans up objects.
+         */
         ~ComModel();
+
+        /**
+         *  Function returns whether the database has been changed since being
+         *  opened.
+         */
+        bool hasBeenChanged();
+
+        /**
+         *  Function returns a pointer to a model containing data for the
+         *  commission combobox to be displayed on the new payment window.
+         *
+         *  @return - pointer to QSqlQueryModel containing commissions
+         *  Display order:
+         *  Index, Commissioner (Create Date - Due Date) (# of pieces)
+         */
+        QSqlQueryModel *getCommissionList();
 
         /**
          *  Function returns a pointer to a model containing data for the
@@ -91,6 +116,16 @@ namespace Commissionator {
 
         /**
          *  Function returns a pointer to a model containing data for the
+         *  commissioner combobox to be displayed on the new commission dialog.
+         *
+         *  @return - pointer to QSqlQueryModel containing the commissioner names
+         *  Display order:
+         *  Commissioner Id, Name
+         */
+        QSqlQueryModel *getCommissionerNames();
+
+        /**
+         *  Function returns a pointer to a model containing data for the
          *  contact type slider to be displayed on the commissioner panel.
          *
          *  @return - pointer to QSqlQueryModel containing contact types
@@ -105,9 +140,9 @@ namespace Commissionator {
          *
          *  @return - pointer to QSqlQueryModel containing data about the
          *      commission
-         *   Data order:
-         *   Commissioner Name, Create Date, Paid Date, Due Date, Amount Owed,
-         *       Notes
+         *  Data order:
+         *  Commission id, Commissioner id, Commissioner Name, Create Date, 
+         *  Paid Date, Due Date, Amount Owed, Notes
          */
         QSqlQueryModel *getCommission();
 
@@ -117,8 +152,8 @@ namespace Commissionator {
          *
          *  @return - pointer to QSqlQueryModel containing data about the
          *      commissioner
-         *   Data order:
-         *   Commissioner Name, Customer Since, Amount Owed, Notes
+         *  Data order:
+         *  Commissioner Id, Commissioner Name, Customer Since, Amount Owed, Notes
          */
         QSqlQueryModel *getCommissioner();
 
@@ -128,8 +163,8 @@ namespace Commissionator {
          *
          *  @return - pointer to QSqlQueryModel containing data about the
          *      piece
-         *   Data order:
-         *   Commissioner Name, Piece Name, Start Date, End Date, Notes
+         *  Data order:
+         *  Commissioner Name, Piece Name, Start Date, End Date, Notes
         */
         QSqlQueryModel *getPiece();
 
@@ -139,16 +174,26 @@ namespace Commissionator {
          *
          *  @return - pointer to QSqlQueryModel containing data about the
          *      product
-         *   Data order:
-         *   Product Name, Number Produced, Base Price
+         *  Data order:
+         *  Product Name, Number Produced, Base Price
          */
         QSqlQueryModel *getProduct();
+
+        /**
+        *  Function returns a pointer to a model containing data for the
+        *  product combobox to be displayed on the new commission dialog.
+        *
+        *  @return - pointer to QSqlQueryModel containing the product names
+        *  Display order:
+        *  Commissioner Id, Name
+        */
+        QSqlQueryModel *getProductNames();
 
         /**
          *  Function returns a QDataWidgetMapper that can be connected to
          *  multiple views. The current record can be set by
          *  setSale(const QModelIndex &)
-         *  Contains the data about the sale, all of which is editable
+         *  Contains the data about the sale
          *
          *  @return - pointer to QDataWidgetMapper containing data about the
          *      sale
@@ -166,7 +211,7 @@ namespace Commissionator {
          *  Display order:
          *  Product, Name, Price, Sale, Start Date, Finish Date
          */
-        //QSqlQueryModel *getCommissionPieces();
+        QSqlQueryModel *getCommissionPieces();
 
         /**
          *  Function returns a pointer to a model containing data for the
@@ -186,7 +231,7 @@ namespace Commissionator {
          *
          *  @return - pointer to QSqlQueryModel containing commissioner contacts
          *  Display order:
-         *  Contact Type, Entry
+         *  Id, Contact Type, Entry
          */
         QSqlQueryModel *getCommissionerContacts();
 
@@ -267,6 +312,38 @@ namespace Commissionator {
          */
         //QSqlQueryModel *getSalePiecesSold();
 
+    signals:
+        /**
+         *  Signal emmitted whenever the currently selected commission is 
+         *  changed or any value has been changed that may require the
+         *  commission panel to update.
+         */
+        void commissionChanged();
+
+        /**
+         *  Signal emmitted whenever the currently selected commissioner is
+         *  changed or any value has been changed that may require the
+         *  commissioner panel to update.
+         */
+        void commissionerChanged();
+
+        /**
+         *  Signal emmitted whenever the currently selected piece is
+         *  changed or any value has been changed that may require the
+         *  piece panel to update.
+         */
+        void pieceChanged();
+
+        /**
+         *  Signal emitted whenever an sql record is closed.
+         */
+        void recordClosed();
+
+        /**
+         *  Signal emitted whenever an sql record is opened.
+         */
+        void recordOpened();
+
     public slots:
 
         /**
@@ -275,24 +352,52 @@ namespace Commissionator {
         void close();
 
         /**
-         *  Opens a new SQLite database in memory, including building the
-         *  schema and preparing queries. 
-         */
-        void newRecord();
-
-        /**
-         *  Opens the SQLite database at the given filename.
+         *  Opens the SQLite database at the given filename. 
+         *  Creates one if it doesn't exist.
          *
          *  @param fileName - fileName to open
          */
-        //void open(QString fileName);
+        void open(const QString fileName, bool newFile);
         
         /**
          *  Saves the currently open database to the file at the given filename.
          *
          *  @param fileName - the filename and location to save the file to
          */
-        //void save(QString fileName);
+        void save();
+
+        /**
+         *  Function edits the commissioner of the commission with the given id.
+         *
+         *  @param commission - commission id
+         *  @param commissioner - commissioner id
+         */
+        void editCommissionCommissioner(const int commission, 
+            const int commissioner);
+
+        /**
+         *  Function edits the notes of the commission with the given id.
+         *
+         *  @param commissioner - commission id
+         *  @param notes - commission notes
+         */
+        void editCommissionNotes(const int commission, const QString notes);
+
+        /**
+         *  Function edits the name of the commissioner with the given id.
+         *
+         *  @param commissioner - commissioner id
+         *  @param name - commissioner name
+         */
+        void editCommissionerName(const int commissioner, const QString name);
+
+        /**
+         *  Function edits the notes of the commissioner with the given id.
+         *
+         *  @param commissioner - commissioner id
+         *  @param nnotes - commissioner nnotes
+         */
+        void editCommissionerNotes(const int commissioner, const QString notes);
 
         /**
          *  Slot limits the results of getCommissions() based on the inputs
@@ -401,28 +506,28 @@ namespace Commissionator {
         /**
          *  Deletes the commissioner at the given index.
          *
-         *  @param index - index from the Commissioner table to delete
+         *  @param commissioner - index of the Commissioner to delete
          */
-        //void deleteCommissioner(const QModelIndex &index);
+        void deleteCommissioner(const QModelIndex &index);
 
         /**
          *  Deletes the contact at the given index.
          *
-         *  @param index - index from the Contact table to delete
+         *  @param contact - contact id of the contact to delete
          */
-        //void deleteContact(const QModelIndex &index);
+        void deleteContact(const QModelIndex &index);
 
         /**
          *  Deletes the contact type at the given index.
          *
-         *  @param index - index from the Contact Type table to delete
+         *  @param index - index of the Contact Type to delete
          */
         //void deleteContactType(const QModelIndex &index);
 
         /**
          *  Deletes the piece reference at the given index.
          *
-         *  @param index - index from the reference table to delete
+         *  @param index - index of the reference to delete
          */
         //void deletePieceReference(const QModelIndex &index);
 
@@ -430,7 +535,7 @@ namespace Commissionator {
          *  Deletes the product at the given index. Product is hidden, not
          *  actually deleted, so old records aren't broken.
          *
-         *  @param index - index from the product table to delete
+         *  @param index - index of the product to delete
          */
         //void deleteProduct(const QModelIndex &index);
 
@@ -438,35 +543,35 @@ namespace Commissionator {
          *  Deletes the product option at the given index. Option is hidden, not
          *  actually deleted, so old records aren't broken.
          *
-         *  @param index - index from the product option table to delete
+         *  @param index - index of the product option to delete
          */
         //void deleteProductOption(const QModelIndex &index);
 
         /**
          *  Deletes the sale at the given index.
          *
-         *  @param index - index from the sale table to delete
+         *  @param index - index of the sale to delete
          */
         //void deleteSale(const QModelIndex &index);
 
         /**
          *  Deletes the deal at the given index.
          *
-         *  @param index - index from the sale deal table to delete
+         *  @param index - index of the sale deal to delete
          */
         //void deleteDeal(const QModelIndex &index);
 
         /**
          *  Deletes the piece at the given index.
          *
-         *  @param index - index from the piece table to delete
+         *  @param index - index of the piece to delete
          */
-        //void deletePiece(const QModelIndex &index);
+        void deletePiece(const QModelIndex &index);
 
         /**
          *  Deletes the payment at the given index.
          *
-         *  @param index - index from the payment table to delete
+         *  @param index - index of the payment to delete
          */
         //void deletePayment(const QModelIndex &index);
 
@@ -474,15 +579,15 @@ namespace Commissionator {
          *  Deletes the commission at the given index. Pieces are reassigned
          *  to a generic commission.
          *
-         *  @param index - index from the commission table to delete
+         *  @param index - index of the commission to delete
          */
-        //void deleteCommission(const QModelIndex &index);
+        void deleteCommission(const QModelIndex &index);
 
         /**
          *  Deletes the payment type at the given index. Payment type is hidden,
          *  not actually deleted, so as to not break old records.
          *
-         *  @param index - index from the sale table to delete
+         *  @param index - index of the sale to delete
          */
         //void deletePaymentType(const QModelIndex &index);
 
@@ -583,9 +688,11 @@ namespace Commissionator {
          *  @param product - what type of product the piece is
          *  @param name - the name of the piece
          *  @param description - description of the piece
+         *  @param overridePrice - override price of the item (defaults to -1)
          */
         void insertPiece(const int commission, const int product,
-            const QString name, const QString description);
+            const QString name, const QString description, 
+            const double overridePrice);
 
         /**
          *  Inserts payment into the database.
@@ -605,7 +712,7 @@ namespace Commissionator {
          *  @param dueDate - due date of the commission
          *  @param notes - notes for the commission
          */
-        void insertCommission(const int commissionerId,
+        int insertCommission(const int commissionerId,
             const QDateTime dueDate, const QString notes);
 
         /**
@@ -617,10 +724,10 @@ namespace Commissionator {
 
     private:
         /**
-        *  Builds the database schema into the currently managed database.
-        *  Ran during the create function before prepared statements and
-        *  individual models are dealt with.
-        */
+         *  Builds the database schema into the currently managed database.
+         *  Ran during the create function before prepared statements and
+         *  individual models are dealt with.
+         */
         void build();
 
         /**
@@ -642,33 +749,86 @@ namespace Commissionator {
         QVariant getValue(const QModelIndex &index, int column);
 
         /**
-        *  Prepares the various sub-models that are managed by the ComModel.
-        */
+         *  Prepares the various sub-models that are managed by the ComModel.
+         */
         void prepareModels();
+
+        /**
+         *  Refreshes all models that contain commissioner information.
+         */
+        void refreshCommissioners();
+
+        /**
+         *  Refreshes all models that contain commission information.
+         */
+        void refreshCommissions();
+
+        /**
+         *  Refreshes all models that contain contact information.
+         */
+        void refreshContacts();
+
+        /**
+         *  Refreshes all models that contain contact type information.
+         */
+        void refreshContactTypes();
+
+        /**
+         *  Refreshes all models that contain payment information.
+         */
+        void refreshPayments();
+
+        /**
+         *  Refreshes all models that contain payment type information.
+         */
+        void refreshPaymentTypes();
+
+        /**
+         *  Refreshes all models that contain pieces information.
+         */
+        void refreshPieces();
+
+        /**
+         *  Refreshes all models that contain product information.
+         */
+        void refreshProducts();
 
         QSqlDatabase sql;
 		QSqlQueryModel *commissionerCommissionsModel;
 		QSqlQueryModel *commissionerContactsModel;
         QSqlQueryModel *commissionerModel;
+        QSqlQueryModel *commissionerNamesModel;
         QSqlQueryModel *commissionersModel;
-		QSqlQueryModel *commissionmodel;
+		QSqlQueryModel *commissionModel;
+        QSqlQueryModel *commissionListModel;
 		QSqlQueryModel *commissionPaymentsModel;
+        QSqlQueryModel *commissionPiecesModel;
         QSqlQueryModel *commissionsModel;
         QSqlQueryModel *contactTypesModel;
-        QSqlQuery *insertCommissionerQuery;
-        QSqlQuery *insertCommissionQuery;
-        QSqlQuery *insertContactQuery;
-        QSqlQuery *insertContactTypeQuery;
-        QSqlQuery *insertPaymentQuery;
-        QSqlQuery *insertPaymentTypeQuery;
-        QSqlQuery *insertPieceQuery;
-        QSqlQuery *insertProductPriceQuery;
-        QSqlQuery *insertProductQuery;
+        QSqlQuery deleteCommissionerQuery;
+        QSqlQuery deleteCommissionQuery;
+        QSqlQuery deleteContactQuery;
+        QSqlQuery deletePieceQuery;
+        QSqlQuery editCommissionCommissionerQuery;
+        QSqlQuery editCommissionNotesQuery;
+        QSqlQuery editCommissionerNameQuery;
+        QSqlQuery editCommissionerNotesQuery;
+        QSqlQuery insertCommissionerQuery;
+        QSqlQuery insertCommissionQuery;
+        QSqlQuery insertContactQuery;
+        QSqlQuery insertContactTypeQuery;
+        QSqlQuery insertPaymentQuery;
+        QSqlQuery insertPaymentTypeQuery;
+        QSqlQuery insertPieceQuery;
+        QSqlQuery insertProductPriceQuery;
+        QSqlQuery insertProductQuery;
         QSqlQueryModel *paymentTypesModel;
         QSqlQueryModel *pieceModel;
         QSqlQueryModel *piecesModel;
-        QSqlQueryModel *productModel;
+        QSqlQueryModel *productNamesModel;
         QSqlQueryModel *productsModel;
+
+        bool changesMade;
     };
 }
 #endif

@@ -2,9 +2,10 @@
 #define FIXEDROWTABLE_H
 
 #include <QTableView>
-#include <QPushButton>
 #include "FixedRowTableDelegate.h"
 #include "FixedRowBox.h"
+
+class QPushButton;
 
 namespace Commissionator {
 
@@ -23,12 +24,21 @@ namespace Commissionator {
          *  @param model - Pointer to QAbstractItemModel based model on use
          *      for the proxy model and views.
          */
-        FixedRowTable(QAbstractItemModel *model);
+        FixedRowTable(QAbstractItemModel *model, QWidget *parent = nullptr);
 
         /**
-         *  Destructor cleans up internal objects.
+         *  Opens a persistent editor in the ItemView at the given column.
+         *
+         *  @param column - column to open the editor in
          */
-        ~FixedRowTable();
+        void openBoxPersistentEditor(const int column);
+
+        /**
+         *  Closes a persistent editor in the ItemView at the given column.
+         *
+         *  @param column - column to close the editor in
+         */
+        void closeBoxPersistentEditor(const int column);
 
         /**
          *  Sets the bottom box to the bottom of the window if set to true
@@ -87,6 +97,16 @@ namespace Commissionator {
         void setBoxText(QString newText);
 
         /**
+         *  Function sets the number of expectant columns. This is used to
+         *  guarentee the correct number of strings exist before a model is
+         *  initialized in cases where the source model may be linked to
+         *  FixedRowTable before the model is initialized.
+         *
+         *  @param count - number of columns
+         */
+        void setColumnCount(const int count);
+
+        /**
          *  Overrides default setColumnHidden function to call the same
          *  function with the same parameters on box as well.
          */
@@ -140,8 +160,10 @@ namespace Commissionator {
         /**
          *  Initializes proxy.
          *  Exists to allow for easier use of derived classes.
+         *
+         *  @param model - pointer to model to proxy
          */
-        void createProxy();
+        void createProxy(QAbstractItemModel *model);
 
         /**
          *  Initializes search box.
@@ -157,8 +179,10 @@ namespace Commissionator {
 
         /**
          *  Initializes the object and all its sub objects.
+         *
+         *  @param model - pointer to model to proxy
          */
-        void init();
+        void init(QAbstractItemModel *model);
 
         /**
          *  Overrides the default moveCursor function so that the user can not
@@ -204,10 +228,11 @@ namespace Commissionator {
         FixedRowBox *box;
         QPushButton *boxButton;
         double boxButtonWidth;
-        //delegate that handles the icons displayed in on the table
+        //delegate that handles the icons displayed on the table
         FixedRowTableDelegate *tableDelegate;
         bool boxButtonOn;
         bool boxOnBottom;
+        QList<int> persistentEditors;
 
     private slots:
         /**
@@ -239,7 +264,8 @@ namespace Commissionator {
          *  Emitted when the box button is clicked or enter is struck while
          *  editting one of the box's columns
          *
-         *  @param searchQuery - QList of QVariants containing the query
+         *  @param searchQuery - QList of QVariants that each represent a field
+         *      in the query
          */
         void boxQuery(const QList<QVariant> query);
 
@@ -251,6 +277,20 @@ namespace Commissionator {
          *   @param index - index whose button was clicked
          */
         void tableButtonClicked(const QModelIndex &index);
+
+    private slots:
+        /**
+         *  Slot accepts FixedRowBox::boxQuery and emits FixedRowTable::boxQuery.
+         *  Also enforces open persistent editor functionality
+         */
+        void boxQuerySlot(const QList<QVariant> query);
+
+        /**
+         *  Slot accepts FixedRowTableDelegate::buttonClicked and emits 
+         *  FixedRowTable::tableButtonClicked.
+         *  Also enforces open persistent editor functionality
+         */
+        void tableButtonSlot(const QModelIndex &index);
     };
 }
 #endif

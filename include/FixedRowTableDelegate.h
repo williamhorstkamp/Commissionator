@@ -17,7 +17,7 @@ namespace Commissionator {
          *  
          *  @param parent - pointer to parent object
          */
-        FixedRowTableDelegate(QObject *parent = nullptr);
+        FixedRowTableDelegate(QWidget *parent = nullptr);
 
         /**
          *  Sets the icon to the file referenced in the QString.

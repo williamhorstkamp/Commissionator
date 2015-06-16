@@ -8,12 +8,15 @@ namespace Commissionator {
     FixedRowProxyModel::FixedRowProxyModel(QObject *parent) : QIdentityProxyModel(parent) {
         text = QString("");
         queryStrings = QList<QVariant>();
+        columnNumber = 0;
+
+        connect(this, &QAbstractItemModel::columnsInserted, this, &FixedRowProxyModel::refreshText);
+        connect(this, &QAbstractItemModel::columnsRemoved, this, &FixedRowProxyModel::refreshText);
     }
 
     void FixedRowProxyModel::setSourceModel(QAbstractItemModel *newSourceModel) {
         QIdentityProxyModel::setSourceModel(newSourceModel);
-        for (int i = 0; i < columnCount(); i++)
-            queryStrings.insert(i, text);
+        refreshText();
     }
 
     int FixedRowProxyModel::rowCount(const QModelIndex &parent) const {
@@ -33,7 +36,9 @@ namespace Commissionator {
         if (index.isValid()) {
             if (role == Qt::DisplayRole) {
                 if (index.row() == 0) {
-                    return QVariant(queryStrings.at(index.column()));
+                    if (index.column() < queryStrings.count())
+                        return QVariant(queryStrings.at(index.column()));
+                    return QVariant();
                 }
                 return QIdentityProxyModel::data(this->index(index.row() - 1, index.column(), index.parent()), role);
             }
@@ -50,18 +55,25 @@ namespace Commissionator {
 
     bool FixedRowProxyModel::setData(const QModelIndex &index, const QVariant &value, int role) {
         if (index.row() == 0) {
-            if (!value.toString().isEmpty())
+            if (!value.toString().isEmpty()) {
+                while (queryStrings.count() < columnCount())
+                    queryStrings.append(text);
                 queryStrings.replace(index.column(), value.toString());
+            }
             emit QIdentityProxyModel::dataChanged(this->index(0, 0), this->index(0, columnCount() - 1));
             return true;
         }
         return QIdentityProxyModel::setData(this->index(index.row() -1, index.column(), index.parent()), value, role);
     }
 
-    void FixedRowProxyModel::setText( QString newText) {
+    void FixedRowProxyModel::setColumnCount(const int count) {
+        columnNumber = count;
+        refreshText();
+    }
+
+    void FixedRowProxyModel::setText(QString newText) {
         text = newText;
-        for (int i = 0; i < columnCount(); i++)
-            queryStrings.replace(i, text);
+        refreshText();
     }
 
     Qt::ItemFlags FixedRowProxyModel::flags(const QModelIndex &index) const {
@@ -72,11 +84,25 @@ namespace Commissionator {
     }
 
     void FixedRowProxyModel::query() {
-        for (int i = 0; i < columnCount(); i++)     //replace any place that the set text is stored 
+        while (queryStrings.length() < columnCount())
+            queryStrings.append(text);
+        for (int i = 0; i < queryStrings.length(); i++)     //replace any place that the set text is stored 
             if (queryStrings[i].toString() == text)   //with an empty string
                 queryStrings.replace(i, QVariant(""));   // to show that there was no entry to that field
         emit querySignal(queryStrings);
-        for (int i = 0; i < columnCount(); i++)
+        refreshText();
+    }
+
+    void FixedRowProxyModel::refreshText() {
+        if (columnNumber == 0) {
+            while (queryStrings.length() < columnCount())
+                queryStrings.append(text);   
+        } else {
+            while (queryStrings.length() < columnNumber)
+                queryStrings.append(text);
+        }
+        for (int i = 0; i < queryStrings.length(); i++)
             queryStrings.replace(i, text);
+        emit dataChanged(index(0, 0), index(0, queryStrings.length()));
     }
 }

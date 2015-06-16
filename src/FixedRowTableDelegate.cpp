@@ -1,11 +1,10 @@
 #include <QApplication>
 #include <QMouseEvent>
-#include <QDialog>
 #include "FixedRowTableDelegate.h"
 
 namespace Commissionator {
 
-    FixedRowTableDelegate::FixedRowTableDelegate(QObject *parent) :
+    FixedRowTableDelegate::FixedRowTableDelegate(QWidget *parent) :
         QStyledItemDelegate(parent) {
         buttonSize = 0;
         buttonIcon = QIcon();

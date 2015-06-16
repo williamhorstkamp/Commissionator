@@ -1,11 +1,21 @@
 #ifndef MAINWINDOW
 #define MAINWINDOW
 
+#include <QDateTime>
+#include <QVariant>
 #include <QMainWindow>
-#include <QStackedWidget>
-#include "TestLayouts.h"
-#include "LeftPanel.h"
-#include "ComModel.h"
+
+class QHBoxLayout;
+class QStackedWidget;
+class LeftPanel;
+class NewCommissionWindow;
+class NewCommissionerWindow;
+class NewPaymentWindow;
+class NewPieceWindow;
+class CommissionerPanel;
+class CommissionPanel;
+class ComModel;
+class QFrame;
 
 namespace Commissionator {
 
@@ -17,9 +27,146 @@ namespace Commissionator {
         MainWindow();
 
     public slots:
-        //temp slots for testing
-        void page1();
-        void page2();
+        /**
+         *  Closes the current record.
+         */
+        void closeRecord();
+
+        /**
+         *  Slot accepts the newCommission signal from NewCommissionWindow 
+         *  and inserts both the commission and the pieces into the model.
+         *
+         *  @param pieceName - piece name
+         *  @param pieceNotes - piece notes
+         *  @param productId - product id
+         *  @param productName - product names
+         *  @param price - override price (-1 by default)
+         *  @param pieces - list of tuples representing each piece in the commission
+         *  Tuple Order:
+         *  Product Id, Piece Name, Piece Notes, Override Price (default -1)
+         */
+        void insertCommission(const int commissionerId,
+            const QDateTime dueDate, const QString notes, 
+            QList<std::tuple
+                <const int, const QString, const QString, const double>> pieces);
+
+        /**
+         *  Slot accepts the newPiece signal from NewPieceWindow and inserts
+         *  the piece into the currently selected commission.
+         *
+         *  @param pieceName - piece name
+         *  @param pieceNotes - piece notes
+         *  @param productId - product id
+         *  @param productName - product names
+         *  @param price - override price (-1 by default)
+         */
+        void insertPiece(const QString pieceName, const QString pieceNotes,
+            const int productId, const QString productName,
+            const double price);
+
+        /**
+         *  Sets panels and toolbar to the Manage Commissioner panels
+         */
+        void manageCommissioners();
+
+        /**
+         *  Sets panels and toolbar to the Manage Commission panels
+         */
+        void manageCommissions();
+
+        /**
+         *  Function opens the dialog window to create a new commission.
+         *  Takes control away from the MainWindow for the duration of the
+         *  new commission window's lifetime. Depending on whether a commission
+         *  is created or not, the models may be refreshed.
+         */
+        void newCommission();
+
+        /**
+         *  Function opens the dialog window to create a new commissioner.
+         *  Takes control away from the MainWindow for the duration of the
+         *  new commissioner window's lifetime. Depending on whether a commissioner
+         *  is created or not, the models may be refreshed.
+         */
+        void newCommissioner();
+
+        /**
+         *  Function opens the dialog window to create a new commission.
+         *  Takes control away from the MainWindow for the duration of the
+         *  new commission window's lifetime. Depending on whether a commission
+         *  is created or not, the models may be refreshed. Prevents editing
+         *  the commissioner and sets it to the given commissioner id
+         *
+         *  @param frozen - commissioner id if the commission is for a specific
+         *      commissioner
+         */
+        void newCommissionWithCommissioner(const QVariant &commissioner);
+
+        /**
+         *  Function opens the dialog window to create a new payment.
+         *  Takes control away from the MainWindow for the duration of the
+         *  new payment window's lifetime. Depending on whether a payment
+         *  is made or not, the models may be refreshed.
+         *
+         *  @param commission - commission id for the payment
+         */
+        void newPayment(const QVariant &commission);
+
+        /**
+         *  Function opens the dialog window to create a new piece.
+         *  Takes control away from the MainWindow for the duration of the
+         *  new piece window's lifetime. Depending on whether a piece
+         *  is created or not, the models may be refreshed.
+         *
+         *  @param commission - commission id for the piece
+         */
+        void newPiece();
+
+        /**
+        *  Function opens the dialog window the create a new record.
+        *  Takes control away from the MainWindow for the duration of the
+        *  new record window's lifetime.
+         */
+        void newRecord();
+
+        /**
+         *  Function opens the dialog window the open a record.
+         *  Takes control away from the MainWindow for the duration of the
+         *  open record window's lifetime.
+         */
+        void open();
+
+        /**
+         *  Function prepares panels and connections when a record is opened.
+         */
+        void recordClosed();
+
+        /**
+         *  Function disables buttons that can't work without a record.
+         */
+        void recordOpened();
+
+        /**
+         *  Function attempts to save to the last saved file. If no file has
+         *  been saved to during this session, runs saveAs.
+         */
+        void save();
+
+        /**
+         *  Functions searches for commissioners with given arguements
+         *
+         *  Argument order:
+         *  Commissioner Name, Customer Since, Amount Owed
+         */
+        void searchCommission(const QList<QVariant> query);
+
+        /**
+         *  Functions searches for commissioners with given arguements
+         *
+         *  Argument order:
+         *  Commissioner Name, Customer Since, Amount Owed
+         */
+        void searchCommissioner(const QList<QVariant> query);
 
     private:
         /**
@@ -53,11 +200,25 @@ namespace Commissionator {
         void createPanels();
 
         /**
+         *  Initiliazes popups
+         */
+        void createPopups();
+
+        /**
          *  Switches the context toolbar to what is pointed to in newBar
          *
          *  @param newBar - pointer to the bar to set the context bar to
          */
         void swapContextToolBar(QToolBar *newBar);
+
+        /**
+         *  Function toggles whether actions and panels are visible or not
+         *  and manages their connections. Helper function of recordOpened and 
+         *  recordClosed.
+         *
+         *  @param isEnabled - whether the components should be enabled or not
+         */
+        void toggleComponents(const bool isEnabled);
 
         QWidget *window;
         QHBoxLayout *layout;
@@ -66,10 +227,16 @@ namespace Commissionator {
 
         ComModel *model;
 
-        LeftPanel *lp1;
-        LeftPanel2 *lp2;
-        RightPanel *rp1;
-        RightPanel2 *rp2;
+        LeftPanel *commissionerLeftPanel;
+        LeftPanel *commissionLeftPanel;
+        CommissionerPanel *commissionerRightPanel;
+        CommissionPanel *commissionRightPanel;
+        QFrame *line;
+
+        NewCommissionWindow *commissionPopup;
+        NewCommissionerWindow *commissionerPopup;
+        NewPaymentWindow *paymentPopup;
+        NewPieceWindow *piecePopup;
 
         QMenu *fileMenu;
         QMenu *newMenu;
@@ -78,14 +245,15 @@ namespace Commissionator {
 
         QToolBar *mainToolBar;
         QToolBar *contextToolBar;
-        QToolBar *panelToolBar1;
-        QToolBar *panelToolBar2;
+        QToolBar *commissionerToolBar;
+        QToolBar *commissionToolBar;
 
         QAction *newAct;
         QAction *openAct;
         QAction *saveAct;
         QAction *saveAsAct;
         QAction *printRecordAct;
+        QAction *closeAct;
         QAction *exitAct;
         QAction *newCommissionerAct;
         QAction *newCommissionAct;
@@ -96,13 +264,11 @@ namespace Commissionator {
         QAction *manageCommissionerAct;
         QAction *manageCommissionAct;
         QAction *managePieceAct;
-        QAction *manageSaleAct;
         QAction *managePaymentAct;
         QAction *aboutAct;
         QAction *helpAct;
+
+        QString currentFile;
     };
-
-
 }
-
-#endif // MAINWINDOW
+#endif

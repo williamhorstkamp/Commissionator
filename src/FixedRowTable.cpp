@@ -1,21 +1,24 @@
 #include <QHeaderView>
 #include <QScrollBar>
 #include <QKeyEvent>
+#include <QPushButton>
 #include <QStyledItemDelegate>
 #include "FixedRowTable.h"
 
 namespace Commissionator {
-    FixedRowTable::FixedRowTable(QAbstractItemModel *model) {
-        createProxy();
-        proxy->setSourceModel(model);
-
-        init();
+    FixedRowTable::FixedRowTable(QAbstractItemModel *model, QWidget *parent) :
+    QTableView(parent) {
+        init(model);
     }
 
-    FixedRowTable::~FixedRowTable() {
-        delete box;
-        delete proxy;
-        delete tableDelegate;
+    void FixedRowTable::closeBoxPersistentEditor(const int column) {
+        persistentEditors.removeAll(column);
+        box->closePersistentEditor(box->model()->index(0, column));
+    }
+
+    void FixedRowTable::openBoxPersistentEditor(const int column) {
+        persistentEditors.append(column);
+        box->openPersistentEditor(box->model()->index(0, column));
     }
 
     void FixedRowTable::setBoxBottom(const bool newOnBottom) {
@@ -49,6 +52,20 @@ namespace Commissionator {
         proxy->setText(newText);
     }
 
+    void FixedRowTable::boxQuerySlot(const QList<QVariant> query) {
+        emit boxQuery(query);
+        foreach(int i, persistentEditors) {
+            box->openPersistentEditor(box->indexAt(QPoint(i, 0)));
+        }
+    }
+
+    void FixedRowTable::tableButtonSlot(const QModelIndex &index) {
+        emit tableButtonClicked(index);
+        foreach(int i, persistentEditors) {
+            box->openPersistentEditor(box->indexAt(QPoint(i, 0)));
+        }
+    }
+
     void FixedRowTable::setTableButtonActivated(const bool isEnabled) {
         if (isEnabled && itemDelegate() != tableDelegate) {
             QAbstractItemDelegate *temp = itemDelegate();
@@ -71,6 +88,10 @@ namespace Commissionator {
         FixedRowTableDelegate *temp = tableDelegate;
         tableDelegate = newDelegate;
         delete temp;
+    }
+
+    void FixedRowTable::setColumnCount(const int count) {
+        proxy->setColumnCount(count);
     }
 
     void FixedRowTable::setColumnHidden(int column, bool hide) {
@@ -101,21 +122,22 @@ namespace Commissionator {
         connect(verticalHeader(), &QHeaderView::sectionResized, this, &FixedRowTable::updateSectionHeight);
         connect(box->horizontalScrollBar(), &QScrollBar::valueChanged, horizontalScrollBar(), &QScrollBar::setValue);
         connect(horizontalScrollBar(), &QScrollBar::valueChanged, box->horizontalScrollBar(), &QScrollBar::setValue);
-        connect(proxy, &FixedRowProxyModel::querySignal, this, &FixedRowTable::boxQuery);
-        connect(tableDelegate, &FixedRowTableDelegate::buttonClicked, this, &FixedRowTable::tableButtonClicked);
+        connect(proxy, &FixedRowProxyModel::querySignal, this, &FixedRowTable::boxQuerySlot);
+        connect(tableDelegate, &FixedRowTableDelegate::buttonClicked, this, &FixedRowTable::tableButtonSlot);
         connect(box, &FixedRowBox::boxQuery, proxy, &FixedRowProxyModel::query);
         connect(boxButton, &QPushButton::clicked, proxy, &FixedRowProxyModel::query);
     }
 
     void FixedRowTable::createDelegates() {
-        tableDelegate = new FixedRowTableDelegate();
+        tableDelegate = new FixedRowTableDelegate(this);
         setItemDelegate(tableDelegate);
         setTableButtonActivated(false);
         setBoxButtonActivated(false);
     }
 
-    void FixedRowTable::createProxy() {
+    void FixedRowTable::createProxy(QAbstractItemModel *model) {
         proxy = new FixedRowProxyModel(this);
+        proxy->setSourceModel(model);
     }
 
     void FixedRowTable::createBox() {
@@ -132,18 +154,15 @@ namespace Commissionator {
     }
     
     void FixedRowTable::createTable() {
-        
         setModel(proxy);
         setFocusPolicy(Qt::StrongFocus);
         setHorizontalScrollMode(ScrollPerPixel);
         setVerticalScrollMode(ScrollPerPixel);
         verticalHeader()->hide();
-
-        for (int col = 0; col < horizontalHeader()->count(); col++)
-            horizontalHeader()->setSectionResizeMode(col, QHeaderView::Stretch);
     }
 
-    void FixedRowTable::init() {
+    void FixedRowTable::init(QAbstractItemModel *model) {
+        createProxy(model);
         createTable();
         createBox();
         createDelegates();
@@ -158,29 +177,57 @@ namespace Commissionator {
             setRowHidden(0, true);  //hides the search row from the top
             if (boxButtonOn) {
                 if (boxButtonWidth == 0) {
-                    box->setGeometry(verticalHeader()->width() + frameWidth(),
-                        contentsRect().bottom() - box->rowHeight(0),
-                        viewport()->width() + verticalHeader()->width() - columnWidth(columnAt(
+                    if (horizontalScrollBar()->isVisible()) {
+                        box->setGeometry(verticalHeader()->width() + frameWidth(),
+                            contentsRect().bottom() - box->rowHeight(0) - horizontalScrollBar()->height(),
+                            viewport()->width() + verticalHeader()->width() - columnWidth(columnAt(
                             viewport()->width() + verticalHeader()->width() - 1)),
-                        box->rowHeight(0));
-                    boxButton->setGeometry(
-                        viewport()->width() + verticalHeader()->width() - columnWidth(columnAt(
+                            box->rowHeight(0));
+                        boxButton->setGeometry(
+                            viewport()->width() + verticalHeader()->width() - columnWidth(columnAt(
                             viewport()->width() + verticalHeader()->width() - 1)),
-                        contentsRect().bottom() - box->rowHeight(0) - 1,
-                        columnWidth(columnAt(viewport()->width() + verticalHeader()->width() - 1)) + 2,
-                        box->rowHeight(0) + 2);
+                            contentsRect().bottom() - box->rowHeight(0) - 1 - horizontalScrollBar()->height(),
+                            columnWidth(columnAt(viewport()->width() + verticalHeader()->width() - 1)) + 2,
+                            box->rowHeight(0) + 2);
+                    } else {
+                        box->setGeometry(verticalHeader()->width() + frameWidth(),
+                            contentsRect().bottom() - box->rowHeight(0),
+                            viewport()->width() + verticalHeader()->width() - columnWidth(columnAt(
+                            viewport()->width() + verticalHeader()->width() - 1)),
+                            box->rowHeight(0));
+                        boxButton->setGeometry(
+                            viewport()->width() + verticalHeader()->width() - columnWidth(columnAt(
+                            viewport()->width() + verticalHeader()->width() - 1)),
+                            contentsRect().bottom() - box->rowHeight(0) - 1,
+                            columnWidth(columnAt(viewport()->width() + verticalHeader()->width() - 1)) + 2,
+                            box->rowHeight(0) + 2);
+                    }
                 } else {
-                    box->setGeometry(verticalHeader()->width() + frameWidth(),
-                        contentsRect().bottom() - box->rowHeight(0),
-                        viewport()->width() + verticalHeader()->width() 
-                        - box->rowHeight(0)*boxButtonWidth,
-                        box->rowHeight(0));
-                    boxButton->setGeometry(
-                        viewport()->width() + verticalHeader()->width() 
-                        - box->rowHeight(0)*boxButtonWidth,
-                        contentsRect().bottom() - box->rowHeight(0) - 1,
-                        box->rowHeight(0)*boxButtonWidth + 2,
-                        box->rowHeight(0) + 2);
+                    if (horizontalScrollBar()->isVisible()) {
+                        box->setGeometry(verticalHeader()->width() + frameWidth(),
+                            contentsRect().bottom() - box->rowHeight(0) - horizontalScrollBar()->height(),
+                            viewport()->width() + verticalHeader()->width()
+                            - box->rowHeight(0)*boxButtonWidth,
+                            box->rowHeight(0));
+                        boxButton->setGeometry(
+                            viewport()->width() + verticalHeader()->width()
+                            - box->rowHeight(0)*boxButtonWidth,
+                            contentsRect().bottom() - box->rowHeight(0) - 1 - horizontalScrollBar()->height(),
+                            box->rowHeight(0)*boxButtonWidth + 2,
+                            box->rowHeight(0) + 2);
+                    } else {
+                        box->setGeometry(verticalHeader()->width() + frameWidth(),
+                            contentsRect().bottom() - box->rowHeight(0),
+                            viewport()->width() + verticalHeader()->width()
+                            - box->rowHeight(0)*boxButtonWidth,
+                            box->rowHeight(0));
+                        boxButton->setGeometry(
+                            viewport()->width() + verticalHeader()->width()
+                            - box->rowHeight(0)*boxButtonWidth,
+                            contentsRect().bottom() - box->rowHeight(0) - 1,
+                            box->rowHeight(0)*boxButtonWidth + 2,
+                            box->rowHeight(0) + 2);
+                    }
                 }
                 boxButton->show();
             } else {

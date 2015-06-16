@@ -1,11 +1,11 @@
 #ifndef LEFTPANEL_H
 #define LEFTPANEL_H
 
-#include <QVBoxLayout>
-#include <QSqlQueryModel>
-#include <QList>
-#include <QLabel>
 #include "FixedRowTable.h"
+
+class QLabel;
+class QVBoxLayout;
+class QSqlQueryModel;
 
 namespace Commissionator {
     /**
@@ -27,15 +27,9 @@ namespace Commissionator {
          *      view. Not Implemented during testing, but functionality is
          *      written and tested.
          */
-        LeftPanel(QString title, QSqlQueryModel *model, QList<int> hiddenColumns);
-
-        ~LeftPanel();
+        LeftPanel(QString title, QSqlQueryModel *model, QList<int> hiddenColumns, QWidget *parent = nullptr);
 
     private:
-        QVBoxLayout *layout;
-        FixedRowTable *view;
-        QLabel *titleLabel;
-
         /**
         *  Initializes the panels title label based on QString input
         *
@@ -53,6 +47,10 @@ namespace Commissionator {
         *      written and tested.
         */
         void createTable(QSqlQueryModel *model, QList<int> hiddenColumns);
+
+        QVBoxLayout *layout;
+        FixedRowTable *view;
+        QLabel *titleLabel;
 
     signals:
         /**
