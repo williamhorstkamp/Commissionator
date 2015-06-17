@@ -39,9 +39,6 @@ namespace Commissionator {
             prepareModels();
 
             //this is test data that only exists because the user can not currently enter this data
-            insertProduct("thing", 1.0);
-            insertProduct("thing 2", 2.0);
-            insertProduct("thing 3", 3.50);
             insertContactType("Contact Type");
             insertContactType("Contact Type 2");
             insertContactType("Contact Type 3");
@@ -254,6 +251,7 @@ namespace Commissionator {
         deleteCommissionerQuery.bindValue(0, getValue(index, 0));
         deleteCommissionerQuery.exec();
         refreshCommissioners();
+        refreshCommissions();
         changesMade = true;
         emit commissionerChanged();
     }
@@ -285,6 +283,7 @@ namespace Commissionator {
         refreshCommissions();
         refreshCommissioners();
         changesMade = true;
+        emit commissionerChanged();
         return insertCommissionQuery.lastInsertId().toInt();
     }
 
@@ -328,8 +327,8 @@ namespace Commissionator {
         refreshPayments();
         refreshCommissions();
         refreshCommissioners();
-        emit commissionChanged();
         changesMade = true;
+        emit commissionChanged();
     }
 
     void ComModel::insertPaymentType(const QString typeName) {
@@ -337,6 +336,7 @@ namespace Commissionator {
         insertPaymentTypeQuery.exec();
         refreshPaymentTypes();
         changesMade = true;
+        emit commissionChanged();
     }
 
     void ComModel::insertPiece(const int commission, const int product,
@@ -357,6 +357,8 @@ namespace Commissionator {
         refreshCommissions();
         refreshPieces();
         changesMade = true;
+        emit commissionChanged();
+        emit commissionerChanged();
     }
 
     void ComModel::insertProduct(const QString productName, const double basePrice) {
@@ -377,6 +379,7 @@ namespace Commissionator {
         insertProductPriceQuery.exec();
         refreshProducts();
         changesMade = true;
+        emit commissionerChanged();
     }
 
     void ComModel::build() {

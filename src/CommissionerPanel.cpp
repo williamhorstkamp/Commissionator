@@ -124,7 +124,6 @@ namespace Commissionator {
         layout->addWidget(notesLabel);
         layout->addWidget(commissionerNotes);
         layout->addWidget(commissionerNotesEdit);
-        setLayout(layout);
     }
 
     void CommissionerPanel::createTables(QSqlQueryModel *contactModel, 

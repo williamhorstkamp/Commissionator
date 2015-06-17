@@ -12,6 +12,7 @@ class NewCommissionWindow;
 class NewCommissionerWindow;
 class NewPaymentWindow;
 class NewPieceWindow;
+class NewProductWindow;
 class CommissionerPanel;
 class CommissionPanel;
 class ComModel;
@@ -117,10 +118,16 @@ namespace Commissionator {
          *  Takes control away from the MainWindow for the duration of the
          *  new piece window's lifetime. Depending on whether a piece
          *  is created or not, the models may be refreshed.
-         *
-         *  @param commission - commission id for the piece
          */
         void newPiece();
+
+        /**
+         *  Function opens the dialog window to create a new product.
+         *  Takes control away from the MainWindow for the duration of the
+         *  new product window's lifetime. Depending on whether a product
+         *  is created or not, the models may be refreshed.
+         */
+        void newProduct();
 
         /**
         *  Function opens the dialog window the create a new record.
@@ -237,6 +244,7 @@ namespace Commissionator {
         NewCommissionerWindow *commissionerPopup;
         NewPaymentWindow *paymentPopup;
         NewPieceWindow *piecePopup;
+        NewProductWindow *productPopup;
 
         QMenu *fileMenu;
         QMenu *newMenu;

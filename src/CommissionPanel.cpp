@@ -225,21 +225,16 @@ namespace Commissionator {
         commissionNotes->setText(commissionModel->record(0).value(7).toString());
 
         piecesTable->hideColumn(0);
-
-        for (int i = 0; i < piecesTable->model()->columnCount() - 1; ++i)
+        
+        for (int i = 0; i < piecesTable->model()->columnCount(); i++)
             piecesTable->horizontalHeader()->setSectionResizeMode(
-                i, QHeaderView::ResizeToContents);
-        piecesTable->horizontalHeader()->setSectionResizeMode(
-            piecesTable->model()->columnCount() - 1, QHeaderView::Stretch);
-
-
-        for (int i = 0; i < paymentsTable->model()->columnCount() - 1; ++i)
+                i, QHeaderView::Stretch);
+        
+        for (int i = 0; i < paymentsTable->model()->columnCount(); i++)
             paymentsTable->horizontalHeader()->setSectionResizeMode(
-                i, QHeaderView::ResizeToContents);
-        paymentsTable->horizontalHeader()->setSectionResizeMode(
-            paymentsTable->model()->columnCount() - 1, QHeaderView::Stretch);
-
-        if (commissionModel->record(0).value(0).toInt() == 0) {
+                i, QHeaderView::Stretch);
+            
+       if (commissionModel->record(0).value(0).toInt() == 0) {
             unlockButton->hide();
             commissionerName->hide();
             commissionerNameCombo->hide();
