@@ -68,7 +68,6 @@ namespace Commissionator{
         manageMenu->addAction(manageCommissionerAct);
         manageMenu->addAction(manageCommissionAct);
         manageMenu->addAction(managePieceAct);
-        manageMenu->addAction(managePaymentAct);
 
         menuBar()->addSeparator();
 
@@ -140,10 +139,6 @@ namespace Commissionator{
         managePieceAct = new QAction(QIcon(":/Piece.png"), tr("&Piece"), this);
         managePieceAct->setStatusTip(tr("Manage existing pieces"));
         managePieceAct->setEnabled(false);
-
-        managePaymentAct = new QAction(QIcon(":/Payment.png"), tr("&Payment"), this);
-        managePaymentAct->setStatusTip(tr("Manage existing payments"));
-        managePaymentAct->setEnabled(false);
 
         helpAct = new QAction(QIcon(":/Help.png"), tr("&Help"), this);
         helpAct->setStatusTip(tr("Get help about Commissionator"));
@@ -423,7 +418,7 @@ namespace Commissionator{
             connect(manageCommissionAct, &QAction::triggered,
                 this, &MainWindow::manageCommissions);
 
-            manageCommissions();
+            manageCommissioners();
             currentFile = "";
         } else {
             delete commissionerLeftPanel;
@@ -450,7 +445,6 @@ namespace Commissionator{
             manageCommissionerAct->disconnect();
             manageCommissionAct->disconnect();
             managePieceAct->disconnect();
-            managePaymentAct->disconnect();
 
             model->disconnect();
             connect(model, &ComModel::recordClosed,
@@ -471,6 +465,5 @@ namespace Commissionator{
         manageCommissionerAct->setEnabled(isEnabled);
         manageCommissionAct->setEnabled(isEnabled);
         //managePieceAct->setEnabled(isEnabled);
-        //managePaymentAct->setEnabled(isEnabled);
     }
 }

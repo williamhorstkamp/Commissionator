@@ -272,7 +272,6 @@ namespace Commissionator {
         QAction *manageCommissionerAct;
         QAction *manageCommissionAct;
         QAction *managePieceAct;
-        QAction *managePaymentAct;
         QAction *aboutAct;
         QAction *helpAct;
 
