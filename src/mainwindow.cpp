@@ -159,11 +159,11 @@ namespace Commissionator{
         mainToolBar->addAction(saveAct);
         mainToolBar->setMovable(false);
         commissionerToolBar = addToolBar(tr("Commissioner"));
-        commissionerToolBar->addAction(newCommissionAct);
+        commissionerToolBar->addAction(newCommissionerAct);
         commissionerToolBar->setMovable(false);
         contextToolBar = commissionerToolBar;
         commissionToolBar = addToolBar(tr("Commission"));
-        commissionToolBar->addAction(newCommissionerAct);
+        commissionToolBar->addAction(newCommissionAct);
         commissionToolBar->setMovable(false);
         commissionToolBar->setVisible(false);
         setContextMenuPolicy(Qt::NoContextMenu);
@@ -371,9 +371,9 @@ namespace Commissionator{
     }
 
     void MainWindow::searchCommissioner(const QList<QVariant> query) {
-        if (query.length() == 4)    //id, name, commissioner since, amounted owed
+        if (query.length() == 5)    //id, name, commissioner since, amounted owed, notes
             model->searchCommissioners(query[1].toString(), query[2].toString(),
-            query[3].toString());
+            query[3].toString(), query[4].toString());
     }
 
     void MainWindow::manageCommissioners() {

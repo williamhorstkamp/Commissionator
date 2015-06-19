@@ -162,10 +162,11 @@ namespace Commissionator {
     }
 
     void ComModel::searchCommissioners(const QString name, const QString dateOldest,
-        const QString balance) {
+        const QString balance, const QString notes) {
         commissionersModel->query().bindValue(0, "%" + name + "%");
         commissionersModel->query().bindValue(1, "%" + dateOldest + "%");
         commissionersModel->query().bindValue(2, "%" + balance + "%");
+        commissionersModel->query().bindValue(3, "%" + notes + "%");
         commissionersModel->query().exec();
         commissionersModel->setQuery(commissionersModel->query());
     }
@@ -709,9 +710,9 @@ namespace Commissionator {
             "GROUP BY Commissioner.id) c "
             "WHERE name LIKE (?) AND C.id IS NOT 0 "
             "GROUP BY C.id HAVING CommissionerSince like (?) "
-            "AND amountOwed like (?);");
+            "AND amountOwed like (?) AND notes like (?);");
         commissionersModel->setQuery(commissionersQuery);
-        searchCommissioners("", "", "");
+        searchCommissioners("", "", "", "");
         commissionersModel->setHeaderData(2, Qt::Horizontal, 
             QVariant("Customer Since"), Qt::DisplayRole);
         commissionersModel->setHeaderData(3, Qt::Horizontal,

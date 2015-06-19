@@ -425,7 +425,7 @@ namespace Commissionator {
          *  @param balance - how much money they owe total
          */
         void searchCommissioners(const QString name, const QString dateOldest, 
-            const QString balance);
+            const QString balance, const QString notes);
 
         /**
          *  Slot limits the results of getPieces() based on the inputs
