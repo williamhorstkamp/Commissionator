@@ -245,7 +245,6 @@ namespace Commissionator {
         refreshCommissioners();
         refreshCommissions();
         changesMade = true;
-        emit commissionChanged();
     }
 
     void ComModel::deleteCommissioner(const QModelIndex &index) {
@@ -254,7 +253,6 @@ namespace Commissionator {
         refreshCommissioners();
         refreshCommissions();
         changesMade = true;
-        emit commissionerChanged();
     }
 
     void ComModel::deleteContact(const QModelIndex &index) {
@@ -284,7 +282,6 @@ namespace Commissionator {
         refreshCommissions();
         refreshCommissioners();
         changesMade = true;
-        emit commissionerChanged();
         return insertCommissionQuery.lastInsertId().toInt();
     }
 
@@ -329,7 +326,6 @@ namespace Commissionator {
         refreshCommissions();
         refreshCommissioners();
         changesMade = true;
-        emit commissionChanged();
     }
 
     void ComModel::insertPaymentType(const QString typeName) {
@@ -337,7 +333,6 @@ namespace Commissionator {
         insertPaymentTypeQuery.exec();
         refreshPaymentTypes();
         changesMade = true;
-        emit commissionChanged();
     }
 
     void ComModel::insertPiece(const int commission, const int product,
@@ -358,8 +353,6 @@ namespace Commissionator {
         refreshCommissions();
         refreshPieces();
         changesMade = true;
-        emit commissionChanged();
-        emit commissionerChanged();
     }
 
     void ComModel::insertProduct(const QString productName, const double basePrice) {
@@ -380,7 +373,7 @@ namespace Commissionator {
         insertProductPriceQuery.exec();
         refreshProducts();
         changesMade = true;
-        emit commissionerChanged();
+
     }
 
     void ComModel::build() {
@@ -678,40 +671,48 @@ namespace Commissionator {
          */
         commissionersModel = new QSqlTableModel(this);
         QSqlQuery commissionersQuery(sql);
-        commissionersQuery.prepare("SELECT c.id,  c.name, c.commissionerSince, "
-            "CASE WHEN(c.cost = 0) THEN 'Paid Off' "
-            "WHEN(c.cost < 0) THEN 'Tipped ' || -c.cost "
-            "WHEN(c.cost IS NULL) THEN 'No Commissioned Pieces' "
-            "ELSE c.cost || ' owed' END AS amountOwed, C.notes FROM "
-            "(SELECT Commissioner.id id, Commissioner.name name, "
-            "COALESCE(STRFTIME('%m/%d/%Y', min(Commission.createDate)/1000, "
+        commissionersQuery.prepare("SELECT Commissioner.id, Commissioner.name, "
+            "COALESCE(STRFTIME('%m/%d/%Y', min(Commission.createDate) / 1000, "
             "'unixepoch', 'localtime'), 'No Commissions') commissionerSince, "
-            "Commissioner.notes notes, "
-            "COALESCE(SUM(COALESCE(a.override, a.price)) - fee, "
-            "SUM(COALESCE(a.override, a.price))) cost FROM Commissioner "
-            "LEFT JOIN Commission "
-            "ON Commissioner.id = Commission.commissioner "
+            "CASE WHEN(COALESCE(SUM(COALESCE(a.override, a.price, b.price)) - c.fee, "
+            "SUM(COALESCE(a.override, a.price, b.price))) < 0) THEN 'Tipped ' || "
+            "- COALESCE(SUM(COALESCE(a.override, a.price, b.price)) - c.fee, "
+            "SUM(COALESCE(a.override, a.price, b.price))) "
+            "WHEN(SUM(b.price) IS NULL) THEN 'No Commissioned Pieces' "
+            "WHEN (COALESCE(SUM(COALESCE(a.override, a.price, b.price)) - c.fee, "
+            "SUM(COALESCE(a.override, a.price, b.price))) = 0) THEN 'Paid off' "
+            "ELSE COALESCE(SUM(COALESCE(a.override, a.price, b.price)) - c.fee, "
+            "SUM(COALESCE(a.override, a.price, b.price))) || ' owed' "
+            "END as amountOwed, "
+            "Commissioner.notes  FROM Commissioner "
+            "LEFT JOIN Commission ON Commissioner.id = Commission.commissioner "
+            "LEFT JOIN Piece ON Commission.id = Piece.commission "
             "LEFT JOIN "
-            "(SELECT Commission.id id, ProductPrices.price price, "
+            "(SELECT Piece.id id, ProductPrices.price price, "
             "Piece.overridePrice override "
             "FROM Commission "
             "INNER JOIN Piece ON Commission.id = Piece.commission "
             "INNER JOIN ProductPrices ON Piece.product = ProductPrices.product "
             "AND ProductPrices.date < Commission.createDate "
             "GROUP BY Piece.id HAVING date = max(date)) a "
-            "ON Commission.id = a.id "
+            "ON Piece.id = a.id "
+            "LEFT JOIN "
+            "(SELECT Piece.id id, ProductPrices.price "
+            "FROM Piece "
+            "LEFT JOIN ProductPrices ON Piece.product = ProductPrices.product "
+            "GROUP BY Piece.id HAVING date = min(date)) b "
+            "ON Piece.id = b.id "
             "LEFT JOIN "
             "(SELECT Commission.id id, SUM(Payment.fee) fee FROM Payment "
             "INNER JOIN Commission ON Payment.commission = Commission.id "
             "INNER JOIN Commissioner ON "
             "Commission.commissioner = Commissioner.id "
-            "GROUP BY Commissioner.id) b "
-            "ON Commission.id = b.id "
-            "WHERE Commissioner.id > 0 "
-            "GROUP BY Commissioner.id) c "
-            "WHERE name LIKE (?) AND C.id IS NOT 0 "
-            "GROUP BY C.id HAVING CommissionerSince like (?) "
-            "AND amountOwed like (?) AND notes like (?);");
+            "GROUP BY Commission.id) c "
+            "ON Commission.id = c.id "
+            "WHERE Commission.id IS NOT 0 AND Commissioner.name LIKE(?) "
+            "AND Commissioner.notes LIKE(?) "
+            "GROUP BY Commissioner.id HAVING commissionerSince like(?) "
+            "AND amountOwed LIKE(?)");
         commissionersModel->setQuery(commissionersQuery);
         searchCommissioners("", "", "", "");
         commissionersModel->setHeaderData(2, Qt::Horizontal, 
@@ -967,6 +968,7 @@ namespace Commissionator {
         commissionerModel->setQuery(commissionerModel->query());
         commissionerNamesModel->query().exec();
         commissionerNamesModel->setQuery(commissionerNamesModel->query());
+        emit commissionerChanged();
     }
 
     void ComModel::refreshCommissions() {
@@ -978,6 +980,7 @@ namespace Commissionator {
         commissionModel->setQuery(commissionModel->query());
         commissionListModel->query().exec();
         commissionListModel->setQuery(commissionListModel->query());
+        emit commissionChanged();
     }
 
     void ComModel::refreshContacts() {
