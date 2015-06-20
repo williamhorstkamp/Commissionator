@@ -40,6 +40,7 @@ namespace Commissionator {
         /**
          *  Overrides default function to make it so inherited classes use clear();
          *
+         *  @param e - QCloseEvent to handle by the overridden function
          */
         virtual void keyPressEvent(QKeyEvent *e);
 

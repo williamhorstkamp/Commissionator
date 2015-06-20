@@ -1,6 +1,5 @@
 #include <QLabel>
 #include <QSqlRecord>
-#include <QVBoxLayout>
 #include <QSqlQueryModel>
 #include <QHeaderView>
 #include <QLineEdit>
@@ -13,21 +12,14 @@ namespace Commissionator {
     CommissionerPanel::CommissionerPanel(QSqlQueryModel *commissionerModel, 
         QSqlQueryModel *contactModel, QSqlQueryModel *commissionsModel,
         QSqlQueryModel *contactTypesModel, QWidget *parent) :
-        QWidget(parent) {
+        RightPanel(parent) {
         this->commissionerModel = commissionerModel;
         this->contactTypesModel = contactTypesModel;
 
-        createFonts();
         createLabels();
         createButtons();
         createTables(contactModel, commissionsModel, contactTypesModel);
         createPanel();
-    }
-
-    CommissionerPanel::~CommissionerPanel() {
-        delete titleFont;
-        delete standardFont;
-        delete titleLayout;
     }
 
     void CommissionerPanel::createButtons() {
@@ -41,15 +33,6 @@ namespace Commissionator {
         newCommissionButton->hide();
         connect(newCommissionButton, &QPushButton::clicked,
             this, &CommissionerPanel::newCommissionSlot);
-    }
-
-    void CommissionerPanel::createFonts() {
-        titleFont = new QFont();
-        titleFont->setPointSize(12);
-        titleFont->setBold(true);
-
-        standardFont = new QFont();
-        standardFont->setPointSize(10);
     }
 
     void CommissionerPanel::createLabels() {
@@ -124,7 +107,6 @@ namespace Commissionator {
         layout->addWidget(notesLabel);
         layout->addWidget(commissionerNotes);
         layout->addWidget(commissionerNotesEdit);
-        setLayout(layout);
     }
 
     void CommissionerPanel::createTables(QSqlQueryModel *contactModel, 

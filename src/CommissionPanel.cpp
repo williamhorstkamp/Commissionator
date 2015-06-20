@@ -1,4 +1,3 @@
-#include <QVBoxLayout>
 #include <QLineEdit>
 #include <QSqlRecord>
 #include <QLabel>
@@ -15,21 +14,14 @@ namespace Commissionator {
     CommissionPanel::CommissionPanel(QSqlQueryModel *commissionModel,
         QSqlQueryModel *piecesModel, QSqlQueryModel *paymentsModel,
         QSqlQueryModel *commissionerNamesModel, QWidget *parent) :
-        QWidget(parent) {
+        RightPanel(parent) {
         this->commissionModel = commissionModel;
         this->commissionerNamesModel = commissionerNamesModel;
 
-        createFonts();
         createLabels();
         createButtons();
         createTables(piecesModel, paymentsModel);
         createPanel();
-    }
-
-    CommissionPanel::~CommissionPanel() {
-        delete titleFont;
-        delete standardFont;
-        delete titleLayout;
     }
 
     void CommissionPanel::createButtons() {
@@ -48,15 +40,6 @@ namespace Commissionator {
         newPaymentButton->hide();
         connect(newPaymentButton, &QPushButton::clicked,
             this, &CommissionPanel::newPaymentSlot);
-    }
-
-    void CommissionPanel::createFonts() {
-        titleFont = new QFont();
-        titleFont->setPointSize(12);
-        titleFont->setBold(true);
-
-        standardFont = new QFont();
-        standardFont->setPointSize(10);
     }
 
     void CommissionPanel::createLabels() {
@@ -225,21 +208,16 @@ namespace Commissionator {
         commissionNotes->setText(commissionModel->record(0).value(7).toString());
 
         piecesTable->hideColumn(0);
-
-        for (int i = 0; i < piecesTable->model()->columnCount() - 1; ++i)
+        
+        for (int i = 0; i < piecesTable->model()->columnCount(); i++)
             piecesTable->horizontalHeader()->setSectionResizeMode(
-                i, QHeaderView::ResizeToContents);
-        piecesTable->horizontalHeader()->setSectionResizeMode(
-            piecesTable->model()->columnCount() - 1, QHeaderView::Stretch);
-
-
-        for (int i = 0; i < paymentsTable->model()->columnCount() - 1; ++i)
+                i, QHeaderView::Stretch);
+        
+        for (int i = 0; i < paymentsTable->model()->columnCount(); i++)
             paymentsTable->horizontalHeader()->setSectionResizeMode(
-                i, QHeaderView::ResizeToContents);
-        paymentsTable->horizontalHeader()->setSectionResizeMode(
-            paymentsTable->model()->columnCount() - 1, QHeaderView::Stretch);
-
-        if (commissionModel->record(0).value(0).toInt() == 0) {
+                i, QHeaderView::Stretch);
+            
+       if (commissionModel->record(0).value(0).toInt() == 0) {
             unlockButton->hide();
             commissionerName->hide();
             commissionerNameCombo->hide();

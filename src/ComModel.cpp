@@ -39,9 +39,6 @@ namespace Commissionator {
             prepareModels();
 
             //this is test data that only exists because the user can not currently enter this data
-            insertProduct("thing", 1.0);
-            insertProduct("thing 2", 2.0);
-            insertProduct("thing 3", 3.50);
             insertContactType("Contact Type");
             insertContactType("Contact Type 2");
             insertContactType("Contact Type 3");
@@ -165,10 +162,11 @@ namespace Commissionator {
     }
 
     void ComModel::searchCommissioners(const QString name, const QString dateOldest,
-        const QString balance) {
+        const QString balance, const QString notes) {
         commissionersModel->query().bindValue(0, "%" + name + "%");
         commissionersModel->query().bindValue(1, "%" + dateOldest + "%");
         commissionersModel->query().bindValue(2, "%" + balance + "%");
+        commissionersModel->query().bindValue(3, "%" + notes + "%");
         commissionersModel->query().exec();
         commissionersModel->setQuery(commissionersModel->query());
     }
@@ -247,15 +245,14 @@ namespace Commissionator {
         refreshCommissioners();
         refreshCommissions();
         changesMade = true;
-        emit commissionChanged();
     }
 
     void ComModel::deleteCommissioner(const QModelIndex &index) {
         deleteCommissionerQuery.bindValue(0, getValue(index, 0));
         deleteCommissionerQuery.exec();
         refreshCommissioners();
+        refreshCommissions();
         changesMade = true;
-        emit commissionerChanged();
     }
 
     void ComModel::deleteContact(const QModelIndex &index) {
@@ -328,7 +325,6 @@ namespace Commissionator {
         refreshPayments();
         refreshCommissions();
         refreshCommissioners();
-        emit commissionChanged();
         changesMade = true;
     }
 
@@ -377,6 +373,7 @@ namespace Commissionator {
         insertProductPriceQuery.exec();
         refreshProducts();
         changesMade = true;
+
     }
 
     void ComModel::build() {
@@ -630,36 +627,37 @@ namespace Commissionator {
         commissionerContactsModel->setQuery(commissionerContactsQuery);
         commissionerModel = new QSqlQueryModel(this);
         QSqlQuery commissionerQuery(sql);
-        commissionerQuery.prepare("SELECT c.id, c.name, c.createDate, "
-            "COALESCE(c.cost, ''),"
-            "c.notes FROM "
-            "(SELECT Commissioner.id id, Commissioner.name name, "
+        commissionerQuery.prepare("SELECT Commissioner.id, Commissioner.name, "
             "COALESCE(STRFTIME('%m/%d/%Y', min(Commission.createDate) / 1000, "
-            "'unixepoch', 'localtime'), 'No Commissions') createDate, "
-            "Commissioner.notes notes, "
-            "COALESCE(SUM(COALESCE(a.override, a.price)) - fee, "
-            "SUM(COALESCE(a.override, a.price))) cost "
+            "'unixepoch', 'localtime'), 'No Commissions'), "
+            "COALESCE(SUM(COALESCE(a.override, a.price, b.price)) - c.fee, "
+            "SUM(COALESCE(a.override, a.price, b.price))), Commissioner.notes "
             "FROM Commissioner "
-            "LEFT JOIN Commission "
-            "ON Commissioner.id = Commission.commissioner "
+            "LEFT JOIN Commission ON Commissioner.id = Commission.commissioner "
+            "LEFT JOIN Piece ON Commission.id = Piece.commission "
             "LEFT JOIN "
-            "(SELECT Commission.id id, ProductPrices.price price, "
+            "(SELECT Piece.id id, ProductPrices.price price, "
             "Piece.overridePrice override "
             "FROM Commission "
             "INNER JOIN Piece ON Commission.id = Piece.commission "
             "INNER JOIN ProductPrices ON Piece.product = ProductPrices.product "
             "AND ProductPrices.date < Commission.createDate "
             "GROUP BY Piece.id HAVING date = max(date)) a "
-            "ON Commission.id = a.id "
+            "ON Piece.id = a.id "
+            "LEFT JOIN "
+            "(SELECT Piece.id id, ProductPrices.price "
+            "FROM Piece "
+            "LEFT JOIN ProductPrices ON Piece.product = ProductPrices.product "
+            "GROUP BY Piece.id HAVING date = min(date)) b "
+            "ON Piece.id = b.id "
             "LEFT JOIN "
             "(SELECT Commission.id id, SUM(Payment.fee) fee FROM Payment "
             "INNER JOIN Commission ON Payment.commission = Commission.id "
             "INNER JOIN Commissioner ON "
             "Commission.commissioner = Commissioner.id "
-            "GROUP BY Commission.id) b "
-            "ON Commission.id = b.id "
-            "WHERE Commissioner.id > 0 GROUP BY Commission.id) c "
-            "WHERE c.id = (?)");
+            "GROUP BY Commission.id) c "
+            "ON Commission.id = c.id "
+            "WHERE Commissioner.id = (?)");
         commissionerModel->setQuery(commissionerQuery);
         commissionerNamesModel = new QSqlQueryModel(this);
         QSqlQuery commissionerNamesQuery("SELECT Commissioner.id, "
@@ -673,80 +671,93 @@ namespace Commissionator {
          */
         commissionersModel = new QSqlTableModel(this);
         QSqlQuery commissionersQuery(sql);
-        commissionersQuery.prepare("SELECT c.id,  c.name, c.commissionerSince, "
-            "CASE WHEN(c.cost = 0) THEN 'Paid Off' "
-            "WHEN(c.cost < 0) THEN 'Tipped ' || -c.cost "
-            "WHEN(c.cost IS NULL) THEN 'No Commissioned Pieces' "
-            "ELSE c.cost || ' owed' END AS amountOwed, C.notes FROM "
-            "(SELECT Commissioner.id id, Commissioner.name name, "
-            "COALESCE(STRFTIME('%m/%d/%Y', min(Commission.createDate)/1000, "
+        commissionersQuery.prepare("SELECT Commissioner.id, Commissioner.name, "
+            "COALESCE(STRFTIME('%m/%d/%Y', min(Commission.createDate) / 1000, "
             "'unixepoch', 'localtime'), 'No Commissions') commissionerSince, "
-            "Commissioner.notes notes, "
-            "COALESCE(SUM(COALESCE(a.override, a.price)) - fee, "
-            "SUM(COALESCE(a.override, a.price))) cost FROM Commissioner "
-            "LEFT JOIN Commission "
-            "ON Commissioner.id = Commission.commissioner "
+            "CASE WHEN(COALESCE(SUM(COALESCE(a.override, a.price, b.price)) - c.fee, "
+            "SUM(COALESCE(a.override, a.price, b.price))) < 0) THEN 'Tipped ' || "
+            "- COALESCE(SUM(COALESCE(a.override, a.price, b.price)) - c.fee, "
+            "SUM(COALESCE(a.override, a.price, b.price))) "
+            "WHEN(SUM(b.price) IS NULL) THEN 'No Commissioned Pieces' "
+            "WHEN (COALESCE(SUM(COALESCE(a.override, a.price, b.price)) - c.fee, "
+            "SUM(COALESCE(a.override, a.price, b.price))) = 0) THEN 'Paid off' "
+            "ELSE COALESCE(SUM(COALESCE(a.override, a.price, b.price)) - c.fee, "
+            "SUM(COALESCE(a.override, a.price, b.price))) || ' owed' "
+            "END as amountOwed, "
+            "Commissioner.notes  FROM Commissioner "
+            "LEFT JOIN Commission ON Commissioner.id = Commission.commissioner "
+            "LEFT JOIN Piece ON Commission.id = Piece.commission "
             "LEFT JOIN "
-            "(SELECT Commission.id id, ProductPrices.price price, "
+            "(SELECT Piece.id id, ProductPrices.price price, "
             "Piece.overridePrice override "
             "FROM Commission "
             "INNER JOIN Piece ON Commission.id = Piece.commission "
             "INNER JOIN ProductPrices ON Piece.product = ProductPrices.product "
             "AND ProductPrices.date < Commission.createDate "
             "GROUP BY Piece.id HAVING date = max(date)) a "
-            "ON Commission.id = a.id "
+            "ON Piece.id = a.id "
+            "LEFT JOIN "
+            "(SELECT Piece.id id, ProductPrices.price "
+            "FROM Piece "
+            "LEFT JOIN ProductPrices ON Piece.product = ProductPrices.product "
+            "GROUP BY Piece.id HAVING date = min(date)) b "
+            "ON Piece.id = b.id "
             "LEFT JOIN "
             "(SELECT Commission.id id, SUM(Payment.fee) fee FROM Payment "
             "INNER JOIN Commission ON Payment.commission = Commission.id "
             "INNER JOIN Commissioner ON "
             "Commission.commissioner = Commissioner.id "
-            "GROUP BY Commissioner.id) b "
-            "ON Commission.id = b.id "
-            "WHERE Commissioner.id > 0 "
-            "GROUP BY Commissioner.id) c "
-            "WHERE name LIKE (?) AND C.id IS NOT 0 "
-            "GROUP BY C.id HAVING CommissionerSince like (?) "
-            "AND amountOwed like (?);");
+            "GROUP BY Commission.id) c "
+            "ON Commission.id = c.id "
+            "WHERE Commissioner.id IS NOT 0 AND Commissioner.name LIKE(?) "
+            "AND Commissioner.notes LIKE(?) "
+            "GROUP BY Commissioner.id HAVING commissionerSince like(?) "
+            "AND amountOwed LIKE(?)");
         commissionersModel->setQuery(commissionersQuery);
-        searchCommissioners("", "", "");
+        searchCommissioners("", "", "", "");
         commissionersModel->setHeaderData(2, Qt::Horizontal, 
             QVariant("Customer Since"), Qt::DisplayRole);
         commissionersModel->setHeaderData(3, Qt::Horizontal,
             QVariant("Amount Owed"), Qt::DisplayRole);
         commissionModel = new QSqlQueryModel(this);
         QSqlQuery commissionQuery(sql);
-        commissionQuery.prepare("SELECT c.id, c.cid, c.name, c.createDate, "
-            "c.paidDate, c.dueDate, "
-            "COALESCE(c.cost, '') amountOwed, C.notes FROM "
-            "(SELECT Commission.id id, Commissioner.id cid, "
-            "Commissioner.name name, "
-            "strftime('%m/%d/%Y', Commission.createDate / 1000, 'unixepoch', "
-            "'localtime') createDate, "
-            "COALESCE(strftime('%m/%d/%Y',Commission.paidDate / 1000, "
-            "'unixepoch', 'localtime'), 'Unpaid') paidDate, "
-            "strftime('%m/%d/%Y', Commission.dueDate / 1000,  'unixepoch', "
-            "'localtime') dueDate, Commission.notes notes, "
-            "COALESCE(SUM(COALESCE(a.override, a.price)) - fee, "
-            "SUM(COALESCE(a.override, a.price))) cost FROM Commission "
-            "INNER JOIN Commissioner "
+        commissionQuery.prepare("SELECT Commission.id, Commissioner.id, "
+            "Commissioner.name, "
+            "STRFTIME('%m/%d/%Y', min(Commission.createDate) / 1000, "
+            "'unixepoch', 'localtime'), "
+            "STRFTIME('%m/%d/%Y', min(Commission.paidDate) / 1000, "
+            "'unixepoch', 'localtime'), "
+            "STRFTIME('%m/%d/%Y', min(Commission.dueDate) / 1000, "
+            "'unixepoch', 'localtime'), "
+            "COALESCE(SUM(COALESCE(a.override, a.price, b.price)) - c.fee, "
+            "SUM(COALESCE(a.override, a.price, b.price)), ''), "
+            "Commission.notes FROM Commission "
+            "LEFT JOIN Commissioner "
             "ON Commission.commissioner = Commissioner.id "
+            "LEFT JOIN Piece ON Commission.id = Piece.commission "
             "LEFT JOIN "
-            "(SELECT Commission.id id, ProductPrices.price price, "
-            "Piece.overridePrice override FROM Commission "
+            "(SELECT Piece.id id, ProductPrices.price price, "
+            "Piece.overridePrice override "
+            "FROM Commission "
             "INNER JOIN Piece ON Commission.id = Piece.commission "
             "INNER JOIN ProductPrices ON Piece.product = ProductPrices.product "
             "AND ProductPrices.date < Commission.createDate "
             "GROUP BY Piece.id HAVING date = max(date)) a "
-            "ON Commission.id = a.id LEFT JOIN "
+            "ON Piece.id = a.id "
+            "LEFT JOIN "
+            "(SELECT Piece.id id, ProductPrices.price "
+            "FROM Piece "
+            "LEFT JOIN ProductPrices ON Piece.product = ProductPrices.product "
+            "GROUP BY Piece.id HAVING date = min(date)) b "
+            "ON Piece.id = b.id "
+            "LEFT JOIN "
             "(SELECT Commission.id id, SUM(Payment.fee) fee FROM Payment "
             "INNER JOIN Commission ON Payment.commission = Commission.id "
             "INNER JOIN Commissioner ON "
             "Commission.commissioner = Commissioner.id "
-            "GROUP BY Commissioner.id) b "
-            "ON Commission.id = b.id "
-            "WHERE Commission.id > 0 "
             "GROUP BY Commission.id) c "
-            "WHERE c.id = (?)");
+            "ON Commission.id = c.id "
+            "WHERE Commission.id = (?)");
         commissionModel->setQuery(commissionQuery);
         commissionListModel = new QSqlQueryModel(this);
         QSqlQuery commissionListQuery("SELECT Commission.id, Commissioner.name "
@@ -962,6 +973,7 @@ namespace Commissionator {
         commissionerModel->setQuery(commissionerModel->query());
         commissionerNamesModel->query().exec();
         commissionerNamesModel->setQuery(commissionerNamesModel->query());
+        emit commissionerChanged();
     }
 
     void ComModel::refreshCommissions() {
@@ -973,6 +985,7 @@ namespace Commissionator {
         commissionModel->setQuery(commissionModel->query());
         commissionListModel->query().exec();
         commissionListModel->setQuery(commissionListModel->query());
+        emit commissionChanged();
     }
 
     void ComModel::refreshContacts() {

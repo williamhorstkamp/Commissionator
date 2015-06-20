@@ -13,6 +13,7 @@
 #include "NewCommissionerWindow.h"
 #include "NewPaymentWindow.h"
 #include "NewPieceWindow.h"
+#include "NewProductWindow.h"
 #include "CommissionerPanel.h"
 #include "CommissionPanel.h"
 #include "ComModel.h"
@@ -67,7 +68,6 @@ namespace Commissionator{
         manageMenu->addAction(manageCommissionerAct);
         manageMenu->addAction(manageCommissionAct);
         manageMenu->addAction(managePieceAct);
-        manageMenu->addAction(managePaymentAct);
 
         menuBar()->addSeparator();
 
@@ -140,10 +140,6 @@ namespace Commissionator{
         managePieceAct->setStatusTip(tr("Manage existing pieces"));
         managePieceAct->setEnabled(false);
 
-        managePaymentAct = new QAction(QIcon(":/Payment.png"), tr("&Payment"), this);
-        managePaymentAct->setStatusTip(tr("Manage existing payments"));
-        managePaymentAct->setEnabled(false);
-
         helpAct = new QAction(QIcon(":/Help.png"), tr("&Help"), this);
         helpAct->setStatusTip(tr("Get help about Commissionator"));
         helpAct->setEnabled(false); //not yet implemented
@@ -163,11 +159,11 @@ namespace Commissionator{
         mainToolBar->addAction(saveAct);
         mainToolBar->setMovable(false);
         commissionerToolBar = addToolBar(tr("Commissioner"));
-        commissionerToolBar->addAction(newCommissionAct);
+        commissionerToolBar->addAction(newCommissionerAct);
         commissionerToolBar->setMovable(false);
         contextToolBar = commissionerToolBar;
         commissionToolBar = addToolBar(tr("Commission"));
-        commissionToolBar->addAction(newCommissionerAct);
+        commissionToolBar->addAction(newCommissionAct);
         commissionToolBar->setMovable(false);
         commissionToolBar->setVisible(false);
         setContextMenuPolicy(Qt::NoContextMenu);
@@ -278,6 +274,9 @@ namespace Commissionator{
         piecePopup = new NewPieceWindow(model->getProductNames(), this);
         connect(piecePopup, &NewPieceWindow::newPiece,
             this, &MainWindow::insertPiece);
+        productPopup = new NewProductWindow(this);
+        connect(productPopup, &NewProductWindow::newProduct,
+            model, &ComModel::insertProduct);
     }
 
     void MainWindow::insertCommission(const int commissionerId,
@@ -289,7 +288,6 @@ namespace Commissionator{
             model->insertPiece(id, std::get<0>(pieces[i]),
             std::get<1>(pieces[i]), std::get<2>(pieces[i]),
             std::get<3>(pieces[i]));
-        commissionerRightPanel->updatePanel();
     }
 
     void MainWindow::insertPiece(const QString pieceName, const QString pieceNotes,
@@ -297,7 +295,6 @@ namespace Commissionator{
         const double price) {
         model->insertPiece(model->getCommission()->record(0).value(0).toInt(),
             productId, pieceName, pieceNotes, price);
-        commissionRightPanel->updatePanel();
     }
 
     void MainWindow::newCommission() {
@@ -320,6 +317,10 @@ namespace Commissionator{
 
     void MainWindow::newPiece() {
         piecePopup->exec();
+    }
+
+    void MainWindow::newProduct() {
+        productPopup->exec();
     }
 
     void MainWindow::newRecord() {
@@ -370,23 +371,23 @@ namespace Commissionator{
     }
 
     void MainWindow::searchCommissioner(const QList<QVariant> query) {
-        if (query.length() == 4)    //id, name, commissioner since, amounted owed
+        if (query.length() == 5)    //id, name, commissioner since, amounted owed, notes
             model->searchCommissioners(query[1].toString(), query[2].toString(),
-            query[3].toString());
+            query[3].toString(), query[4].toString());
     }
 
     void MainWindow::manageCommissioners() {
         leftPanel->setCurrentWidget(commissionerLeftPanel);
         rightPanel->setCurrentWidget(commissionerRightPanel);
         swapContextToolBar(commissionerToolBar);
-        //commissionerRightPanel->updatePanel();
+        commissionerRightPanel->updatePanel();
     }
 
     void MainWindow::manageCommissions() {
         leftPanel->setCurrentWidget(commissionLeftPanel);
         rightPanel->setCurrentWidget(commissionRightPanel);
         swapContextToolBar(commissionToolBar);
-        //commissionRightPanel->updatePanel();
+        commissionRightPanel->updatePanel();
     }
 
     void MainWindow::swapContextToolBar(QToolBar *newBar) {
@@ -410,6 +411,8 @@ namespace Commissionator{
                 this, &MainWindow::newCommission);
             connect(newPaymentAct, &QAction::triggered,
                 this, &MainWindow::newPayment);
+            connect(newProductAct, &QAction::triggered,
+                this, &MainWindow::newProduct);
             connect(manageCommissionerAct, &QAction::triggered,
                 this, &MainWindow::manageCommissioners);
             connect(manageCommissionAct, &QAction::triggered,
@@ -428,6 +431,7 @@ namespace Commissionator{
             delete commissionerPopup;
             delete paymentPopup;
             delete piecePopup;
+            delete productPopup;
 
             saveAct->disconnect();
             closeAct->disconnect();
@@ -441,7 +445,6 @@ namespace Commissionator{
             manageCommissionerAct->disconnect();
             manageCommissionAct->disconnect();
             managePieceAct->disconnect();
-            managePaymentAct->disconnect();
 
             model->disconnect();
             connect(model, &ComModel::recordClosed,
@@ -455,13 +458,12 @@ namespace Commissionator{
         //printRecordAct->setEnabled(isEnabled);
         newCommissionerAct->setEnabled(isEnabled);
         newCommissionAct->setEnabled(isEnabled);
-        //newProductAct->setEnabled(isEnabled);
+        newProductAct->setEnabled(isEnabled);
         //newSaleAct->setEnabled(isEnabled);
         newPaymentAct->setEnabled(isEnabled);
         //manageStorefrontAct->setEnabled(isEnabled);
         manageCommissionerAct->setEnabled(isEnabled);
         manageCommissionAct->setEnabled(isEnabled);
         //managePieceAct->setEnabled(isEnabled);
-        //managePaymentAct->setEnabled(isEnabled);
     }
 }

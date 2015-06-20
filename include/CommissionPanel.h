@@ -1,6 +1,7 @@
 #ifndef COMMISSIONPANEL_H
 #define COMMISSIONPANEL_H
 
+#include "RightPanel.h"
 #include "FixedRowTableDelegate.h"
 
 class QSqlQueryModel;
@@ -12,7 +13,7 @@ class QPushButton;
 class QTableView;
 
 namespace Commissionator {
-    class CommissionPanel : public QWidget {
+    class CommissionPanel : public RightPanel {
 
         Q_OBJECT
 
@@ -33,12 +34,6 @@ namespace Commissionator {
         CommissionPanel(QSqlQueryModel *commissionModel,
             QSqlQueryModel *piecesModel, QSqlQueryModel *paymentsModel, 
             QSqlQueryModel *commissionerNamesModel, QWidget *parent = nullptr);
-
-        /**
-         *  Destructor removes resources from the free store, cleaning up
-         *  the panel
-         */
-        ~CommissionPanel();
 
     signals:
         /**
@@ -119,11 +114,6 @@ namespace Commissionator {
         void createButtons();
 
         /**
-         *  Helper function creates QFonts
-         */
-        void createFonts();
-
-        /**
          *  Helper function creates QLabels and QTextEdit
          */
         void createLabels();
@@ -146,8 +136,6 @@ namespace Commissionator {
         void createTables(QSqlQueryModel *piecesModel,
             QSqlQueryModel *paymentsModel);
 
-        QVBoxLayout *layout;
-        QGridLayout *titleLayout;
         QSqlQueryModel *commissionModel;
         QSqlQueryModel *commissionerNamesModel;
         QPushButton *unlockButton;
@@ -168,8 +156,6 @@ namespace Commissionator {
         QLabel *notesLabel;
         QLabel *commissionNotes;
         QLineEdit *commissionNotesEdit;
-        QFont *titleFont;
-        QFont *standardFont;
     };
 }
 
