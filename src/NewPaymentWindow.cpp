@@ -30,6 +30,14 @@ namespace Commissionator {
         typeLabel->setFont(*font);
         typeLabel->setText("Payment Type:");
 
+        amountOwedLabel = new QLabel(this);
+        amountOwedLabel->setFont(*font);
+        amountOwedLabel->setText("Amount Owed:");
+
+        amountOwed = new QLabel(this);
+        amountOwed->setFont(*font);
+        amountOwed->setText("No Commission Selected");
+
         amountLabel = new QLabel(this);
         amountLabel->setFont(*font);
         amountLabel->setText("Payment Amount:");
@@ -45,6 +53,9 @@ namespace Commissionator {
         connect(comBox, static_cast<void(QComboBox::*)(int)>
             (&QComboBox::currentIndexChanged),
             this, &NewPaymentWindow::setSubmitEnabled);
+        connect(comBox, static_cast<void(QComboBox::*)(int)>
+            (&QComboBox::currentIndexChanged),
+            this, &NewPaymentWindow::updateAmount);
 
         typeBox = new QComboBox(this);
         typeBox->setModel(paymentModel);
@@ -76,12 +87,14 @@ namespace Commissionator {
 
         payLayout->addWidget(comLabel, 0, 0);
         payLayout->addWidget(typeLabel, 1, 0);
-        payLayout->addWidget(amountLabel, 2, 0);
-        payLayout->addWidget(notesLabel, 3, 0);
+        payLayout->addWidget(amountOwedLabel, 2, 0);
+        payLayout->addWidget(amountLabel, 3, 0);
+        payLayout->addWidget(notesLabel, 4, 0);
         payLayout->addWidget(comBox, 0, 1);
         payLayout->addWidget(typeBox, 1, 1);
-        payLayout->addWidget(amountEdit, 2, 1);
-        payLayout->addWidget(notesEdit, 3, 1);
+        payLayout->addWidget(amountOwed, 2, 1);
+        payLayout->addWidget(amountEdit, 3, 1);
+        payLayout->addWidget(notesEdit, 4, 1);
     }
 
     NewPaymentWindow::~NewPaymentWindow() {
@@ -92,6 +105,8 @@ namespace Commissionator {
         comBox->setEnabled(true);
         comBox->setCurrentIndex(-1);
         typeBox->setCurrentIndex(-1);
+        amountOwed->setText("No Commission Selected");
+        amountOwed->setStyleSheet("QLabel { color : black; }");
         amountEdit->setValue(0);
         notesEdit->setText("");
         submitButton->setEnabled(false);
@@ -122,5 +137,18 @@ namespace Commissionator {
             submitButton->setEnabled(true);
         else
             submitButton->setEnabled(false);
+    }
+
+    void NewPaymentWindow::updateAmount() {
+        QLocale dollarConverter = QLocale();
+        double dollars = comBox->model()->index(
+            comBox->currentIndex(), 2).data().toDouble();
+        if (dollars > 0) {
+            amountOwed->setStyleSheet("QLabel { color : red; }");
+            amountOwed->setText(dollarConverter.toCurrencyString(dollars));
+        } else {
+            amountOwed->setStyleSheet("QLabel { color : green; }");
+            amountOwed->setText("Paid Off");
+        }      
     }
 }

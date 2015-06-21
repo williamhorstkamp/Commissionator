@@ -72,6 +72,13 @@ namespace Commissionator {
          */
         virtual void setSubmitEnabled();
 
+    private slots:
+        /**
+         *  Private slot updates the amountOwedLabel whenever a new item is
+         *  selected from the commission drop-down box
+         */
+        void updateAmount();
+
     private:
         /**
         *  Function resets the window to default settings.
@@ -83,6 +90,8 @@ namespace Commissionator {
         QLabel *newPayLabel;
         QLabel *comLabel;
         QLabel *typeLabel;
+        QLabel *amountOwedLabel;
+        QLabel *amountOwed;
         QLabel *amountLabel;
         QLabel *notesLabel;
         QComboBox *comBox;

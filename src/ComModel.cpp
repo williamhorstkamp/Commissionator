@@ -373,10 +373,15 @@ namespace Commissionator {
         insertProductPriceQuery.exec();
         refreshProducts();
         changesMade = true;
+    }
 
+    void ComModel::insertRefund(const int commissionId, const double refundAmount,
+        const QString refundNotes) {
+        insertPayment(commissionId, 0, -refundAmount, refundNotes);
     }
 
     void ComModel::build() {
+        QSqlDatabase::database().transaction();
         sql.exec("PRAGMA foreign_keys = ON;");
         sql.exec("PRAGMA synchronous = OFF;");
         sql.exec("CREATE TABLE IF NOT EXISTS ContactType("
@@ -411,7 +416,7 @@ namespace Commissionator {
             "id	INTEGER PRIMARY KEY AUTOINCREMENT, "
             "name	TEXT NOT NULL, "
             "price	REAL NOT NULL, "
-            "isInt	BOOL NOT NULL, "
+            "isInt	INTEGER(1) NOT NULL, "
             "product	INTEGER NOT NULL, "
             "FOREIGN KEY(product) REFERENCES Product(id)"
             ");");
@@ -452,7 +457,8 @@ namespace Commissionator {
             ");");
         sql.exec("CREATE TABLE IF NOT EXISTS PaymentType("
             "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-            "name	TEXT NOT NULL"
+            "name	TEXT NOT NULL, "
+            "deleted INTEGER(1) NOT NULL"
             ");");
         sql.exec("CREATE TABLE IF NOT EXISTS Payment("
             "id	INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -469,6 +475,8 @@ namespace Commissionator {
         sql.exec("INSERT INTO Commission(id, createDate, dueDate, "
             "commissioner, notes) "
             "VALUES(0, 0, 0, 0, '');");
+        sql.exec("INSERT INTO PaymentType(id, name, deleted) "
+            "VALUES(0, 'Refund', 0);");
         sql.exec("CREATE TRIGGER IF NOT EXISTS deleteCommissionerContacts "
             "AFTER DELETE ON Commissioner "
             "FOR EACH ROW "
@@ -544,6 +552,7 @@ namespace Commissionator {
             "ON Commission.id = b.id "
             "WHERE Commission.id = NEW.commission) > 0; "
             "END");
+        QSqlDatabase::database().commit();
     }
 
     void ComModel::cleanupQueries() {
@@ -760,16 +769,38 @@ namespace Commissionator {
             "WHERE Commission.id = (?)");
         commissionModel->setQuery(commissionQuery);
         commissionListModel = new QSqlQueryModel(this);
-        QSqlQuery commissionListQuery("SELECT Commission.id, Commissioner.name "
-            "|| ' (' || strftime('%m/%d/%Y', Commission.createDate/1000, 'unixepoch', "
-            "'localtime') || ' - ' || "
-            "strftime('%m/%d/%Y', Commission.dueDate/1000, 'unixepoch', "
-            "'localtime') || ') (' || COUNT(Piece.id) ||' Pieces)' "
-            "FROM Commission "
-            "INNER JOIN Commissioner "
-            "ON Commission.commissioner = Commissioner.id "
+        QSqlQuery commissionListQuery("SELECT Commissioner.id,"
+            "Commissioner.name || ' (' || strftime('%m/%d/%Y', "
+            "Commission.createDate/1000, 'unixepoch','localtime') || ' - ' || "
+            "strftime('%m/%d/%Y', Commission.dueDate / 1000, 'unixepoch', "
+            "'localtime') || ') (' || COUNT(Piece.id) || ' Pieces)', "
+            "COALESCE(SUM(COALESCE(a.override, a.price, b.price)) - c.fee, "
+            "SUM(COALESCE(a.override, a.price, b.price))), c.fee "
+            "FROM Commissioner "
+            "LEFT JOIN Commission ON Commissioner.id = Commission.commissioner "
             "LEFT JOIN Piece ON Commission.id = Piece.commission "
-            "WHERE Commission.id IS NOT 0 "
+            "LEFT JOIN "
+            "(SELECT Piece.id id, ProductPrices.price price, "
+            "Piece.overridePrice override FROM Commission "
+            "INNER JOIN Piece ON Commission.id = Piece.commission "
+            "INNER JOIN ProductPrices ON Piece.product = ProductPrices.product "
+            "AND ProductPrices.date < Commission.createDate "
+            "GROUP BY Piece.id HAVING date = max(date)) a "
+            "ON Piece.id = a.id "
+            "LEFT JOIN "
+            "(SELECT Piece.id id, ProductPrices.price "
+            "FROM Piece "
+            "LEFT JOIN ProductPrices ON Piece.product = ProductPrices.product "
+            "GROUP BY Piece.id HAVING date = min(date)) b "
+            "ON Piece.id = b.id "
+            "LEFT JOIN "
+            "(SELECT Commission.id id, SUM(Payment.fee) fee FROM Payment "
+            "INNER JOIN Commission ON Payment.commission = Commission.id "
+            "INNER JOIN Commissioner ON "
+            "Commission.commissioner = Commissioner.id "
+            "GROUP BY Commission.id) c "
+            "ON Commission.id = c.id "
+            "WHERE Commission.id > 0 "
             "GROUP BY Commission.id", sql);
         commissionListQuery.exec();
         commissionListModel->setQuery(commissionListQuery);
@@ -898,7 +929,7 @@ namespace Commissionator {
             "Contact(commissioner, type, entry) VALUES(?, ?, ?);");
         insertPaymentTypeQuery = QSqlQuery(sql);
         insertPaymentTypeQuery.prepare("INSERT INTO "
-            "PaymentType(name) VALUES (?);");
+            "PaymentType(name, deleted) VALUES (?, 0);");
         insertPaymentQuery = QSqlQuery(sql);
         insertPaymentQuery.prepare("INSERT INTO "
             "Payment(commission, method, fee, note, date) "
@@ -915,7 +946,8 @@ namespace Commissionator {
         insertProductQuery.prepare("INSERT INTO "
             "Product(name) VALUES(?);");
         paymentTypesModel = new QSqlQueryModel(this);
-        paymentTypesModel->setQuery(QSqlQuery("SELECT id, name FROM PaymentType", sql));
+        paymentTypesModel->setQuery(QSqlQuery("SELECT id, name FROM PaymentType "
+            "WHERE deleted = 0 AND id > 0", sql));
         paymentTypesModel->query().exec();
         pieceModel = new QSqlQueryModel(this);
         QSqlQuery pieceQuery(sql);
@@ -977,6 +1009,7 @@ namespace Commissionator {
     }
 
     void ComModel::refreshCommissions() {
+        QSqlDatabase::database().transaction();
         commissionerCommissionsModel->query().exec();
         commissionerCommissionsModel->setQuery(commissionerCommissionsModel->query());
         commissionsModel->query().exec();
@@ -985,6 +1018,7 @@ namespace Commissionator {
         commissionModel->setQuery(commissionModel->query());
         commissionListModel->query().exec();
         commissionListModel->setQuery(commissionListModel->query());
+        QSqlDatabase::database().commit();
         emit commissionChanged();
     }
 
@@ -1010,19 +1044,22 @@ namespace Commissionator {
     }
 
     void ComModel::refreshPieces() {
+        QSqlDatabase::database().transaction();
         commissionPiecesModel->query().exec();
         commissionPiecesModel->setQuery(commissionPiecesModel->query());
         pieceModel->query().exec();
         pieceModel->setQuery(pieceModel->query());
         piecesModel->query().exec();
         piecesModel->setQuery(piecesModel->query());
+        QSqlDatabase::database().commit();
     }
 
     void ComModel::refreshProducts() {
+        QSqlDatabase::database().transaction();
         productNamesModel->query().exec();
         productNamesModel->setQuery(productNamesModel->query());
         productsModel->query().exec();
         productsModel->setQuery(productsModel->query());
-
+        QSqlDatabase::database().commit();
     }
 }

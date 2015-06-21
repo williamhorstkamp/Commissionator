@@ -44,7 +44,8 @@ namespace Commissionator {
          *
          *  @return - pointer to QSqlQueryModel containing commissions
          *  Display order:
-         *  Index, Commissioner (Create Date - Due Date) (# of pieces)
+         *  Index, Commissioner (Create Date - Due Date) (# of pieces),
+         *  Total Price, Sum of Payment Amounts
          */
         QSqlQueryModel *getCommissionList();
 
@@ -722,6 +723,15 @@ namespace Commissionator {
          */
         void insertPaymentType(const QString typeName);
 
+        /**
+         *  Inserts refund into the database.
+         *
+         *  @param commissionId - commission the payment is for
+         *  @param refundAmount - the amount the payment is made for
+         *  @param refundNotes - notes about the payment
+         */
+        void insertRefund(const int commissionId, const double refundAmount,
+            const QString refundNotes);
     private:
         /**
          *  Builds the database schema into the currently managed database.
