@@ -9,6 +9,7 @@
 #include <QMessageBox>
 #include <QFileInfo>
 #include "LeftPanel.h"
+#include "StoreFrontPanel.h"
 #include "NewCommissionWindow.h"
 #include "NewCommissionerWindow.h"
 #include "NewPaymentWindow.h"
@@ -206,8 +207,11 @@ namespace Commissionator{
             model->getCommissionPayments(),
             model->getCommissionerNames(),
             this);
+        storefrontLeftPanel = new StoreFrontPanel(model->getProducts());
+
         leftPanel->addWidget(commissionerLeftPanel);
         leftPanel->addWidget(commissionLeftPanel);
+        leftPanel->addWidget(storefrontLeftPanel);
         rightPanel->addWidget(commissionerRightPanel);
         rightPanel->addWidget(commissionRightPanel);
 
@@ -252,6 +256,11 @@ namespace Commissionator{
             this, &MainWindow::newRefund);
         connect(commissionRightPanel, &CommissionPanel::newPiece,
             this, &MainWindow::newPiece);
+
+        //connect(storefrontLeftPanel, &StoreFrontPanel::productTableClicked,
+        //    model, &ComModel::setProduct);
+        connect(storefrontLeftPanel, &StoreFrontPanel::productSearch,
+            this, &MainWindow::searchProducts);
 
         layout->addWidget(leftPanel);
         layout->addWidget(line);
@@ -387,6 +396,12 @@ namespace Commissionator{
             query[3].toString(), query[4].toString());
     }
 
+    void MainWindow::searchProducts(const QList<QVariant> query) {
+        if (query.length() == 4)    //id, name, base price, number produced
+            model->searchProducts(query[1].toString(), query[2].toString(),
+            query[3].toString());
+    }
+
     void MainWindow::manageCommissioners() {
         leftPanel->setCurrentWidget(commissionerLeftPanel);
         rightPanel->setCurrentWidget(commissionerRightPanel);
@@ -399,6 +414,10 @@ namespace Commissionator{
         rightPanel->setCurrentWidget(commissionRightPanel);
         swapContextToolBar(commissionToolBar);
         commissionRightPanel->updatePanel();
+    }
+
+    void MainWindow::manageStoreFront() {
+        leftPanel->setCurrentWidget(storefrontLeftPanel);
     }
 
     void MainWindow::swapContextToolBar(QToolBar *newBar) {
@@ -428,6 +447,8 @@ namespace Commissionator{
                 this, &MainWindow::manageCommissioners);
             connect(manageCommissionAct, &QAction::triggered,
                 this, &MainWindow::manageCommissions);
+            connect(manageStorefrontAct, &QAction::triggered,
+                this, &MainWindow::manageStoreFront);
 
             manageCommissioners();
             currentFile = "";
@@ -472,7 +493,7 @@ namespace Commissionator{
         newProductAct->setEnabled(isEnabled);
         //newSaleAct->setEnabled(isEnabled);
         newPaymentAct->setEnabled(isEnabled);
-        //manageStorefrontAct->setEnabled(isEnabled);
+        manageStorefrontAct->setEnabled(isEnabled);
         manageCommissionerAct->setEnabled(isEnabled);
         manageCommissionAct->setEnabled(isEnabled);
         //managePieceAct->setEnabled(isEnabled);

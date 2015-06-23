@@ -8,6 +8,7 @@
 class QHBoxLayout;
 class QStackedWidget;
 class LeftPanel;
+class StoreFrontPanel;
 class NewCommissionWindow;
 class NewCommissionerWindow;
 class NewPaymentWindow;
@@ -75,6 +76,11 @@ namespace Commissionator {
          *  Sets panels and toolbar to the Manage Commission panels
          */
         void manageCommissions();
+
+        /**
+         *  Sets panels and toolbar to the Manage StoreFront panels
+         */
+        void manageStoreFront();
 
         /**
          *  Function opens the dialog window to create a new commission.
@@ -186,6 +192,14 @@ namespace Commissionator {
          */
         void searchCommissioner(const QList<QVariant> query);
 
+        /**
+         *  Functions searches for products with given arguements
+         *
+         *  Argument order:
+         *  Product Name, Base Price, Number Produced
+         */
+        void searchProducts(const QList<QVariant> query);
+
     private:
         /**
          *  Initializes menus
@@ -247,6 +261,7 @@ namespace Commissionator {
 
         LeftPanel *commissionerLeftPanel;
         LeftPanel *commissionLeftPanel;
+        StoreFrontPanel *storefrontLeftPanel;
         CommissionerPanel *commissionerRightPanel;
         CommissionPanel *commissionRightPanel;
         QFrame *line;

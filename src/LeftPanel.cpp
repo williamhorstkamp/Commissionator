@@ -3,11 +3,14 @@
 #include <QVBoxLayout>
 #include <QSqlQueryModel>
 #include <QLabel>
+#include <QVariant>
+#include "FixedRowTable.h"
 #include "LeftPanel.h"
 
 
 namespace Commissionator {
-    LeftPanel::LeftPanel(QString title, QSqlQueryModel *model, QList<int> hiddenColumns, QWidget *parent) : QWidget(parent) {
+    LeftPanel::LeftPanel(QString title, QSqlQueryModel *model, 
+        QList<int> hiddenColumns, QWidget *parent) : QWidget(parent) {
         layout = new QVBoxLayout(this);
         createTitle(title);
         createTable(model, hiddenColumns);
@@ -34,7 +37,6 @@ namespace Commissionator {
         view->setTableButtonIcon(":/Delete.png");
         view->setTableButtonSize(24);
         view->setBoxText("Search");
-
         view->setSelectionMode(QAbstractItemView::NoSelection);
 
         foreach(int i, hiddenColumns)

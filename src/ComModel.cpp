@@ -405,6 +405,13 @@ namespace Commissionator {
             "id	INTEGER PRIMARY KEY AUTOINCREMENT, "
             "name	TEXT NOT NULL"
             ");");
+        sql.exec("CREATE TABLE IF NOT EXISTS ProductEvent("
+            "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+            "product INTEGER NOT NULL, "
+            "position INTEGER NOT NULL, "
+            "name TEXT NOT NULL, "
+            "FOREIGN KEY(product) REFERENCES Product(id), "
+            "CONSTRAINT propos UNIQUE(product, position))");
         sql.exec("CREATE TABLE IF NOT EXISTS ProductPrices("
             "id INTEGER PRIMARY KEY AUTOINCREMENT, "
             "product INTEGER NOT NULL, "
@@ -439,6 +446,13 @@ namespace Commissionator {
             "FOREIGN KEY(commission) REFERENCES Commission(id), "
             "FOREIGN KEY(product) REFERENCES Product(id)"
             ");");
+        sql.exec("CREATE TABLE IF NOT EXISTS PieceEvent("
+            "piece INTEGER NOT NULL, "
+            "event INTEGER NOT NULL, "
+            "finishDate INTEGER NOT NULL, "
+            "FOREIGN KEY(piece) REFERENCES piece(id), "
+            "FOREIGN KEY(event) REFERENCES ProductEvent(id), "
+            "CONSTRAINT pieve UNIQUE(piece, event))");
         sql.exec("CREATE TABLE IF NOT EXISTS PieceOption("
             "field	TEXT NOT NULL, "
             "piece	INTEGER NOT NULL, "
@@ -982,7 +996,11 @@ namespace Commissionator {
             "FROM Product;", sql);
         productNamesQuery.exec();
         productNamesModel->setQuery(productNamesQuery);
-        productsModel = new QSqlQueryModel(this);
+        /**
+         *  initialized as a QSqlTableModel so that any proxy models created
+         *  using this model can contain editable fields.
+         */
+        productsModel = new QSqlTableModel(this);
         QSqlQuery productsQuery(sql);
         productsQuery.prepare("SELECT Product.id, Product.name, "
             "ProductPrices.price, COUNT(DISTINCT Piece.id) "

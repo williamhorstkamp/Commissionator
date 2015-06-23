@@ -1,18 +1,20 @@
 #ifndef LEFTPANEL_H
 #define LEFTPANEL_H
 
-#include "FixedRowTable.h"
+#include <QWidget>
+#include <QVariant>
 
 class QLabel;
 class QVBoxLayout;
 class QSqlQueryModel;
+class FixedRowTable;
 
 namespace Commissionator {
     /**
      *  Class represents the left panel for many of the programs viewpoints,
      *  including commissioner and commission
      */
-    class LeftPanel :public QWidget {
+    class LeftPanel : public QWidget {
         Q_OBJECT
 
     public:
@@ -24,33 +26,11 @@ namespace Commissionator {
          *      is displaying
          *  @param model - pointer to the model to set the table view to
          *  @param hiddenColumns - QList containing column ids to hide from the
-         *      view. Not Implemented during testing, but functionality is
-         *      written and tested.
+         *      view. 
+         *  @param parent - pointer to parent widget
          */
-        LeftPanel(QString title, QSqlQueryModel *model, QList<int> hiddenColumns, QWidget *parent = nullptr);
-
-    private:
-        /**
-        *  Initializes the panels title label based on QString input
-        *
-        *  @param title - QString containing text to set the panel label to
-        */
-        void createTitle(QString title);
-
-        /**
-        *  Initializes the panels title based on the given model.
-        *
-        *  @param model - pointer to the model to set the table view to
-        *
-        *  @param hiddenColumns - QList containing column ids to hide from the
-        *      view. Not Implemented during testing, but functionality is
-        *      written and tested.
-        */
-        void createTable(QSqlQueryModel *model, QList<int> hiddenColumns);
-
-        QVBoxLayout *layout;
-        FixedRowTable *view;
-        QLabel *titleLabel;
+        LeftPanel(QString title, QSqlQueryModel *model, 
+            QList<int> hiddenColumns, QWidget *parent = nullptr);
 
     signals:
         /**
@@ -78,6 +58,29 @@ namespace Commissionator {
          *   @param index - index whose button was clicked
          */
         void iconClicked(const QModelIndex &index);
+
+    private:
+        /**
+        *  Initializes the panels title label based on QString input
+        *
+        *  @param title - QString containing text to set the panel label to
+        */
+        void createTitle(QString title);
+
+        /**
+        *  Initializes the panels title based on the given model.
+        *
+        *  @param model - pointer to the model to set the table view to
+        *
+        *  @param hiddenColumns - QList containing column ids to hide from the
+        *      view. Not Implemented during testing, but functionality is
+        *      written and tested.
+        */
+        void createTable(QSqlQueryModel *model, QList<int> hiddenColumns);
+
+        QVBoxLayout *layout;
+        FixedRowTable *view;
+        QLabel *titleLabel;
     };
 }
 #endif
