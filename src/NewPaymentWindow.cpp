@@ -34,14 +34,6 @@ namespace Commissionator {
         amountOwedLabel->setFont(*font);
         amountOwedLabel->setText("Amount Owed:");
 
-        amountOwed = new QLabel(this);
-        amountOwed->setFont(*font);
-        amountOwed->setText("No Commission Selected");
-
-        amountLabel = new QLabel(this);
-        amountLabel->setFont(*font);
-        amountLabel->setText("Payment Amount:");
-
         notesLabel = new QLabel(this);
         notesLabel->setFont(*font);
         notesLabel->setText("Payment Notes:");
@@ -65,6 +57,10 @@ namespace Commissionator {
             (&QComboBox::currentIndexChanged),
             this, &NewPaymentWindow::setSubmitEnabled);
 
+        amountOwed = new QLabel(this);
+        amountOwed->setFont(*font);
+        amountOwed->setText("No Commission Selected");
+
         amountEdit = new QDoubleSpinBox(this);
         amountEdit->setDecimals(2);
         amountEdit->setMinimum(0);
@@ -72,6 +68,10 @@ namespace Commissionator {
         connect(amountEdit, static_cast<void(QDoubleSpinBox::*)(double)>
             (&QDoubleSpinBox::valueChanged),
             this, &NewPaymentWindow::setSubmitEnabled);
+
+        amountLabel = new QLabel(this);
+        amountLabel->setFont(*font);
+        amountLabel->setText("Payment Amount:");
 
         notesEdit = new QLineEdit(this);
 

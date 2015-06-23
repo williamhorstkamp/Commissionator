@@ -13,6 +13,7 @@ class NewCommissionerWindow;
 class NewPaymentWindow;
 class NewPieceWindow;
 class NewProductWindow;
+class NewRefundWindow;
 class CommissionerPanel;
 class CommissionPanel;
 class ComModel;
@@ -137,6 +138,16 @@ namespace Commissionator {
         void newRecord();
 
         /**
+         *  Function opens the dialog window to create a new refund.
+         *  Takes control away from the MainWindow for the duration of the
+         *  new product window's lifetime. Depending on whether a refund
+         *  is created or not, the models may be refreshed.
+         *
+         *  @param commission - commission id for the payment
+         */
+        void newRefund(const QVariant &commission);
+
+        /**
          *  Function opens the dialog window the open a record.
          *  Takes control away from the MainWindow for the duration of the
          *  open record window's lifetime.
@@ -245,6 +256,7 @@ namespace Commissionator {
         NewPaymentWindow *paymentPopup;
         NewPieceWindow *piecePopup;
         NewProductWindow *productPopup;
+        NewRefundWindow *refundPopup;
 
         QMenu *fileMenu;
         QMenu *newMenu;

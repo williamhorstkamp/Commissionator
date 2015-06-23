@@ -1,5 +1,5 @@
-#ifndef NEWPAYMENTWINDOW_H
-#define NEWPAYMENTWINDOW_H
+#ifndef NEWREFUNDWINDOW_H
+#define NEWREFUNDWINDOW_H
 
 #include "BaseNewWindow.h"
 
@@ -13,29 +13,27 @@ class QLineEdit;
 class QPushButton;
 
 namespace Commissionator {
-    class NewPaymentWindow : public BaseNewWindow {
+    class NewRefundWindow : public BaseNewWindow {
 
         Q_OBJECT
 
     public:
         /**
-         *  Initializes NewPaymentWindow with the combobox displaying data from
+         *  Initializes NewRefundWindow with the combobox displaying data from
          *  the given model
          *
          *  @param commissionModel - model containing commission data
          *  First column is Commission id, second is identifying information
          *      about the commission, third is amount owed, fourth is amount paid
-         *  @param paymentModel - model containing payment type data
-         *  First column is payment type id, second is payment type name
          *  @param parent - pointer to parent widget
          */
-        NewPaymentWindow(QSqlQueryModel *commissionModel,
-            QSqlQueryModel *paymentModel, QWidget *parent = nullptr);
+        NewRefundWindow(QSqlQueryModel *commissionModel,
+            QWidget *parent = nullptr);
 
         /**
          *  Destructor cleans up objects.
          */
-        ~NewPaymentWindow();
+        ~NewRefundWindow();
 
     signals:
         /**
@@ -43,24 +41,22 @@ namespace Commissionator {
          *      and notes for the payment
          *
          *  @param commissionId - commission the payment is for
-         *  @param paymentTypeId - type of payment that is being made
          *  @param paymentAmount - the amount the payment is made for
          *  @param paymentNotes - notes about the payment
          */
-        void newPayment(const int commissionId, const int paymentTypeId,
-            const double paymentAmount, const QString paymentNotes);
+        void newRefund(const int commissionId, const double refundAmount, 
+            const QString refundNotes);
 
-    public slots:
+        public slots:
 
         /**
          *  Sets the commission to the commission with the id given.
-         *  Also disables the commission combobox
          *
          *  @param commission - commission to set the combo box to
          */
         void setCommission(const QVariant &commission);
 
-    protected slots:
+        protected slots:
         /**
          *  Slot intercepts the QPushButton::clicked signal from the insert
          *  commission button and emits the newCommission signal.
@@ -73,9 +69,9 @@ namespace Commissionator {
          */
         virtual void setSubmitEnabled();
 
-    private slots:
+        private slots:
         /**
-         *  Private slot updates the amountOwedLabel whenever a new item is
+         *  Private slot updates the amountPaidLabel whenever a new item is
          *  selected from the commission drop-down box
          */
         void updateAmount();
@@ -87,19 +83,18 @@ namespace Commissionator {
         void clear();
 
         QVBoxLayout *mainLayout;
-        QGridLayout *payLayout;
-        QLabel *newPayLabel;
-        QLabel *comLabel;
-        QLabel *typeLabel;
-        QLabel *amountOwedLabel;
+        QGridLayout *refundLayout;
+        QLabel *newRefundLabel;
+        QLabel *amountPaidLabel;
         QLabel *amountLabel;
         QLabel *notesLabel;
-        QComboBox *comBox;
-        QComboBox *typeBox;
-        QLabel *amountOwed;
+        QLabel *amountPaid;
         QDoubleSpinBox *amountEdit;
         QLineEdit *notesEdit;
         QPushButton *submitButton;
+
+        int commissionId;
+        QSqlQueryModel *commissionModel;
     };
 }
 

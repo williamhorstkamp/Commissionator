@@ -63,8 +63,8 @@ namespace Commissionator {
         void editNotes(const int commission, const QString notes);
 
         /**
-         *  Signal emit when the newCommissionButton is clicked.
-         *  Is to be forwarded to MainWindow::newCommission.
+         *  Signal emit when the newPaymentButton is clicked.
+         *  Is to be forwarded to MainWindow::newPayment.
          *
          *  @param commission - the id of the commission to create
          *      a payment for
@@ -72,13 +72,23 @@ namespace Commissionator {
         void newPayment(const QVariant &commission);
 
         /**
-         *  Signal emit when the newCommissionButton is clicked.
-         *  Is to be forwarded to MainWindow::newCommission.
+         *  Signal emit when the newPieceButton is clicked.
+         *  Is to be forwarded to MainWindow::newPiece.
          *
          *  @param commission - the id of the commission to create
          *      a piece for
          */
         void newPiece(const QVariant &commission);
+
+
+        /**
+         *  Signal emit when the newRefundButton is clicked.
+         *  Is to be forwarded to MainWindow::newRefund.
+         *
+         *  @param commission - the id of the commission to create
+         *      a refund for
+         */
+        void newRefund(const QVariant &commission);
 
     public slots:
         /**
@@ -91,15 +101,21 @@ namespace Commissionator {
     private slots:
         /**
          *  Slot captures QPushButton::clicked from newCommissionButton and
-         *  emits the corresponding newCommission signal
+         *  emits the corresponding newPayment signal
          */
         void newPaymentSlot();
 
         /**
          *  Slot captures QPushButton::clicked from newCommissionButton and
-         *  emits the corresponding newCommission signal
+         *  emits the corresponding newPiece signal
          */
         void newPieceSlot();
+
+        /**
+         *  Slot captures QPushButton::clicked from newRefundButton and
+         *  emits the corresponding newRefund signal
+         */
+        void newRefundSlot();
 
         /**
          *  Slot toggles between the panel's edit and display modes.
@@ -153,6 +169,7 @@ namespace Commissionator {
         QLabel *paymentsLabel;
         QTableView *paymentsTable;
         QPushButton *newPaymentButton;
+        QPushButton *newRefundButton;
         QLabel *notesLabel;
         QLabel *commissionNotes;
         QLineEdit *commissionNotesEdit;

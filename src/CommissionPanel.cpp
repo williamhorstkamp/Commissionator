@@ -40,6 +40,11 @@ namespace Commissionator {
         newPaymentButton->hide();
         connect(newPaymentButton, &QPushButton::clicked,
             this, &CommissionPanel::newPaymentSlot);
+
+        newRefundButton = new QPushButton(tr("New Refund"), this);
+        newRefundButton->hide();
+        connect(newRefundButton, &QPushButton::clicked,
+            this, &CommissionPanel::newRefundSlot);
     }
 
     void CommissionPanel::createLabels() {
@@ -127,6 +132,7 @@ namespace Commissionator {
         layout->addWidget(paymentsLabel);
         layout->addWidget(paymentsTable);
         layout->addWidget(newPaymentButton);
+        layout->addWidget(newRefundButton);
         layout->addWidget(notesLabel);
         layout->addWidget(commissionNotes);
         layout->addWidget(commissionNotesEdit);
@@ -158,6 +164,10 @@ namespace Commissionator {
 
     void CommissionPanel::newPieceSlot() {
         emit newPiece(commissionModel->record(0).value(0));
+    }
+
+    void CommissionPanel::newRefundSlot() {
+        emit newRefund(commissionModel->record(0).value(0));
     }
 
     void CommissionPanel::updatePanel() {
@@ -232,6 +242,7 @@ namespace Commissionator {
             paymentsLabel->hide();
             paymentsTable->hide();
             newPaymentButton->hide();
+            newRefundButton->hide();
             notesLabel->hide();
             commissionNotes->hide();
             commissionNotesEdit->hide();
@@ -255,6 +266,7 @@ namespace Commissionator {
             paymentsLabel->show();
             paymentsTable->show();
             newPaymentButton->show();
+            newRefundButton->show();
             notesLabel->show();
             commissionNotes->show();
             commissionNotesEdit->hide();

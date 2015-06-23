@@ -14,6 +14,7 @@
 #include "NewPaymentWindow.h"
 #include "NewPieceWindow.h"
 #include "NewProductWindow.h"
+#include "NewRefundWindow.h"
 #include "CommissionerPanel.h"
 #include "CommissionPanel.h"
 #include "ComModel.h"
@@ -247,6 +248,8 @@ namespace Commissionator{
             model, &ComModel::editCommissionNotes);
         connect(commissionRightPanel, &CommissionPanel::newPayment,
             this, &MainWindow::newPayment);
+        connect(commissionRightPanel, &CommissionPanel::newRefund,
+            this, &MainWindow::newRefund);
         connect(commissionRightPanel, &CommissionPanel::newPiece,
             this, &MainWindow::newPiece);
 
@@ -277,6 +280,9 @@ namespace Commissionator{
         productPopup = new NewProductWindow(this);
         connect(productPopup, &NewProductWindow::newProduct,
             model, &ComModel::insertProduct);
+        refundPopup = new NewRefundWindow(model->getCommissionList(), this);
+        connect(refundPopup, &NewRefundWindow::newRefund,
+            model, &ComModel::insertRefund);
     }
 
     void MainWindow::insertCommission(const int commissionerId,
@@ -321,6 +327,11 @@ namespace Commissionator{
 
     void MainWindow::newProduct() {
         productPopup->exec();
+    }
+
+    void MainWindow::newRefund(const QVariant &commission) {
+        refundPopup->setCommission(commission);
+        refundPopup->exec();
     }
 
     void MainWindow::newRecord() {
