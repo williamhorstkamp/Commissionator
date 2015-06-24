@@ -17,7 +17,8 @@ namespace Commissionator {
         layout->addWidget(productTable);
         setLayout(layout);
         connect(productTable, &FixedRowTable::boxQuery, this, &StoreFrontPanel::productSearch);
-        connect(productTable, &QTableView::clicked, this, &StoreFrontPanel::productTableClicked);
+        connect(productTable, &FixedRowTable::clicked, this, &StoreFrontPanel::productTableClicked);
+        connect(productTable, &FixedRowTable::tableButtonClicked, this, &StoreFrontPanel::productDelete);
     }
 
     void StoreFrontPanel::createTitle() {
@@ -31,6 +32,9 @@ namespace Commissionator {
 
     void StoreFrontPanel::createTables(QSqlQueryModel *productModel) {
         productTable = new FixedRowTable(productModel, this);
+        productTable->setTableButtonActivated(true);
+        productTable->setTableButtonIcon(":/Delete.png");
+        productTable->setTableButtonSize(24);
         productTable->setBoxText("Search");
         productTable->setSelectionMode(QAbstractItemView::NoSelection);
 

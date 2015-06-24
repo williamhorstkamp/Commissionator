@@ -538,7 +538,7 @@ namespace Commissionator {
          *
          *  @param index - index of the product to delete
          */
-        //void deleteProduct(const QModelIndex &index);
+        void deleteProduct(const QModelIndex &index);
 
         /**
          *  Deletes the product option at the given index. Option is hidden, not
@@ -819,6 +819,7 @@ namespace Commissionator {
         QSqlQuery deleteCommissionQuery;
         QSqlQuery deleteContactQuery;
         QSqlQuery deletePieceQuery;
+        QSqlQuery deleteProductQuery;
         QSqlQuery editCommissionCommissionerQuery;
         QSqlQuery editCommissionNotesQuery;
         QSqlQuery editCommissionerNameQuery;

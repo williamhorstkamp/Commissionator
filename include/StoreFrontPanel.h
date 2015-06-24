@@ -29,6 +29,16 @@ namespace Commissionator {
 
     signals:
         /**
+         *  Signal that is thrown when when one of the SearchTableDelegate
+         *  icons in the product table was clicked.
+         *  Is a forwarded version of SearchTableDelegate::iconClicked
+         *
+         *   @param index - index whose button was clicked and that should
+         *      be deleted
+         */
+        void productDelete(const QModelIndex &index);
+
+        /**
          *  Signal that is sent whenever the product table has been clicked on.
          *  Used to updated the various right panels based on the user's input
          *  to the StoreFront panel.

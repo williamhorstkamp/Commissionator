@@ -178,8 +178,8 @@ namespace Commissionator {
         createDate->setText(
             "Created on " + commissionModel->record(0).value(3).toString());
 
-        if (commissionModel->record(0).value(4).toString() == "Unpaid")
-            paidDate->setText(commissionModel->record(0).value(4).toString());
+        if (commissionModel->record(0).value(4).toString() == NULL)
+            paidDate->setText("Unpaid");
         else
             paidDate->setText(
                 "Paid on " + commissionModel->record(0).value(4).toString());

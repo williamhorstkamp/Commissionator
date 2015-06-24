@@ -271,6 +271,12 @@ namespace Commissionator {
         changesMade = true;
     }
 
+    void ComModel::deleteProduct(const QModelIndex &index) {
+        deleteProductQuery.bindValue(0, getValue(index, 0));
+        deleteProductQuery.exec();
+        refreshProducts();
+    }
+
     int ComModel::insertCommission(const int commissionerId, 
         const QDateTime dueDate, const QString notes) {
         insertCommissionQuery.bindValue(0, commissionerId);
@@ -403,7 +409,8 @@ namespace Commissionator {
             ");");
         sql.exec("CREATE TABLE IF NOT EXISTS Product("
             "id	INTEGER PRIMARY KEY AUTOINCREMENT, "
-            "name	TEXT NOT NULL"
+            "name	TEXT NOT NULL, "
+            "available INTEGER(1) NOT NULL"
             ");");
         sql.exec("CREATE TABLE IF NOT EXISTS ProductEvent("
             "id INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -916,6 +923,9 @@ namespace Commissionator {
         deletePieceQuery = QSqlQuery(sql);
         deletePieceQuery.prepare("DELETE FROM Piece WHERE "
             "Piece.id = (?);");
+        deleteProductQuery = QSqlQuery(sql);
+        deleteProductQuery.prepare("UPDATE Product "
+            "SET available = 0 WHERE id = (?)");
         editCommissionCommissionerQuery = QSqlQuery(sql);
         editCommissionCommissionerQuery.prepare("UPDATE Commission "
             "SET commissioner = (?) WHERE id = (?)");
@@ -958,7 +968,7 @@ namespace Commissionator {
             "VALUES (?, ?, ?);");
         insertProductQuery = QSqlQuery(sql);
         insertProductQuery.prepare("INSERT INTO "
-            "Product(name) VALUES(?);");
+            "Product(name, available) VALUES(?, 1);");
         paymentTypesModel = new QSqlQueryModel(this);
         paymentTypesModel->setQuery(QSqlQuery("SELECT id, name FROM PaymentType "
             "WHERE deleted = 0 AND id > 0", sql));
@@ -993,7 +1003,7 @@ namespace Commissionator {
         searchPieces("", "", "", "");
         productNamesModel = new QSqlQueryModel(this);
         QSqlQuery productNamesQuery("SELECT Product.id, Product.name "
-            "FROM Product;", sql);
+            "FROM Product WHERE Product.available = 1;", sql);
         productNamesQuery.exec();
         productNamesModel->setQuery(productNamesQuery);
         /**
@@ -1002,13 +1012,15 @@ namespace Commissionator {
          */
         productsModel = new QSqlTableModel(this);
         QSqlQuery productsQuery(sql);
-        productsQuery.prepare("SELECT Product.id, Product.name, "
-            "ProductPrices.price, COUNT(DISTINCT Piece.id) "
+        productsQuery.prepare("SELECT Product.id, Product.name Name, "
+            "ProductPrices.price Price, COUNT(DISTINCT Piece.id) "
+            "AS 'Number of Pieces' "
             "FROM Product "
             "LEFT JOIN ProductPrices ON Product.id = ProductPrices.product "
             "LEFT JOIN Piece ON Product.id = Piece.product "
             "WHERE Product.name LIKE (?) "
             "AND ProductPrices.price LIKE (?) "
+            "AND Product.available = 1 "
             "GROUP BY Product.id "
             "HAVING ProductPrices.date = MAX(ProductPrices.date) "
             "AND COALESCE(COUNT(Piece.id), 0) LIKE (?);");

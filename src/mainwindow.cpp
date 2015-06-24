@@ -261,6 +261,8 @@ namespace Commissionator{
         //    model, &ComModel::setProduct);
         connect(storefrontLeftPanel, &StoreFrontPanel::productSearch,
             this, &MainWindow::searchProducts);
+        connect(storefrontLeftPanel, &StoreFrontPanel::productDelete,
+            model, &ComModel::deleteProduct);
 
         layout->addWidget(leftPanel);
         layout->addWidget(line);
