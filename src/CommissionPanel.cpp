@@ -7,6 +7,8 @@
 #include <QDateTime>
 #include <QTableView>
 #include <QHeaderView>
+#include <QVBoxLayout>
+#include "FixedRowTableDelegate.h"
 #include "CommissionPanel.h"
 
 namespace Commissionator {

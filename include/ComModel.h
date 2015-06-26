@@ -2,9 +2,10 @@
 #define COMMODEL_H
 
 #include <QObject>
-#include <QSqlQuery>
 #include <QDateTime>
 
+class QSqlDatabase;
+class QSqlQuery;
 class QSqlQueryModel;
 
 namespace Commissionator {
@@ -289,7 +290,7 @@ namespace Commissionator {
          *  Display order:
          *  Commissioner, Piece Name, Start Date, Finish Date
          */
-        //QSqlQueryModel *getProductPiecesSold();
+        QSqlQueryModel *getProductPiecesSold();
 
         /**
          *  Function returns a pointer to a model containing data for the
@@ -494,7 +495,7 @@ namespace Commissionator {
          *
          *  @param index - index containing the product to set the models to
          */
-        //void setProduct(const QModelIndex &index);
+        void setProduct(const QModelIndex &index);
 
         /**
          *  Slot sets a number of models relating to the sale panel to
@@ -803,7 +804,7 @@ namespace Commissionator {
          */
         void refreshProducts();
 
-        QSqlDatabase sql;
+        QSqlDatabase *sql;
 		QSqlQueryModel *commissionerCommissionsModel;
 		QSqlQueryModel *commissionerContactsModel;
         QSqlQueryModel *commissionerModel;
@@ -815,29 +816,31 @@ namespace Commissionator {
         QSqlQueryModel *commissionPiecesModel;
         QSqlQueryModel *commissionsModel;
         QSqlQueryModel *contactTypesModel;
-        QSqlQuery deleteCommissionerQuery;
-        QSqlQuery deleteCommissionQuery;
-        QSqlQuery deleteContactQuery;
-        QSqlQuery deletePieceQuery;
-        QSqlQuery deleteProductQuery;
-        QSqlQuery editCommissionCommissionerQuery;
-        QSqlQuery editCommissionNotesQuery;
-        QSqlQuery editCommissionerNameQuery;
-        QSqlQuery editCommissionerNotesQuery;
-        QSqlQuery insertCommissionerQuery;
-        QSqlQuery insertCommissionQuery;
-        QSqlQuery insertContactQuery;
-        QSqlQuery insertContactTypeQuery;
-        QSqlQuery insertPaymentQuery;
-        QSqlQuery insertPaymentTypeQuery;
-        QSqlQuery insertPieceQuery;
-        QSqlQuery insertProductPriceQuery;
-        QSqlQuery insertProductQuery;
+        QSqlQuery *deleteCommissionerQuery;
+        QSqlQuery *deleteCommissionQuery;
+        QSqlQuery *deleteContactQuery;
+        QSqlQuery *deletePieceQuery;
+        QSqlQuery *deleteProductQuery;
+        QSqlQuery *editCommissionCommissionerQuery;
+        QSqlQuery *editCommissionNotesQuery;
+        QSqlQuery *editCommissionerNameQuery;
+        QSqlQuery *editCommissionerNotesQuery;
+        QSqlQuery *insertCommissionerQuery;
+        QSqlQuery *insertCommissionQuery;
+        QSqlQuery *insertContactQuery;
+        QSqlQuery *insertContactTypeQuery;
+        QSqlQuery *insertPaymentQuery;
+        QSqlQuery *insertPaymentTypeQuery;
+        QSqlQuery *insertPieceQuery;
+        QSqlQuery *insertProductPriceQuery;
+        QSqlQuery *insertProductQuery;
         QSqlQueryModel *paymentTypesModel;
         QSqlQueryModel *pieceModel;
         QSqlQueryModel *piecesModel;
+        QSqlQueryModel *productModel;
         QSqlQueryModel *productNamesModel;
         QSqlQueryModel *productsModel;
+        QSqlQueryModel *productPiecesModel;
 
         bool changesMade;
     };

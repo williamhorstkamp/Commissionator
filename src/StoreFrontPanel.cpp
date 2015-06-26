@@ -11,9 +11,14 @@ namespace Commissionator {
     StoreFrontPanel::StoreFrontPanel(QSqlQueryModel *productsModel,
         QWidget *parent) : QWidget(parent) {
         layout = new QVBoxLayout(this);
-        createTitle();
+        createLabels();
         createTables(productsModel);
+        line = new QFrame(this);
+        line->setFrameShape(QFrame::HLine);
+        line->setFrameShadow(QFrame::Sunken);
         layout->addWidget(titleLabel);
+        layout->addWidget(line);
+        layout->addWidget(productLabel);
         layout->addWidget(productTable);
         setLayout(layout);
         connect(productTable, &FixedRowTable::boxQuery, this, &StoreFrontPanel::productSearch);
@@ -21,13 +26,18 @@ namespace Commissionator {
         connect(productTable, &FixedRowTable::tableButtonClicked, this, &StoreFrontPanel::productDelete);
     }
 
-    void StoreFrontPanel::createTitle() {
+    void StoreFrontPanel::createLabels() {
+        QFont titleFont;
+        titleFont.setPointSize(12);
+        titleFont.setBold(true);
+        QFont font;
+        font.setPointSize(10);
         titleLabel = new QLabel("StoreFront", this);
         titleLabel->setAlignment(Qt::AlignCenter);
-        QFont font;
-        font.setPointSize(12);
-        font.setBold(true);
-        titleLabel->setFont(font);
+        titleLabel->setFont(titleFont);
+        productLabel = new QLabel("Products:", this);
+        productLabel->setAlignment(Qt::AlignCenter);
+        productLabel->setFont(font);
     }
 
     void StoreFrontPanel::createTables(QSqlQueryModel *productModel) {

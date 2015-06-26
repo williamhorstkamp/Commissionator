@@ -9,12 +9,12 @@ class QVBoxLayout;
 class QSqlQueryModel;
 class QPushButton;
 class FixedRowTable;
+class QFrame;
 
 namespace Commissionator {
     /**
-    *  Class represents the left panel for many of the programs viewpoints,
-    *  including commissioner and commission
-    */
+     *  Class represents the storefront left panel. 
+     */
     class StoreFrontPanel : public QWidget {
         Q_OBJECT
 
@@ -57,11 +57,9 @@ namespace Commissionator {
 
     private:
         /**
-         *  Initializes the panels title label based on QString input
-         *
-         *  @param title - QString containing text to set the panel label to
+         *  Initializes the panels various labels
          */
-        void createTitle();
+        void createLabels();
 
         /**
          *  Initializes the panels title based on the given model.
@@ -71,9 +69,12 @@ namespace Commissionator {
         void createTables(QSqlQueryModel *productModel);
 
         QVBoxLayout *layout;
+        QLabel *titleLabel;
+        QFrame *line;
+        QLabel *productLabel;
         FixedRowTable *productTable;
         QPushButton *insertProductButton;
-        QLabel *titleLabel;
+        
     };
 }
 #endif

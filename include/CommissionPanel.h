@@ -2,7 +2,6 @@
 #define COMMISSIONPANEL_H
 
 #include "RightPanel.h"
-#include "FixedRowTableDelegate.h"
 
 class QSqlQueryModel;
 class QVBoxLayout;
@@ -11,6 +10,8 @@ class QLabel;
 class QComboBox;
 class QPushButton;
 class QTableView;
+class QLineEdit;
+class FixedRowTableDelegate;
 
 namespace Commissionator {
     class CommissionPanel : public RightPanel {
@@ -54,7 +55,7 @@ namespace Commissionator {
         void editCommissioner(const int commission, const int commissioner);
 
         /**
-         *  Signal emit when the commissioner's name has been edited during the
+         *  Signal emit when the commissioner's notes has been edited during the
          *  edit mode of the panel
          *
          *  @param commission - id of the commission

@@ -1,9 +1,8 @@
 #ifndef COMMISSIONERPANEL_H
 #define COMMISSIONERPANEL_H
 
+#include <QVariant>
 #include "RightPanel.h"
-#include "ComboEditorDelegate.h"
-#include "FixedRowTable.h"
 
 class QVBoxLayout;
 class QGridLayout;
@@ -11,6 +10,10 @@ class QLabel;
 class QTextEdit;
 class QPushButton;
 class QSqlQueryModel;
+class QTableView;
+class FixedRowTable;
+class QLineEdit;
+class ComboEditorDelegate;
 
 namespace Commissionator {
     class CommissionerPanel : public RightPanel {
@@ -89,7 +92,7 @@ namespace Commissionator {
     public slots:
         /**
          *  Slot connects to ComModel::commissionerChanged.
-         *  Refreshes the Widgets that display the Commissioner data to match the 
+         *  Refreshes the Widgets that display the commissioner data to match the 
          *  newly selected commissioner.
          */
         void updatePanel();

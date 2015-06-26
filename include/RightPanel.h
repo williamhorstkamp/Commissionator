@@ -1,10 +1,11 @@
 #ifndef RIGHTPANEL_H
 #define RIGHTPANEL_H
 
-#include <QVBoxLayout>
 #include <QWidget>
 
 class QFont;
+class QVBoxLayout;
+class QGridLayout;
 
 namespace Commissionator {
     class RightPanel : public QWidget {

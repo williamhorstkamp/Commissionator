@@ -4,7 +4,9 @@
 #include <QHeaderView>
 #include <QLineEdit>
 #include <QPushButton>
+#include <QVBoxLayout>
 #include "FixedRowTable.h"
+#include "ComboEditorDelegate.h"
 #include "CommissionerPanel.h"
 
 namespace Commissionator {
