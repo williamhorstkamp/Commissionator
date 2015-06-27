@@ -7,6 +7,7 @@
 #include <QPushButton>
 #include <QDoubleSpinBox>
 #include <QSqlRecord>
+#include <QHeaderView>
 #include "FixedRowTable.h"
 
 namespace Commissionator {
@@ -111,7 +112,7 @@ namespace Commissionator {
                     productNameEdit->text());
             if (basePriceEdit->text() != basePrice->text())
                 emit editPrice(productModel->record(0).value(0).toInt(), 
-                    basePriceEdit->text().toInt());
+                    basePriceEdit->text().toDouble());
             updatePanel();
         } else {
             productName->hide();
@@ -122,6 +123,48 @@ namespace Commissionator {
     }
 
     void ProductPanel::updatePanel() {
+        if (productModel->record(0).value(0).toInt() != 0) {
+            QLocale dollarConverter = QLocale();
 
+            productName->setText(
+                productModel->record(0).value(1).toString());
+
+            numberProduced->setText(
+                "Number Produced: " + 
+                productModel->record(0).value(2).toString());
+
+            basePrice->setText(
+                "Base Price: " + 
+                dollarConverter.toCurrencyString(
+                    productModel->record(0).value(3).toDouble()));
+
+            for (int i = 0; i < piecesSoldTable->model()->columnCount(); i++)
+                piecesSoldTable->horizontalHeader()->setSectionResizeMode(
+                i, QHeaderView::Stretch);
+
+            unlockButton->show();
+            productName->show();
+            productNameEdit->hide();
+            productNameEdit->setText(productName->text());
+            numberProduced->show();
+            basePrice->show();
+            basePriceEdit->hide();
+            basePriceEdit->setValue(productModel->record(0).value(3).toDouble());
+            //productOptionsLabel->show();
+            //productOptionsTable->show();
+            piecesSoldLabel->show();
+            piecesSoldTable->show();
+         } else {
+            unlockButton->hide();
+            productName->hide();
+            productNameEdit->hide();
+            numberProduced->hide();
+            basePrice->hide();
+            basePriceEdit->hide();
+            //productOptionsLabel->hide();
+            //productOptionsTable->hide();
+            piecesSoldLabel->hide();
+            piecesSoldTable->hide();
+        }
     }
 }

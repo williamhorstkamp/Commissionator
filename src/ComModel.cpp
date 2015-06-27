@@ -28,7 +28,7 @@ namespace Commissionator {
         delete insertPaymentQuery;
         delete insertPaymentTypeQuery;
         delete insertPieceQuery;
-        delete insertProductPriceQuery;
+        delete editProductPriceQuery;
         delete insertProductQuery;
         delete sql;
     }
@@ -276,6 +276,7 @@ namespace Commissionator {
         productPiecesModel->query().bindValue(0, proId);
         productPiecesModel->query().exec();
         productPiecesModel->setQuery(productPiecesModel->query());
+        emit productChanged();
     }
 
     void ComModel::deleteCommission(const QModelIndex &index) {
@@ -406,16 +407,16 @@ namespace Commissionator {
         QSqlQuery lastId("SELECT last_insert_rowid();", *sql);
         lastId.exec();
         lastId.first();
-        insertProductPrice(lastId.value(0).toInt(), basePrice);
+        editProductPrice(lastId.value(0).toInt(), basePrice);
         changesMade = true;
     }
 
-    void ComModel::insertProductPrice(const int productId, const double basePrice) {
-        insertProductPriceQuery->bindValue(0, productId);
-        insertProductPriceQuery->bindValue(1, basePrice);
-        insertProductPriceQuery->bindValue(2,
+    void ComModel::editProductPrice(const int productId, const double basePrice) {
+        editProductPriceQuery->bindValue(0, productId);
+        editProductPriceQuery->bindValue(1, basePrice);
+        editProductPriceQuery->bindValue(2,
             QDateTime::currentDateTime().toMSecsSinceEpoch());
-        insertProductPriceQuery->exec();
+        editProductPriceQuery->exec();
         refreshProducts();
         changesMade = true;
     }
@@ -640,7 +641,7 @@ namespace Commissionator {
         insertPaymentQuery->finish();
         insertPaymentTypeQuery->finish();
         insertPieceQuery->finish();
-        insertProductPriceQuery->finish();
+        editProductPriceQuery->finish();
         insertProductQuery->finish();
         paymentTypesModel->query().finish();
         pieceModel->query().finish();
@@ -1001,8 +1002,8 @@ namespace Commissionator {
         insertPieceQuery->prepare("INSERT INTO "
             "Piece(commission, product, name, notes, createDate, finishDate, overridePrice) "
             "VALUES(?, ?, ?, ?, ?, ?, ?);");
-        insertProductPriceQuery = new QSqlQuery(*sql);
-        insertProductPriceQuery->prepare("INSERT INTO "
+        editProductPriceQuery = new QSqlQuery(*sql);
+        editProductPriceQuery->prepare("INSERT INTO "
             "ProductPrices(product, price, date) "
             "VALUES (?, ?, ?);");
         insertProductQuery = new QSqlQuery(*sql);
@@ -1041,9 +1042,9 @@ namespace Commissionator {
         piecesModel->setQuery(piecesQuery);
         searchPieces("", "", "", "");
         productModel = new QSqlQueryModel(this);
-        QSqlQuery productQuery("SELECT Product.name, COUNT(Piece.id), "
-            "ProductPrices.price FROM Product "
-            "INNER JOIN Piece ON Product.id = Piece.product "
+        QSqlQuery productQuery("SELECT Product.id, Product.name, "
+            "COUNT(Piece.id), ProductPrices.price FROM Product "
+            "LEFT JOIN Piece ON Product.id = Piece.product "
             "INNER JOIN ProductPrices ON Product.id = ProductPrices.product "
             "WHERE Product.id = (?) "
             "GROUP BY Product.id "
@@ -1062,13 +1063,14 @@ namespace Commissionator {
         QSqlQuery productsQuery(*sql);
         productsQuery.prepare("SELECT Product.id, Product.name Name, "
             "ProductPrices.price Price, COUNT(DISTINCT Piece.id) "
-            "AS 'Number of Pieces' "
+            "AS 'Number of Pieces', "
+            "CASE WHEN Product.available = 1 THEN 'Available' "
+            "ELSE 'Unavailable' END AS 'Available' "
             "FROM Product "
             "LEFT JOIN ProductPrices ON Product.id = ProductPrices.product "
             "LEFT JOIN Piece ON Product.id = Piece.product "
             "WHERE Product.name LIKE (?) "
             "AND ProductPrices.price LIKE (?) "
-            "AND Product.available = 1 "
             "GROUP BY Product.id "
             "HAVING ProductPrices.date = MAX(ProductPrices.date) "
             "AND COALESCE(COUNT(Piece.id), 0) LIKE (?);");
@@ -1076,11 +1078,12 @@ namespace Commissionator {
         searchProducts("", "", "");
         productPiecesModel = new QSqlQueryModel(this);
         QSqlQuery productPiecesQuery(*sql);
-        productPiecesQuery.prepare("SELECT Piece.id, Commissioner.name, "
-            "Piece.name, STRFTIME('%m/%d/%Y', min(Piece.createDate) / 1000, "
-            "'unixepoch', 'localtime'), "
-            "COALESCE(STRFTIME('%m/%d/%Y', min(Piece.finishDate) / 1000, "
-            "'unixepoch', 'localtime'), 'Unfinished') "
+        productPiecesQuery.prepare("SELECT Commissioner.name AS "
+            "'Commissioner', Piece.name AS 'Piece Name', "
+            "STRFTIME('%m/%d/%Y', Piece.createDate/ 1000, 'unixepoch', "
+            "'localtime') AS 'Create Date', "
+            "COALESCE(STRFTIME('%m/%d/%Y', Piece.finishDate / 1000, "
+            "'unixepoch', 'localtime'), 'Unfinished') AS 'Finish Date' "
             "FROM Commission "
             "INNER JOIN Piece ON Commission.id = Piece.commission "
             "INNER JOIN Commissioner ON "
@@ -1153,5 +1156,6 @@ namespace Commissionator {
         productsModel->query().exec();
         productsModel->setQuery(productsModel->query());
         QSqlDatabase::database().commit();
+        emit productChanged();
     }
 }

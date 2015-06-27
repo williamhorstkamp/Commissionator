@@ -154,68 +154,52 @@ namespace Commissionator {
     }
 
     void CommissionerPanel::updatePanel() {
-        QLocale dollarConverter = QLocale();
-        commissionerName->setText(
-            commissionerModel->record(0).value(1).toString());
-        if (commissionerModel->record(0).value(2).toString() 
-            == "No Commissions")
-            commissionerDate->setText(
+        if (commissionerModel->record(0).value(0).toInt() != 0) {
+            QLocale dollarConverter = QLocale();
+            commissionerName->setText(
+                commissionerModel->record(0).value(1).toString());
+            if (commissionerModel->record(0).value(2).toString()
+                == "No Commissions")
+                commissionerDate->setText(
                 commissionerModel->record(0).value(2).toString());
-        else
-            commissionerDate->setText(
-                "Customer since " + 
-                commissionerModel->record(0).value(2).toString());
-        if (commissionerModel->record(0).value(3).toDouble() <= 0) {
-            commissionerPaid->setStyleSheet("QLabel { color : green; }");
-            if (commissionerModel->record(0).value(3).toDouble() == 0)
-                commissionerPaid->setText("Paid Off");
             else
+                commissionerDate->setText(
+                "Customer since " +
+                commissionerModel->record(0).value(2).toString());
+            if (commissionerModel->record(0).value(3).toDouble() <= 0) {
+                commissionerPaid->setStyleSheet("QLabel { color : green; }");
+                if (commissionerModel->record(0).value(3).toDouble() == 0)
+                    commissionerPaid->setText("Paid Off");
+                else
+                    commissionerPaid->setText(
+                    "Tipped " + dollarConverter.toCurrencyString(
+                    -commissionerModel->record(0).value(3).toDouble()));
+            } else if (commissionerModel->record(0).value(3).toString()
+                == "") {
+                commissionerPaid->setStyleSheet("QLabel { color : blue; }");
                 commissionerPaid->setText(
-                "Tipped " + dollarConverter.toCurrencyString(
-                -commissionerModel->record(0).value(3).toDouble()));
-        } else if (commissionerModel->record(0).value(3).toString() 
-            == "") {
-            commissionerPaid->setStyleSheet("QLabel { color : blue; }");
-            commissionerPaid->setText(
-                "No Commissioned Pieces");
-        } else {
-            commissionerPaid->setStyleSheet("QLabel { color : red; }");
-            commissionerPaid->setText(
-                dollarConverter.toCurrencyString(
+                    "No Commissioned Pieces");
+            } else {
+                commissionerPaid->setStyleSheet("QLabel { color : red; }");
+                commissionerPaid->setText(
+                    dollarConverter.toCurrencyString(
                     commissionerModel->record(0).value(3).toDouble())
-                + " owed");
-        }
-        commissionerNotes->setText(commissionerModel->record(0).value(4).toString());
+                    + " owed");
+            }
+            commissionerNotes->setText(commissionerModel->record(0).value(4).toString());
 
-        for (int i = 0; i < contactInfoTable->model()->columnCount(); i++)
-            contactInfoTable->horizontalHeader()->setSectionResizeMode(i, 
+            for (int i = 0; i < contactInfoTable->model()->columnCount(); i++)
+                contactInfoTable->horizontalHeader()->setSectionResizeMode(i,
                 QHeaderView::Stretch);
 
-        contactInfoTable->openBoxPersistentEditor(1);
+            contactInfoTable->openBoxPersistentEditor(1);
 
-        for (int i = 0; i < commissionsTable->model()->columnCount(); i++)
-            commissionsTable->horizontalHeader()->setSectionResizeMode(i, 
+            for (int i = 0; i < commissionsTable->model()->columnCount(); i++)
+                commissionsTable->horizontalHeader()->setSectionResizeMode(i,
                 QHeaderView::Stretch);
 
-        contactInfoTable->setColumnHidden(0, true);
+            contactInfoTable->setColumnHidden(0, true);
 
-        if (commissionerModel->record(0).value(0).toInt() == 0) {
-            unlockButton->hide();
-            commissionerName->hide();
-            commissionerNameEdit->hide();
-            commissionerNameEdit->setText(commissionerName->text());
-            commissionerDate->hide();
-            commissionerPaid->hide();
-            contactInfoLabel->hide();
-            contactInfoTable->hide();
-            commissionsLabel->hide();
-            commissionsTable->hide();
-            newCommissionButton->hide();
-            notesLabel->hide();
-            commissionerNotes->hide();
-            commissionerNotesEdit->hide();
-            commissionerNotesEdit->setText("");
-        } else {
             unlockButton->show();
             commissionerName->show();
             commissionerNameEdit->hide();
@@ -231,6 +215,22 @@ namespace Commissionator {
             commissionerNotes->show();
             commissionerNotesEdit->hide();
             commissionerNotesEdit->setText(commissionerNotes->text());
+        } else {
+            unlockButton->hide();
+            commissionerName->hide();
+            commissionerNameEdit->hide();
+            commissionerNameEdit->setText(commissionerName->text());
+            commissionerDate->hide();
+            commissionerPaid->hide();
+            contactInfoLabel->hide();
+            contactInfoTable->hide();
+            commissionsLabel->hide();
+            commissionsTable->hide();
+            newCommissionButton->hide();
+            notesLabel->hide();
+            commissionerNotes->hide();
+            commissionerNotesEdit->hide();
+            commissionerNotesEdit->setText("");
         }
     }
 

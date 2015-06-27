@@ -337,6 +337,13 @@ namespace Commissionator {
         void pieceChanged();
 
         /**
+         *  Signal emmitted whenever the currently selected product is
+         *  changed or any value has been changed that may require the
+         *  product panel to update.
+         */
+        void productChanged();
+
+        /**
          *  Signal emitted whenever an sql record is closed.
          */
         void recordClosed();
@@ -400,6 +407,17 @@ namespace Commissionator {
          *  @param nnotes - commissioner nnotes
          */
         void editCommissionerNotes(const int commissioner, const QString notes);
+
+
+        /**
+         *  Inserts new product price into database. All new pieces of this
+         *  product will use the new price, and old pieces will use the old 
+         *  price.
+         *
+         *  @param productId - id of the product
+         *  @param basePrice - base price of the product without options
+         */
+        void editProductPrice(const int productId, const double basePrice);
 
         /**
          *  Slot limits the results of getCommissions() based on the inputs
@@ -637,14 +655,6 @@ namespace Commissionator {
         void insertProduct(const QString productName, const double basePrice);
 
         /**
-         *  Inserts new product price into database.
-         *
-         *  @param productId - id of the product
-         *  @param basePrice - base price of the product without options
-         */
-        void insertProductPrice(const int productId, const double basePrice);
-
-        /**
          *  Inserts product option type into the database.
          *
          *  @param product - product the option is for
@@ -825,6 +835,7 @@ namespace Commissionator {
         QSqlQuery *editCommissionNotesQuery;
         QSqlQuery *editCommissionerNameQuery;
         QSqlQuery *editCommissionerNotesQuery;
+        QSqlQuery *editProductPriceQuery;
         QSqlQuery *insertCommissionerQuery;
         QSqlQuery *insertCommissionQuery;
         QSqlQuery *insertContactQuery;
@@ -832,7 +843,6 @@ namespace Commissionator {
         QSqlQuery *insertPaymentQuery;
         QSqlQuery *insertPaymentTypeQuery;
         QSqlQuery *insertPieceQuery;
-        QSqlQuery *insertProductPriceQuery;
         QSqlQuery *insertProductQuery;
         QSqlQueryModel *paymentTypesModel;
         QSqlQueryModel *pieceModel;
