@@ -272,6 +272,8 @@ namespace Commissionator{
 
         connect(model, &ComModel::productChanged,
             productRightPanel, &ProductPanel::updatePanel);
+        connect(productRightPanel, &ProductPanel::editAvailability,
+            model, &ComModel::editProductAvailability);
         connect(productRightPanel, &ProductPanel::editName,
             model, &ComModel::editProductName);
         connect(productRightPanel, &ProductPanel::editPrice,

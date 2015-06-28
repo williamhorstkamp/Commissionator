@@ -177,7 +177,7 @@ namespace Commissionator {
          *  @return - pointer to QSqlQueryModel containing data about the
          *      product
          *  Data order:
-         *  Product Name, Number Produced, Base Price
+         *  Product Name, Number Produced, Base Price, Available
          */
         QSqlQueryModel *getProduct();
 
@@ -407,6 +407,14 @@ namespace Commissionator {
          *  @param nnotes - commissioner nnotes
          */
         void editCommissionerNotes(const int commissioner, const QString notes);
+
+        /**
+         *  Edits whether the product is available for purchase or not.
+         *
+         *  @param productId - id of the product
+         *  @param available - whether the product is available or not
+         */
+        void editProductAvailability(const int productId, const bool available);
 
         /**
          *  Edits product name.
@@ -837,11 +845,11 @@ namespace Commissionator {
         QSqlQuery *deleteCommissionQuery;
         QSqlQuery *deleteContactQuery;
         QSqlQuery *deletePieceQuery;
-        QSqlQuery *deleteProductQuery;
         QSqlQuery *editCommissionCommissionerQuery;
         QSqlQuery *editCommissionNotesQuery;
         QSqlQuery *editCommissionerNameQuery;
         QSqlQuery *editCommissionerNotesQuery;
+        QSqlQuery *editProductAvailabilityQuery;
         QSqlQuery *editProductPriceQuery; 
         QSqlQuery *editProductNameQuery;
         QSqlQuery *insertCommissionerQuery;

@@ -29,6 +29,12 @@ namespace Commissionator {
         unlockButton->hide();
         connect(unlockButton, &QPushButton::clicked,
             this, &ProductPanel::toggleEdit);
+
+        availableButton = new QPushButton(this);
+        availableButton->setIcon(QIcon(":/Delete.png"));
+        availableButton->hide();
+        connect(availableButton, &QPushButton::clicked,
+            this, &ProductPanel::toggleAvailable);
     }
 
     void ProductPanel::createLabels() {
@@ -40,6 +46,10 @@ namespace Commissionator {
         connect(productNameEdit, &QLineEdit::returnPressed,
             this, &ProductPanel::toggleEdit);
         productNameEdit->hide();
+
+        availableLabel = new QLabel(this);
+        availableLabel->setAlignment(Qt::AlignCenter);
+        availableLabel->setFont(*standardFont);
 
         numberProduced = new QLabel(this);
         numberProduced->setAlignment(Qt::AlignCenter);
@@ -68,6 +78,7 @@ namespace Commissionator {
         layout = new QVBoxLayout(this);
         titleLayout = new QGridLayout();
 
+        titleLayout->addWidget(availableButton, 0, 0);
         titleLayout->addWidget(productName, 0, 4);
         titleLayout->addWidget(productNameEdit, 0, 4);
         titleLayout->addWidget(unlockButton, 0, 8);
@@ -83,6 +94,7 @@ namespace Commissionator {
 
         layout->addLayout(titleLayout);
         layout->addWidget(numberProduced);
+        layout->addWidget(availableLabel);
         layout->addWidget(basePrice);
         layout->addWidget(basePriceEdit);
         //layout->addWidget(productOptionsLabel);
@@ -122,6 +134,11 @@ namespace Commissionator {
         }
     }
 
+    void ProductPanel::toggleAvailable() {
+        emit editAvailability(productModel->record(0).value(0).toInt(),
+            !productModel->record(0).value(4).toBool());
+    }
+
     void ProductPanel::updatePanel() {
         if (productModel->record(0).value(0).toInt() != 0) {
             QLocale dollarConverter = QLocale();
@@ -129,9 +146,21 @@ namespace Commissionator {
             productName->setText(
                 productModel->record(0).value(1).toString());
 
+            if (productModel->record(0).value(4).toBool()) {
+                availableLabel->setText("Product Available");
+                availableLabel->setStyleSheet("QLabel { color : green; }");
+            } else {
+                availableLabel->setText("Product Unavailable");
+                availableLabel->setStyleSheet("QLabel { color : red; }");
+            }
+                
             numberProduced->setText(
                 "Number Produced: " + 
                 productModel->record(0).value(2).toString());
+            if (productModel->record(0).value(2).toInt() == 0)
+                numberProduced->setStyleSheet("QLabel { color : red; }");
+            else
+                numberProduced->setStyleSheet("QLabel { color : green; }");
 
             basePrice->setText(
                 "Base Price: " + 
@@ -143,7 +172,9 @@ namespace Commissionator {
                 i, QHeaderView::Stretch);
 
             unlockButton->show();
+            availableButton->show();
             productName->show();
+            availableLabel->show();
             productNameEdit->hide();
             productNameEdit->setText(productName->text());
             numberProduced->show();
@@ -156,7 +187,9 @@ namespace Commissionator {
             piecesSoldTable->show();
          } else {
             unlockButton->hide();
+            availableButton->hide();
             productName->hide();
+            availableLabel->hide();
             productNameEdit->hide();
             numberProduced->hide();
             basePrice->hide();

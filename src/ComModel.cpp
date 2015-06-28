@@ -16,11 +16,11 @@ namespace Commissionator {
         delete deleteCommissionQuery;
         delete deleteContactQuery;
         delete deletePieceQuery;
-        delete deleteProductQuery;
         delete editCommissionCommissionerQuery;
         delete editCommissionNotesQuery;
         delete editCommissionerNameQuery;
         delete editCommissionerNotesQuery;
+        delete editProductAvailabilityQuery;
         delete editProductNameQuery;
         delete editProductPriceQuery;
         delete insertCommissionerQuery;
@@ -190,6 +190,14 @@ namespace Commissionator {
         changesMade = true;
     }
 
+    void ComModel::editProductAvailability(const int productId, 
+        const bool available) {
+        editProductAvailabilityQuery->bindValue(0, available);
+        editProductAvailabilityQuery->bindValue(1, productId);
+        editProductAvailabilityQuery->exec();
+        refreshProducts();
+    }
+
     void ComModel::editProductPrice(const int productId, const double basePrice) {
         editProductPriceQuery->bindValue(0, productId);
         editProductPriceQuery->bindValue(1, basePrice);
@@ -331,9 +339,7 @@ namespace Commissionator {
     }
 
     void ComModel::deleteProduct(const QModelIndex &index) {
-        deleteProductQuery->bindValue(0, getValue(index, 0));
-        deleteProductQuery->exec();
-        refreshProducts();
+        editProductAvailability(getValue(index, 0).toInt(), false);
     }
 
     int ComModel::insertCommission(const int commissionerId, 
@@ -972,9 +978,6 @@ namespace Commissionator {
         deletePieceQuery = new QSqlQuery(*sql);
         deletePieceQuery->prepare("DELETE FROM Piece WHERE "
             "Piece.id = (?);");
-        deleteProductQuery = new QSqlQuery(*sql);
-        deleteProductQuery->prepare("UPDATE Product "
-            "SET available = 0 WHERE id = (?)");
         editCommissionCommissionerQuery = new QSqlQuery(*sql);
         editCommissionCommissionerQuery->prepare("UPDATE Commission "
             "SET commissioner = (?) WHERE id = (?)");
@@ -987,6 +990,9 @@ namespace Commissionator {
         editCommissionerNotesQuery = new QSqlQuery(*sql);
         editCommissionerNotesQuery->prepare("UPDATE Commissioner "
             "SET notes = (?) WHERE id = (?)");
+        editProductAvailabilityQuery = new QSqlQuery(*sql);
+        editProductAvailabilityQuery->prepare("UPDATE Product "
+            "SET available = (?) WHERE id = (?)");
         editProductPriceQuery = new QSqlQuery(*sql);
         editProductPriceQuery->prepare("INSERT INTO "
             "ProductPrices(product, price, date) "
@@ -1055,7 +1061,8 @@ namespace Commissionator {
         searchPieces("", "", "", "");
         productModel = new QSqlQueryModel(this);
         QSqlQuery productQuery("SELECT Product.id, Product.name, "
-            "COUNT(Piece.id), ProductPrices.price FROM Product "
+            "COUNT(Piece.id), ProductPrices.price, Product.available "
+            "FROM Product "
             "LEFT JOIN Piece ON Product.id = Piece.product "
             "INNER JOIN ProductPrices ON Product.id = ProductPrices.product "
             "WHERE Product.id = (?) "

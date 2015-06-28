@@ -46,6 +46,14 @@ namespace Commissionator {
         void deleteProductOption(const QModelIndex &index);
 
         /**
+         *  Signal emit when the product's availability has been toggled.
+         *
+         *  @param product - id of the product
+         *  @param available - whether the product is available or not
+         */
+        void editAvailability(const int product, const bool available);
+
+        /**
          *  Signal emit when the product's name has been edited during the
          *  edit mode of the panel
          *
@@ -102,6 +110,11 @@ namespace Commissionator {
          */
         void toggleEdit();
 
+        /**
+         *  Toggles whether a product is available or not.
+         */
+        void toggleAvailable();
+
     private:
         /**
          *  Helpers function creates buttons and connections
@@ -133,7 +146,9 @@ namespace Commissionator {
 
         QSqlQueryModel *productModel;
         QPushButton *unlockButton;
+        QPushButton *availableButton;
         QLabel *productName;
+        QLabel *availableLabel;
         QLineEdit *productNameEdit;
         QLabel *numberProduced;
         QLabel *basePrice;
