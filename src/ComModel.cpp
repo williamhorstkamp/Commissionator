@@ -21,6 +21,8 @@ namespace Commissionator {
         delete editCommissionNotesQuery;
         delete editCommissionerNameQuery;
         delete editCommissionerNotesQuery;
+        delete editProductNameQuery;
+        delete editProductPriceQuery;
         delete insertCommissionerQuery;
         delete insertCommissionQuery;
         delete insertContactQuery;
@@ -28,7 +30,6 @@ namespace Commissionator {
         delete insertPaymentQuery;
         delete insertPaymentTypeQuery;
         delete insertPieceQuery;
-        delete editProductPriceQuery;
         delete insertProductQuery;
         delete sql;
     }
@@ -186,6 +187,24 @@ namespace Commissionator {
         editCommissionerNotesQuery->bindValue(1, commissioner);
         editCommissionerNotesQuery->exec();
         refreshCommissioners();
+        changesMade = true;
+    }
+
+    void ComModel::editProductPrice(const int productId, const double basePrice) {
+        editProductPriceQuery->bindValue(0, productId);
+        editProductPriceQuery->bindValue(1, basePrice);
+        editProductPriceQuery->bindValue(2,
+            QDateTime::currentDateTime().toMSecsSinceEpoch());
+        editProductPriceQuery->exec();
+        refreshProducts();
+        changesMade = true;
+    }
+
+    void ComModel::editProductName(const int productId, const QString name) {
+        editProductNameQuery->bindValue(0, name);
+        editProductNameQuery->bindValue(1, productId);
+        editProductNameQuery->exec();
+        refreshProducts();
         changesMade = true;
     }
 
@@ -408,16 +427,6 @@ namespace Commissionator {
         lastId.exec();
         lastId.first();
         editProductPrice(lastId.value(0).toInt(), basePrice);
-        changesMade = true;
-    }
-
-    void ComModel::editProductPrice(const int productId, const double basePrice) {
-        editProductPriceQuery->bindValue(0, productId);
-        editProductPriceQuery->bindValue(1, basePrice);
-        editProductPriceQuery->bindValue(2,
-            QDateTime::currentDateTime().toMSecsSinceEpoch());
-        editProductPriceQuery->exec();
-        refreshProducts();
         changesMade = true;
     }
 
@@ -978,6 +987,13 @@ namespace Commissionator {
         editCommissionerNotesQuery = new QSqlQuery(*sql);
         editCommissionerNotesQuery->prepare("UPDATE Commissioner "
             "SET notes = (?) WHERE id = (?)");
+        editProductPriceQuery = new QSqlQuery(*sql);
+        editProductPriceQuery->prepare("INSERT INTO "
+            "ProductPrices(product, price, date) "
+            "VALUES (?, ?, ?);");
+        editProductNameQuery = new QSqlQuery(*sql);
+        editProductNameQuery->prepare("UPDATE Product "
+            "SET name = (?) WHERE id = (?)");
         insertCommissionerQuery = new QSqlQuery(*sql);
         insertCommissionerQuery->prepare("INSERT INTO "
             "Commissioner(name, notes) VALUES (?, ?);");
@@ -1002,10 +1018,6 @@ namespace Commissionator {
         insertPieceQuery->prepare("INSERT INTO "
             "Piece(commission, product, name, notes, createDate, finishDate, overridePrice) "
             "VALUES(?, ?, ?, ?, ?, ?, ?);");
-        editProductPriceQuery = new QSqlQuery(*sql);
-        editProductPriceQuery->prepare("INSERT INTO "
-            "ProductPrices(product, price, date) "
-            "VALUES (?, ?, ?);");
         insertProductQuery = new QSqlQuery(*sql);
         insertProductQuery->prepare("INSERT INTO "
             "Product(name, available) VALUES(?, 1);");
@@ -1104,7 +1116,6 @@ namespace Commissionator {
     }
 
     void ComModel::refreshCommissions() {
-        QSqlDatabase::database().transaction();
         commissionerCommissionsModel->query().exec();
         commissionerCommissionsModel->setQuery(commissionerCommissionsModel->query());
         commissionsModel->query().exec();
@@ -1113,7 +1124,6 @@ namespace Commissionator {
         commissionModel->setQuery(commissionModel->query());
         commissionListModel->query().exec();
         commissionListModel->setQuery(commissionListModel->query());
-        QSqlDatabase::database().commit();
         emit commissionChanged();
     }
 
@@ -1139,23 +1149,22 @@ namespace Commissionator {
     }
 
     void ComModel::refreshPieces() {
-        QSqlDatabase::database().transaction();
         commissionPiecesModel->query().exec();
         commissionPiecesModel->setQuery(commissionPiecesModel->query());
         pieceModel->query().exec();
         pieceModel->setQuery(pieceModel->query());
         piecesModel->query().exec();
         piecesModel->setQuery(piecesModel->query());
-        QSqlDatabase::database().commit();
+        emit pieceChanged();
     }
 
     void ComModel::refreshProducts() {
-        QSqlDatabase::database().transaction();
         productNamesModel->query().exec();
         productNamesModel->setQuery(productNamesModel->query());
         productsModel->query().exec();
         productsModel->setQuery(productsModel->query());
-        QSqlDatabase::database().commit();
+        productModel->query().exec();
+        productModel->setQuery(productModel->query());
         emit productChanged();
     }
 }

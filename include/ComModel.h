@@ -408,6 +408,13 @@ namespace Commissionator {
          */
         void editCommissionerNotes(const int commissioner, const QString notes);
 
+        /**
+         *  Edits product name.
+         *
+         *  @param productId - id of the product
+         *  @param name - new name for the product
+         */
+        void editProductName(const int productId, const QString name);
 
         /**
          *  Inserts new product price into database. All new pieces of this
@@ -835,7 +842,8 @@ namespace Commissionator {
         QSqlQuery *editCommissionNotesQuery;
         QSqlQuery *editCommissionerNameQuery;
         QSqlQuery *editCommissionerNotesQuery;
-        QSqlQuery *editProductPriceQuery;
+        QSqlQuery *editProductPriceQuery; 
+        QSqlQuery *editProductNameQuery;
         QSqlQuery *insertCommissionerQuery;
         QSqlQuery *insertCommissionQuery;
         QSqlQuery *insertContactQuery;
