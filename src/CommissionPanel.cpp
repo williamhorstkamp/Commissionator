@@ -30,21 +30,25 @@ namespace Commissionator {
         unlockButton = new QPushButton(this);
         unlockButton->setIcon(QIcon(":/NewFile.png"));
         unlockButton->hide();
+        unlockButton->setToolTip("Unlock/Lock the editable fields");
         connect(unlockButton, &QPushButton::clicked,
             this, &CommissionPanel::toggleEdit);
 
         newPieceButton = new QPushButton(tr("New Piece"), this);
         newPieceButton->hide();
+        newPieceButton->setToolTip("Create a new piece for this commission");
         connect(newPieceButton, &QPushButton::clicked,
             this, &CommissionPanel::newPieceSlot);
 
         newPaymentButton = new QPushButton(tr("New Payment"), this);
         newPaymentButton->hide();
+        newPaymentButton->setToolTip("Make a payment on this commission");
         connect(newPaymentButton, &QPushButton::clicked,
             this, &CommissionPanel::newPaymentSlot);
 
         newRefundButton = new QPushButton(tr("New Refund"), this);
         newRefundButton->hide();
+        newRefundButton->setToolTip("Process a refund for this commission");
         connect(newRefundButton, &QPushButton::clicked,
             this, &CommissionPanel::newRefundSlot);
     }

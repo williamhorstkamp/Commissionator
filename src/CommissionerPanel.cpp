@@ -28,11 +28,13 @@ namespace Commissionator {
         unlockButton = new QPushButton(this);
         unlockButton->setIcon(QIcon(":/NewFile.png"));
         unlockButton->hide();
+        unlockButton->setToolTip("Unlock/Lock the editable fields");
         connect(unlockButton, &QPushButton::clicked,
             this, &CommissionerPanel::toggleEdit);
 
         newCommissionButton = new QPushButton(tr("New Commission"), this);
         newCommissionButton->hide();
+        newCommissionButton->setToolTip("Create a new Commission");
         connect(newCommissionButton, &QPushButton::clicked,
             this, &CommissionerPanel::newCommissionSlot);
     }

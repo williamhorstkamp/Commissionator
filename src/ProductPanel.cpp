@@ -27,12 +27,14 @@ namespace Commissionator {
         unlockButton = new QPushButton(this);
         unlockButton->setIcon(QIcon(":/NewFile.png"));
         unlockButton->hide();
+        unlockButton->setToolTip("Unlock/Lock the editable fields");
         connect(unlockButton, &QPushButton::clicked,
             this, &ProductPanel::toggleEdit);
 
         availableButton = new QPushButton(this);
         availableButton->setIcon(QIcon(":/Delete.png"));
         availableButton->hide();
+        availableButton->setToolTip("Toggle whether the product is for sale or not");
         connect(availableButton, &QPushButton::clicked,
             this, &ProductPanel::toggleAvailable);
     }
