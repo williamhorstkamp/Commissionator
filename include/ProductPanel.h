@@ -10,7 +10,6 @@ class QGridLayout;
 class QLabel;
 class QComboBox;
 class QPushButton;
-class QTableView;
 class QLineEdit;
 class QDoubleSpinBox;
 class FixedRowTable;
@@ -85,6 +84,19 @@ namespace Commissionator {
         void insertProductOption(const int product, const QString name,
             const double price, const bool isNumeric);
 
+        /**
+         *  Signal emit when the productPiecesTable's button is clicked.
+         *  Is a modification of FixedRowTable::boxQuery and is to be forwarded to
+         *  ComModel::searchProductPieces
+         *
+         *  @param commissioner - commissioner name
+         *  @param piece - piece name
+         *  @param createDate - date the piece was created
+         *  @param finishDate - date the piece was finished
+         */
+        void searchProductPieces(const QString commission, const QString piece,
+            const QString createDate, const QString finishDate);
+
         public slots:
         /**
          *  Slot connects to ComModel::productChanged.
@@ -103,6 +115,16 @@ namespace Commissionator {
          *  Product id, product option name, product option price, is numeric
          */
         void insertProductOptionSlot(const QList<QVariant> query);
+
+        /**
+         *  Slot captures FixedRowTable::boxQuery from productPiecesTable and
+         *  emits the corresponding searchProductPieces signal.
+         *
+         *  @param query - QList of Qvariants containing the query variables
+         *  Data order:
+         *  Commissioner Name, Piece Name, Piece Create Date, Piece Finish Date
+         */
+        void searchProductPiecesSlot(const QList<QVariant> query);
 
         /**
          *  Slot toggles between the panel's edit and display modes.
@@ -156,7 +178,7 @@ namespace Commissionator {
         QLabel *productOptionsLabel;
         FixedRowTable *productOptionsTable;
         QLabel *piecesSoldLabel;
-        QTableView *piecesSoldTable;
+        FixedRowTable *piecesSoldTable;
     };
 }
 

@@ -488,6 +488,18 @@ namespace Commissionator {
             const QString numberOfPieces);
 
         /**
+         *  Slot limits the results of getProductPieces() based on the inputs
+         *  given in the searchQuery.
+         *
+         *  @param commissioner - name of commissioner
+         *  @param piece - name of piece
+         *  @param createDate - date the piece was created
+         *  @param finishDate - date the piece was finished
+         */
+        void searchProductPieces(const QString commissioner, const QString piece,
+            const QString createDate, const QString finishDate);
+
+        /**
          *  Slot limits the results of getSales() based on the inputs
          *  given in the searchQuery.
          *

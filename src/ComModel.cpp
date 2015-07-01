@@ -2,6 +2,7 @@
 #include <QSqlDatabase>
 #include <QDebug>
 #include <QSqlQuery>
+#include <QSqlRecord>
 #include "ComModel.h"
 
 namespace Commissionator {
@@ -260,6 +261,18 @@ namespace Commissionator {
         productsModel->setQuery(productsModel->query());
     }
 
+    void ComModel::searchProductPieces(const QString commissioner, const QString piece,
+        const QString createDate, const QString finishDate) {
+        productPiecesModel->query().bindValue(0, 
+            productModel->record(0).value(0).toString());
+        productPiecesModel->query().bindValue(1, "%" + commissioner + "%");
+        productPiecesModel->query().bindValue(2, "%" + piece + "%");
+        productPiecesModel->query().bindValue(3, "%" + createDate + "%");
+        productPiecesModel->query().bindValue(4, "%" + finishDate + "%");
+        productPiecesModel->query().exec();
+        productPiecesModel->setQuery(productPiecesModel->query());
+    }
+
     void ComModel::setCommission(const QModelIndex &index) {
         int comId = getValue(index, 0).toInt();
         commissionModel->query().bindValue(0, comId);
@@ -300,9 +313,7 @@ namespace Commissionator {
         productModel->query().bindValue(0, proId);
         productModel->query().exec();
         productModel->setQuery(productModel->query());
-        productPiecesModel->query().bindValue(0, proId);
-        productPiecesModel->query().exec();
-        productPiecesModel->setQuery(productPiecesModel->query());
+        searchProductPieces("", "", "", "");
         emit productChanged();
     }
 
@@ -1092,10 +1103,14 @@ namespace Commissionator {
             "AND ProductPrices.price LIKE (?) "
             "GROUP BY Product.id "
             "HAVING ProductPrices.date = MAX(ProductPrices.date) "
-            "AND COALESCE(COUNT(Piece.id), 0) LIKE (?);");
+            "AND COUNT(DISTINCT Piece.id) LIKE (?);");
         productsModel->setQuery(productsQuery);
         searchProducts("", "", "");
-        productPiecesModel = new QSqlQueryModel(this);
+        /**
+        *  initialized as a QSqlTableModel so that any proxy models created
+        *  using this model can contain editable fields.
+        */
+        productPiecesModel = new QSqlTableModel(this);
         QSqlQuery productPiecesQuery(*sql);
         productPiecesQuery.prepare("SELECT Commissioner.name AS "
             "'Commissioner', Piece.name AS 'Piece Name', "
@@ -1107,7 +1122,12 @@ namespace Commissionator {
             "INNER JOIN Piece ON Commission.id = Piece.commission "
             "INNER JOIN Commissioner ON "
             "Commission.commissioner = Commissioner.id "
-            "WHERE Piece.product = (?) "
+            "WHERE Piece.product = (?) AND Commissioner.name LIKE (?) "
+            "AND Piece.name LIKE (?) "
+            "AND STRFTIME('%m/%d/%Y', Piece.createDate / 1000, 'unixepoch', "
+            "'localtime') LIKE (?) "
+            "AND COALESCE(STRFTIME('%m/%d/%Y', Piece.finishDate / 1000, "
+            "'unixepoch', 'localtime'), 'Unfinished') LIKE (?) "
             "GROUP BY Piece.id;");
         productPiecesModel->setQuery(productPiecesQuery);
     }

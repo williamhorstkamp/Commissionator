@@ -1,4 +1,3 @@
-#include "ProductPanel.h"
 #include <QSqlQueryModel>
 #include <QVBoxLayout>
 #include <QGridLayout>
@@ -9,6 +8,7 @@
 #include <QSqlRecord>
 #include <QHeaderView>
 #include "FixedRowTable.h"
+#include "ProductPanel.h"
 
 namespace Commissionator {
     ProductPanel::ProductPanel(QSqlQueryModel *productModel,
@@ -107,16 +107,25 @@ namespace Commissionator {
 
     void ProductPanel::createTables(//QSqlQueryModel *productOptionsModel,
         QSqlQueryModel *piecesSoldModel) {
-        piecesSoldTable = new QTableView(this);
-        piecesSoldTable->setModel(piecesSoldModel);
+        piecesSoldTable = new FixedRowTable(piecesSoldModel);
+        piecesSoldTable->setBoxText("Search");
+        piecesSoldTable->setColumnCount(4);
         piecesSoldTable->setSelectionMode(QAbstractItemView::NoSelection);
         piecesSoldTable->hide();
+        connect(piecesSoldTable, &FixedRowTable::boxQuery, 
+            this, &ProductPanel::searchProductPiecesSlot);
     }
 
     void ProductPanel::insertProductOptionSlot(const QList<QVariant> query) {
         if (query.length() == 4)    //product id, option name, option price, is numeric
             emit insertProductOption(query[0].toInt(), query[1].toString(),
             query[2].toDouble(), query[3].toBool());
+    }
+
+    void ProductPanel::searchProductPiecesSlot(const QList<QVariant> query) {
+        if (query.length() == 4)    //com name, piece name, create date, finish date
+            emit searchProductPieces(query[0].toString(), query[1].toString(),
+            query[2].toString(), query[3].toString());
     }
 
     void ProductPanel::toggleEdit() {

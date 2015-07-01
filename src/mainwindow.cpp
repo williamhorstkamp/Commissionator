@@ -278,6 +278,8 @@ namespace Commissionator{
             model, &ComModel::editProductName);
         connect(productRightPanel, &ProductPanel::editPrice,
             model, &ComModel::editProductPrice);
+        connect(productRightPanel, &ProductPanel::searchProductPieces,
+            model, &ComModel::searchProductPieces);
 
         layout->addWidget(leftPanel);
         layout->addWidget(line);
@@ -414,7 +416,7 @@ namespace Commissionator{
     }
 
     void MainWindow::searchProducts(const QList<QVariant> query) {
-        if (query.length() == 4)    //id, name, base price, number produced
+        if (query.length() == 5)    //id, name, base price, number produced
             model->searchProducts(query[1].toString(), query[2].toString(),
             query[3].toString());
     }
