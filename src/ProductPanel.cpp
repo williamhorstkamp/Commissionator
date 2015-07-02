@@ -28,6 +28,9 @@ namespace Commissionator {
         unlockButton->setIcon(QIcon(":/NewFile.png"));
         unlockButton->hide();
         unlockButton->setToolTip("Unlock/Lock the editable fields");
+        unlockButton->setMinimumSize(24, 24);
+        unlockButton->setMaximumSize(24, 24);
+        unlockButton->setIconSize(QSize(21.6, 21.6));
         connect(unlockButton, &QPushButton::clicked,
             this, &ProductPanel::toggleEdit);
 
@@ -35,6 +38,9 @@ namespace Commissionator {
         availableButton->setIcon(QIcon(":/Delete.png"));
         availableButton->hide();
         availableButton->setToolTip("Toggle whether the product is for sale or not");
+        availableButton->setMinimumSize(24, 24);
+        availableButton->setMaximumSize(24, 24);
+        availableButton->setIconSize(QSize(21.6, 21.6));
         connect(availableButton, &QPushButton::clicked,
             this, &ProductPanel::toggleAvailable);
     }

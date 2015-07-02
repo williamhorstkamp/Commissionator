@@ -31,6 +31,9 @@ namespace Commissionator {
         unlockButton->setIcon(QIcon(":/NewFile.png"));
         unlockButton->hide();
         unlockButton->setToolTip("Unlock/Lock the editable fields");
+        unlockButton->setMinimumSize(24, 24);
+        unlockButton->setMaximumSize(24, 24);
+        unlockButton->setIconSize(QSize(21.6, 21.6));
         connect(unlockButton, &QPushButton::clicked,
             this, &CommissionPanel::toggleEdit);
 
