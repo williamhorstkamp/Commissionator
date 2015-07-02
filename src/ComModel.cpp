@@ -522,7 +522,7 @@ namespace Commissionator {
         sql->exec("CREATE TABLE IF NOT EXISTS PieceEvent("
             "piece INTEGER NOT NULL, "
             "event INTEGER NOT NULL, "
-            "finishDate INTEGER NOT NULL, "
+            "finishDate INTEGER, "
             "FOREIGN KEY(piece) REFERENCES piece(id), "
             "FOREIGN KEY(event) REFERENCES ProductEvent(id), "
             "CONSTRAINT pieve UNIQUE(piece, event))");
@@ -638,6 +638,15 @@ namespace Commissionator {
             "GROUP BY Commission.id) b "
             "ON Commission.id = b.id "
             "WHERE Commission.id = NEW.commission) > 0; "
+            "END");
+        sql->exec("CREATE TRIGGER insertPieceEvent "
+            "AFTER INSERT ON Piece "
+            "FOR EACH ROW BEGIN "
+            "INSERT INTO PieceEvent(piece, event) "
+            "SELECT Piece.id, ProductEvent.id "
+            "FROM ProductEvent  LEFT JOIN Piece "
+            "ON ProductEvent.product = Piece.product "
+            "WHERE Piece.id = NEW.id; "
             "END");
         QSqlDatabase::database().commit();
     }
