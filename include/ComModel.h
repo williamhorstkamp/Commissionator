@@ -138,7 +138,7 @@ namespace Commissionator {
 
         /**
          *  Function returns a QSqlQueryModel that contains data about the
-         *  seleted Commission
+         *  selected Commission
          *
          *  @return - pointer to QSqlQueryModel containing data about the
          *      commission
@@ -150,7 +150,7 @@ namespace Commissionator {
 
         /**
          *  Function returns a QSqlQueryModel that contains data about the
-         *  seleted Commissioner
+         *  selected Commissioner
          *
          *  @return - pointer to QSqlQueryModel containing data about the
          *      commissioner
@@ -161,7 +161,7 @@ namespace Commissionator {
 
         /**
          *  Function returns a QSqlQueryModel that contains data about the
-         *  seleted Piece
+         *  selected Piece
          *
          *  @return - pointer to QSqlQueryModel containing data about the
          *      piece
@@ -172,7 +172,7 @@ namespace Commissionator {
 
         /**
          *  Function returns a QSqlQueryModel that contains data about the
-         *  seleted Product
+         *  selected Product
          *
          *  @return - pointer to QSqlQueryModel containing data about the
          *      product
@@ -180,6 +180,18 @@ namespace Commissionator {
          *  Product Name, Number Produced, Base Price, Available
          */
         QSqlQueryModel *getProduct();
+
+
+        /**
+         *  Function returns a QSqlQueryModel that contains data about the
+         *  selected Product events
+         *
+         *  @return - pointer to QSqlQueryModel containing data about the
+         *      product
+         *  Data order:
+         *  Product Name, Number Produced, Base Price, Available
+         */
+        QSqlQueryModel *getProductEvents();
 
         /**
         *  Function returns a pointer to a model containing data for the

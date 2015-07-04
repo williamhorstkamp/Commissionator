@@ -8,6 +8,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QFileInfo>
+#include <QCloseEvent>
 #include "LeftPanel.h"
 #include "StoreFrontPanel.h"
 #include "NewCommissionWindow.h"
@@ -30,7 +31,20 @@ namespace Commissionator{
         createStatusBar();
         createToolBars();
 
-        setMinimumSize(1020, 800);
+        setMinimumSize(1024, 768);
+    }
+
+    void MainWindow::closeEvent(QCloseEvent *event) {
+        if (model->hasBeenChanged()) {
+            int ret = QMessageBox::question(this, tr("Save File?"),
+                tr("The database has been modified.\n"
+                "Would you like to save your changes?"),
+                QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel, QMessageBox::Save);
+            if (ret == QMessageBox::Save) {
+                save();
+            } else if (ret == QMessageBox::Cancel)
+                event->ignore();
+        }
     }
 
     void MainWindow::closeRecord() {
@@ -211,6 +225,7 @@ namespace Commissionator{
             this);
         productRightPanel = new ProductPanel(
             model->getProduct(), 
+            model->getProductPiecesSold(),
             model->getProductPiecesSold(), 
             this);
 

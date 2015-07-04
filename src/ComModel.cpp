@@ -434,6 +434,7 @@ namespace Commissionator {
         refreshCommissioners();
         refreshCommissions();
         refreshPieces();
+        refreshProducts();
         changesMade = true;
     }
 
@@ -1197,6 +1198,8 @@ namespace Commissionator {
     void ComModel::refreshProducts() {
         productNamesModel->query().exec();
         productNamesModel->setQuery(productNamesModel->query());
+        productPiecesModel->query().exec();
+        productPiecesModel->setQuery(productPiecesModel->query());
         productsModel->query().exec();
         productsModel->setQuery(productsModel->query());
         productModel->query().exec();

@@ -30,6 +30,14 @@ namespace Commissionator {
     public:
         MainWindow();
 
+        /**
+         *  Overrides default closeEvent() function by first attempting to
+         *  save before closing
+         *
+         *  @param event - the close event that is being evaluated
+         */
+        void closeEvent(QCloseEvent *event);
+
     public slots:
         /**
          *  Closes the current record.

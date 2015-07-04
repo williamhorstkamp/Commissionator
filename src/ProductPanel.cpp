@@ -7,18 +7,20 @@
 #include <QDoubleSpinBox>
 #include <QSqlRecord>
 #include <QHeaderView>
+#include <QListView>
 #include "FixedRowTable.h"
 #include "ProductPanel.h"
 
 namespace Commissionator {
     ProductPanel::ProductPanel(QSqlQueryModel *productModel,
-        //QSqlQueryModel *productOptionsModel,
+        QSqlQueryModel *eventsModel,
+        //QSqlQueryModel *optionsModel,
         QSqlQueryModel *piecesSoldModel, QWidget *parent) : RightPanel(parent) {
         this->productModel = productModel;
 
         createLabels();
         createButtons();
-        createTables(/*productOptionsModel, */piecesSoldModel);
+        createTables(eventsModel, /*optionsModel, */piecesSoldModel);
         createPanel();
     }
 
@@ -73,9 +75,13 @@ namespace Commissionator {
         basePriceEdit->setMaximum(999999);
         basePriceEdit->hide();
 
-        productOptionsLabel = new QLabel(this);
-        productOptionsLabel->setAlignment(Qt::AlignCenter);
-        productOptionsLabel->setFont(*standardFont);
+        eventsLabel = new QLabel(this);
+        eventsLabel->setAlignment(Qt::AlignCenter);
+        eventsLabel->setFont(*standardFont);
+
+        optionsLabel = new QLabel(this);
+        optionsLabel->setAlignment(Qt::AlignCenter);
+        optionsLabel->setFont(*standardFont);
 
         piecesSoldLabel = new QLabel(this);
         piecesSoldLabel->setAlignment(Qt::AlignCenter);
@@ -105,14 +111,26 @@ namespace Commissionator {
         layout->addWidget(availableLabel);
         layout->addWidget(basePrice);
         layout->addWidget(basePriceEdit);
-        //layout->addWidget(productOptionsLabel);
-        //layout->addWidget(productOptionsTable);
+        layout->addWidget(eventsLabel);
+        layout->addWidget(eventsList);
+        //layout->addWidget(optionsLabel);
+        //layout->addWidget(optionsTable);
         layout->addWidget(piecesSoldLabel);
         layout->addWidget(piecesSoldTable);
     }
 
-    void ProductPanel::createTables(//QSqlQueryModel *productOptionsModel,
+    void ProductPanel::createTables(QSqlQueryModel *eventsModel,
+        //QSqlQueryModel *optionsModel,
         QSqlQueryModel *piecesSoldModel) {
+        eventsList = new QListView(this);
+        eventsList->setModel(eventsModel);
+        eventsList->setSelectionMode(QAbstractItemView::NoSelection);
+        eventsList->hide();
+        //connect(eventsDelegate, &FixedRowTableDelegate::buttonClicked,
+        //    this, &ProductPanel::deleteEvent);
+
+        
+
         piecesSoldTable = new FixedRowTable(piecesSoldModel);
         piecesSoldTable->setBoxText("Search");
         piecesSoldTable->setColumnCount(4);
@@ -198,8 +216,10 @@ namespace Commissionator {
             basePrice->show();
             basePriceEdit->hide();
             basePriceEdit->setValue(productModel->record(0).value(3).toDouble());
-            //productOptionsLabel->show();
-            //productOptionsTable->show();
+            eventsLabel->show();
+            eventsList->show();
+            //optionsLabel->show();
+            //optionsTable->show();
             piecesSoldLabel->show();
             piecesSoldTable->show();
          } else {
@@ -211,6 +231,8 @@ namespace Commissionator {
             numberProduced->hide();
             basePrice->hide();
             basePriceEdit->hide();
+            eventsLabel->hide();
+            eventsList->hide();
             //productOptionsLabel->hide();
             //productOptionsTable->hide();
             piecesSoldLabel->hide();

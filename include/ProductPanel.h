@@ -12,6 +12,8 @@ class QComboBox;
 class QPushButton;
 class QLineEdit;
 class QDoubleSpinBox;
+class QListView;
+class FixedRowTableDelegate;
 class FixedRowTable;
 
 namespace Commissionator {
@@ -32,7 +34,8 @@ namespace Commissionator {
         *      selected pieces sold for the product
         */
         ProductPanel(QSqlQueryModel *productModel,
-            //QSqlQueryModel *productOptionsModel,
+            QSqlQueryModel *eventsModel,
+            //QSqlQueryModel *optionsModel,
             QSqlQueryModel *piecesSoldModel, QWidget *parent = nullptr);
 
     signals:
@@ -97,7 +100,7 @@ namespace Commissionator {
         void searchProductPieces(const QString commission, const QString piece,
             const QString createDate, const QString finishDate);
 
-        public slots:
+    public slots:
         /**
          *  Slot connects to ComModel::productChanged.
          *  Refreshes the Widgets that display the product data to match the
@@ -105,7 +108,7 @@ namespace Commissionator {
          */
         void updatePanel();
 
-        private slots:
+    private slots:
         /**
          *  Slot captures FixedRowTable::boxQuery from productOptionTable and
          *  emits the corresponding insertProductOption signal.
@@ -163,7 +166,8 @@ namespace Commissionator {
          *  @param contactTypesModel - QSqlQueryModel containing a list of
          *      contact types
          */
-        void createTables(//QSqlQueryModel *productOptionsModel,
+        void createTables(QSqlQueryModel *eventsModel,
+            //QSqlQueryModel *optionsModel,
             QSqlQueryModel *piecesSoldModel);
 
         QSqlQueryModel *productModel;
@@ -175,8 +179,10 @@ namespace Commissionator {
         QLabel *numberProduced;
         QLabel *basePrice;
         QDoubleSpinBox *basePriceEdit;
-        QLabel *productOptionsLabel;
-        FixedRowTable *productOptionsTable;
+        QLabel *eventsLabel;
+        QListView *eventsList;
+        QLabel *optionsLabel;
+        FixedRowTable *optionsTable;
         QLabel *piecesSoldLabel;
         FixedRowTable *piecesSoldTable;
     };

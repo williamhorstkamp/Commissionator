@@ -42,10 +42,12 @@ namespace Commissionator {
         foreach(int i, hiddenColumns)
             view->setColumnHidden(i, true);
 
-        for (int i = 0; i < view->model()->columnCount() - 1; ++i)
-            view->horizontalHeader()->setSectionResizeMode(i, QHeaderView::ResizeToContents);
-        view->horizontalHeader()->setSectionResizeMode(
-            view->model()->columnCount() - 1, 
-            QHeaderView::Stretch);
+        if (view->model()->columnCount() > 0) {
+            for (int i = 0; i < view->model()->columnCount() - 1; ++i)
+                view->horizontalHeader()->setSectionResizeMode(i, QHeaderView::ResizeToContents);
+            view->horizontalHeader()->setSectionResizeMode(
+                view->model()->columnCount() - 1,
+                QHeaderView::Stretch);
+        }
     }
 }
