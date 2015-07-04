@@ -181,7 +181,6 @@ namespace Commissionator {
          */
         QSqlQueryModel *getProduct();
 
-
         /**
          *  Function returns a QSqlQueryModel that contains data about the
          *  selected Product events
@@ -599,6 +598,14 @@ namespace Commissionator {
         void deleteProduct(const QModelIndex &index);
 
         /**
+         *  Deletes the product event at the given index. This only effects
+         *  new pieces, not ones that have already been created.
+         *
+         *  @param index - index of the product to delete
+         */
+        void deleteProductEvent(const QModelIndex &index);
+
+        /**
          *  Deletes the product option at the given index. Option is hidden, not
          *  actually deleted, so old records aren't broken.
          *
@@ -869,6 +876,7 @@ namespace Commissionator {
         QSqlQuery *deleteCommissionQuery;
         QSqlQuery *deleteContactQuery;
         QSqlQuery *deletePieceQuery;
+        QSqlQuery *deleteProductEventQuery;
         QSqlQuery *editCommissionCommissionerQuery;
         QSqlQuery *editCommissionNotesQuery;
         QSqlQuery *editCommissionerNameQuery;

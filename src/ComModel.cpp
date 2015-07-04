@@ -197,6 +197,7 @@ namespace Commissionator {
         editProductAvailabilityQuery->bindValue(1, productId);
         editProductAvailabilityQuery->exec();
         refreshProducts();
+        changesMade = true;
     }
 
     void ComModel::editProductPrice(const int productId, const double basePrice) {
@@ -351,6 +352,13 @@ namespace Commissionator {
 
     void ComModel::deleteProduct(const QModelIndex &index) {
         editProductAvailability(getValue(index, 0).toInt(), false);
+    }
+
+    void ComModel::deleteProductEvent(const QModelIndex &index) {
+        deleteProductEventQuery->bindValue(0, getValue(index, 0));
+        deleteProductEventQuery->exec();
+        refreshProducts();
+        changesMade = true;
     }
 
     int ComModel::insertCommission(const int commissionerId, 
@@ -999,6 +1007,9 @@ namespace Commissionator {
         deletePieceQuery = new QSqlQuery(*sql);
         deletePieceQuery->prepare("DELETE FROM Piece WHERE "
             "Piece.id = (?);");
+        deleteProductEventQuery = new QSqlQuery(*sql);
+        deleteProductEventQuery->prepare("DELETE FROM ProductEvent WHERE "
+            "ProductEvent.id = (?);");
         editCommissionCommissionerQuery = new QSqlQuery(*sql);
         editCommissionCommissionerQuery->prepare("UPDATE Commission "
             "SET commissioner = (?) WHERE id = (?)");

@@ -129,8 +129,6 @@ namespace Commissionator {
         //connect(eventsDelegate, &FixedRowTableDelegate::buttonClicked,
         //    this, &ProductPanel::deleteEvent);
 
-        
-
         piecesSoldTable = new FixedRowTable(piecesSoldModel);
         piecesSoldTable->setBoxText("Search");
         piecesSoldTable->setColumnCount(4);
