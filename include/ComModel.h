@@ -658,12 +658,26 @@ namespace Commissionator {
         //void deletePaymentType(const QModelIndex &index);
 
         /**
+         *  Inserts commission into the database.
+         *
+         *  @param commissionerId - id of commissioner of the commission
+         *  @param dueDate - due date of the commission
+         *  @param notes - notes for the commission
+         *
+         *  @return - id of inserted commission
+         */
+        int insertCommission(const int commissionerId,
+            const QDateTime dueDate, const QString notes);
+
+        /**
          *  Inserts commissioner into the database.
          *
          *  @param commissionerName - name of commissioner
          *  @param commissionerNotes - notes for commissioner
+         *
+         *  @return - id of inserted commissioner
          */
-        void insertCommissioner(const QString commissionerName, 
+        int insertCommissioner(const QString commissionerName, 
             const QString commissionerNotes);
 
         /**
@@ -672,24 +686,30 @@ namespace Commissionator {
          *  @param commissionerId - id of commissioner the contact is for
          *  @param contactType - type of contact
          *  @param contactEntry - the entry for this contact
+         *
+         *  @return - id of inserted contact
          */
-        void insertContact(const int commissionerId, 
+        int insertContact(const int commissionerId, 
             const int contactType, const QString contactEntry);
 
         /**
          *  Inserts contact type into the database.
          *
          *  @param contactTypeName - QString representing Contact Type name
+         *
+         *  @return - id of inserted contact type
          */
-        void insertContactType(const QString contactTypeName);
+        int insertContactType(const QString contactTypeName);
 
         /**
          *  Inserts piece reference into the database.
          *
          *  @param piece - piece the reference is for
          *  @param reference - reference to be bound
+         *
+         *  @return - id of inserted reference
          */
-        //void insertPieceReference(const QString piece, 
+        //int insertPieceReference(const QString piece, 
         //    const QString reference);
 
         /**
@@ -697,8 +717,10 @@ namespace Commissionator {
          *
          *  @param productName - name of the product
          *  @param basePrice - base price of the product without options
+         *
+         *  @return - id of inserted product
          */
-        void insertProduct(const QString productName, const double basePrice);
+        int insertProduct(const QString productName, const double basePrice);
 
         /**
          *  Inserts product option type into the database.
@@ -707,8 +729,10 @@ namespace Commissionator {
          *  @param option - name of product option
          *  @param optionPrice - cost of the option
          *  @param isNumeric - whether the price is a numeric value or a boolean
+         *
+         *  @return - id of inserted product option
          */
-        //void insertProductOption(const QString product, const QString option,
+        //int insertProductOption(const QString product, const QString option,
             //const QString optionPrice, bool isNumeric);
 
         /**
@@ -717,8 +741,10 @@ namespace Commissionator {
          *  @param name - name of the sale
          *  @param startDate - starting date of the sale
          *  @param endDate - ending date of the sale
+         *
+         *  @return - id of inserted sale
          */
-        //void insertSale(const QString name, const QDateTime startDate, 
+        //int insertSale(const QString name, const QDateTime startDate, 
             //const QDateTime endDate);
 
         /**
@@ -735,8 +761,10 @@ namespace Commissionator {
          *  @param count2 - the number of product2s you recieve
          *  @param product2 - the product you get with the deal
          *  @param scalar2 - the amount you pay for the second product
+         *
+         *  @return - id of inserted deal
          */
-        //void insertDeal(const QString dealName, int count1, QString product1, 
+        //int insertDeal(const QString dealName, int count1, QString product1, 
             //double scalar1, int count2, QString product2, double scalar2);
 
         /**
@@ -747,8 +775,10 @@ namespace Commissionator {
          *  @param name - the name of the piece
          *  @param description - description of the piece
          *  @param overridePrice - override price of the item (defaults to -1)
+         *
+         *  @return - id of inserted piece
          */
-        void insertPiece(const int commission, const int product,
+        int insertPiece(const int commission, const int product,
             const QString name, const QString description, 
             const double overridePrice);
 
@@ -759,26 +789,20 @@ namespace Commissionator {
          *  @param paymentTypeId - type of payment that is being made
          *  @param paymentAmount - the amount the payment is made for
          *  @param paymentNotes - notes about the payment
-         */
-        void insertPayment(const int commissionId, const int paymentTypeId,
-            const double paymentAmount, const QString paymentNotes);
-
-        /**
-         *  Inserts commission into the database.
          *
-         *  @param commissionerId - id of commissioner of the commission
-         *  @param dueDate - due date of the commission
-         *  @param notes - notes for the commission
+         *  @return - id of inserted payment
          */
-        int insertCommission(const int commissionerId,
-            const QDateTime dueDate, const QString notes);
+        int insertPayment(const int commissionId, const int paymentTypeId,
+            const double paymentAmount, const QString paymentNotes);
 
         /**
          *  Inserts payment into the database.
          *
          *  @param typeName - name of the payment type that is being entered
+         *
+         *  @return - id of inserted payment type
          */
-        void insertPaymentType(const QString typeName);
+        int insertPaymentType(const QString typeName);
 
         /**
          *  Inserts refund into the database.
@@ -786,8 +810,10 @@ namespace Commissionator {
          *  @param commissionId - commission the payment is for
          *  @param refundAmount - the amount the payment is made for
          *  @param refundNotes - notes about the payment
+         *
+         *  @return - id of inserted refund
          */
-        void insertRefund(const int commissionId, const double refundAmount,
+        int insertRefund(const int commissionId, const double refundAmount,
             const QString refundNotes);
     private:
         /**

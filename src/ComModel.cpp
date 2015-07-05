@@ -375,16 +375,17 @@ namespace Commissionator {
         return insertCommissionQuery->lastInsertId().toInt();
     }
 
-    void ComModel::insertCommissioner(const QString commissionerName,
+    int ComModel::insertCommissioner(const QString commissionerName,
         const QString commissionerNotes) {
         insertCommissionerQuery->bindValue(0, commissionerName);
         insertCommissionerQuery->bindValue(1, commissionerNotes);
         insertCommissionerQuery->exec();
         refreshCommissioners();
         changesMade = true;
+        return insertCommissionerQuery->lastInsertId().toInt();
     }
 
-    void ComModel::insertContact(const int commissionerId,
+    int ComModel::insertContact(const int commissionerId,
         const int contactType, const QString contactEntry) {
         if (contactEntry != "") {
             insertContactQuery->bindValue(0, commissionerId);
@@ -394,16 +395,18 @@ namespace Commissionator {
         }
         refreshContacts();
         changesMade = true;
+        return insertContactQuery->lastInsertId().toInt();
     }
 
-    void ComModel::insertContactType(const QString contactTypeName) {
+    int ComModel::insertContactType(const QString contactTypeName) {
         insertContactTypeQuery->bindValue(0, contactTypeName);
         insertContactTypeQuery->exec();
         refreshContactTypes();
         changesMade = true;
+        return insertContactTypeQuery->lastInsertId().toInt();
     }
 
-    void ComModel::insertPayment(const int commissionId, const int paymentTypeId,
+    int ComModel::insertPayment(const int commissionId, const int paymentTypeId,
         const double paymentAmount, const QString paymentNotes) {
         insertPaymentQuery->bindValue(0, commissionId);
         insertPaymentQuery->bindValue(1, paymentTypeId);
@@ -416,16 +419,18 @@ namespace Commissionator {
         refreshCommissions();
         refreshCommissioners();
         changesMade = true;
+        return insertPaymentQuery->lastInsertId().toInt();
     }
 
-    void ComModel::insertPaymentType(const QString typeName) {
+    int ComModel::insertPaymentType(const QString typeName) {
         insertPaymentTypeQuery->bindValue(0, typeName);
         insertPaymentTypeQuery->exec();
         refreshPaymentTypes();
         changesMade = true;
+        return insertPaymentTypeQuery->lastInsertId().toInt();
     }
 
-    void ComModel::insertPiece(const int commission, const int product,
+    int ComModel::insertPiece(const int commission, const int product,
         const QString name, const QString description, 
         const double overridePrice) {
         insertPieceQuery->bindValue(0, commission);
@@ -444,9 +449,10 @@ namespace Commissionator {
         refreshPieces();
         refreshProducts();
         changesMade = true;
+        return insertPieceQuery->lastInsertId().toInt();
     }
 
-    void ComModel::insertProduct(const QString productName, const double basePrice) {
+    int ComModel::insertProduct(const QString productName, const double basePrice) {
         insertProductQuery->bindValue(0, productName);
         insertProductQuery->exec();
         QSqlQuery lastId("SELECT last_insert_rowid();", *sql);
@@ -454,11 +460,12 @@ namespace Commissionator {
         lastId.first();
         editProductPrice(lastId.value(0).toInt(), basePrice);
         changesMade = true;
+        return insertProductQuery->lastInsertId().toInt();
     }
 
-    void ComModel::insertRefund(const int commissionId, const double refundAmount,
+    int ComModel::insertRefund(const int commissionId, const double refundAmount,
         const QString refundNotes) {
-        insertPayment(commissionId, 0, -refundAmount, refundNotes);
+        return insertPayment(commissionId, 0, -refundAmount, refundNotes);
     }
 
     void ComModel::build() {
