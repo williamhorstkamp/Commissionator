@@ -218,6 +218,14 @@ namespace Commissionator {
         changesMade = true;
     }
 
+    void ComModel::editProductEventPlace(const int productEvent, const int place) {
+        editProductEventPlaceQuery->bindValue(0, place);
+        editProductEventPlaceQuery->bindValue(1, productEvent);
+        editProductEventPlaceQuery->exec();
+        refreshProducts();
+        changesMade = true;
+    }
+
     void ComModel::searchCommissioners(const QString name, const QString dateOldest,
         const QString balance, const QString notes) {
         commissionersModel->query().bindValue(0, "%" + name + "%");
@@ -463,6 +471,14 @@ namespace Commissionator {
         return insertProductQuery->lastInsertId().toInt();
     }
 
+    int ComModel::insertProductEvent(const int product, const QString eventName) {
+        insertProductEventQuery->bindValue(0, product);
+        insertProductEventQuery->bindValue(1, eventName);
+        insertProductEventQuery->exec();
+        changesMade = true;
+        return insertProductEventQuery->lastInsertId().toInt();
+    }
+
     int ComModel::insertRefund(const int commissionId, const double refundAmount,
         const QString refundNotes) {
         return insertPayment(commissionId, 0, -refundAmount, refundNotes);
@@ -472,6 +488,7 @@ namespace Commissionator {
         QSqlDatabase::database().transaction();
         sql->exec("PRAGMA foreign_keys = ON;");
         sql->exec("PRAGMA synchronous = OFF;");
+        sql->exec("PRAGMA recursive_triggers = ON;");
         sql->exec("CREATE TABLE IF NOT EXISTS ContactType("
             "id	INTEGER PRIMARY KEY AUTOINCREMENT, "
             "type	TEXT NOT NULL"
@@ -674,6 +691,7 @@ namespace Commissionator {
         commissionerNamesModel->query().finish();
         commissionersModel->query().finish();
         commissionModel->query().finish();
+        commissionListModel->query().finish();
         commissionPaymentsModel->query().finish();
         commissionPiecesModel->query().finish();
         commissionsModel->query().finish();
@@ -681,10 +699,16 @@ namespace Commissionator {
         deleteCommissionerQuery->finish();
         deleteCommissionQuery->finish();
         deleteContactQuery->finish();
+        deletePieceQuery->finish();
+        deleteProductEventQuery->finish();
         editCommissionCommissionerQuery->finish();
         editCommissionNotesQuery->finish();
         editCommissionerNameQuery->finish();
         editCommissionerNotesQuery->finish();
+        editProductAvailabilityQuery->finish();
+        editProductPriceQuery->finish();
+        editProductNameQuery->finish();
+        editProductEventPlaceQuery->finish();
         insertCommissionerQuery->finish();
         insertCommissionQuery->finish();
         insertContactQuery->finish();
@@ -692,13 +716,16 @@ namespace Commissionator {
         insertPaymentQuery->finish();
         insertPaymentTypeQuery->finish();
         insertPieceQuery->finish();
-        editProductPriceQuery->finish();
         insertProductQuery->finish();
+        insertProductEventQuery->finish();
         paymentTypesModel->query().finish();
         pieceModel->query().finish();
         piecesModel->query().finish();
+        productEventCountQuery->finish();
+        productModel->query().finish();
         productNamesModel->query().finish();
         productsModel->query().finish();
+        productPiecesModel->query().finish();
     }
 
     QVariant ComModel::getValue(const QModelIndex &index, int column) {
@@ -1039,6 +1066,9 @@ namespace Commissionator {
         editProductNameQuery = new QSqlQuery(*sql);
         editProductNameQuery->prepare("UPDATE Product "
             "SET name = (?) WHERE id = (?)");
+        editProductEventPlaceQuery = new QSqlQuery(*sql);
+        editProductEventPlaceQuery->prepare("UPDATE ProductEvent "
+            "SET position = (?) WHERE id = (?)");
         insertCommissionerQuery = new QSqlQuery(*sql);
         insertCommissionerQuery->prepare("INSERT INTO "
             "Commissioner(name, notes) VALUES (?, ?);");
@@ -1066,6 +1096,9 @@ namespace Commissionator {
         insertProductQuery = new QSqlQuery(*sql);
         insertProductQuery->prepare("INSERT INTO "
             "Product(name, available) VALUES(?, 1);");
+        insertProductEventQuery = new QSqlQuery(*sql);
+        insertProductEventQuery->prepare("INSERT INTO ProductEvent"
+            "(product, name) VALUES (?, ?)");
         paymentTypesModel = new QSqlQueryModel(this);
         paymentTypesModel->setQuery(QSqlQuery("SELECT id, name FROM PaymentType "
             "WHERE deleted = 0 AND id > 0", *sql));
@@ -1098,6 +1131,7 @@ namespace Commissionator {
             "'localtime'), 0) LIKE (?);");
         piecesModel->setQuery(piecesQuery);
         searchPieces("", "", "", "");
+        productEventCountQuery = new QSqlQuery(*sql);
         productModel = new QSqlQueryModel(this);
         QSqlQuery productQuery("SELECT Product.id, Product.name, "
             "COUNT(Piece.id), ProductPrices.price, Product.available "

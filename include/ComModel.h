@@ -428,6 +428,14 @@ namespace Commissionator {
         void editProductAvailability(const int productId, const bool available);
 
         /**
+         *  Edits the order that the product events take place in
+         *
+         *  @param productEvent - the product event being moved
+         *  @param place - the new order that the event takes place in
+         */
+        void editProductEventPlace(const int productEvent, const int place);
+
+        /**
          *  Edits product name.
          *
          *  @param productId - id of the product
@@ -723,6 +731,14 @@ namespace Commissionator {
         int insertProduct(const QString productName, const double basePrice);
 
         /**
+         *  Insert product event into the database.
+         *
+         *  @param product - product the event is for
+         *  @param eventName - name of the event
+         */
+        int insertProductEvent(const int product, const QString eventName);
+
+        /**
          *  Inserts product option type into the database.
          *
          *  @param product - product the option is for
@@ -732,7 +748,7 @@ namespace Commissionator {
          *
          *  @return - id of inserted product option
          */
-        //int insertProductOption(const QString product, const QString option,
+        //int insertProductOption(const int product, const QString option,
             //const QString optionPrice, bool isNumeric);
 
         /**
@@ -910,6 +926,7 @@ namespace Commissionator {
         QSqlQuery *editProductAvailabilityQuery;
         QSqlQuery *editProductPriceQuery; 
         QSqlQuery *editProductNameQuery;
+        QSqlQuery *editProductEventPlaceQuery;
         QSqlQuery *insertCommissionerQuery;
         QSqlQuery *insertCommissionQuery;
         QSqlQuery *insertContactQuery;
@@ -918,9 +935,11 @@ namespace Commissionator {
         QSqlQuery *insertPaymentTypeQuery;
         QSqlQuery *insertPieceQuery;
         QSqlQuery *insertProductQuery;
+        QSqlQuery *insertProductEventQuery;
         QSqlQueryModel *paymentTypesModel;
         QSqlQueryModel *pieceModel;
         QSqlQueryModel *piecesModel;
+        QSqlQuery *productEventCountQuery;
         QSqlQueryModel *productModel;
         QSqlQueryModel *productNamesModel;
         QSqlQueryModel *productsModel;
