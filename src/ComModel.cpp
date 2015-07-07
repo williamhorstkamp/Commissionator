@@ -460,7 +460,8 @@ namespace Commissionator {
         return insertPieceQuery->lastInsertId().toInt();
     }
 
-    int ComModel::insertProduct(const QString productName, const double basePrice) {
+    int ComModel::insertProduct(const QString productName, 
+        const double basePrice) {
         insertProductQuery->bindValue(0, productName);
         insertProductQuery->exec();
         QSqlQuery lastId("SELECT last_insert_rowid();", *sql);
@@ -471,16 +472,22 @@ namespace Commissionator {
         return insertProductQuery->lastInsertId().toInt();
     }
 
-    int ComModel::insertProductEvent(const int product, const QString eventName) {
+    int ComModel::insertProductEvent(const int product, 
+        const QString eventName) {
         insertProductEventQuery->bindValue(0, product);
         insertProductEventQuery->bindValue(1, eventName);
+        productEventCountQuery->bindValue(0, product);
+        productEventCountQuery->exec();
+        productEventCountQuery->first();
+        insertProductEventQuery->bindValue(2, 
+            productEventCountQuery->value(0).toInt() + 1);
         insertProductEventQuery->exec();
         changesMade = true;
         return insertProductEventQuery->lastInsertId().toInt();
     }
 
-    int ComModel::insertRefund(const int commissionId, const double refundAmount,
-        const QString refundNotes) {
+    int ComModel::insertRefund(const int commissionId, 
+        const double refundAmount, const QString refundNotes) {
         return insertPayment(commissionId, 0, -refundAmount, refundNotes);
     }
 
@@ -617,7 +624,8 @@ namespace Commissionator {
             "UPDATE Piece SET commission = 0 "
             "WHERE commission = OLD.id; "
             "END");
-        sql->exec("CREATE TRIGGER IF NOT EXISTS updateCommissionPaidDateOnPayment "
+        sql->exec("CREATE TRIGGER IF NOT EXISTS "
+            "updateCommissionPaidDateOnPayment "
             "AFTER INSERT ON Payment "
             "FOR EACH ROW BEGIN "
             "UPDATE Commission SET paidDate = STRFTIME('%s', 'now') * 1000 "
@@ -730,7 +738,9 @@ namespace Commissionator {
 
     QVariant ComModel::getValue(const QModelIndex &index, int column) {
         if (index.isValid())
-            return index.model()->data(index.model()->index(index.row(), column));
+            return index.model()->data(index.model()->index(
+                index.row(), 
+                column));
         else
             return QVariant();
     }
@@ -1098,7 +1108,7 @@ namespace Commissionator {
             "Product(name, available) VALUES(?, 1);");
         insertProductEventQuery = new QSqlQuery(*sql);
         insertProductEventQuery->prepare("INSERT INTO ProductEvent"
-            "(product, name) VALUES (?, ?)");
+            "(product, name, position) VALUES (?, ?, ?)");
         paymentTypesModel = new QSqlQueryModel(this);
         paymentTypesModel->setQuery(QSqlQuery("SELECT id, name FROM PaymentType "
             "WHERE deleted = 0 AND id > 0", *sql));
@@ -1132,6 +1142,10 @@ namespace Commissionator {
         piecesModel->setQuery(piecesQuery);
         searchPieces("", "", "", "");
         productEventCountQuery = new QSqlQuery(*sql);
+        productEventCountQuery->prepare("SELECT Count(ProductEvent.id) "
+            "FROM Product "
+            "LEFT JOIN ProductEvent ON Product.id = ProductEvent.product "
+            "WHERE Product.id = (?)");
         productModel = new QSqlQueryModel(this);
         QSqlQuery productQuery("SELECT Product.id, Product.name, "
             "COUNT(Piece.id), ProductPrices.price, Product.available "
