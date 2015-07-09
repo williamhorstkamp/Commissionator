@@ -92,9 +92,11 @@ namespace Commissionator {
         /**
          *  Slot adds a new piece to the newPieceView based on given parameters
          *
-         *  @param query - QList of Qvariants containing the query variables
-         *  Data order:
-         *  Product Id, Product Name, Piece Name, Piece Notes
+         *  @param pieceName - name of the piece
+         *  @param pieceNotes - notes for the piece
+         *  @param productId - the product id of the piece
+         *  @param productName - the name of the product (for display purposes)
+         *  @param price - the override price, if used (defaults to -1)
          */
         void newPieceSlot(const QString pieceName, const QString pieceNotes,
             const int productId, const QString productName, const double price);

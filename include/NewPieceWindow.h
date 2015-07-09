@@ -51,7 +51,7 @@ namespace Commissionator {
     protected slots:
         /**
          *  Slot intercepts the QPushButton::clicked signal from the insert
-         *  commissioner button and emits the newCommissioner signal.
+         *  piece button and emits the newCommissioner signal.
          */
         virtual void newItemSlot();
 
@@ -63,7 +63,7 @@ namespace Commissionator {
 
     private slots:
         /**
-         *  Slot catches QZheckBox::stateChanged from the price override checkblox
+         *  Slot catches QCheckBox::stateChanged from the price override checkbox
          *  and toggles whether the price lineedit is displayed.
          */
         void setPriceOverride();

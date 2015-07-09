@@ -8,6 +8,9 @@ class QGridLayout;
 class QLabel;
 class QLineEdit;
 class QDoubleSpinBox;
+class QStringListModel;
+class QListView;
+class FixedRowTableDelegate;
 
 namespace Commissionator {
 
@@ -50,6 +53,21 @@ namespace Commissionator {
          */
         virtual void setSubmitEnabled();
 
+    private slots:
+        /**
+         *  Slot deletes the piece at the given index.
+         *
+         *  @param index - index of the piece to delete
+         */
+        void deleteEventSlot(const QModelIndex &index);
+
+        /**
+         *  Slot adds a new piece to the newPieceView based on given parameters
+         *
+         *  @param eventName - the name of the newly created event
+         */
+        void newEventSlot(const QString eventName);
+
     private:
         /**
          *  Function resets the window to default settings.
@@ -63,6 +81,10 @@ namespace Commissionator {
         QLabel *priceLabel;
         QLineEdit *nameEdit;
         QDoubleSpinBox *priceEdit;
+        QStringListModel *productEventsModel;
+        FixedRowTableDelegate *delegate;
+        QListView *productEventsView;
+        QPushButton *newProductEventButton;
         QPushButton *submitButton;
     };
 }

@@ -653,7 +653,8 @@ namespace Commissionator {
             "ON Commission.id = b.id "
             "WHERE Commission.id = NEW.commission) <= 0; "
             "END");
-        sql->exec("CREATE TRIGGER IF NOT EXISTS updateCommissionPaidDateOnPiece "
+        sql->exec("CREATE TRIGGER IF NOT EXISTS "
+            "updateCommissionPaidDateOnPiece "
             "AFTER INSERT ON Piece "
             "FOR EACH ROW BEGIN "
             "UPDATE Commission SET paidDate = NULL "
@@ -680,7 +681,7 @@ namespace Commissionator {
             "ON Commission.id = b.id "
             "WHERE Commission.id = NEW.commission) > 0; "
             "END");
-        sql->exec("CREATE TRIGGER insertPieceEvent "
+        sql->exec("CREATE TRIGGER IF NOT EXISTS insertPieceEvent "
             "AFTER INSERT ON Piece "
             "FOR EACH ROW BEGIN "
             "INSERT INTO PieceEvent(piece, event) "
