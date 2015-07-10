@@ -116,7 +116,7 @@ namespace Commissionator {
         comBox->setCurrentIndex(-1);
         calendarEdit->setDate(QDate::currentDate());
         notesEdit->setText("");
-        newPieceModel->removeRows(0, newPieceModel->rowCount());
+        newPieceModel->clear();
         submitButton->setEnabled(false);
     }
 

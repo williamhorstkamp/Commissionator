@@ -322,7 +322,7 @@ namespace Commissionator{
             this, &MainWindow::insertPiece);
         productPopup = new NewProductWindow(this);
         connect(productPopup, &NewProductWindow::newProduct,
-            model, &ComModel::insertProduct);
+            this, &MainWindow::insertProduct);
         refundPopup = new NewRefundWindow(model->getCommissionList(), this);
         connect(refundPopup, &NewRefundWindow::newRefund,
             model, &ComModel::insertRefund);
@@ -344,6 +344,13 @@ namespace Commissionator{
         const double price) {
         model->insertPiece(model->getCommission()->record(0).value(0).toInt(),
             productId, pieceName, pieceNotes, price);
+    }
+
+    void MainWindow::insertProduct(const QString productName, const double basePrice,
+        QList<QString> events) {
+        const int id = model->insertProduct(productName, basePrice);
+        for (int i = 0; i < events.length(); i++)
+            model->insertProductEvent(id, events[i]);
     }
 
     void MainWindow::newCommission() {

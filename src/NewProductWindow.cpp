@@ -5,8 +5,9 @@
 #include <QDoubleSpinBox>
 #include <QPushButton>
 #include <QListView>
-#include <QStringListModel>
+#include <QStandardItemModel>
 #include "FixedRowTableDelegate.h"
+#include "NewEventWindow.h"
 #include "NewProductWindow.h"
 
 namespace Commissionator {
@@ -38,20 +39,27 @@ namespace Commissionator {
         priceEdit->setMinimum(0);
         priceEdit->setMaximum(999999);
 
-        QStringList list;
-        productEventsModel = new QStringListModel(this);
-        productEventsModel->setStringList(list);
+        productEventsModel = new QStandardItemModel(this);
 
         productEventsView = new QListView(this);
         productEventsView->setModel(productEventsModel);
         delegate = new FixedRowTableDelegate(this);
         delegate->setIcon(":/Delete.png");
-        delegate->setIconSize(24);
+        delegate->setIconSize(16);
         productEventsView->setItemDelegate(delegate);
         productEventsView->setSelectionMode(QAbstractItemView::NoSelection);
         connect(delegate, &FixedRowTableDelegate::buttonClicked,
             this, &NewProductWindow::deleteEventSlot);
         
+        eventPopup = new NewEventWindow(this);
+        connect(eventPopup, &NewEventWindow::newEvent,
+            this, &NewProductWindow::newEventSlot);
+
+        newProductEventButton = new QPushButton(this);
+        newProductEventButton->setText("New Product Event");
+        connect(newProductEventButton, &QPushButton::clicked,
+            eventPopup, &NewEventWindow::exec);
+
         submitButton = new QPushButton(this);
         submitButton->setText("Submit Product");
         submitButton->setEnabled(false);
@@ -61,7 +69,7 @@ namespace Commissionator {
         mainLayout->addWidget(newProLabel);
         mainLayout->addLayout(proLayout);
         mainLayout->addWidget(productEventsView);
-        //mainLayout->addWidget(newProductEventButton);
+        mainLayout->addWidget(newProductEventButton);
         mainLayout->addWidget(submitButton);
 
         proLayout->addWidget(nameLabel, 0, 0);
@@ -77,6 +85,7 @@ namespace Commissionator {
     void NewProductWindow::clear() {
         nameEdit->setText("");
         priceEdit->setValue(0);
+        productEventsModel->clear();
         submitButton->setEnabled(false);
     }
 
@@ -85,11 +94,14 @@ namespace Commissionator {
     }
 
     void NewProductWindow::newEventSlot(const QString eventName) {
-        productEventsModel->stringList() << eventName;
+        productEventsModel->appendRow(new QStandardItem(eventName));
     }
 
     void NewProductWindow::newItemSlot() {
-        emit newProduct(nameEdit->text(), priceEdit->value());
+        QList<QString> events;
+        for (int i = 0; i < productEventsModel->rowCount(); i++) 
+            events << productEventsModel->index(i, 0).data().toString();
+        emit newProduct(nameEdit->text(), priceEdit->value(), events);
         BaseNewWindow::newItemSlot();
     }
 

@@ -77,6 +77,18 @@ namespace Commissionator {
             const double price);
 
         /**
+         *  Slot accepts the newProduct signal from NewProductWindow and
+         *  inserts the product and the product options into the model.
+         *
+         *  @param productName - the name of the product
+         *  @param basePrice - the base price of the product
+         *  @param events - list of strings representing the names of the
+         *      product events. It is expected that they are in proper order.
+         */
+        void insertProduct(const QString productName, const double basePrice,
+            QList<QString> events);
+
+        /**
          *  Sets panels and toolbar to the Manage Commissioner panels
          */
         void manageCommissioners();

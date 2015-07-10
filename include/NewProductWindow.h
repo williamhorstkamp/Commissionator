@@ -8,9 +8,10 @@ class QGridLayout;
 class QLabel;
 class QLineEdit;
 class QDoubleSpinBox;
-class QStringListModel;
+class QStandardItemModel;
 class QListView;
 class FixedRowTableDelegate;
+class NewEventWindow;
 
 namespace Commissionator {
 
@@ -37,8 +38,10 @@ namespace Commissionator {
          *
          *  @param productName - name of the product
          *  @param basePrice - price of the product on creation
+         *  @param events - list of event names
          */
-        void newProduct(const QString productName, const double basePrice);
+        void newProduct(const QString productName, const double basePrice, 
+            QList<QString> events);
 
     protected slots:
         /**
@@ -81,11 +84,12 @@ namespace Commissionator {
         QLabel *priceLabel;
         QLineEdit *nameEdit;
         QDoubleSpinBox *priceEdit;
-        QStringListModel *productEventsModel;
+        QStandardItemModel *productEventsModel;
         FixedRowTableDelegate *delegate;
         QListView *productEventsView;
         QPushButton *newProductEventButton;
         QPushButton *submitButton;
+        NewEventWindow *eventPopup;
     };
 }
 

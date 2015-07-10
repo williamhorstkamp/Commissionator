@@ -24,10 +24,17 @@ namespace Commissionator {
             this, &NewEventWindow::setSubmitEnabled);
 
         submitButton = new QPushButton(this);
-        submitButton->setText("Submit Piece");
+        submitButton->setText("Submit Event");
         submitButton->setEnabled(false);
         connect(submitButton, &QPushButton::clicked,
             this, &NewEventWindow::newItemSlot);
+
+        mainLayout->addWidget(newEventLabel);
+        mainLayout->addLayout(eventLayout);
+        mainLayout->addWidget(submitButton);
+
+        eventLayout->addWidget(nameLabel, 0, 0);
+        eventLayout->addWidget(nameEdit, 0, 1);
     }
 
     NewEventWindow::~NewEventWindow() {
