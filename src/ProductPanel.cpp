@@ -20,7 +20,7 @@ namespace Commissionator {
 
         createLabels();
         createButtons();
-        createTables(eventsModel, /*optionsModel, */piecesSoldModel);
+        createTables(eventsModel, /*optionsModel,*/ piecesSoldModel);
         createPanel();
     }
 

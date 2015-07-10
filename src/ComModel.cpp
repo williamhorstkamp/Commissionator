@@ -143,6 +143,10 @@ namespace Commissionator {
         return productModel;
     }
 
+    QSqlQueryModel *ComModel::getProductEvents() {
+        return productEventsModel;
+    }
+
     QSqlQueryModel *ComModel::getProducts() {
         return productsModel;
     }
@@ -322,6 +326,9 @@ namespace Commissionator {
         productModel->query().bindValue(0, proId);
         productModel->query().exec();
         productModel->setQuery(productModel->query());
+        productEventsModel->query().bindValue(0, proId);
+        productEventsModel->query().exec();
+        productEventsModel->setQuery(productEventsModel->query());
         searchProductPieces("", "", "", "");
         emit productChanged();
     }
@@ -1148,7 +1155,8 @@ namespace Commissionator {
             "LEFT JOIN ProductEvent ON Product.id = ProductEvent.product "
             "WHERE Product.id = (?)");
         productModel = new QSqlQueryModel(this);
-        QSqlQuery productQuery("SELECT Product.id, Product.name, "
+        QSqlQuery productQuery(*sql);
+        productQuery.prepare("SELECT Product.id, Product.name, "
             "COUNT(Piece.id), ProductPrices.price, Product.available "
             "FROM Product "
             "LEFT JOIN Piece ON Product.id = Piece.product "
@@ -1157,6 +1165,12 @@ namespace Commissionator {
             "GROUP BY Product.id "
             "HAVING ProductPrices.date = MAX(ProductPrices.date);");
         productModel->setQuery(productQuery);
+        productEventsModel = new QSqlQueryModel(this);
+        QSqlQuery productEventsQuery(*sql);
+        productEventsQuery.prepare("SELECT ProductEvent.name "
+            "FROM ProductEvent WHERE ProductEvent.product = (?) "
+            "ORDER BY ProductEvent.position ASC");
+        productEventsModel->setQuery(productEventsQuery);
         productNamesModel = new QSqlQueryModel(this);
         QSqlQuery productNamesQuery("SELECT Product.id, Product.name "
             "FROM Product WHERE Product.available = 1;", *sql);

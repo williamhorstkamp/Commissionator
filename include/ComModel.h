@@ -941,6 +941,7 @@ namespace Commissionator {
         QSqlQueryModel *piecesModel;
         QSqlQuery *productEventCountQuery;
         QSqlQueryModel *productModel;
+        QSqlQueryModel *productEventsModel;
         QSqlQueryModel *productNamesModel;
         QSqlQueryModel *productsModel;
         QSqlQueryModel *productPiecesModel;

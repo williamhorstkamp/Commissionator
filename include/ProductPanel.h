@@ -23,16 +23,18 @@ namespace Commissionator {
 
     public:
         /**
-        *  Constructor accepts QSqlQueryModels for the selected product,
-        *  the options it has, and the specific pieces sold.
-        *
-        *  @param productsModel - QSqlQueryModel containing data about the
-        *      selected product
-        *  @param productOptionsModel - QSqlQueryModel containing data about the
-        *      selected product's options
-        *  @param PiecesSoldModel - QSqlQueryModel containing data about the
-        *      selected pieces sold for the product
-        */
+         *  Constructor accepts QSqlQueryModels for the selected product,
+         *  the options it has, and the specific pieces sold.
+         *
+         *  @param productsModel - QSqlQueryModel containing data about the
+         *      selected product
+         *  @param eventsModel - QSqlQueryModel containing data about the
+         *      selected product's events
+         *  @param optionsModel - QSqlQueryModel containing data about the
+         *      selected product's options
+         *  @param piecesSoldModel - QSqlQueryModel containing data about the
+         *      selected pieces sold for the product
+         */
         ProductPanel(QSqlQueryModel *productModel,
             QSqlQueryModel *eventsModel,
             //QSqlQueryModel *optionsModel,
@@ -40,11 +42,11 @@ namespace Commissionator {
 
     signals:
         /**
-        *  Signal emit when the productOptionTable's delete button is clicked.
-        *  Is a fowarded to ComModel::deleteProductOption
-        *
-        *  @param index - index of the ProductOption
-        */
+         *  Signal emit when the productOptionTable's delete button is clicked.
+         *  Is a fowarded to ComModel::deleteProductOption
+         *
+         *  @param index - index of the ProductOption
+         */
         void deleteProductOption(const QModelIndex &index);
 
         /**

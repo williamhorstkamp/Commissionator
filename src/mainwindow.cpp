@@ -225,7 +225,7 @@ namespace Commissionator{
             this);
         productRightPanel = new ProductPanel(
             model->getProduct(), 
-            model->getProductPiecesSold(),
+            model->getProductEvents(),
             model->getProductPiecesSold(), 
             this);
 
