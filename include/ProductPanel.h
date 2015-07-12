@@ -42,6 +42,14 @@ namespace Commissionator {
 
     signals:
         /**
+         *  Signal emit when the productEventTable's delete button is clicked.
+         *  Is a fowarded to ComModel::deleteProductEvent
+         *
+         *  @param index - index of the ProductEvent
+         */
+        void deleteProductEvent(const QModelIndex &index);
+
+        /**
          *  Signal emit when the productOptionTable's delete button is clicked.
          *  Is a fowarded to ComModel::deleteProductOption
          *
@@ -183,6 +191,7 @@ namespace Commissionator {
         QDoubleSpinBox *basePriceEdit;
         QLabel *eventsLabel;
         QListView *eventsList;
+        FixedRowTableDelegate *eventsDelegate;
         QLabel *optionsLabel;
         FixedRowTable *optionsTable;
         QLabel *piecesSoldLabel;

@@ -125,9 +125,14 @@ namespace Commissionator {
         eventsList = new QListView(this);
         eventsList->setModel(eventsModel);
         eventsList->setSelectionMode(QAbstractItemView::NoSelection);
+        eventsList->setSpacing(1);
+        eventsDelegate = new FixedRowTableDelegate(this);
+        eventsDelegate->setIcon(":/Delete.png");
+        eventsDelegate->setIconSize(18);
+        eventsList->setItemDelegate(eventsDelegate);
         eventsList->hide();
-        //connect(eventsDelegate, &FixedRowTableDelegate::buttonClicked,
-        //    this, &ProductPanel::deleteEvent);
+        connect(eventsDelegate, &FixedRowTableDelegate::buttonClicked,
+            this, &ProductPanel::deleteProductEvent);
 
         piecesSoldTable = new FixedRowTable(piecesSoldModel);
         piecesSoldTable->setBoxText("Search");
@@ -199,6 +204,8 @@ namespace Commissionator {
                 "Base Price: " + 
                 dollarConverter.toCurrencyString(
                     productModel->record(0).value(3).toDouble()));
+
+            eventsList->setModelColumn(1);
 
             for (int i = 0; i < piecesSoldTable->model()->columnCount(); i++)
                 piecesSoldTable->horizontalHeader()->setSectionResizeMode(

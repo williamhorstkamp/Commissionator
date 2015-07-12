@@ -1167,7 +1167,7 @@ namespace Commissionator {
         productModel->setQuery(productQuery);
         productEventsModel = new QSqlQueryModel(this);
         QSqlQuery productEventsQuery(*sql);
-        productEventsQuery.prepare("SELECT ProductEvent.name "
+        productEventsQuery.prepare("SELECT ProductEvent.id, ProductEvent.name "
             "FROM ProductEvent WHERE ProductEvent.product = (?) "
             "ORDER BY ProductEvent.position ASC");
         productEventsModel->setQuery(productEventsQuery);
@@ -1281,6 +1281,8 @@ namespace Commissionator {
         productNamesModel->setQuery(productNamesModel->query());
         productPiecesModel->query().exec();
         productPiecesModel->setQuery(productPiecesModel->query());
+        productEventsModel->query().exec();
+        productEventsModel->setQuery(productEventsModel->query());
         productsModel->query().exec();
         productsModel->setQuery(productsModel->query());
         productModel->query().exec();

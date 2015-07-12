@@ -295,6 +295,8 @@ namespace Commissionator{
             model, &ComModel::editProductPrice);
         connect(productRightPanel, &ProductPanel::searchProductPieces,
             model, &ComModel::searchProductPieces);
+        connect(productRightPanel, &ProductPanel::deleteProductEvent,
+            model, &ComModel::deleteProductEvent);
 
         layout->addWidget(leftPanel);
         layout->addWidget(line);
