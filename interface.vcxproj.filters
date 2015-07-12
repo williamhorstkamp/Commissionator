@@ -234,6 +234,15 @@
     <ClCompile Include="GeneratedFiles\Release\moc_NewEventWindow.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="src\DropDisabledQStandardItemModel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_DropDisabledQStandardItemModel.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_DropDisabledQStandardItemModel.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="Resources\commissionator.qrc">
@@ -300,6 +309,9 @@
       <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="include\NewEventWindow.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="include\DropDisabledQStandardItemModel.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>

@@ -5,7 +5,7 @@
 #include <QDoubleSpinBox>
 #include <QPushButton>
 #include <QListView>
-#include <QStandardItemModel>
+#include "DropDisabledQStandardItemModel.h"
 #include "FixedRowTableDelegate.h"
 #include "NewEventWindow.h"
 #include "NewProductWindow.h"
@@ -39,15 +39,16 @@ namespace Commissionator {
         priceEdit->setMinimum(0);
         priceEdit->setMaximum(999999);
 
-        productEventsModel = new QStandardItemModel(this);
+        productEventsModel = new DropDisabledQStandardItemModel(this);
 
         productEventsView = new QListView(this);
         productEventsView->setModel(productEventsModel);
         delegate = new FixedRowTableDelegate(this);
         delegate->setIcon(":/Delete.png");
-        delegate->setIconSize(16);
+        delegate->setIconSize(18);
         productEventsView->setItemDelegate(delegate);
-        productEventsView->setSelectionMode(QAbstractItemView::NoSelection);
+        productEventsView->setDragDropMode(QAbstractItemView::InternalMove);
+        productEventsView->setSpacing(1);
         connect(delegate, &FixedRowTableDelegate::buttonClicked,
             this, &NewProductWindow::deleteEventSlot);
         

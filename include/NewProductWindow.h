@@ -8,7 +8,7 @@ class QGridLayout;
 class QLabel;
 class QLineEdit;
 class QDoubleSpinBox;
-class QStandardItemModel;
+class DropDisabledQStandardItemModel;
 class QListView;
 class FixedRowTableDelegate;
 class NewEventWindow;
@@ -84,7 +84,7 @@ namespace Commissionator {
         QLabel *priceLabel;
         QLineEdit *nameEdit;
         QDoubleSpinBox *priceEdit;
-        QStandardItemModel *productEventsModel;
+        DropDisabledQStandardItemModel *productEventsModel;
         FixedRowTableDelegate *delegate;
         QListView *productEventsView;
         QPushButton *newProductEventButton;

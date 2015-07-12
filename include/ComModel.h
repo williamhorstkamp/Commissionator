@@ -735,6 +735,8 @@ namespace Commissionator {
          *
          *  @param product - product the event is for
          *  @param eventName - name of the event
+         *
+         *  @param return - id of inserted product event
          */
         int insertProductEvent(const int product, const QString eventName);
 
