@@ -187,7 +187,8 @@ namespace Commissionator {
         changesMade = true;
     }
 
-    void ComModel::editCommissionerNotes(const int commissioner, const QString notes) {
+    void ComModel::editCommissionerNotes(const int commissioner, 
+        const QString notes) {
         editCommissionerNotesQuery->bindValue(0, notes);
         editCommissionerNotesQuery->bindValue(1, commissioner);
         editCommissionerNotesQuery->exec();
@@ -204,7 +205,8 @@ namespace Commissionator {
         changesMade = true;
     }
 
-    void ComModel::editProductPrice(const int productId, const double basePrice) {
+    void ComModel::editProductPrice(const int productId, 
+        const double basePrice) {
         editProductPriceQuery->bindValue(0, productId);
         editProductPriceQuery->bindValue(1, basePrice);
         editProductPriceQuery->bindValue(2,
@@ -222,7 +224,8 @@ namespace Commissionator {
         changesMade = true;
     }
 
-    void ComModel::editProductEventPlace(const int productEvent, const int place) {
+    void ComModel::editProductEventPlace(const int productEvent, 
+        const int place) {
         editProductEventPlaceQuery->bindValue(0, place);
         editProductEventPlaceQuery->bindValue(1, productEvent);
         editProductEventPlaceQuery->exec();
@@ -230,8 +233,8 @@ namespace Commissionator {
         changesMade = true;
     }
 
-    void ComModel::searchCommissioners(const QString name, const QString dateOldest,
-        const QString balance, const QString notes) {
+    void ComModel::searchCommissioners(const QString name, 
+        const QString dateOldest, const QString balance, const QString notes) {
         commissionersModel->query().bindValue(0, "%" + name + "%");
         commissionersModel->query().bindValue(1, "%" + dateOldest + "%");
         commissionersModel->query().bindValue(2, "%" + balance + "%");
@@ -274,8 +277,9 @@ namespace Commissionator {
         productsModel->setQuery(productsModel->query());
     }
 
-    void ComModel::searchProductPieces(const QString commissioner, const QString piece,
-        const QString createDate, const QString finishDate) {
+    void ComModel::searchProductPieces(const QString commissioner, 
+        const QString piece, const QString createDate,
+        const QString finishDate) {
         productPiecesModel->query().bindValue(0, 
             productModel->record(0).value(0).toString());
         productPiecesModel->query().bindValue(1, "%" + commissioner + "%");
@@ -307,10 +311,12 @@ namespace Commissionator {
         commissionerModel->setQuery(commissionerModel->query());
         commissionerCommissionsModel->query().bindValue(0, comId);
         commissionerCommissionsModel->query().exec();
-        commissionerCommissionsModel->setQuery(commissionerCommissionsModel->query());
+        commissionerCommissionsModel->setQuery(
+            commissionerCommissionsModel->query());
         commissionerContactsModel->query().bindValue(0, comId);
         commissionerContactsModel->query().exec();
-        commissionerContactsModel->setQuery(commissionerContactsModel->query());
+        commissionerContactsModel->setQuery(
+            commissionerContactsModel->query());
         emit commissionerChanged();
     }
 
@@ -421,8 +427,9 @@ namespace Commissionator {
         return insertContactTypeQuery->lastInsertId().toInt();
     }
 
-    int ComModel::insertPayment(const int commissionId, const int paymentTypeId,
-        const double paymentAmount, const QString paymentNotes) {
+    int ComModel::insertPayment(const int commissionId, 
+        const int paymentTypeId, const double paymentAmount, 
+        const QString paymentNotes) {
         insertPaymentQuery->bindValue(0, commissionId);
         insertPaymentQuery->bindValue(1, paymentTypeId);
         insertPaymentQuery->bindValue(2, paymentAmount);
@@ -452,7 +459,8 @@ namespace Commissionator {
         insertPieceQuery->bindValue(1, product);
         insertPieceQuery->bindValue(2, name);
         insertPieceQuery->bindValue(3, description);
-        insertPieceQuery->bindValue(4, QDateTime::currentDateTime().toMSecsSinceEpoch());
+        insertPieceQuery->bindValue(4, 
+            QDateTime::currentDateTime().toMSecsSinceEpoch());
         insertPieceQuery->bindValue(5, QVariant(QVariant::String));
         if (overridePrice > -1)
             insertPieceQuery->bindValue(6, overridePrice);
@@ -647,7 +655,8 @@ namespace Commissionator {
             "Piece.overridePrice override "
             "FROM Commission "
             "INNER JOIN Piece ON Commission.id = Piece.commission "
-            "INNER JOIN ProductPrices ON Piece.product = ProductPrices.product "
+            "INNER JOIN ProductPrices "
+            "ON Piece.product = ProductPrices.product "
             "AND ProductPrices.date < Commission.createDate "
             "GROUP BY Piece.id HAVING date = max(date)) a "
             "ON Commission.id = a.id "
@@ -675,7 +684,8 @@ namespace Commissionator {
             "Piece.overridePrice override "
             "FROM Commission "
             "INNER JOIN Piece ON Commission.id = Piece.commission "
-            "INNER JOIN ProductPrices ON Piece.product = ProductPrices.product "
+            "INNER JOIN ProductPrices "
+            "ON Piece.product = ProductPrices.product "
             "AND ProductPrices.date < Commission.createDate "
             "GROUP BY Piece.id HAVING date = max(date)) a "
             "ON Commission.id = a.id "
@@ -757,10 +767,12 @@ namespace Commissionator {
 		commissionerCommissionsModel = new QSqlQueryModel(this);
         QSqlQuery commissionerCommissionsQuery(*sql);
         commissionerCommissionsQuery.prepare("SELECT strftime('%m/%d/%Y', "
-            "Commission.createDate / 1000, 'unixepoch', 'localtime') 'Create Date', "
+            "Commission.createDate/1000, 'unixepoch', 'localtime') "
+            "'Create Date', "
             "COALESCE(strftime('%m/%d/%Y', Commission.paidDate / 1000, "
             "'unixepoch', 'localtime'), 'Unpaid') 'Paid Date', "
-            "COALESCE(SUM(COALESCE(override, price)), 'No pieces') 'Total Price', "
+            "COALESCE(SUM(COALESCE(override, price)), 'No pieces') "
+            "'Total Price', "
             "COALESCE(strftime('%m/%d/%Y', max(Piece.finishDate) / 1000, "
             "'unixepoch', 'localtime'), 'Unfinished') 'Finish Date' "
             "FROM Commission "
@@ -769,7 +781,8 @@ namespace Commissionator {
             "ProductPrices.price price, Piece.overridePrice override "
             "FROM Commission "
             "INNER JOIN Piece ON Commission.id = Piece.commission "
-            "INNER JOIN ProductPrices ON Piece.product = ProductPrices.product "
+            "INNER JOIN ProductPrices "
+            "ON Piece.product = ProductPrices.product "
             "INNER JOIN Commissioner ON "
             "Commission.commissioner = Commissioner.id "
             "WHERE ProductPrices.date < Commission.createDate "
@@ -963,7 +976,8 @@ namespace Commissionator {
         commissionListModel->setQuery(commissionListQuery);
 		commissionPaymentsModel = new QSqlQueryModel(this);
         QSqlQuery commissionPaymentsQuery(*sql);
-        commissionPaymentsQuery.prepare("SELECT PaymentType.name as 'Payment Type', "
+        commissionPaymentsQuery.prepare("SELECT PaymentType.name as "
+            "'Payment Type', "
             "strftime('%m/%d/%Y', Payment.date/1000, 'unixepoch', 'localtime') "
             "as 'Payment Date', "
             "Payment.fee as 'Payment Amount', "
@@ -973,8 +987,8 @@ namespace Commissionator {
         commissionPaymentsModel->setQuery(commissionPaymentsQuery);
         commissionPiecesModel = new QSqlQueryModel(this);
         QSqlQuery commissionPiecesQuery(*sql);
-        commissionPiecesQuery.prepare("SELECT a.id, a.product as 'Product Name', "
-            "a.name as 'Piece Name', "
+        commissionPiecesQuery.prepare("SELECT a.id, "
+            "a.product as 'Product Name', a.name as 'Piece Name', "
             "COALESCE(b.price, a.price) as 'Price', "
             "a.createDate as 'Create Date', a.finishDate as 'Finish Date' "
             "FROM "
@@ -1045,7 +1059,9 @@ namespace Commissionator {
         commissionsModel->setHeaderData(6, Qt::Horizontal,
             QVariant("Finish Date"), Qt::DisplayRole);
         contactTypesModel = new QSqlQueryModel(this);
-        contactTypesModel->setQuery(QSqlQuery("SELECT id, type FROM ContactType;", *sql));
+        QSqlQuery contactTypesQuery(*sql);
+        contactTypesQuery.prepare("SELECT id, type FROM ContactType;");
+        contactTypesModel->setQuery(contactTypesQuery);
         contactTypesModel->query().exec();
         deleteCommissionerQuery = new QSqlQuery(*sql);
         deleteCommissionerQuery->prepare("DELETE FROM Commissioner WHERE "
@@ -1109,7 +1125,8 @@ namespace Commissionator {
             "VALUES (?, ?, ?, ?, ?);");
         insertPieceQuery = new QSqlQuery(*sql);
         insertPieceQuery->prepare("INSERT INTO "
-            "Piece(commission, product, name, notes, createDate, finishDate, overridePrice) "
+            "Piece(commission, product, name, notes, createDate, finishDate, "
+            "overridePrice) "
             "VALUES(?, ?, ?, ?, ?, ?, ?);");
         insertProductQuery = new QSqlQuery(*sql);
         insertProductQuery->prepare("INSERT INTO "
@@ -1118,7 +1135,8 @@ namespace Commissionator {
         insertProductEventQuery->prepare("INSERT INTO ProductEvent"
             "(product, name, position) VALUES (?, ?, ?)");
         paymentTypesModel = new QSqlQueryModel(this);
-        paymentTypesModel->setQuery(QSqlQuery("SELECT id, name FROM PaymentType "
+        paymentTypesModel->setQuery(QSqlQuery("SELECT id, name "
+            "FROM PaymentType "
             "WHERE deleted = 0 AND id > 0", *sql));
         paymentTypesModel->query().exec();
         pieceModel = new QSqlQueryModel(this);
@@ -1144,7 +1162,8 @@ namespace Commissionator {
             "INNER JOIN Commissioner ON Commission.commissioner = Commissioner.id "
             "WHERE Commissioner.name LIKE (?) "
             "AND Piece.name LIKE (?) "
-            "AND STRFTIME('%m/%d/%Y', Piece.createDate/1000, 'unixepoch', 'localtime') LIKE (?) "
+            "AND STRFTIME('%m/%d/%Y', Piece.createDate/1000, 'unixepoch', "
+            "'localtime') LIKE (?) "
             "AND COALESCE(STRFTIME('%m/%d/%Y', Piece.finishDate/1000, 'unixepoch', "
             "'localtime'), 0) LIKE (?);");
         piecesModel->setQuery(piecesQuery);
