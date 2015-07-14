@@ -479,12 +479,9 @@ namespace Commissionator {
         const double basePrice) {
         insertProductQuery->bindValue(0, productName);
         insertProductQuery->exec();
-        QSqlQuery lastId("SELECT last_insert_rowid();", *sql);
-        lastId.exec();
-        lastId.first();
-        editProductPrice(lastId.value(0).toInt(), basePrice);
-        changesMade = true;
-        return insertProductQuery->lastInsertId().toInt();
+        int id = insertProductQuery->lastInsertId().toInt();
+        editProductPrice(id, basePrice);
+        return id;
     }
 
     int ComModel::insertProductEvent(const int product, 
@@ -698,12 +695,12 @@ namespace Commissionator {
             "ON Commission.id = b.id "
             "WHERE Commission.id = NEW.commission) > 0; "
             "END");
-        sql->exec("CREATE TRIGGER IF NOT EXISTS insertPieceEvent "
+        sql->exec("CREATE TRIGGER IF NOT EXISTS insertPieceEventAfterPiece "
             "AFTER INSERT ON Piece "
             "FOR EACH ROW BEGIN "
             "INSERT INTO PieceEvent(piece, event) "
             "SELECT Piece.id, ProductEvent.id "
-            "FROM ProductEvent  LEFT JOIN Piece "
+            "FROM ProductEvent LEFT JOIN Piece "
             "ON ProductEvent.product = Piece.product "
             "WHERE Piece.id = NEW.id; "
             "END");
