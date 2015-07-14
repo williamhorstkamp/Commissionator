@@ -704,6 +704,20 @@ namespace Commissionator {
             "ON ProductEvent.product = Piece.product "
             "WHERE Piece.id = NEW.id; "
             "END");
+        sql->exec("CREATE TRIGGER IF NOT EXISTS "
+            "deletePieceEventAfterProductEvent "
+            "BEFORE DELETE ON ProductEvent "
+            "FOR EACH ROW BEGIN "
+            "DELETE FROM PieceEvent WHERE PieceEvent.event = OLD.id; "
+            "END");
+        sql->exec("CREATE TRIGGER IF NOT EXISTS "
+            "insertPieceEventAfterProductEvent "
+            "AFTER INSERT ON ProductEvent "
+            "FOR EACH ROW BEGIN "
+            "INSERT INTO PieceEvent(piece, event) "
+            "SELECT Piece.id, NEW.id "
+            "FROM Piece WHERE Piece.product = NEW.product; "
+            "END");
         QSqlDatabase::database().commit();
     }
 
