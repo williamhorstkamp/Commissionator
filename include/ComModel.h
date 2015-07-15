@@ -920,6 +920,7 @@ namespace Commissionator {
         QSqlQuery *deleteCommissionQuery;
         QSqlQuery *deleteContactQuery;
         QSqlQuery *deletePieceQuery;
+        QSqlQuery *deleteProductQuery;
         QSqlQuery *deleteProductEventQuery;
         QSqlQuery *editCommissionCommissionerQuery;
         QSqlQuery *editCommissionNotesQuery;

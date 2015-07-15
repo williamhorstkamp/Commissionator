@@ -372,7 +372,10 @@ namespace Commissionator {
     }
 
     void ComModel::deleteProduct(const QModelIndex &index) {
-        editProductAvailability(getValue(index, 0).toInt(), false);
+        int id = getValue(index, 0).toInt();
+        deleteProductQuery->bindValue(0, id);
+        deleteProductQuery->exec();
+        editProductAvailability(id, false);
     }
 
     void ComModel::deleteProductEvent(const QModelIndex &index) {
@@ -737,6 +740,7 @@ namespace Commissionator {
         deleteCommissionQuery->finish();
         deleteContactQuery->finish();
         deletePieceQuery->finish();
+        deleteProductQuery->finish();
         deleteProductEventQuery->finish();
         editCommissionCommissionerQuery->finish();
         editCommissionNotesQuery->finish();
@@ -1086,6 +1090,12 @@ namespace Commissionator {
         deletePieceQuery = new QSqlQuery(*sql);
         deletePieceQuery->prepare("DELETE FROM Piece WHERE "
             "Piece.id = (?);");
+        deleteProductQuery = new QSqlQuery(*sql);
+        deleteProductQuery->prepare("DELETE FROM Product WHERE id IN "
+            "(SELECT product.id FROM Product "
+            "LEFT JOIN Piece ON Product.id = Piece.product "
+            "WHERE Product.id = (?) AND Piece.id IS NULL); "
+            );
         deleteProductEventQuery = new QSqlQuery(*sql);
         deleteProductEventQuery->prepare("DELETE FROM ProductEvent WHERE "
             "ProductEvent.id = (?);");
