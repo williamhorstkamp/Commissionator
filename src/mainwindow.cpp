@@ -503,6 +503,8 @@ namespace Commissionator{
             delete commissionerRightPanel;
             delete commissionLeftPanel;
             delete commissionRightPanel;
+            delete storefrontLeftPanel;
+            delete productRightPanel;
             delete line;
 
             delete commissionPopup;
@@ -510,6 +512,7 @@ namespace Commissionator{
             delete paymentPopup;
             delete piecePopup;
             delete productPopup;
+            delete refundPopup;
 
             saveAct->disconnect();
             closeAct->disconnect();

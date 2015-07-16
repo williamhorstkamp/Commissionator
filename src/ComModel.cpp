@@ -721,6 +721,12 @@ namespace Commissionator {
             "SELECT Piece.id, NEW.id "
             "FROM Piece WHERE Piece.product = NEW.product; "
             "END");
+        sql->exec("CREATE TRIGGER IF NOT EXISTS "
+            "deletePieceEventAfterPiece "
+            "BEFORE DELETE ON Piece "
+            "FOR EACH ROW BEGIN "
+            "DELETE FROM PieceEvent WHERE PieceEvent.piece = OLD.id; "
+            "END");
         QSqlDatabase::database().commit();
     }
 
