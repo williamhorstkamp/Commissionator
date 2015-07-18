@@ -508,9 +508,6 @@ namespace Commissionator {
 
     void ComModel::build() {
         QSqlDatabase::database().transaction();
-        sql->exec("PRAGMA foreign_keys = ON;");
-        sql->exec("PRAGMA synchronous = OFF;");
-        sql->exec("PRAGMA recursive_triggers = ON;");
         sql->exec("CREATE TABLE IF NOT EXISTS ContactType("
             "id	INTEGER PRIMARY KEY AUTOINCREMENT, "
             "type	TEXT NOT NULL"
@@ -578,8 +575,8 @@ namespace Commissionator {
             "piece INTEGER NOT NULL, "
             "event INTEGER NOT NULL, "
             "finishDate INTEGER, "
-            "FOREIGN KEY(piece) REFERENCES piece(id), "
-            "FOREIGN KEY(event) REFERENCES ProductEvent(id), "
+            "FOREIGN KEY(piece) REFERENCES piece(id) ON DELETE CASCADE, "
+            "FOREIGN KEY(event) REFERENCES ProductEvent(id) ON DELETE CASCADE, "
             "CONSTRAINT pieve UNIQUE(piece, event))");
         sql->exec("CREATE TABLE IF NOT EXISTS PieceOption("
             "field	TEXT NOT NULL, "
@@ -708,24 +705,12 @@ namespace Commissionator {
             "WHERE Piece.id = NEW.id; "
             "END");
         sql->exec("CREATE TRIGGER IF NOT EXISTS "
-            "deletePieceEventAfterProductEvent "
-            "BEFORE DELETE ON ProductEvent "
-            "FOR EACH ROW BEGIN "
-            "DELETE FROM PieceEvent WHERE PieceEvent.event = OLD.id; "
-            "END");
-        sql->exec("CREATE TRIGGER IF NOT EXISTS "
             "insertPieceEventAfterProductEvent "
             "AFTER INSERT ON ProductEvent "
             "FOR EACH ROW BEGIN "
             "INSERT INTO PieceEvent(piece, event) "
             "SELECT Piece.id, NEW.id "
             "FROM Piece WHERE Piece.product = NEW.product; "
-            "END");
-        sql->exec("CREATE TRIGGER IF NOT EXISTS "
-            "deletePieceEventAfterPiece "
-            "BEFORE DELETE ON Piece "
-            "FOR EACH ROW BEGIN "
-            "DELETE FROM PieceEvent WHERE PieceEvent.piece = OLD.id; "
             "END");
         QSqlDatabase::database().commit();
     }
@@ -785,6 +770,9 @@ namespace Commissionator {
     }
 
     void ComModel::prepareModels() {
+        sql->exec("PRAGMA foreign_keys = ON;");
+        sql->exec("PRAGMA synchronous = OFF;");
+        sql->exec("PRAGMA recursive_triggers = ON;");
 		commissionerCommissionsModel = new QSqlQueryModel(this);
         QSqlQuery commissionerCommissionsQuery(*sql);
         commissionerCommissionsQuery.prepare("SELECT strftime('%m/%d/%Y', "
