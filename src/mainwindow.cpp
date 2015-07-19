@@ -391,8 +391,10 @@ namespace Commissionator{
             "", tr("Commissioner Files (*.cdb)"));
         if (newFile != NULL) {
             QFileInfo file(newFile);
-            if (file.exists())
+            if (file.exists()) {
+                model->close();
                 QFile::remove(newFile);
+            }     
             model->open(newFile, true);
         }
     }

@@ -51,7 +51,7 @@ namespace Commissionator {
 
     void ComModel::open(QString fileName, bool newFile) {
         if (sql->isOpen())
-            close();;
+            close();
         *sql = QSqlDatabase::addDatabase("QSQLITE");
         sql->setDatabaseName(fileName);
         sql->open();
