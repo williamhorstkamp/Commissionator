@@ -401,14 +401,19 @@ namespace Commissionator{
 
     void MainWindow::open() {
         if (model->hasBeenChanged()) {
-            int ret = QMessageBox::question(this, tr("Save File?"),
+            switch (QMessageBox::question(this, tr("Save File?"),
                 tr("The database has been modified.\n"
                 "Would you like to save your changes?"),
-                QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel, QMessageBox::Save);
-            if (ret == QMessageBox::Save)
+                QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel,
+                QMessageBox::Save)) {
+            case QMessageBox::Save:
                 save();
-            else if (ret == QMessageBox::Cancel)
+                break;
+            case QMessageBox::Cancel:
                 return;
+            default:    //discard was hit
+                break;
+            }
         }
         QString openFile = QFileDialog::getOpenFileName(this, tr("Open File"),
             "", tr("Commissioner Files (*.cdb)"));

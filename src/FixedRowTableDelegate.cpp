@@ -1,5 +1,6 @@
 #include <QApplication>
 #include <QMouseEvent>
+#include <QMessageBox>
 #include "FixedRowTableDelegate.h"
 
 namespace Commissionator {
@@ -28,10 +29,13 @@ namespace Commissionator {
                 int x = rect.left() + rect.width() - buttonSize;
                 if (mEvent->x() > x && mEvent->x() < x + buttonSize && 
                     mEvent->y() > rect.top() &&
-                    mEvent->y() < rect.top() + buttonSize) {
-                    emit buttonClicked(index);
-                    return true;
-                }
+                    mEvent->y() < rect.top() + buttonSize)
+                    if (QMessageBox::question(qobject_cast<QWidget*>(this->parent()), tr("Delete?"),
+                        tr("Delete this entry?"),
+                        QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::Yes) {
+                        emit buttonClicked(index);
+                        return true;
+                    }
             }
         return QStyledItemDelegate::editorEvent(event, model, option, index);
     }
