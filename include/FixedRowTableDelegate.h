@@ -20,6 +20,13 @@ namespace Commissionator {
         FixedRowTableDelegate(QWidget *parent = nullptr);
 
         /**
+         *  Sets the delete message for the delegate.
+         *
+         *  @param deleteMessage - new delete message to be used
+         */
+        void setDeleteMessage(QString deleteMessage);
+
+        /**
          *  Sets the icon to the file referenced in the QString.
          *
          *  @param iconLocation - QString containing the location of the icon
@@ -61,6 +68,7 @@ namespace Commissionator {
     private:
         int buttonSize;
         QIcon buttonIcon;
+        QString deleteMessage;
 
     signals:
         /**

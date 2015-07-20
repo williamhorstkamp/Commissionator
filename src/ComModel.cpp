@@ -46,6 +46,7 @@ namespace Commissionator {
         sql->close();
         sql = new QSqlDatabase();
         QSqlDatabase::removeDatabase(connection);
+        changesMade = false;
         emit recordClosed();
     }
 

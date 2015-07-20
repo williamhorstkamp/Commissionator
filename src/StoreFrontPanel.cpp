@@ -47,6 +47,8 @@ namespace Commissionator {
         productTable->setTableButtonSize(24);
         productTable->setBoxText("Search");
         productTable->setSelectionMode(QAbstractItemView::NoSelection);
+        productTable->setDeleteMessage("Toggle availability? \n"
+            "Will delete product if no pieces for it exist.");
 
         productTable->setColumnHidden(0, true);
 

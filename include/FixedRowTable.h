@@ -113,6 +113,11 @@ namespace Commissionator {
         void setColumnHidden(int column, bool hide);
 
         /**
+         *  Sets the delete message for the row icon.
+         */
+        void setDeleteMessage(QString deleteMessage);
+
+        /**
          *  Activates or deactives the table buttons.
          *
          *  @param isEnabled - boolean referencing whether to activate the button

@@ -8,7 +8,12 @@ namespace Commissionator {
     FixedRowTableDelegate::FixedRowTableDelegate(QWidget *parent) :
         QStyledItemDelegate(parent) {
         buttonSize = 0;
+        deleteMessage = tr("Delete this entry?");
         buttonIcon = QIcon();
+    }
+
+    void FixedRowTableDelegate::setDeleteMessage(QString deleteMessage) {
+        this->deleteMessage = deleteMessage;
     }
 
     void FixedRowTableDelegate::setIcon(QString iconLocation) {
@@ -31,7 +36,7 @@ namespace Commissionator {
                     mEvent->y() > rect.top() &&
                     mEvent->y() < rect.top() + buttonSize)
                     if (QMessageBox::question(qobject_cast<QWidget*>(this->parent()), tr("Delete?"),
-                        tr("Delete this entry?"),
+                        deleteMessage,
                         QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::Yes) {
                         emit buttonClicked(index);
                         return true;

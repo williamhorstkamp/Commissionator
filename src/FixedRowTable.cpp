@@ -99,6 +99,10 @@ namespace Commissionator {
         box->setColumnHidden(column, hide);
     }
 
+    void FixedRowTable::setDeleteMessage(QString deleteMessage) {
+        tableDelegate->setDeleteMessage(deleteMessage);
+    }
+
     QModelIndex FixedRowTable::moveCursor(CursorAction cursorAction,
         Qt::KeyboardModifiers modifiers) {
         QModelIndex current = QTableView::moveCursor(cursorAction, modifiers);
