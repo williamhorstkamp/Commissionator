@@ -17,9 +17,12 @@ namespace Commissionator {
         layout->addWidget(titleLabel);
         layout->addWidget(view);
         setLayout(layout);
-        connect(view, &FixedRowTable::boxQuery, this, &LeftPanel::search);
-        connect(view, &FixedRowTable::tableButtonClicked, this, &LeftPanel::iconClicked);
-        connect(view, &FixedRowTable::clicked, this, &LeftPanel::tableClicked);
+        connect(view, &FixedRowTable::boxQuery, 
+            this, &LeftPanel::search);
+        connect(view, &FixedRowTable::tableButtonClicked, 
+            this, &LeftPanel::iconClicked);
+        connect(view, &FixedRowTable::clicked, 
+            this, &LeftPanel::tableClicked);
     }
 
     void LeftPanel::createTitle(QString title) {

@@ -18,6 +18,7 @@ class NewRefundWindow;
 class CommissionerPanel;
 class CommissionPanel;
 class ProductPanel;
+class OptionsDialog;
 class ComModel;
 class QFrame;
 
@@ -97,6 +98,13 @@ namespace Commissionator {
          *  Sets panels and toolbar to the Manage Commission panels
          */
         void manageCommissions();
+
+        /** 
+         *  Function opens the options dialog window.
+         *  Takes control away from the MainWindow for the duration of the
+         *  option window's lifetime.
+         */
+        void manageOptions();
 
         /**
          *  Sets panels and toolbar to the Manage StoreFront panels
@@ -294,6 +302,7 @@ namespace Commissionator {
         NewPieceWindow *piecePopup;
         NewProductWindow *productPopup;
         NewRefundWindow *refundPopup;
+        OptionsDialog *optionsPopup;
 
         QMenu *fileMenu;
         QMenu *newMenu;
@@ -317,6 +326,7 @@ namespace Commissionator {
         QAction *newProductAct;
         QAction *newSaleAct;
         QAction *newPaymentAct;
+        QAction *manageOptionsAct;
         QAction *manageStorefrontAct;
         QAction *manageCommissionerAct;
         QAction *manageCommissionAct;

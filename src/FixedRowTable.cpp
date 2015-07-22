@@ -3,6 +3,9 @@
 #include <QKeyEvent>
 #include <QPushButton>
 #include <QStyledItemDelegate>
+#include "FixedRowTableDelegate.h"
+#include "FixedRowBox.h"
+#include "FixedRowProxyModel.h"
 #include "FixedRowTable.h"
 
 namespace Commissionator {

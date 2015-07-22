@@ -2,9 +2,13 @@
 #define FIXEDROWTABLE_H
 
 #include <QTableView>
-#include "FixedRowTableDelegate.h"
-#include "FixedRowBox.h"
+#include "FixedRowProxyModel.h"
 
+class QAbstractItemModel;
+class FixedRowTableDelegate;
+class FixedRowBox;
+class FixedRowProxyModel;
+class QTableView;
 class QPushButton;
 
 namespace Commissionator {

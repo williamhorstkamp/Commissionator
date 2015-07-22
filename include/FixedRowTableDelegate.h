@@ -4,6 +4,7 @@
 #include <QStyledItemDelegate>
 
 namespace Commissionator {
+
     /**
      *  Class is a delegate to display buttons on a SearchTableView.
      */

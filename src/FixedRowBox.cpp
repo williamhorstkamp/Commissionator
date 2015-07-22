@@ -1,5 +1,7 @@
 #include <QKeyEvent>
 #include <QHeaderView>
+#include "FixedRowProxyModel.h"
+#include "FixedRowTableDelegate.h"
 #include "FixedRowBox.h"
 
 namespace Commissionator {

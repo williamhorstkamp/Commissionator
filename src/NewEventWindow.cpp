@@ -6,7 +6,7 @@
 
 namespace Commissionator {
 
-    NewEventWindow::NewEventWindow(QWidget *parent) {
+    NewEventWindow::NewEventWindow(QWidget *parent) : BaseNewWindow(parent) {
         mainLayout = new QVBoxLayout(this);
         eventLayout = new QGridLayout();
 

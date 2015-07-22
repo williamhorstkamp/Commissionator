@@ -17,6 +17,7 @@
 #include "NewPieceWindow.h"
 #include "NewProductWindow.h"
 #include "NewRefundWindow.h"
+#include "OptionsDialog.h"
 #include "CommissionerPanel.h"
 #include "CommissionPanel.h"
 #include "ProductPanel.h"
@@ -81,6 +82,7 @@ namespace Commissionator{
         newMenu->addAction(newPaymentAct);
 
         manageMenu = menuBar()->addMenu(tr("&Manage"));
+        manageMenu->addAction(manageOptionsAct);
         manageMenu->addAction(manageStorefrontAct);
         manageMenu->addAction(manageCommissionerAct);
         manageMenu->addAction(manageCommissionAct);
@@ -140,6 +142,10 @@ namespace Commissionator{
         newPaymentAct = new QAction(QIcon(":/PaymentPlus.png"), tr("&Payment"), this);
         newPaymentAct->setStatusTip(tr("Create a new payment"));
         newPaymentAct->setEnabled(false);
+
+        manageOptionsAct = new QAction(tr("&Store Options"), this);
+        manageOptionsAct->setStatusTip(tr("Manage store options"));
+        manageOptionsAct->setEnabled(false);
 
         manageStorefrontAct = new QAction(QIcon(":/Storefront.png"), tr("&Storefront"), this);
         manageStorefrontAct->setStatusTip(tr("Manage existing products"));
@@ -328,6 +334,16 @@ namespace Commissionator{
         refundPopup = new NewRefundWindow(model->getCommissionList(), this);
         connect(refundPopup, &NewRefundWindow::newRefund,
             model, &ComModel::insertRefund);
+        optionsPopup = new OptionsDialog(model->getContactTypes(), 
+            model->getPaymentTypes(), this);
+        connect(optionsPopup, &OptionsDialog::deleteContactType,
+            model, &ComModel::deleteContactType);
+        connect(optionsPopup, &OptionsDialog::insertContactType,
+            model, &ComModel::insertContactType);
+        connect(optionsPopup, &OptionsDialog::deletePaymentType,
+            model, &ComModel::deletePaymentType);
+        connect(optionsPopup, &OptionsDialog::insertPaymentType,
+            model, &ComModel::insertPaymentType);
     }
 
     void MainWindow::insertCommission(const int commissionerId,
@@ -466,6 +482,10 @@ namespace Commissionator{
         commissionRightPanel->updatePanel();
     }
 
+    void MainWindow::manageOptions() {
+        optionsPopup->exec();
+    }
+
     void MainWindow::manageStoreFront() {
         leftPanel->setCurrentWidget(storefrontLeftPanel);
         rightPanel->setCurrentWidget(productRightPanel);
@@ -496,6 +516,8 @@ namespace Commissionator{
                 this, &MainWindow::newPayment);
             connect(newProductAct, &QAction::triggered,
                 this, &MainWindow::newProduct);
+            connect(manageOptionsAct, &QAction::triggered,
+                this, &MainWindow::manageOptions);
             connect(manageCommissionerAct, &QAction::triggered,
                 this, &MainWindow::manageCommissioners);
             connect(manageCommissionAct, &QAction::triggered,
@@ -520,6 +542,7 @@ namespace Commissionator{
             delete piecePopup;
             delete productPopup;
             delete refundPopup;
+            delete optionsPopup;
 
             saveAct->disconnect();
             closeAct->disconnect();
@@ -533,6 +556,7 @@ namespace Commissionator{
             manageCommissionerAct->disconnect();
             manageCommissionAct->disconnect();
             managePieceAct->disconnect();
+            manageOptionsAct->disconnect();
 
             model->disconnect();
             connect(model, &ComModel::recordClosed,
@@ -549,6 +573,7 @@ namespace Commissionator{
         newProductAct->setEnabled(isEnabled);
         //newSaleAct->setEnabled(isEnabled);
         newPaymentAct->setEnabled(isEnabled);
+        manageOptionsAct->setEnabled(isEnabled);
         manageStorefrontAct->setEnabled(isEnabled);
         manageCommissionerAct->setEnabled(isEnabled);
         manageCommissionAct->setEnabled(isEnabled);

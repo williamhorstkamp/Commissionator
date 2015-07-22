@@ -102,7 +102,7 @@ namespace Commissionator {
          *  Slot captures FixedRowTable::boxQuery from contactInfoTable and
          *  emits the corresponding insertContact signal.
          *
-         *  @param query - QList of Qvariants containing the query variables
+         *  @param query - QList of QVariants containing the query variables
          *  Data order:
          *  Commissioner Id, Contact Type, Entry
          */

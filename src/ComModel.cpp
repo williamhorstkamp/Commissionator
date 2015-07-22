@@ -363,6 +363,20 @@ namespace Commissionator {
         changesMade = true;
     }
 
+    void ComModel::deleteContactType(const QModelIndex &index) {
+        deleteContactTypeQuery->bindValue(0, getValue(index, 0));
+        deleteContactTypeQuery->exec();
+        refreshContactTypes();
+        changesMade = true;
+    }
+
+    void ComModel::deletePaymentType(const QModelIndex &index) {
+        deletePaymentTypeQuery->bindValue(0, getValue(index, 0));
+        deletePaymentTypeQuery->exec();
+        refreshPaymentTypes();
+        changesMade = true;
+    }
+
     void ComModel::deletePiece(const QModelIndex &index) {
         deletePieceQuery->bindValue(0, getValue(index, 0));
         deletePieceQuery->exec();
@@ -511,7 +525,8 @@ namespace Commissionator {
         QSqlDatabase::database().transaction();
         sql->exec("CREATE TABLE IF NOT EXISTS ContactType("
             "id	INTEGER PRIMARY KEY AUTOINCREMENT, "
-            "type	TEXT NOT NULL"
+            "type	TEXT NOT NULL "
+            "available INTEGER(1) NOT NULL"
             ");");
         sql->exec("CREATE TABLE IF NOT EXISTS Contact("
             "id	INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -598,7 +613,7 @@ namespace Commissionator {
         sql->exec("CREATE TABLE IF NOT EXISTS PaymentType("
             "id INTEGER PRIMARY KEY AUTOINCREMENT, "
             "name	TEXT NOT NULL, "
-            "deleted INTEGER(1) NOT NULL"
+            "available INTEGER(1) NOT NULL"
             ");");
         sql->exec("CREATE TABLE IF NOT EXISTS Payment("
             "id	INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -1070,18 +1085,25 @@ namespace Commissionator {
             QVariant("Finish Date"), Qt::DisplayRole);
         contactTypesModel = new QSqlQueryModel(this);
         QSqlQuery contactTypesQuery(*sql);
-        contactTypesQuery.prepare("SELECT id, type FROM ContactType;");
+        contactTypesQuery.prepare("SELECT id, type FROM ContactType "
+            "WHERE available = 1;");
         contactTypesModel->setQuery(contactTypesQuery);
         contactTypesModel->query().exec();
         deleteCommissionerQuery = new QSqlQuery(*sql);
         deleteCommissionerQuery->prepare("DELETE FROM Commissioner WHERE "
             "Commissioner.id = (?);");
-        deleteContactQuery = new QSqlQuery(*sql);
-        deleteContactQuery->prepare("DELETE FROM Contact WHERE "
-            "Contact.id = (?);");
         deleteCommissionQuery = new QSqlQuery(*sql);
         deleteCommissionQuery->prepare("DELETE FROM Commission WHERE "
             "Commission.id = (?);");
+        deleteContactQuery = new QSqlQuery(*sql);
+        deleteContactQuery->prepare("DELETE FROM Contact WHERE "
+            "Contact.id = (?);");
+        deleteContactTypeQuery = new QSqlQuery(*sql);
+        deleteContactTypeQuery->prepare("UPDATE ContactType "
+            "SET available = 0 WHERE id = (?);");
+        deletePaymentTypeQuery = new QSqlQuery(*sql);
+        deletePaymentTypeQuery->prepare("UPDATE PaymentType "
+            "SET available = 0 WHERE id = (?);");
         deletePieceQuery = new QSqlQuery(*sql);
         deletePieceQuery->prepare("DELETE FROM Piece WHERE "
             "Piece.id = (?);");
@@ -1128,13 +1150,13 @@ namespace Commissionator {
             "VALUES (?, ?, ?, ?);");
         insertContactTypeQuery = new QSqlQuery(*sql);
         insertContactTypeQuery->prepare("INSERT INTO "
-            "ContactType(type) VALUES (?);");
+            "ContactType(type, available) VALUES (?, 1);");
         insertContactQuery = new QSqlQuery(*sql);
         insertContactQuery->prepare("INSERT INTO "
             "Contact(commissioner, type, entry) VALUES(?, ?, ?);");
         insertPaymentTypeQuery = new QSqlQuery(*sql);
         insertPaymentTypeQuery->prepare("INSERT INTO "
-            "PaymentType(name, deleted) VALUES (?, 0);");
+            "PaymentType(name, available) VALUES (?, 1);");
         insertPaymentQuery = new QSqlQuery(*sql);
         insertPaymentQuery->prepare("INSERT INTO "
             "Payment(commission, method, fee, note, date) "
@@ -1151,9 +1173,11 @@ namespace Commissionator {
         insertProductEventQuery->prepare("INSERT INTO ProductEvent"
             "(product, name, position) VALUES (?, ?, ?)");
         paymentTypesModel = new QSqlQueryModel(this);
-        paymentTypesModel->setQuery(QSqlQuery("SELECT id, name "
+        QSqlQuery paymentTypesQuery(*sql);
+        paymentTypesQuery.prepare("SELECT id, name "
             "FROM PaymentType "
-            "WHERE deleted = 0 AND id > 0", *sql));
+            "WHERE available = 1 AND id > 0");
+        paymentTypesModel->setQuery(paymentTypesQuery);
         paymentTypesModel->query().exec();
         pieceModel = new QSqlQueryModel(this);
         QSqlQuery pieceQuery(*sql);

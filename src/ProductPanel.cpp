@@ -9,6 +9,7 @@
 #include <QHeaderView>
 #include <QListView>
 #include "FixedRowTable.h"
+#include "FixedRowTableDelegate.h"
 #include "ProductPanel.h"
 
 namespace Commissionator {

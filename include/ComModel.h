@@ -327,28 +327,33 @@ namespace Commissionator {
 
     signals:
         /**
-         *  Signal emmitted whenever the currently selected commission is 
+         *  Signal emitted whenever the currently selected commission is 
          *  changed or any value has been changed that may require the
          *  commission panel to update.
          */
         void commissionChanged();
 
         /**
-         *  Signal emmitted whenever the currently selected commissioner is
+         *  Signal emitted whenever the currently selected commissioner is
          *  changed or any value has been changed that may require the
          *  commissioner panel to update.
          */
         void commissionerChanged();
 
         /**
-         *  Signal emmitted whenever the currently selected piece is
+         *  Signal emitted whenever an option is changed.
+         */
+        void optionChanged();
+
+        /**
+         *  Signal emitted whenever the currently selected piece is
          *  changed or any value has been changed that may require the
          *  piece panel to update.
          */
         void pieceChanged();
 
         /**
-         *  Signal emmitted whenever the currently selected product is
+         *  Signal emitted whenever the currently selected product is
          *  changed or any value has been changed that may require the
          *  product panel to update.
          */
@@ -588,7 +593,7 @@ namespace Commissionator {
          *
          *  @param index - index of the Contact Type to delete
          */
-        //void deleteContactType(const QModelIndex &index);
+        void deleteContactType(const QModelIndex &index);
 
         /**
          *  Deletes the piece reference at the given index.
@@ -663,7 +668,7 @@ namespace Commissionator {
          *
          *  @param index - index of the sale to delete
          */
-        //void deletePaymentType(const QModelIndex &index);
+        void deletePaymentType(const QModelIndex &index);
 
         /**
          *  Inserts commission into the database.
@@ -919,6 +924,8 @@ namespace Commissionator {
         QSqlQuery *deleteCommissionerQuery;
         QSqlQuery *deleteCommissionQuery;
         QSqlQuery *deleteContactQuery;
+        QSqlQuery *deleteContactTypeQuery;
+        QSqlQuery *deletePaymentTypeQuery;
         QSqlQuery *deletePieceQuery;
         QSqlQuery *deleteProductQuery;
         QSqlQuery *deleteProductEventQuery;
