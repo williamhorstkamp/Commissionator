@@ -56,6 +56,13 @@ namespace Commissionator {
          */
         void insertPaymentType(const QString paymentType);
 
+    public slots:
+        /**
+         *  Overrides default exec.
+         *  Provides default functionality plus updates the panel.
+         */
+        int exec();
+
     private slots:
         /**
          *  Slot captures FixedRowTable::boxQuery from contactTypeTable and

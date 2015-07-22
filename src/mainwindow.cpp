@@ -336,6 +336,8 @@ namespace Commissionator{
             model, &ComModel::insertRefund);
         optionsPopup = new OptionsDialog(model->getContactTypes(), 
             model->getPaymentTypes(), this);
+        connect(model, &ComModel::optionChanged,
+            optionsPopup, &OptionsDialog::updateGeometry);
         connect(optionsPopup, &OptionsDialog::deleteContactType,
             model, &ComModel::deleteContactType);
         connect(optionsPopup, &OptionsDialog::insertContactType,

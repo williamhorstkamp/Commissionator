@@ -40,14 +40,16 @@ namespace Commissionator {
     }
 
     void ComModel::close() {
-        sql->exec("ROLLBACK TO SAVEPOINT sv");
-        cleanupQueries();
-        QString connection = sql->connectionName();
-        sql->close();
-        sql = new QSqlDatabase();
-        QSqlDatabase::removeDatabase(connection);
-        changesMade = false;
-        emit recordClosed();
+        if (sql->isOpen()) {
+            sql->exec("ROLLBACK TO SAVEPOINT sv");
+            cleanupQueries();
+            QString connection = sql->connectionName();
+            sql->close();
+            sql = new QSqlDatabase();
+            QSqlDatabase::removeDatabase(connection);
+            changesMade = false;
+            emit recordClosed();
+        }
     }
 
     void ComModel::open(QString fileName, bool newFile) {
@@ -57,19 +59,9 @@ namespace Commissionator {
         sql->setDatabaseName(fileName);
         sql->open();
 
-        if (newFile) {
+        if (newFile)
             build();
-            prepareModels();
-
-            //this is test data that only exists because the user can not currently enter this data
-            insertContactType("Contact Type");
-            insertContactType("Contact Type 2");
-            insertContactType("Contact Type 3");
-            insertPaymentType("payment type");
-            insertPaymentType("payment type 2");
-            insertPaymentType("payment type 3");
-        } else
-            prepareModels();
+        prepareModels();
 
         sql->exec("SAVEPOINT sv");
         changesMade = false;
@@ -525,7 +517,7 @@ namespace Commissionator {
         QSqlDatabase::database().transaction();
         sql->exec("CREATE TABLE IF NOT EXISTS ContactType("
             "id	INTEGER PRIMARY KEY AUTOINCREMENT, "
-            "type	TEXT NOT NULL "
+            "type	TEXT NOT NULL, "
             "available INTEGER(1) NOT NULL"
             ");");
         sql->exec("CREATE TABLE IF NOT EXISTS Contact("
@@ -1083,7 +1075,11 @@ namespace Commissionator {
             QVariant("Piece Count"), Qt::DisplayRole);
         commissionsModel->setHeaderData(6, Qt::Horizontal,
             QVariant("Finish Date"), Qt::DisplayRole);
-        contactTypesModel = new QSqlQueryModel(this);
+        /**
+         *  initialized as a QSqlTableModel so that any proxy models created
+         *  using this model can contain editable fields.
+         */
+        contactTypesModel = new QSqlTableModel(this);
         QSqlQuery contactTypesQuery(*sql);
         contactTypesQuery.prepare("SELECT id, type FROM ContactType "
             "WHERE available = 1;");
@@ -1172,7 +1168,11 @@ namespace Commissionator {
         insertProductEventQuery = new QSqlQuery(*sql);
         insertProductEventQuery->prepare("INSERT INTO ProductEvent"
             "(product, name, position) VALUES (?, ?, ?)");
-        paymentTypesModel = new QSqlQueryModel(this);
+        /**
+         *  initialized as a QSqlTableModel so that any proxy models created
+         *  using this model can contain editable fields.
+         */
+        paymentTypesModel = new QSqlTableModel(this);
         QSqlQuery paymentTypesQuery(*sql);
         paymentTypesQuery.prepare("SELECT id, name "
             "FROM PaymentType "
@@ -1307,22 +1307,26 @@ namespace Commissionator {
     void ComModel::refreshContacts() {
         commissionerContactsModel->query().exec();
         commissionerContactsModel->setQuery(commissionerContactsModel->query());
+        emit commissionerChanged();
     }
 
 
     void ComModel::refreshContactTypes() {
         contactTypesModel->query().exec();
         contactTypesModel->setQuery(contactTypesModel->query());
+        emit optionChanged();
     }
 
     void ComModel::refreshPayments() {
         commissionPaymentsModel->query().exec();
         commissionPaymentsModel->setQuery(commissionPaymentsModel->query());
+        emit commissionChanged();
     }
 
     void ComModel::refreshPaymentTypes() {
         paymentTypesModel->query().exec();
         paymentTypesModel->setQuery(paymentTypesModel->query());
+        emit optionChanged();
     }
 
     void ComModel::refreshPieces() {

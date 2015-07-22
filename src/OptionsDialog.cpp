@@ -35,8 +35,6 @@ namespace Commissionator {
         contactTypeTable->setBoxText("Insert");
         contactTypeTable->setSelectionMode(QAbstractItemView::NoSelection);
         contactTypeTable->setColumnHidden(0, true);
-        contactTypeTable->horizontalHeader()->setSectionResizeMode(0,
-            QHeaderView::Stretch);
         connect(contactTypeTable, &FixedRowTable::tableButtonClicked,
             this, &OptionsDialog::deleteContactType);
         connect(contactTypeTable, &FixedRowTable::boxQuery,
@@ -53,8 +51,6 @@ namespace Commissionator {
         paymentTypeTable->setBoxText("Insert");
         paymentTypeTable->setSelectionMode(QAbstractItemView::NoSelection);
         paymentTypeTable->setColumnHidden(0, true);
-        paymentTypeTable->horizontalHeader()->setSectionResizeMode(0,
-            QHeaderView::Stretch);
         connect(paymentTypeTable, &FixedRowTable::tableButtonClicked,
             this, &OptionsDialog::deletePaymentType);
         connect(paymentTypeTable, &FixedRowTable::boxQuery,
@@ -65,16 +61,27 @@ namespace Commissionator {
 
         optionLayout->addWidget(contactLabel, 0, 0);
         optionLayout->addWidget(contactTypeTable, 1, 0);
-        optionLayout->addWidget(paymentLabel, 1, 0);
+        optionLayout->addWidget(paymentLabel, 0, 1);
         optionLayout->addWidget(paymentTypeTable, 1, 1);
 
+        updateGeometry();
     }
 
     void OptionsDialog::insertContactTypeSlot(const QList<QVariant> query) {
-        emit insertContactType(query[0].toString());
+        emit insertContactType(query[1].toString());
     }
 
     void OptionsDialog::insertPaymentTypeSlot(const QList<QVariant> query) {
-        emit insertPaymentType(query[0].toString());
+        emit insertPaymentType(query[1].toString());
+    }
+
+    int OptionsDialog::exec() {
+        if (contactTypeTable->model()->columnCount() > 0)
+            contactTypeTable->horizontalHeader()->setSectionResizeMode(1,
+            QHeaderView::Stretch);
+        if (paymentTypeTable->model()->columnCount() > 0)
+            paymentTypeTable->horizontalHeader()->setSectionResizeMode(1,
+            QHeaderView::Stretch);
+        return QDialog::exec();
     }
 }
