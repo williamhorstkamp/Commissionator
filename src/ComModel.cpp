@@ -550,7 +550,7 @@ namespace Commissionator {
             "product INTEGER NOT NULL, "
             "price REAL NOT NULL, "
             "date TEXT NOT NULL, "
-            "FOREIGN KEY(product) REFERENCES Product(id)"
+            "FOREIGN KEY(product) REFERENCES Product(id) ON DELETE CASCADE"
             ");");
         sql->exec("CREATE TABLE IF NOT EXISTS ProductOption("
             "id	INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -558,7 +558,7 @@ namespace Commissionator {
             "price	REAL NOT NULL, "
             "isInt	INTEGER(1) NOT NULL, "
             "product	INTEGER NOT NULL, "
-            "FOREIGN KEY(product) REFERENCES Product(id)"
+            "FOREIGN KEY(product) REFERENCES Product(id) ON DELETE CASCADE"
             ");");
         sql->exec("CREATE TABLE IF NOT EXISTS ProductOptionPrices("
             "id INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -1080,11 +1080,12 @@ namespace Commissionator {
          *  using this model can contain editable fields.
          */
         contactTypesModel = new QSqlTableModel(this);
-        QSqlQuery contactTypesQuery(*sql);
-        contactTypesQuery.prepare("SELECT id, type FROM ContactType "
-            "WHERE available = 1;");
+        QSqlQuery contactTypesQuery("SELECT id, type FROM ContactType "
+            "WHERE available = 1;", *sql);
         contactTypesModel->setQuery(contactTypesQuery);
         contactTypesModel->query().exec();
+        contactTypesModel->setHeaderData(1, Qt::Horizontal,
+            QVariant("Type"), Qt::DisplayRole);
         deleteCommissionerQuery = new QSqlQuery(*sql);
         deleteCommissionerQuery->prepare("DELETE FROM Commissioner WHERE "
             "Commissioner.id = (?);");
@@ -1107,8 +1108,7 @@ namespace Commissionator {
         deleteProductQuery->prepare("DELETE FROM Product WHERE id IN "
             "(SELECT product.id FROM Product "
             "LEFT JOIN Piece ON Product.id = Piece.product "
-            "WHERE Product.id = (?) AND Piece.id IS NULL); "
-            );
+            "WHERE Product.id = (?) AND Piece.id IS NULL);");
         deleteProductEventQuery = new QSqlQuery(*sql);
         deleteProductEventQuery->prepare("DELETE FROM ProductEvent WHERE "
             "ProductEvent.id = (?);");
@@ -1173,12 +1173,13 @@ namespace Commissionator {
          *  using this model can contain editable fields.
          */
         paymentTypesModel = new QSqlTableModel(this);
-        QSqlQuery paymentTypesQuery(*sql);
-        paymentTypesQuery.prepare("SELECT id, name "
+        QSqlQuery paymentTypesQuery("SELECT id, name "
             "FROM PaymentType "
-            "WHERE available = 1 AND id > 0");
+            "WHERE available = 1 AND id > 0", *sql);
         paymentTypesModel->setQuery(paymentTypesQuery);
         paymentTypesModel->query().exec();
+        paymentTypesModel->setHeaderData(1, Qt::Horizontal,
+            QVariant("Name"), Qt::DisplayRole);
         pieceModel = new QSqlQueryModel(this);
         QSqlQuery pieceQuery(*sql);
         pieceQuery.prepare("SELECT Commissioner.name, Piece.name, "

@@ -28,7 +28,7 @@ namespace Commissionator {
         contactLabel->setFont(*font);
         contactLabel->setText("Contact Types");
 
-        contactTypeTable = new FixedRowTable(contactTypesModel);
+        contactTypeTable = new FixedRowTable(contactTypesModel, this);
         contactTypeTable->setTableButtonActivated(true);
         contactTypeTable->setTableButtonIcon(":/Delete.png");
         contactTypeTable->setTableButtonSize(24);
