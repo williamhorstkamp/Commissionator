@@ -28,7 +28,7 @@ namespace Commissionator {
 
     void ProductPanel::createButtons() {
         unlockButton = new QPushButton(this);
-        unlockButton->setIcon(QIcon(":/NewFile.png"));
+        unlockButton->setIcon(QIcon(":/Edit.png"));
         unlockButton->hide();
         unlockButton->setToolTip("Unlock/Lock the editable fields");
         unlockButton->setMinimumSize(24, 24);
@@ -38,7 +38,6 @@ namespace Commissionator {
             this, &ProductPanel::toggleEdit);
 
         availableButton = new QPushButton(this);
-        availableButton->setIcon(QIcon(":/Delete.png"));
         availableButton->hide();
         availableButton->setToolTip("Toggle whether the product is for sale or not");
         availableButton->setMinimumSize(24, 24);
@@ -181,6 +180,11 @@ namespace Commissionator {
     void ProductPanel::updatePanel() {
         if (productModel->record(0).value(0).toInt() != 0) {
             QLocale dollarConverter = QLocale();
+
+            if (productModel->record(0).value(4).toBool())
+                availableButton->setIcon(QIcon(":/Toggle.png"));
+            else
+                availableButton->setIcon(QIcon(":/ToggleNo.png"));
 
             productName->setText(
                 productModel->record(0).value(1).toString());

@@ -21,5 +21,10 @@
         <file>SaveAsFile.png</file>
         <file>SaveFile.png</file>
         <file>Storefront.png</file>
+        <file>Commissionator.png</file>
+        <file>Edit.png</file>
+        <file>Options.png</file>
+        <file>Toggle.png</file>
+        <file>ToggleNo.png</file>
     </qresource>
 </RCC>

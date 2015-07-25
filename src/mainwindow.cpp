@@ -33,6 +33,7 @@ namespace Commissionator{
         createToolBars();
 
         setMinimumSize(1024, 768);
+        setWindowIcon(QIcon(":/Commissionator.png"));
     }
 
     void MainWindow::closeEvent(QCloseEvent *event) {
@@ -143,7 +144,7 @@ namespace Commissionator{
         newPaymentAct->setStatusTip(tr("Create a new payment"));
         newPaymentAct->setEnabled(false);
 
-        manageOptionsAct = new QAction(tr("&Store Options"), this);
+        manageOptionsAct = new QAction(QIcon(":/Options.png"), tr("&Store Options"), this);
         manageOptionsAct->setStatusTip(tr("Manage store options"));
         manageOptionsAct->setEnabled(false);
 

@@ -391,5 +391,20 @@
     <Image Include="Resources\Storefront.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="Resources\Commissionator.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\Edit.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\Options.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\Toggle.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\ToggleNo.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>
