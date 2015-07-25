@@ -313,6 +313,7 @@ namespace Commissionator {
         QToolBar *contextToolBar;
         QToolBar *commissionerToolBar;
         QToolBar *commissionToolBar;
+        QToolBar *storefrontToolBar;
 
         QAction *newAct;
         QAction *openAct;

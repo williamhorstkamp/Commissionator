@@ -8,6 +8,7 @@ class QLabel;
 class QVBoxLayout;
 class QSqlQueryModel;
 class FixedRowTable;
+class QFrame;
 
 namespace Commissionator {
     /**
@@ -81,6 +82,7 @@ namespace Commissionator {
         QVBoxLayout *layout;
         FixedRowTable *view;
         QLabel *titleLabel;
+        QFrame *line;
     };
 }
 #endif

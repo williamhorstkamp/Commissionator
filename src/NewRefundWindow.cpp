@@ -20,7 +20,7 @@ namespace Commissionator {
         newRefundLabel = new QLabel(this);
         newRefundLabel->setAlignment(Qt::AlignCenter);
         newRefundLabel->setFont(*titleFont);
-        newRefundLabel->setText("Insert Payment");
+        newRefundLabel->setText("Insert Refund");
 
         amountPaidLabel = new QLabel(this);
         amountPaidLabel->setFont(*font);
@@ -28,11 +28,11 @@ namespace Commissionator {
 
         amountLabel = new QLabel(this);
         amountLabel->setFont(*font);
-        amountLabel->setText("Payment Amount:");
+        amountLabel->setText("Refund Amount:");
 
         notesLabel = new QLabel(this);
         notesLabel->setFont(*font);
-        notesLabel->setText("Payment Notes:");
+        notesLabel->setText("Refund Notes:");
 
         amountPaid = new QLabel(this);
         amountPaid->setFont(*font);
@@ -49,7 +49,7 @@ namespace Commissionator {
         notesEdit = new QLineEdit(this);
 
         submitButton = new QPushButton(this);
-        submitButton->setText("Submit Payment");
+        submitButton->setText("Submit Refund");
         submitButton->setEnabled(false);
         connect(submitButton, &QPushButton::clicked,
             this, &NewRefundWindow::newItemSlot);
@@ -102,16 +102,21 @@ namespace Commissionator {
 
     void NewRefundWindow::updateAmount() {
         QLocale dollarConverter = QLocale();
-        double paid = commissionModel->index(
-            commissionModel->match(commissionModel->index(0, 0),
+        QModelIndexList list = commissionModel->match(commissionModel->index(0, 0),
             Qt::DisplayRole,
-            commissionId).first().row(), 3).data().toDouble();
+            commissionId);
+        double paid = 0;
+        if (!list.empty())
+            paid = commissionModel->index(
+                commissionModel->match(commissionModel->index(0, 0),
+                Qt::DisplayRole,
+                commissionId).first().row(), 3).data().toDouble();
         if (paid > 0) {
             amountPaid->setStyleSheet("QLabel { color : red; }");
             amountPaid->setText(dollarConverter.toCurrencyString(paid));
         } else {
             amountPaid->setStyleSheet("QLabel { color : green; }");
-            amountPaid->setText("Paid Off");
+            amountPaid->setText("No payments made");
         }
         amountEdit->setMaximum(paid);
     }

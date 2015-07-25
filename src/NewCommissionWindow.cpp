@@ -89,6 +89,7 @@ namespace Commissionator {
         submitButton = new QPushButton(this);
         submitButton->setText("Submit Commission");
         submitButton->setEnabled(false);
+        submitButton->setDefault(true);
         connect(submitButton, &QPushButton::clicked,
             this, &NewCommissionWindow::newItemSlot);
 

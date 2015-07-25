@@ -64,6 +64,7 @@ namespace Commissionator {
         submitButton = new QPushButton(this);
         submitButton->setText("Submit Product");
         submitButton->setEnabled(false);
+        submitButton->setDefault(true);
         connect(submitButton, &QPushButton::clicked,
             this, &NewProductWindow::newItemSlot);
 

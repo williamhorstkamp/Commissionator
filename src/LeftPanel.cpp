@@ -14,7 +14,11 @@ namespace Commissionator {
         layout = new QVBoxLayout(this);
         createTitle(title);
         createTable(model, hiddenColumns);
+        line = new QFrame(this);
+        line->setFrameShape(QFrame::HLine);
+        line->setFrameShadow(QFrame::Sunken);
         layout->addWidget(titleLabel);
+        layout->addWidget(line);
         layout->addWidget(view);
         setLayout(layout);
         connect(view, &FixedRowTable::boxQuery, 

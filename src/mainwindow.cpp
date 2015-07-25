@@ -78,7 +78,7 @@ namespace Commissionator{
         newMenu->addAction(newCommissionerAct);
         newMenu->addAction(newCommissionAct);
         newMenu->addAction(newProductAct);
-        newMenu->addAction(newSaleAct);
+        //newMenu->addAction(newSaleAct);   //not implemented
         newMenu->addAction(newPaymentAct);
 
         manageMenu = menuBar()->addMenu(tr("&Manage"));
@@ -123,23 +123,23 @@ namespace Commissionator{
         connect(exitAct, &QAction::triggered,
             this, &MainWindow::close);
         
-        newCommissionerAct = new QAction(QIcon(":/CommissionerPlus.png"), tr("&Commissioner"), this);
+        newCommissionerAct = new QAction(QIcon(":/CommissionerPlus.png"), tr("&New Commissioner"), this);
         newCommissionerAct->setStatusTip(tr("Create a new commissioner"));
         newCommissionerAct->setEnabled(false);
 
-        newCommissionAct = new QAction(QIcon(":/CommissionPlus.png"), tr("&Commission"), this);
+        newCommissionAct = new QAction(QIcon(":/CommissionPlus.png"), tr("&New Commission"), this);
         newCommissionAct->setStatusTip(tr("Create a new commission"));
         newCommissionAct->setEnabled(false);
 
-        newProductAct = new QAction(QIcon(":/ProductPlus.png"), tr("&Product"), this);
+        newProductAct = new QAction(QIcon(":/ProductPlus.png"), tr("&New Product"), this);
         newProductAct->setStatusTip(tr("Create a new product"));
         newProductAct->setEnabled(false);
 
-        newSaleAct = new QAction(QIcon(":/SalePlus.png"), tr("&Sale"), this);
+        newSaleAct = new QAction(QIcon(":/SalePlus.png"), tr("&New Sale"), this);
         newSaleAct->setStatusTip(tr("Create a new sale"));
         newSaleAct->setEnabled(false);
 
-        newPaymentAct = new QAction(QIcon(":/PaymentPlus.png"), tr("&Payment"), this);
+        newPaymentAct = new QAction(QIcon(":/PaymentPlus.png"), tr("&New Payment"), this);
         newPaymentAct->setStatusTip(tr("Create a new payment"));
         newPaymentAct->setEnabled(false);
 
@@ -189,6 +189,10 @@ namespace Commissionator{
         commissionToolBar->addAction(newCommissionAct);
         commissionToolBar->setMovable(false);
         commissionToolBar->setVisible(false);
+        storefrontToolBar = addToolBar(tr("StoreFront"));
+        storefrontToolBar->addAction(newProductAct);
+        storefrontToolBar->setMovable(false);
+        storefrontToolBar->setVisible(false);
         setContextMenuPolicy(Qt::NoContextMenu);
     }
 
@@ -491,7 +495,7 @@ namespace Commissionator{
     void MainWindow::manageStoreFront() {
         leftPanel->setCurrentWidget(storefrontLeftPanel);
         rightPanel->setCurrentWidget(productRightPanel);
-        //swapContextToolBar(storeFrontToolBar);
+        swapContextToolBar(storefrontToolBar);
         productRightPanel->updatePanel();
     }
 
