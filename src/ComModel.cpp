@@ -397,8 +397,9 @@ namespace Commissionator {
         insertCommissionQuery->bindValue(0, commissionerId);
         insertCommissionQuery->bindValue(1, dueDate.toMSecsSinceEpoch());
         insertCommissionQuery->bindValue(2, notes);
-        insertCommissionQuery->bindValue(3, 
-            QDateTime::currentDateTime().toMSecsSinceEpoch());
+        auto time = QDateTime::currentDateTime().toMSecsSinceEpoch();
+        insertCommissionQuery->bindValue(3, time);
+        insertCommissionQuery->bindValue(4, time);
         insertCommissionQuery->exec();
         refreshCommissions();
         refreshCommissioners();
@@ -680,28 +681,35 @@ namespace Commissionator {
             "FOR EACH ROW BEGIN "
             "UPDATE Commission SET paidDate = NULL "
             "WHERE Commission.id = NEW.commission AND "
-            "(SELECT COALESCE(SUM(COALESCE(a.override, a.price)) - fee, "
-            "SUM(COALESCE(a.override, a.price))) FROM Commission "
-            "INNER JOIN Commissioner "
+            "(SELECT COALESCE(SUM(COALESCE(a.override, a.price, b.price)) "
+            "- c.fee, " 
+            "SUM(COALESCE(a.override, a.price, b.price))) FROM Commission "
+            "LEFT JOIN Commissioner "
             "ON Commission.commissioner = Commissioner.id "
+            "LEFT JOIN Piece ON Commission.id = Piece.commission "
             "LEFT JOIN "
-            "(SELECT Commission.id id, ProductPrices.price price, "
+            "(SELECT Piece.id id, ProductPrices.price price, "
             "Piece.overridePrice override "
             "FROM Commission "
             "INNER JOIN Piece ON Commission.id = Piece.commission "
-            "INNER JOIN ProductPrices "
-            "ON Piece.product = ProductPrices.product "
+            "INNER JOIN ProductPrices ON Piece.product = ProductPrices.product "
             "AND ProductPrices.date < Commission.createDate "
             "GROUP BY Piece.id HAVING date = max(date)) a "
-            "ON Commission.id = a.id "
+            "ON Piece.id = a.id "
+            "LEFT JOIN "
+            "(SELECT Piece.id id, ProductPrices.price "
+            "FROM Piece "
+            "LEFT JOIN ProductPrices ON Piece.product = ProductPrices.product "
+            "GROUP BY Piece.id HAVING date = min(date)) b "
+            "ON Piece.id = b.id "
             "LEFT JOIN "
             "(SELECT Commission.id id, SUM(Payment.fee) fee FROM Payment "
             "INNER JOIN Commission ON Payment.commission = Commission.id "
             "INNER JOIN Commissioner ON "
             "Commission.commissioner = Commissioner.id "
-            "GROUP BY Commission.id) b "
-            "ON Commission.id = b.id "
-            "WHERE Commission.id = NEW.commission) > 0; "
+            "GROUP BY Commission.id) c "
+            "ON Commission.id = c.id "
+            "WHERE Commission.id = NEW.Commission) > 0; "
             "END");
         sql->exec("CREATE TRIGGER IF NOT EXISTS insertPieceEventAfterPiece "
             "AFTER INSERT ON Piece "
@@ -1142,8 +1150,8 @@ namespace Commissionator {
             "Commissioner(name, notes) VALUES (?, ?);");
         insertCommissionQuery = new QSqlQuery(*sql);
         insertCommissionQuery->prepare("INSERT INTO "
-            "Commission(commissioner, dueDate, notes, createDate) "
-            "VALUES (?, ?, ?, ?);");
+            "Commission(commissioner, dueDate, notes, createDate, paidDate) "
+            "VALUES (?, ?, ?, ?, ?);");
         insertContactTypeQuery = new QSqlQuery(*sql);
         insertContactTypeQuery->prepare("INSERT INTO "
             "ContactType(type, available) VALUES (?, 1);");
