@@ -158,6 +158,21 @@ namespace Commissionator {
         emit newCommission(commissionerModel->record(0).value(0));
     }
 
+    void CommissionerPanel::toggleEdit() {
+        if (commissionerName->isHidden()) {
+            if (commissionerNameEdit->text() != commissionerName->text() ||
+                commissionerNotesEdit->text() != commissionerNotes->text())
+                emit edit(commissionerModel->record(0).value(0).toInt(),
+                commissionerNameEdit->text(), commissionerNotesEdit->text());
+            updatePanel();
+        } else {
+            commissionerName->hide();
+            commissionerNameEdit->show();
+            commissionerNotes->hide();
+            commissionerNotesEdit->show();
+        }
+    }
+
     void CommissionerPanel::updatePanel() {
         if (commissionerModel->record(0).value(0).toInt() != 0) {
             QLocale dollarConverter = QLocale();
@@ -236,23 +251,6 @@ namespace Commissionator {
             commissionerNotes->hide();
             commissionerNotesEdit->hide();
             commissionerNotesEdit->setText("");
-        }
-    }
-
-    void CommissionerPanel::toggleEdit() {
-        if (commissionerName->isHidden()) { 
-            if (commissionerNameEdit->text() != commissionerName->text())
-                emit editName(commissionerModel->record(0).value(0).toInt(),
-                    commissionerNameEdit->text());
-            if (commissionerNotesEdit->text() != commissionerNotes->text())
-                emit editNotes(commissionerModel->record(0).value(0).toInt(),
-                commissionerNotesEdit->text());
-            updatePanel();
-        } else {
-            commissionerName->hide();
-            commissionerNameEdit->show();
-            commissionerNotes->hide();
-            commissionerNotesEdit->show();
         }
     }
 }

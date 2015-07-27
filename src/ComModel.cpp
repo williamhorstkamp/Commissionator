@@ -17,13 +17,11 @@ namespace Commissionator {
         delete deleteCommissionQuery;
         delete deleteContactQuery;
         delete deletePieceQuery;
-        delete editCommissionCommissionerQuery;
-        delete editCommissionNotesQuery;
-        delete editCommissionerNameQuery;
-        delete editCommissionerNotesQuery;
+        delete editCommissionQuery;
+        delete editCommissionerQuery;
         delete editProductAvailabilityQuery;
-        delete editProductNameQuery;
         delete editProductPriceQuery;
+        delete editProductNameQuery;
         delete insertCommissionerQuery;
         delete insertCommissionQuery;
         delete insertContactQuery;
@@ -152,40 +150,25 @@ namespace Commissionator {
         return productPiecesModel;
     }
 
-    void ComModel::editCommissionCommissioner(const int commission,
-        const int commissioner) {
-        editCommissionCommissionerQuery->bindValue(0, commissioner);
-        editCommissionCommissionerQuery->bindValue(1, commission);
-        editCommissionCommissionerQuery->exec();
+    void ComModel::editCommission(const int commission,
+        const int commissioner, const QString notes) {
+        editCommissionQuery->bindValue(0, commissioner);
+        editCommissionQuery->bindValue(1, notes);
+        editCommissionQuery->bindValue(2, commission);
+        editCommissionQuery->exec();
         refreshCommissions();
         refreshCommissioners();
         changesMade = true;
     }
 
-    void ComModel::editCommissionNotes(const int commission, 
+    void ComModel::editCommissioner(const int commissioner, const QString name,
         const QString notes) {
-        editCommissionNotesQuery->bindValue(0, notes);
-        editCommissionNotesQuery->bindValue(1, commission);
-        editCommissionNotesQuery->exec();
-        refreshCommissions();
-        changesMade = true;
-    }
-
-    void ComModel::editCommissionerName(const int commissioner, const QString name) {
-        editCommissionerNameQuery->bindValue(0, name);
-        editCommissionerNameQuery->bindValue(1, commissioner);
-        editCommissionerNameQuery->exec();
+        editCommissionerQuery->bindValue(0, name);
+        editCommissionerQuery->bindValue(1, notes);
+        editCommissionerQuery->bindValue(2, commissioner);
+        editCommissionerQuery->exec();
         refreshCommissioners();
         refreshCommissions();
-        changesMade = true;
-    }
-
-    void ComModel::editCommissionerNotes(const int commissioner, 
-        const QString notes) {
-        editCommissionerNotesQuery->bindValue(0, notes);
-        editCommissionerNotesQuery->bindValue(1, commissioner);
-        editCommissionerNotesQuery->exec();
-        refreshCommissioners();
         changesMade = true;
     }
 
@@ -198,21 +181,27 @@ namespace Commissionator {
         changesMade = true;
     }
 
-    void ComModel::editProductPrice(const int productId, 
+    void ComModel::editProduct(const int productId, 
+        const QString name, const double basePrice) {
+        editProductPriceQuery->bindValue(0, productId);
+        editProductPriceQuery->bindValue(1, basePrice);
+        editProductPriceQuery->bindValue(2,
+            QDateTime::currentDateTime().toMSecsSinceEpoch());
+        editProductPriceQuery->exec();
+        editProductNameQuery->bindValue(0, name);
+        editProductNameQuery->bindValue(1, productId);
+        editProductNameQuery->exec();
+        refreshProducts();
+        changesMade = true;
+    }
+
+    void ComModel::editProductPrice(const int productId,
         const double basePrice) {
         editProductPriceQuery->bindValue(0, productId);
         editProductPriceQuery->bindValue(1, basePrice);
         editProductPriceQuery->bindValue(2,
             QDateTime::currentDateTime().toMSecsSinceEpoch());
         editProductPriceQuery->exec();
-        refreshProducts();
-        changesMade = true;
-    }
-
-    void ComModel::editProductName(const int productId, const QString name) {
-        editProductNameQuery->bindValue(0, name);
-        editProductNameQuery->bindValue(1, productId);
-        editProductNameQuery->exec();
         refreshProducts();
         changesMade = true;
     }
@@ -749,10 +738,8 @@ namespace Commissionator {
         deletePieceQuery->finish();
         deleteProductQuery->finish();
         deleteProductEventQuery->finish();
-        editCommissionCommissionerQuery->finish();
-        editCommissionNotesQuery->finish();
-        editCommissionerNameQuery->finish();
-        editCommissionerNotesQuery->finish();
+        editCommissionQuery->finish();
+        editCommissionerQuery->finish();
         editProductAvailabilityQuery->finish();
         editProductPriceQuery->finish();
         editProductNameQuery->finish();
@@ -1120,18 +1107,12 @@ namespace Commissionator {
         deleteProductEventQuery = new QSqlQuery(*sql);
         deleteProductEventQuery->prepare("DELETE FROM ProductEvent WHERE "
             "ProductEvent.id = (?);");
-        editCommissionCommissionerQuery = new QSqlQuery(*sql);
-        editCommissionCommissionerQuery->prepare("UPDATE Commission "
-            "SET commissioner = (?) WHERE id = (?)");
-        editCommissionNotesQuery = new QSqlQuery(*sql);
-        editCommissionNotesQuery->prepare("UPDATE Commission "
-            "SET notes = (?) WHERE id = (?)");
-        editCommissionerNameQuery = new QSqlQuery(*sql);
-        editCommissionerNameQuery->prepare("UPDATE Commissioner "
-            "SET name = (?) WHERE id = (?)");
-        editCommissionerNotesQuery = new QSqlQuery(*sql);
-        editCommissionerNotesQuery->prepare("UPDATE Commissioner "
-            "SET notes = (?) WHERE id = (?)");
+        editCommissionQuery = new QSqlQuery(*sql);
+        editCommissionQuery->prepare("UPDATE Commission "
+            "SET commissioner = (?), NOTES = (?) WHERE id = (?)");
+        editCommissionerQuery = new QSqlQuery(*sql);
+        editCommissionerQuery->prepare("UPDATE Commissioner "
+            "SET name = (?), notes = (?) WHERE id = (?)");
         editProductAvailabilityQuery = new QSqlQuery(*sql);
         editProductAvailabilityQuery->prepare("UPDATE Product "
             "SET available = (?) WHERE id = (?)");

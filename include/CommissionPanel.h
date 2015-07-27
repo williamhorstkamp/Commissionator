@@ -51,17 +51,10 @@ namespace Commissionator {
          *
          *  @param commission - id of the commission
          *  @param commissioner - id of the commission
-         */
-        void editCommissioner(const int commission, const int commissioner);
-
-        /**
-         *  Signal emit when the commissioner's notes has been edited during the
-         *  edit mode of the panel
-         *
-         *  @param commission - id of the commission
          *  @param notes - new notes for the commission
          */
-        void editNotes(const int commission, const QString notes);
+        void edit(const int commission, const int commissioner,
+            const QString notes);
 
         /**
          *  Signal emit when the newPaymentButton is clicked.

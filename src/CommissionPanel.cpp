@@ -284,14 +284,15 @@ namespace Commissionator {
 
     void CommissionPanel::toggleEdit() {
         if (commissionerName->isHidden()) {
-            if (commissionerNameCombo->model()->index(commissionerNameCombo->currentIndex(), 0).data().toString() != commissionerName->text())
-                emit editCommissioner(
+            if (commissionerNameCombo->model()->index(
+                commissionerNameCombo->currentIndex(), 0).data().toString() 
+                != commissionerName->text() || 
+                commissionNotesEdit->text() != commissionNotes->text())
+                emit edit(
                     commissionModel->record(0).value(0).toInt(),
                     commissionerNameCombo->model()->index(
-                        commissionerNameCombo->currentIndex(), 0).data().toInt());
-            if (commissionNotesEdit->text() != commissionNotes->text())
-                emit editNotes(commissionModel->record(0).value(0).toInt(),
-                commissionNotesEdit->text());
+                        commissionerNameCombo->currentIndex(), 0).data().toInt(),
+                        commissionNotesEdit->text());
             updatePanel();
         } else {
             commissionerName->hide();

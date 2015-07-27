@@ -157,12 +157,10 @@ namespace Commissionator {
 
     void ProductPanel::toggleEdit() {
         if (productName->isHidden()) {
-            if (productNameEdit->text() != productName->text())
-                emit editName(productModel->record(0).value(0).toInt(), 
-                    productNameEdit->text());
-            if (basePriceEdit->text() != basePrice->text())
-                emit editPrice(productModel->record(0).value(0).toInt(), 
-                    basePriceEdit->text().toDouble());
+            if (productNameEdit->text() != productName->text() ||
+                basePriceEdit->text() != basePrice->text())
+                emit edit(productModel->record(0).value(0).toInt(), 
+                    productNameEdit->text(), basePriceEdit->text().toDouble());
             updatePanel();
         } else {
             productName->hide();

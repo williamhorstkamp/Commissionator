@@ -370,7 +370,6 @@ namespace Commissionator {
         void recordOpened();
 
     public slots:
-
         /**
          *  Closes the open database
          */
@@ -392,37 +391,26 @@ namespace Commissionator {
         void save();
 
         /**
-         *  Function edits the commissioner of the commission with the given id.
+         *  Function edits the commissioner and notes of the commission 
+         *  with the given id.
          *
          *  @param commission - commission id
          *  @param commissioner - commissioner id
-         */
-        void editCommissionCommissioner(const int commission, 
-            const int commissioner);
-
-        /**
-         *  Function edits the notes of the commission with the given id.
-         *
-         *  @param commissioner - commission id
          *  @param notes - commission notes
          */
-        void editCommissionNotes(const int commission, const QString notes);
+        void editCommission(const int commission, 
+            const int commissioner, const QString notes);
 
         /**
-         *  Function edits the name of the commissioner with the given id.
+         *  Function edits the name and notes of the commissioner with 
+         *  the given id.
          *
          *  @param commissioner - commissioner id
          *  @param name - commissioner name
+         *  @param notes - commissioner notes
          */
-        void editCommissionerName(const int commissioner, const QString name);
-
-        /**
-         *  Function edits the notes of the commissioner with the given id.
-         *
-         *  @param commissioner - commissioner id
-         *  @param nnotes - commissioner nnotes
-         */
-        void editCommissionerNotes(const int commissioner, const QString notes);
+        void editCommissioner(const int commissioner, const QString name,
+            const QString notes);
 
         /**
          *  Edits whether the product is available for purchase or not.
@@ -441,17 +429,17 @@ namespace Commissionator {
         void editProductEventPlace(const int productEvent, const int place);
 
         /**
-         *  Edits product name.
+         *  Edits product name and base price
          *
          *  @param productId - id of the product
          *  @param name - new name for the product
+         *  @param basePrice - base price of the product without options
          */
-        void editProductName(const int productId, const QString name);
+        void editProduct(const int productId, const QString name,
+            const double basePrice);
 
         /**
-         *  Inserts new product price into database. All new pieces of this
-         *  product will use the new price, and old pieces will use the old 
-         *  price.
+         *  Edits product base price
          *
          *  @param productId - id of the product
          *  @param basePrice - base price of the product without options
@@ -929,10 +917,8 @@ namespace Commissionator {
         QSqlQuery *deletePieceQuery;
         QSqlQuery *deleteProductQuery;
         QSqlQuery *deleteProductEventQuery;
-        QSqlQuery *editCommissionCommissionerQuery;
-        QSqlQuery *editCommissionNotesQuery;
-        QSqlQuery *editCommissionerNameQuery;
-        QSqlQuery *editCommissionerNotesQuery;
+        QSqlQuery *editCommissionQuery;
+        QSqlQuery *editCommissionerQuery;
         QSqlQuery *editProductAvailabilityQuery;
         QSqlQuery *editProductPriceQuery; 
         QSqlQuery *editProductNameQuery;

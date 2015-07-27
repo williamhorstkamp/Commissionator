@@ -262,10 +262,8 @@ namespace Commissionator{
             model, &ComModel::insertContact);
         connect(commissionerRightPanel, &CommissionerPanel::deleteContact,
             model, &ComModel::deleteContact);
-        connect(commissionerRightPanel, &CommissionerPanel::editName,
-            model, &ComModel::editCommissionerName);
-        connect(commissionerRightPanel, &CommissionerPanel::editNotes,
-            model, &ComModel::editCommissionerNotes);
+        connect(commissionerRightPanel, &CommissionerPanel::edit,
+            model, &ComModel::editCommissioner);
 
         connect(commissionLeftPanel, &LeftPanel::tableClicked,
             model, &ComModel::setCommission);
@@ -278,10 +276,8 @@ namespace Commissionator{
             commissionRightPanel, &CommissionPanel::updatePanel);
         connect(commissionRightPanel, &CommissionPanel::deletePiece,
             model, &ComModel::deletePiece);
-        connect(commissionRightPanel, &CommissionPanel::editCommissioner,
-            model, &ComModel::editCommissionCommissioner);
-        connect(commissionRightPanel, &CommissionPanel::editNotes,
-            model, &ComModel::editCommissionNotes);
+        connect(commissionRightPanel, &CommissionPanel::edit,
+            model, &ComModel::editCommission);
         connect(commissionRightPanel, &CommissionPanel::newPayment,
             this, &MainWindow::newPayment);
         connect(commissionRightPanel, &CommissionPanel::newRefund,
@@ -300,10 +296,8 @@ namespace Commissionator{
             productRightPanel, &ProductPanel::updatePanel);
         connect(productRightPanel, &ProductPanel::editAvailability,
             model, &ComModel::editProductAvailability);
-        connect(productRightPanel, &ProductPanel::editName,
-            model, &ComModel::editProductName);
-        connect(productRightPanel, &ProductPanel::editPrice,
-            model, &ComModel::editProductPrice);
+        connect(productRightPanel, &ProductPanel::edit,
+            model, &ComModel::editProduct);
         connect(productRightPanel, &ProductPanel::searchProductPieces,
             model, &ComModel::searchProductPieces);
         connect(productRightPanel, &ProductPanel::deleteProductEvent,

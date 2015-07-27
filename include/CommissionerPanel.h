@@ -57,16 +57,8 @@ namespace Commissionator {
          *  @param commissioner - id of the commissioner
          *  @param name - new name for the commissioner
          */
-        void editName(const int commissioner, const QString name);
-
-        /**
-         *  Signal emit when the commissioner's notes has been edited during the
-         *  edit mode of the panel
-         *
-         *  @param commissioner - id of the commissioner
-         *  @param notes - new notes for the commissioner
-         */
-        void editNotes(const int commissioner, const QString notes);
+        void edit(const int commissioner, const QString name, 
+            const QString notes);
 
         /**
          *  Signal emit when the contactInfoTable's button is clicked.

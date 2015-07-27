@@ -71,17 +71,9 @@ namespace Commissionator {
          *
          *  @param product - id of the product
          *  @param name - new name for the product
-         */
-        void editName(const int product, const QString name);
-
-        /**
-         *  Signal emit when the product's price has been edited during the
-         *  edit mode of the panel
-         *
-         *  @param product - id of the product
          *  @param price - new price for the product
          */
-        void editPrice(const int product, const double price);
+        void edit(const int product, const QString name, const double price);
 
         /**
          *  Signal emit when the productOptionTable's button is clicked.
