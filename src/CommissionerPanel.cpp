@@ -145,6 +145,8 @@ namespace Commissionator {
         commissionsTable->setModel(commissionsModel);
         commissionsTable->setSelectionMode(QAbstractItemView::NoSelection);
         commissionsTable->hide();
+        connect(commissionsTable, &QTableView::doubleClicked,
+            this, &CommissionerPanel::setCommission);
     }
 
     void CommissionerPanel::insertContactSlot(const QList<QVariant> query) {
@@ -213,12 +215,13 @@ namespace Commissionator {
                 QHeaderView::Stretch);
 
             contactInfoTable->openBoxPersistentEditor(1);
+            contactInfoTable->setColumnHidden(0, true);
 
             for (int i = 0; i < commissionsTable->model()->columnCount(); i++)
                 commissionsTable->horizontalHeader()->setSectionResizeMode(i,
                 QHeaderView::Stretch);
 
-            contactInfoTable->setColumnHidden(0, true);
+            commissionsTable->setColumnHidden(0, true);
 
             unlockButton->show();
             commissionerName->show();

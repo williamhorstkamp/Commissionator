@@ -778,9 +778,9 @@ namespace Commissionator {
         sql->exec("PRAGMA recursive_triggers = ON;");
 		commissionerCommissionsModel = new QSqlQueryModel(this);
         QSqlQuery commissionerCommissionsQuery(*sql);
-        commissionerCommissionsQuery.prepare("SELECT strftime('%m/%d/%Y', "
-            "Commission.createDate/1000, 'unixepoch', 'localtime') "
-            "'Create Date', "
+        commissionerCommissionsQuery.prepare("SELECT Commission.id, "
+            "strftime('%m/%d/%Y', Commission.createDate/1000, 'unixepoch', "
+            "'localtime') 'Create Date', "
             "COALESCE(strftime('%m/%d/%Y', Commission.paidDate / 1000, "
             "'unixepoch', 'localtime'), 'Unpaid') 'Paid Date', "
             "COALESCE(SUM(COALESCE(override, price)), 'No pieces') "
@@ -1252,7 +1252,7 @@ namespace Commissionator {
         */
         productPiecesModel = new QSqlTableModel(this);
         QSqlQuery productPiecesQuery(*sql);
-        productPiecesQuery.prepare("SELECT Commissioner.name AS "
+        productPiecesQuery.prepare("SELECT Piece.id, Commissioner.name AS "
             "'Commissioner', Piece.name AS 'Piece Name', "
             "STRFTIME('%m/%d/%Y', Piece.createDate/ 1000, 'unixepoch', "
             "'localtime') AS 'Create Date', "

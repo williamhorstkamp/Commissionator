@@ -81,6 +81,14 @@ namespace Commissionator {
          */
         void newCommission(const QVariant &commissioner);
 
+        /**
+         *  Signal emit when a commission is double clicked.
+         *  Is to be forward to ComModel::setCommission.
+         *
+         *  @param commission - index of double clicked field
+         */
+        void setCommission(const QModelIndex &index);
+
     public slots:
         /**
          *  Slot connects to ComModel::commissionerChanged.

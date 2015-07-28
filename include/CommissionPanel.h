@@ -74,7 +74,6 @@ namespace Commissionator {
          */
         void newPiece(const QVariant &commission);
 
-
         /**
          *  Signal emit when the newRefundButton is clicked.
          *  Is to be forwarded to MainWindow::newRefund.
@@ -83,6 +82,14 @@ namespace Commissionator {
          *      a refund for
          */
         void newRefund(const QVariant &commission);
+
+        /**
+         *  Signal emit when a piece is double clicked.
+         *  Is to be forward to ComModel::setPiece.
+         *
+         *  @param commission - index of double clicked field
+         */
+        void setPiece(const QModelIndex &index);
 
     public slots:
         /**

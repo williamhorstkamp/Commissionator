@@ -102,6 +102,14 @@ namespace Commissionator {
         void searchProductPieces(const QString commission, const QString piece,
             const QString createDate, const QString finishDate);
 
+        /**
+         *  Signal emit when a piece is double clicked.
+         *  Is to be forward to ComModel::setPiece.
+         *
+         *  @param commission - index of double clicked field
+         */
+        void setPiece(const QModelIndex &index);
+
     public slots:
         /**
          *  Slot connects to ComModel::productChanged.

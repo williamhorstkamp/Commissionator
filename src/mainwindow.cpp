@@ -256,6 +256,8 @@ namespace Commissionator{
 
         connect(model, &ComModel::commissionerChanged,
             commissionerRightPanel, &CommissionerPanel::updatePanel);
+        connect(model, &ComModel::commissionerChanged,
+            this, &MainWindow::manageCommissioners);
         connect(commissionerRightPanel, &CommissionerPanel::newCommission,
             this, &MainWindow::newCommissionWithCommissioner);
         connect(commissionerRightPanel, &CommissionerPanel::insertContact,
@@ -264,6 +266,8 @@ namespace Commissionator{
             model, &ComModel::deleteContact);
         connect(commissionerRightPanel, &CommissionerPanel::edit,
             model, &ComModel::editCommissioner);
+        connect(commissionerRightPanel, &CommissionerPanel::setCommission,
+            model, &ComModel::setCommission);
 
         connect(commissionLeftPanel, &LeftPanel::tableClicked,
             model, &ComModel::setCommission);
@@ -274,6 +278,8 @@ namespace Commissionator{
 
         connect(model, &ComModel::commissionChanged,
             commissionRightPanel, &CommissionPanel::updatePanel);
+        connect(model, &ComModel::commissionChanged,
+            this, &MainWindow::manageCommissions);
         connect(commissionRightPanel, &CommissionPanel::deletePiece,
             model, &ComModel::deletePiece);
         connect(commissionRightPanel, &CommissionPanel::edit,
@@ -294,6 +300,8 @@ namespace Commissionator{
 
         connect(model, &ComModel::productChanged,
             productRightPanel, &ProductPanel::updatePanel);
+        connect(model, &ComModel::productChanged,
+            this, &MainWindow::manageStoreFront);
         connect(productRightPanel, &ProductPanel::editAvailability,
             model, &ComModel::editProductAvailability);
         connect(productRightPanel, &ProductPanel::edit,

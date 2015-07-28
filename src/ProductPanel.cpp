@@ -141,6 +141,8 @@ namespace Commissionator {
         piecesSoldTable->hide();
         connect(piecesSoldTable, &FixedRowTable::boxQuery, 
             this, &ProductPanel::searchProductPiecesSlot);
+        connect(piecesSoldTable, &QTableView::doubleClicked,
+            this, &ProductPanel::setPiece);
     }
 
     void ProductPanel::insertProductOptionSlot(const QList<QVariant> query) {
@@ -213,6 +215,8 @@ namespace Commissionator {
             for (int i = 0; i < piecesSoldTable->model()->columnCount(); i++)
                 piecesSoldTable->horizontalHeader()->setSectionResizeMode(
                 i, QHeaderView::Stretch);
+
+            piecesSoldTable->setColumnHidden(0, true);
 
             unlockButton->show();
             availableButton->show();

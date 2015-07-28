@@ -160,6 +160,8 @@ namespace Commissionator {
         piecesTable->hide();
         connect(piecesDelegate, &FixedRowTableDelegate::buttonClicked,
             this, &CommissionPanel::deletePiece);
+        connect(piecesTable, &QTableView::doubleClicked,
+            this, &CommissionPanel::setPiece);
 
         paymentsTable = new QTableView(this);
         paymentsTable->setModel(paymentsModel);
