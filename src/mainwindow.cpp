@@ -190,6 +190,9 @@ namespace Commissionator{
         commissionToolBar->addAction(newCommissionAct);
         commissionToolBar->setMovable(false);
         commissionToolBar->setVisible(false);
+        pieceToolBar = addToolBar(tr("Piece"));
+        pieceToolBar->setMovable(false);
+        pieceToolBar->setVisible(false);
         storefrontToolBar = addToolBar(tr("StoreFront"));
         storefrontToolBar->addAction(newProductAct);
         storefrontToolBar->setMovable(false);
@@ -221,6 +224,8 @@ namespace Commissionator{
             model->getCommissioners(), hidden);
         commissionLeftPanel = new LeftPanel("Commission",
             model->getCommissions(), hidden);
+        pieceLeftPanel = new LeftPanel("Piece",
+            model->getPieces(), hidden);
         storefrontLeftPanel = new StoreFrontPanel(model->getProducts());
         commissionerRightPanel = new CommissionerPanel(
             model->getCommissioner(),
@@ -242,15 +247,17 @@ namespace Commissionator{
 
         leftPanel->addWidget(commissionerLeftPanel);
         leftPanel->addWidget(commissionLeftPanel);
+        leftPanel->addWidget(pieceLeftPanel);
         leftPanel->addWidget(storefrontLeftPanel);
         rightPanel->addWidget(commissionerRightPanel);
         rightPanel->addWidget(commissionRightPanel);
+        //rightPanel->addWidget(pieceRightPanel);
         rightPanel->addWidget(productRightPanel);
 
         connect(commissionerLeftPanel, &LeftPanel::tableClicked,
             model, &ComModel::setCommissioner);
         connect(commissionerLeftPanel, &LeftPanel::search,
-            this, &MainWindow::searchCommissioner);
+            this, &MainWindow::searchCommissioners);
         connect(commissionerLeftPanel, &LeftPanel::iconClicked,
             model, &ComModel::deleteCommissioner);
 
@@ -272,7 +279,7 @@ namespace Commissionator{
         connect(commissionLeftPanel, &LeftPanel::tableClicked,
             model, &ComModel::setCommission);
         connect(commissionLeftPanel, &LeftPanel::search,
-            this, &MainWindow::searchCommission);
+            this, &MainWindow::searchCommissions);
         connect(commissionLeftPanel, &LeftPanel::iconClicked,
             model, &ComModel::deleteCommission);
 
@@ -290,6 +297,18 @@ namespace Commissionator{
             this, &MainWindow::newRefund);
         connect(commissionRightPanel, &CommissionPanel::newPiece,
             this, &MainWindow::newPiece);
+
+        connect(pieceLeftPanel, &LeftPanel::tableClicked,
+            model, &ComModel::setPiece);
+        connect(pieceLeftPanel, &LeftPanel::search,
+            this, &MainWindow::searchPieces);
+        connect(pieceLeftPanel, &LeftPanel::iconClicked,
+            model, &ComModel::deletePiece);
+
+        //connect(model, &ComModel::commissionChanged,
+        //    pieceRightPanel, &PieceRightPanel::updatePanel);
+        connect(model, &ComModel::pieceChanged,
+            this, &MainWindow::managePieces);
 
         connect(storefrontLeftPanel, &StoreFrontPanel::productTableClicked,
             model, &ComModel::setProduct);
@@ -458,16 +477,22 @@ namespace Commissionator{
         model->save();
     }
 
-    void MainWindow::searchCommission(const QList<QVariant> query) {
+    void MainWindow::searchCommissions(const QList<QVariant> query) {
         if (query.length() == 7)    //id, commissioner, create date, paid date, due date, piece count, finish date
             model->searchCommissions(query[1].toString(), query[2].toString(),
             query[3].toString(), query[4].toString(), query[5].toString(),
             query[6].toString());
     }
 
-    void MainWindow::searchCommissioner(const QList<QVariant> query) {
+    void MainWindow::searchCommissioners(const QList<QVariant> query) {
         if (query.length() == 5)    //id, name, commissioner since, amounted owed, notes
             model->searchCommissioners(query[1].toString(), query[2].toString(),
+            query[3].toString(), query[4].toString());
+    }
+
+    void MainWindow::searchPieces(const QList<QVariant> query) {
+        if (query.length() == 5)    //id, commissioner, product, create, finish
+            model->searchPieces(query[1].toString(), query[2].toString(),
             query[3].toString(), query[4].toString());
     }
 
@@ -493,6 +518,13 @@ namespace Commissionator{
 
     void MainWindow::manageOptions() {
         optionsPopup->exec();
+    }
+
+    void MainWindow::managePieces() {
+        leftPanel->setCurrentWidget(pieceLeftPanel);
+        //rightPanel->setCurrentWidget(pieceRightPanel);
+        swapContextToolBar(pieceToolBar);
+        //pieceRightPanel->updatePanel();
     }
 
     void MainWindow::manageStoreFront() {
@@ -531,6 +563,8 @@ namespace Commissionator{
                 this, &MainWindow::manageCommissioners);
             connect(manageCommissionAct, &QAction::triggered,
                 this, &MainWindow::manageCommissions);
+            connect(managePieceAct, &QAction::triggered,
+                this, &MainWindow::managePieces);
             connect(manageStorefrontAct, &QAction::triggered,
                 this, &MainWindow::manageStoreFront);
 
@@ -586,6 +620,6 @@ namespace Commissionator{
         manageStorefrontAct->setEnabled(isEnabled);
         manageCommissionerAct->setEnabled(isEnabled);
         manageCommissionAct->setEnabled(isEnabled);
-        //managePieceAct->setEnabled(isEnabled);
+        managePieceAct->setEnabled(isEnabled);
     }
 }

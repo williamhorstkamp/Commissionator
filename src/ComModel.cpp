@@ -1180,7 +1180,11 @@ namespace Commissionator {
             "INNER JOIN Commissioner ON Commission.commissioner = Commissioner.id "
             "WHERE Piece.id = (?)");
         pieceModel->setQuery(pieceQuery);
-        piecesModel = new QSqlQueryModel(this);
+        /**
+         *  initialized as a QSqlTableModel so that any proxy models created
+         *  using this model can contain editable fields.
+         */
+        piecesModel = new QSqlTableModel(this);
         QSqlQuery piecesQuery(*sql);
         piecesQuery.prepare("SELECT Piece.id, Commissioner.name, "
             "Piece.name, STRFTIME('%m/%d/%Y',Piece.createDate/1000, 'unixepoch', "
@@ -1198,6 +1202,14 @@ namespace Commissionator {
             "'localtime'), 0) LIKE (?);");
         piecesModel->setQuery(piecesQuery);
         searchPieces("", "", "", "");
+        piecesModel->setHeaderData(1, Qt::Horizontal,
+            QVariant("Commissioner"), Qt::DisplayRole);
+        piecesModel->setHeaderData(2, Qt::Horizontal,
+            QVariant("Product"), Qt::DisplayRole);
+        piecesModel->setHeaderData(3, Qt::Horizontal,
+            QVariant("Create Date"), Qt::DisplayRole);
+        piecesModel->setHeaderData(4, Qt::Horizontal,
+            QVariant("Finish Date"), Qt::DisplayRole);
         productEventCountQuery = new QSqlQuery(*sql);
         productEventCountQuery->prepare("SELECT Count(ProductEvent.id) "
             "FROM Product "

@@ -99,6 +99,11 @@ namespace Commissionator {
          */
         void manageCommissions();
 
+        /**
+         *  Sets panels and toolbar to the Manage Pieces panels
+         */
+        void managePieces();
+
         /** 
          *  Function opens the options dialog window.
          *  Takes control away from the MainWindow for the duration of the
@@ -211,7 +216,7 @@ namespace Commissionator {
          *  Argument order:
          *  Commissioner Name, Customer Since, Amount Owed
          */
-        void searchCommission(const QList<QVariant> query);
+        void searchCommissions(const QList<QVariant> query);
 
         /**
          *  Functions searches for commissioners with given arguements
@@ -219,7 +224,15 @@ namespace Commissionator {
          *  Argument order:
          *  Commissioner Name, Customer Since, Amount Owed
          */
-        void searchCommissioner(const QList<QVariant> query);
+        void searchCommissioners(const QList<QVariant> query);
+
+        /**
+        *  Functions searches for pieces with given arguements
+        *
+        *  Argument order:
+        *  Commissioner Name, Product Name, Create Date, Finish Date
+        */
+        void searchPieces(const QList<QVariant> query);
 
         /**
          *  Functions searches for products with given arguements
@@ -290,6 +303,7 @@ namespace Commissionator {
 
         LeftPanel *commissionerLeftPanel;
         LeftPanel *commissionLeftPanel;
+        LeftPanel *pieceLeftPanel;
         StoreFrontPanel *storefrontLeftPanel;
         CommissionerPanel *commissionerRightPanel;
         CommissionPanel *commissionRightPanel;
@@ -313,6 +327,7 @@ namespace Commissionator {
         QToolBar *contextToolBar;
         QToolBar *commissionerToolBar;
         QToolBar *commissionToolBar;
+        QToolBar *pieceToolBar;
         QToolBar *storefrontToolBar;
 
         QAction *newAct;
@@ -324,14 +339,14 @@ namespace Commissionator {
         QAction *exitAct;
         QAction *newCommissionerAct;
         QAction *newCommissionAct;
+        QAction *newPaymentAct;
         QAction *newProductAct;
         QAction *newSaleAct;
-        QAction *newPaymentAct;
-        QAction *manageOptionsAct;
-        QAction *manageStorefrontAct;
         QAction *manageCommissionerAct;
         QAction *manageCommissionAct;
+        QAction *manageOptionsAct;
         QAction *managePieceAct;
+        QAction *manageStorefrontAct;
         QAction *aboutAct;
         QAction *helpAct;
 
