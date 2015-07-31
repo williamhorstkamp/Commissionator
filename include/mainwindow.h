@@ -17,6 +17,7 @@ class NewProductWindow;
 class NewRefundWindow;
 class CommissionerPanel;
 class CommissionPanel;
+class PiecePanel;
 class ProductPanel;
 class OptionsDialog;
 class ComModel;
@@ -307,6 +308,7 @@ namespace Commissionator {
         StoreFrontPanel *storefrontLeftPanel;
         CommissionerPanel *commissionerRightPanel;
         CommissionPanel *commissionRightPanel;
+        PiecePanel *pieceRightPanel;
         ProductPanel *productRightPanel;
         QFrame *line;
 

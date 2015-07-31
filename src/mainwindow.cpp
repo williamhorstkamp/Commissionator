@@ -20,6 +20,7 @@
 #include "OptionsDialog.h"
 #include "CommissionerPanel.h"
 #include "CommissionPanel.h"
+#include "PiecePanel.h"
 #include "ProductPanel.h"
 #include "ComModel.h"
 #include "mainwindow.h"
@@ -239,6 +240,9 @@ namespace Commissionator{
             model->getCommissionPayments(),
             model->getCommissionerNames(),
             this);
+        pieceRightPanel = new PiecePanel(
+            model->getPiece(),
+            model->getPieceEvents());
         productRightPanel = new ProductPanel(
             model->getProduct(), 
             model->getProductEvents(),
@@ -251,7 +255,7 @@ namespace Commissionator{
         leftPanel->addWidget(storefrontLeftPanel);
         rightPanel->addWidget(commissionerRightPanel);
         rightPanel->addWidget(commissionRightPanel);
-        //rightPanel->addWidget(pieceRightPanel);
+        rightPanel->addWidget(pieceRightPanel);
         rightPanel->addWidget(productRightPanel);
 
         connect(commissionerLeftPanel, &LeftPanel::tableClicked,
@@ -263,8 +267,6 @@ namespace Commissionator{
 
         connect(model, &ComModel::commissionerChanged,
             commissionerRightPanel, &CommissionerPanel::updatePanel);
-        connect(model, &ComModel::commissionerChanged,
-            this, &MainWindow::manageCommissioners);
         connect(commissionerRightPanel, &CommissionerPanel::newCommission,
             this, &MainWindow::newCommissionWithCommissioner);
         connect(commissionerRightPanel, &CommissionerPanel::insertContact,
@@ -275,6 +277,8 @@ namespace Commissionator{
             model, &ComModel::editCommissioner);
         connect(commissionerRightPanel, &CommissionerPanel::setCommission,
             model, &ComModel::setCommission);
+        connect(commissionerRightPanel, &CommissionerPanel::setCommission,
+            this, &MainWindow::manageCommissions);
 
         connect(commissionLeftPanel, &LeftPanel::tableClicked,
             model, &ComModel::setCommission);
@@ -285,8 +289,6 @@ namespace Commissionator{
 
         connect(model, &ComModel::commissionChanged,
             commissionRightPanel, &CommissionPanel::updatePanel);
-        connect(model, &ComModel::commissionChanged,
-            this, &MainWindow::manageCommissions);
         connect(commissionRightPanel, &CommissionPanel::deletePiece,
             model, &ComModel::deletePiece);
         connect(commissionRightPanel, &CommissionPanel::edit,
@@ -297,6 +299,10 @@ namespace Commissionator{
             this, &MainWindow::newRefund);
         connect(commissionRightPanel, &CommissionPanel::newPiece,
             this, &MainWindow::newPiece);
+        connect(commissionRightPanel, &CommissionPanel::setPiece,
+            model, &ComModel::setPiece);
+        connect(commissionRightPanel, &CommissionPanel::setPiece,
+            this, &MainWindow::managePieces);
 
         connect(pieceLeftPanel, &LeftPanel::tableClicked,
             model, &ComModel::setPiece);
@@ -305,10 +311,10 @@ namespace Commissionator{
         connect(pieceLeftPanel, &LeftPanel::iconClicked,
             model, &ComModel::deletePiece);
 
-        //connect(model, &ComModel::commissionChanged,
-        //    pieceRightPanel, &PieceRightPanel::updatePanel);
         connect(model, &ComModel::pieceChanged,
-            this, &MainWindow::managePieces);
+            pieceRightPanel, &PiecePanel::updatePanel);
+        //connect(pieceRightPanel, &pieceRightPanel::edit,
+        //    model, &ComModel::editPiece);
 
         connect(storefrontLeftPanel, &StoreFrontPanel::productTableClicked,
             model, &ComModel::setProduct);
@@ -319,8 +325,6 @@ namespace Commissionator{
 
         connect(model, &ComModel::productChanged,
             productRightPanel, &ProductPanel::updatePanel);
-        connect(model, &ComModel::productChanged,
-            this, &MainWindow::manageStoreFront);
         connect(productRightPanel, &ProductPanel::editAvailability,
             model, &ComModel::editProductAvailability);
         connect(productRightPanel, &ProductPanel::edit,
@@ -329,6 +333,10 @@ namespace Commissionator{
             model, &ComModel::searchProductPieces);
         connect(productRightPanel, &ProductPanel::deleteProductEvent,
             model, &ComModel::deleteProductEvent);
+        connect(productRightPanel, &ProductPanel::setPiece,
+            model, &ComModel::setPiece);
+        connect(productRightPanel, &ProductPanel::setPiece,
+            this, &MainWindow::managePieces);
 
         layout->addWidget(leftPanel);
         layout->addWidget(line);
@@ -491,9 +499,9 @@ namespace Commissionator{
     }
 
     void MainWindow::searchPieces(const QList<QVariant> query) {
-        if (query.length() == 5)    //id, commissioner, product, create, finish
+        if (query.length() == 6)    //id, commissioner, piece, product, create, finish
             model->searchPieces(query[1].toString(), query[2].toString(),
-            query[3].toString(), query[4].toString());
+            query[3].toString(), query[4].toString(), query[5].toString());
     }
 
     void MainWindow::searchProducts(const QList<QVariant> query) {
@@ -522,9 +530,9 @@ namespace Commissionator{
 
     void MainWindow::managePieces() {
         leftPanel->setCurrentWidget(pieceLeftPanel);
-        //rightPanel->setCurrentWidget(pieceRightPanel);
+        rightPanel->setCurrentWidget(pieceRightPanel);
         swapContextToolBar(pieceToolBar);
-        //pieceRightPanel->updatePanel();
+        pieceRightPanel->updatePanel();
     }
 
     void MainWindow::manageStoreFront() {

@@ -40,11 +40,10 @@ namespace Commissionator {
             QSqlQueryModel *contactTypesModel, QWidget *parent = nullptr);
 
     signals:
-
         /**
          *  Signal emit when the contactInfoTable's delete button is clicked.
          *  Is a modification of FixedRowTable::tableButtonClicked and is
-         *  fowarded to ComModel::deleteContact
+         *  fowarded to ComModel::deleteContact.
          *
          *  @param index - index of the contact to delete
          */
@@ -52,7 +51,7 @@ namespace Commissionator {
 
         /** 
          *  Signal emit when the commissioner's name has been edited during the
-         *  edit mode of the panel
+         *  edit mode of the panel.
          *
          *  @param commissioner - id of the commissioner
          *  @param name - new name for the commissioner

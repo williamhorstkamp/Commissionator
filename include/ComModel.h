@@ -166,8 +166,8 @@ namespace Commissionator {
          *  @return - pointer to QSqlQueryModel containing data about the
          *      piece
          *  Data order:
-         *  Commissioner Name, Piece Name, Start Date, End Date, Notes
-        */
+         *  Piece Name, Commissioner Name, Start Date, End Date, Notes
+         */
         QSqlQueryModel *getPiece();
 
         /**
@@ -264,11 +264,11 @@ namespace Commissionator {
          *  piece events table to be displayed on the piece panel.
          *  The current record can be set by setPiece(const QModelIndex &)
          *
-         *  @return - pointer to QSqlTableModel containing piece events
+         *  @return - pointer to QSqlQueryModel containing piece events
          *  Display order:
          *  Event Name, Start Date, End Date
          */
-        //QSqlTableModel *getPieceEvents();
+        QSqlQueryModel *getPieceEvents();
 
         /**
          *  Function returns a pointer to a model containing data for the
@@ -286,11 +286,11 @@ namespace Commissionator {
          *  product options table to be displayed on the product panel.
          *  The current record can be set by setProduct(const QModelIndex &)
          *
-         *  @return - pointer to QSqlTableModel containing product options
+         *  @return - pointer to QSqlQueryModel containing product options
          *  Display order:
          *  Name, Price, Is Numeric
          */
-        //QSqlTableModel *getProductOptions();
+        //QSqlQueryModel *getProductOptions();
 
         /**
          *  Function returns a pointer to a model containing data for the
@@ -480,12 +480,13 @@ namespace Commissionator {
          *
          *  @param commissionerName - the name of the commissioner of the piece
          *  @param pieceName - the name of the piece
+         *  @param productName - the name of the product
          *  @Param startDate - the date the piece was started
          *  @Param finishDate - the date the piece was finished
          */
         void searchPieces(const QString commissionerName,
-            const QString pieceName, const QString startDate,
-            const QString finishDate);
+            const QString pieceName, const QString productName, 
+            const QString startDate, const QString finishDate);
             
         /**
          *  Slot limits the results of getProducts() based on the inputs
@@ -933,6 +934,7 @@ namespace Commissionator {
         QSqlQuery *insertProductQuery;
         QSqlQuery *insertProductEventQuery;
         QSqlQueryModel *paymentTypesModel;
+        QSqlQueryModel *pieceEventsModel;
         QSqlQueryModel *pieceModel;
         QSqlQueryModel *piecesModel;
         QSqlQuery *productEventCountQuery;

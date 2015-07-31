@@ -242,7 +242,7 @@ namespace Commissionator {
             unlockButton->hide();
             commissionerName->hide();
             commissionerNameEdit->hide();
-            commissionerNameEdit->setText(commissionerName->text());
+            commissionerNameEdit->setText("");
             commissionerDate->hide();
             commissionerPaid->hide();
             contactInfoLabel->hide();

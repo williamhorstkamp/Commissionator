@@ -126,6 +126,10 @@ namespace Commissionator {
         return pieceModel;
     }
 
+    QSqlQueryModel *ComModel::getPieceEvents() {
+        return pieceEventsModel;
+    }
+
     QSqlQueryModel *ComModel::getPieces() {
         return piecesModel;
     }
@@ -240,12 +244,13 @@ namespace Commissionator {
     }
 
     void ComModel::searchPieces(const QString commissionerName,
-        const QString pieceName, const QString startDate,
-        const QString finishDate) {
+        const QString pieceName, const QString productName,
+        const QString startDate, const QString finishDate) {
         piecesModel->query().bindValue(0, "%" + commissionerName + "%");
         piecesModel->query().bindValue(1, "%" + pieceName + "%");
-        piecesModel->query().bindValue(2, "%" + startDate + "%");
-        piecesModel->query().bindValue(3, "%" + finishDate + "%");
+        piecesModel->query().bindValue(2, "%" + productName + "%");
+        piecesModel->query().bindValue(3, "%" + startDate + "%");
+        piecesModel->query().bindValue(4, "%" + finishDate + "%");
         piecesModel->query().exec();
         piecesModel->setQuery(piecesModel->query());
     }
@@ -303,9 +308,13 @@ namespace Commissionator {
     }
 
     void ComModel::setPiece(const QModelIndex &index) {
-        pieceModel->query().bindValue(0, getValue(index, 0).toInt());
+        int pieId = getValue(index, 0).toInt();
+        pieceModel->query().bindValue(0, pieId);
         pieceModel->query().exec();
         pieceModel->setQuery(pieceModel->query());  
+        pieceEventsModel->query().bindValue(0, pieId);
+        pieceEventsModel->query().exec();
+        pieceEventsModel->setQuery(pieceEventsModel->query());
         emit pieceChanged();
     }
     
@@ -572,6 +581,7 @@ namespace Commissionator {
         sql->exec("CREATE TABLE IF NOT EXISTS PieceEvent("
             "piece INTEGER NOT NULL, "
             "event INTEGER NOT NULL, "
+            "startDate INTEGER, "
             "finishDate INTEGER, "
             "FOREIGN KEY(piece) REFERENCES piece(id) ON DELETE CASCADE, "
             "FOREIGN KEY(event) REFERENCES ProductEvent(id) ON DELETE CASCADE, "
@@ -1169,12 +1179,16 @@ namespace Commissionator {
         paymentTypesModel->query().exec();
         paymentTypesModel->setHeaderData(1, Qt::Horizontal,
             QVariant("Name"), Qt::DisplayRole);
+        pieceEventsModel = new QSqlQueryModel(this);
+        QSqlQuery pieceEventsQuery(*sql);
+        pieceEventsQuery.prepare("");
+        pieceEventsModel->setQuery(pieceEventsQuery);
         pieceModel = new QSqlQueryModel(this);
         QSqlQuery pieceQuery(*sql);
-        pieceQuery.prepare("SELECT Commissioner.name, Piece.name, "
+        pieceQuery.prepare("SELECT Piece.id, Piece.name, Commissioner.name, "
             "STRFTIME('%m/%d/%Y', Piece.createDate/1000, 'unixepoch', "
-            "'localtime'), COALESCE(STRFTIME('%m/%d/%Y', Piece.finishDate/1000, "
-            "'unixepoch', 'localtime'), 'Unfinished'), Piece.notes FROM Piece "
+            "'localtime'), STRFTIME('%m/%d/%Y', Piece.finishDate/1000, "
+            "'unixepoch', 'localtime'), Piece.notes FROM Piece "
             "INNER JOIN Product ON Piece.product = Product.id "
             "INNER JOIN Commission ON Piece.commission = Commission.id "
             "INNER JOIN Commissioner ON Commission.commissioner = Commissioner.id "
@@ -1187,28 +1201,31 @@ namespace Commissionator {
         piecesModel = new QSqlTableModel(this);
         QSqlQuery piecesQuery(*sql);
         piecesQuery.prepare("SELECT Piece.id, Commissioner.name, "
-            "Piece.name, STRFTIME('%m/%d/%Y',Piece.createDate/1000, 'unixepoch', "
-            "'localtime'), "
+            "Piece.name, Product.name, "
+            "STRFTIME('%m/%d/%Y',Piece.createDate/1000, 'unixepoch', 'localtime'), "
             "COALESCE(STRFTIME('%m/%d/%Y', Piece.finishDate/1000, 'unixepoch', "
             "'localtime'), 'Unfinished') "
             "FROM Piece "
+            "INNER JOIN Product ON Piece.product = Product.id "
             "INNER JOIN Commission ON Piece.commission = Commission.id "
             "INNER JOIN Commissioner ON Commission.commissioner = Commissioner.id "
             "WHERE Commissioner.name LIKE (?) "
-            "AND Piece.name LIKE (?) "
+            "AND Piece.name LIKE (?) AND Product.name LIKE (?) "
             "AND STRFTIME('%m/%d/%Y', Piece.createDate/1000, 'unixepoch', "
             "'localtime') LIKE (?) "
             "AND COALESCE(STRFTIME('%m/%d/%Y', Piece.finishDate/1000, 'unixepoch', "
             "'localtime'), 0) LIKE (?);");
         piecesModel->setQuery(piecesQuery);
-        searchPieces("", "", "", "");
+        searchPieces("", "", "", "", "");
         piecesModel->setHeaderData(1, Qt::Horizontal,
             QVariant("Commissioner"), Qt::DisplayRole);
         piecesModel->setHeaderData(2, Qt::Horizontal,
-            QVariant("Product"), Qt::DisplayRole);
+            QVariant("Piece"), Qt::DisplayRole);
         piecesModel->setHeaderData(3, Qt::Horizontal,
-            QVariant("Create Date"), Qt::DisplayRole);
+            QVariant("Product"), Qt::DisplayRole);
         piecesModel->setHeaderData(4, Qt::Horizontal,
+            QVariant("Create Date"), Qt::DisplayRole);
+        piecesModel->setHeaderData(5, Qt::Horizontal,
             QVariant("Finish Date"), Qt::DisplayRole);
         productEventCountQuery = new QSqlQuery(*sql);
         productEventCountQuery->prepare("SELECT Count(ProductEvent.id) "
