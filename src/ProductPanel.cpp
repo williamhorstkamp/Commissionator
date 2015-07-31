@@ -76,6 +76,7 @@ namespace Commissionator {
         basePriceEdit->hide();
 
         eventsLabel = new QLabel(this);
+        eventsLabel->setText("Events:");
         eventsLabel->setAlignment(Qt::AlignCenter);
         eventsLabel->setFont(*standardFont);
 
@@ -84,6 +85,7 @@ namespace Commissionator {
         optionsLabel->setFont(*standardFont);
 
         piecesSoldLabel = new QLabel(this);
+        piecesSoldLabel->setText("Pieces Sold:");
         piecesSoldLabel->setAlignment(Qt::AlignCenter);
         piecesSoldLabel->setFont(*standardFont);
     }
@@ -93,8 +95,6 @@ namespace Commissionator {
         titleLayout = new QGridLayout();
 
         titleLayout->addWidget(availableButton, 0, 0);
-        titleLayout->addWidget(productName, 0, 4);
-        titleLayout->addWidget(productNameEdit, 0, 4);
         titleLayout->addWidget(unlockButton, 0, 8);
         titleLayout->setColumnStretch(0, 1);
         titleLayout->setColumnStretch(1, 1);
@@ -107,6 +107,8 @@ namespace Commissionator {
         titleLayout->setColumnStretch(8, 1);
 
         layout->addLayout(titleLayout);
+        layout->addWidget(productName);
+        layout->addWidget(productNameEdit);
         layout->addWidget(numberProduced);
         layout->addWidget(availableLabel);
         layout->addWidget(basePrice);

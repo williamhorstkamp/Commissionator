@@ -5,6 +5,7 @@
 #include <QTableView>
 #include <QVBoxLayout>
 #include <QSqlRecord>
+#include <QTextEdit>
 #include "PiecePanel.h"
 
 namespace Commissionator {
@@ -53,23 +54,27 @@ namespace Commissionator {
         finishDate->setAlignment(Qt::AlignCenter);
         finishDate->setFont(*standardFont);
 
-        description = new QLabel(this);
-        description->setAlignment(Qt::AlignCenter);
-        description->setFont(*standardFont);
+        eventsLabel = new QLabel(this);
+        eventsLabel->setText("Events:");
+        eventsLabel->setAlignment(Qt::AlignCenter);
+        eventsLabel->setFont(*standardFont);
+        eventsLabel->hide();
 
+        notesLabel = new QLabel(this);
+        notesLabel->setText("notes:");
+        notesLabel->setAlignment(Qt::AlignCenter);
+        notesLabel->setFont(*standardFont);
+        notesLabel->hide();
 
-        descriptionEdit = new QLineEdit(this);
-        connect(descriptionEdit, &QLineEdit::returnPressed,
-            this, &PiecePanel::toggleEdit);
-        descriptionEdit->hide();
+        notesEdit = new QTextEdit(this);
+        notesEdit->setReadOnly(true);
+        notesEdit->hide();
     }
 
     void PiecePanel::createPanel() {
         layout = new QVBoxLayout(this);
         titleLayout = new QGridLayout();
 
-        titleLayout->addWidget(pieceName, 0, 4);
-        titleLayout->addWidget(pieceNameEdit, 0, 4);
         titleLayout->addWidget(unlockButton, 0, 8);
         titleLayout->setColumnStretch(0, 1);
         titleLayout->setColumnStretch(1, 1);
@@ -82,12 +87,15 @@ namespace Commissionator {
         titleLayout->setColumnStretch(8, 1);
 
         layout->addLayout(titleLayout);
+        layout->addWidget(pieceName);
+        layout->addWidget(pieceNameEdit);
         layout->addWidget(commissionerName);
         layout->addWidget(startDate);
         layout->addWidget(finishDate);
+        layout->addWidget(eventsLabel);
         layout->addWidget(eventsTable);
-        layout->addWidget(description);
-        layout->addWidget(descriptionEdit);
+        layout->addWidget(notesLabel);
+        layout->addWidget(notesEdit);
     }
 
     void PiecePanel::createTables(QSqlQueryModel *eventsModel) {
@@ -100,15 +108,16 @@ namespace Commissionator {
     void PiecePanel::toggleEdit() {
         if (pieceName->isHidden()) {
             if (pieceNameEdit->text() != pieceName->text() ||
-                descriptionEdit->text() != description->text())
+                notesEdit->toPlainText() != 
+                pieceModel->record(0).value(5).toString())
                 emit edit(pieceModel->record(0).value(0).toInt(),
-                pieceNameEdit->text(), descriptionEdit->text());
+                pieceNameEdit->text(), notesEdit->toPlainText());
             updatePanel();
         } else {
             pieceName->hide();
             pieceNameEdit->show();
-            description->hide();
-            descriptionEdit->show();
+            notesEdit->setReadOnly(false);
+            notesEdit->setStyleSheet("QTextEdit { color : black }");
         }
     }
 
@@ -129,8 +138,10 @@ namespace Commissionator {
                     "Finished on " + pieceModel->record(0).value(4).toString());
                 finishDate->setStyleSheet("QLabel { color : green; }");
             }
-            description->setText(
+            notesEdit->setText(
                 pieceModel->record(0).value(5).toString());
+            notesEdit->setReadOnly(true);
+            notesEdit->setStyleSheet("QTextEdit { color : grey }");
 
             unlockButton->show();
             pieceName->show();
@@ -139,10 +150,10 @@ namespace Commissionator {
             commissionerName->show();
             startDate->show();
             finishDate->show();
+            eventsLabel->show();
             eventsTable->show();
-            description->show();
-            descriptionEdit->hide();
-            descriptionEdit->setText(description->text());
+            notesLabel->show();
+            notesEdit->show();
         } else {
             unlockButton->hide();
             pieceName->hide();
@@ -151,10 +162,12 @@ namespace Commissionator {
             commissionerName->hide();
             startDate->hide();
             finishDate->hide();
+            eventsLabel->hide();
             eventsTable->hide();
-            description->hide();
-            descriptionEdit->hide();
-            descriptionEdit->setText("");
+            notesLabel->hide();
+            notesEdit->hide();
+            notesEdit->setReadOnly(true);
+            notesEdit->setText("");
         }
     }
 }

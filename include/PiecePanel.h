@@ -8,6 +8,7 @@ class QSqlQueryModel;
 class QPushButton;
 class QLineEdit;
 class QLabel;
+class QTextEdit;
 class QTableView;
 
 namespace Commissionator {
@@ -92,9 +93,10 @@ namespace Commissionator {
         QLabel *commissionerName;
         QLabel *startDate;
         QLabel *finishDate;
+        QLabel *eventsLabel;
         QTableView *eventsTable;
-        QLabel *description;
-        QLineEdit *descriptionEdit;
+        QLabel *notesLabel;
+        QTextEdit *notesEdit;
     };
 }
 

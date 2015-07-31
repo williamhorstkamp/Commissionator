@@ -313,8 +313,8 @@ namespace Commissionator{
 
         connect(model, &ComModel::pieceChanged,
             pieceRightPanel, &PiecePanel::updatePanel);
-        //connect(pieceRightPanel, &pieceRightPanel::edit,
-        //    model, &ComModel::editPiece);
+        connect(pieceRightPanel, &PiecePanel::edit,
+            model, &ComModel::editPiece);
 
         connect(storefrontLeftPanel, &StoreFrontPanel::productTableClicked,
             model, &ComModel::setProduct);

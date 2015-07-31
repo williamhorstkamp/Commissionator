@@ -176,6 +176,17 @@ namespace Commissionator {
         changesMade = true;
     }
 
+    void ComModel::editPiece(const int piece, const QString name, 
+        const QString description) {
+        editPieceQuery->bindValue(0, name);
+        editPieceQuery->bindValue(1, description);
+        editPieceQuery->bindValue(2, piece);
+        editPieceQuery->exec();
+        refreshCommissions();
+        refreshPieces();
+        changesMade = true;
+    }
+
     void ComModel::editProductAvailability(const int productId, 
         const bool available) {
         editProductAvailabilityQuery->bindValue(0, available);
@@ -750,6 +761,7 @@ namespace Commissionator {
         deleteProductEventQuery->finish();
         editCommissionQuery->finish();
         editCommissionerQuery->finish();
+        editPieceQuery->finish();
         editProductAvailabilityQuery->finish();
         editProductPriceQuery->finish();
         editProductNameQuery->finish();
@@ -1122,6 +1134,9 @@ namespace Commissionator {
             "SET commissioner = (?), NOTES = (?) WHERE id = (?)");
         editCommissionerQuery = new QSqlQuery(*sql);
         editCommissionerQuery->prepare("UPDATE Commissioner "
+            "SET name = (?), notes = (?) WHERE id = (?)");
+        editPieceQuery = new QSqlQuery(*sql);
+        editPieceQuery->prepare("UPDATE Piece "
             "SET name = (?), notes = (?) WHERE id = (?)");
         editProductAvailabilityQuery = new QSqlQuery(*sql);
         editProductAvailabilityQuery->prepare("UPDATE Product "

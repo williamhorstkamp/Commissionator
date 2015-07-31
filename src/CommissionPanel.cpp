@@ -117,8 +117,6 @@ namespace Commissionator {
         layout = new QVBoxLayout(this);
         titleLayout = new QGridLayout();
 
-        titleLayout->addWidget(commissionerName, 0, 4);
-        titleLayout->addWidget(commissionerNameCombo, 0, 4);
         titleLayout->addWidget(unlockButton, 0, 8);
         titleLayout->setColumnStretch(0, 1);
         titleLayout->setColumnStretch(1, 1);
@@ -131,6 +129,8 @@ namespace Commissionator {
         titleLayout->setColumnStretch(8, 1);
 
         layout->addLayout(titleLayout);
+        layout->addWidget(commissionerName);
+        layout->addWidget(commissionerNameCombo);
         layout->addWidget(createDate);
         layout->addWidget(paidDate);
         layout->addWidget(dueDate);

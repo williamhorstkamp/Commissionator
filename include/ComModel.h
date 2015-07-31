@@ -413,6 +413,17 @@ namespace Commissionator {
             const QString notes);
 
         /**
+         *  Function edits the name and description of the piece with the
+         *  given id.
+         *
+         *  @param piece - piece id
+         *  @param name - piece name
+         *  @param description - piece description
+         */
+        void editPiece(const int piece,
+            const QString name, const QString description);
+
+        /**
          *  Edits whether the product is available for purchase or not.
          *
          *  @param productId - id of the product
@@ -920,6 +931,7 @@ namespace Commissionator {
         QSqlQuery *deleteProductEventQuery;
         QSqlQuery *editCommissionQuery;
         QSqlQuery *editCommissionerQuery;
+        QSqlQuery *editPieceQuery;
         QSqlQuery *editProductAvailabilityQuery;
         QSqlQuery *editProductPriceQuery; 
         QSqlQuery *editProductNameQuery;
