@@ -1196,7 +1196,15 @@ namespace Commissionator {
             QVariant("Name"), Qt::DisplayRole);
         pieceEventsModel = new QSqlQueryModel(this);
         QSqlQuery pieceEventsQuery(*sql);
-        pieceEventsQuery.prepare("");
+        pieceEventsQuery.prepare("SELECT PieceEvent.event, "
+            "ProductEvent.name AS 'Event Name', "
+            "PieceEvent.startDate AS 'Start Date', "
+            "PieceEvent.finishDate AS 'Finish Date' "
+            "FROM Piece "
+            "LEFT JOIN PieceEvent ON Piece.id = PieceEvent.piece "
+            "LEFT JOIN ProductEvent ON PieceEvent.event = ProductEvent.id "
+            "WHERE Piece.id = (?) "
+            "ORDER BY ProductEvent.position");
         pieceEventsModel->setQuery(pieceEventsQuery);
         pieceModel = new QSqlQueryModel(this);
         QSqlQuery pieceQuery(*sql);

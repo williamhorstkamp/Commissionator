@@ -6,6 +6,7 @@
 #include <QVBoxLayout>
 #include <QSqlRecord>
 #include <QTextEdit>
+#include <QHeaderView>
 #include "PiecePanel.h"
 
 namespace Commissionator {
@@ -142,6 +143,11 @@ namespace Commissionator {
                 pieceModel->record(0).value(5).toString());
             notesEdit->setReadOnly(true);
             notesEdit->setStyleSheet("QTextEdit { color : grey }");
+
+            eventsTable->hideColumn(0);
+            for (int i = 1; i < eventsTable->model()->columnCount(); i++)
+                eventsTable->horizontalHeader()->setSectionResizeMode(
+                    i, QHeaderView::Stretch);
 
             unlockButton->show();
             pieceName->show();
