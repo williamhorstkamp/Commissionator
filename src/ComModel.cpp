@@ -16,12 +16,18 @@ namespace Commissionator {
         delete deleteCommissionerQuery;
         delete deleteCommissionQuery;
         delete deleteContactQuery;
+        delete deleteContactTypeQuery;
+        delete deletePaymentTypeQuery;
         delete deletePieceQuery;
+        delete deleteProductQuery;
+        delete deleteProductEventQuery;
         delete editCommissionQuery;
         delete editCommissionerQuery;
+        delete editPieceQuery;
         delete editProductAvailabilityQuery;
         delete editProductPriceQuery;
         delete editProductNameQuery;
+        delete editProductEventPlaceQuery;
         delete insertCommissionerQuery;
         delete insertCommissionQuery;
         delete insertContactQuery;
@@ -30,6 +36,8 @@ namespace Commissionator {
         delete insertPaymentTypeQuery;
         delete insertPieceQuery;
         delete insertProductQuery;
+        delete insertProductEventQuery;
+        delete productEventCountQuery;
         delete sql;
     }
 
@@ -756,6 +764,8 @@ namespace Commissionator {
         deleteCommissionerQuery->finish();
         deleteCommissionQuery->finish();
         deleteContactQuery->finish();
+        deleteContactTypeQuery->finish();
+        deletePaymentTypeQuery->finish();
         deletePieceQuery->finish();
         deleteProductQuery->finish();
         deleteProductEventQuery->finish();

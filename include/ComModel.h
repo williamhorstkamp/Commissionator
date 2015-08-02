@@ -7,6 +7,7 @@
 class QSqlDatabase;
 class QSqlQuery;
 class QSqlQueryModel;
+class QDateTime;
 
 namespace Commissionator {
 
