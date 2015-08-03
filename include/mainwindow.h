@@ -310,6 +310,7 @@ namespace Commissionator {
         CommissionPanel *commissionRightPanel;
         PiecePanel *pieceRightPanel;
         ProductPanel *productRightPanel;
+
         QFrame *line;
 
         NewCommissionWindow *commissionPopup;

@@ -583,8 +583,11 @@ namespace Commissionator{
             delete commissionerRightPanel;
             delete commissionLeftPanel;
             delete commissionRightPanel;
-            delete storefrontLeftPanel;
+            delete pieceLeftPanel;
+            delete pieceRightPanel;
             delete productRightPanel;
+            delete storefrontLeftPanel;
+
             delete line;
 
             delete commissionPopup;
