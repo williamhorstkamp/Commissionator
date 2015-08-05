@@ -23,7 +23,7 @@
 #include "PiecePanel.h"
 #include "ProductPanel.h"
 #include "ComModel.h"
-#include "mainwindow.h"
+#include "MainWindow.h"
 
 namespace Commissionator{
     MainWindow::MainWindow() {
@@ -114,7 +114,7 @@ namespace Commissionator{
 
         printRecordAct = new QAction(tr("&Print Records"), this);
         printRecordAct->setStatusTip(tr("Prints the entire set of data kept in the file"));
-        printRecordAct->setEnabled(false);
+        printRecordAct->setEnabled(false);  //not yet implemented
 
         closeAct = new QAction(tr("&Close"), this);
         closeAct->setStatusTip(tr("Closes current record"));
@@ -125,53 +125,66 @@ namespace Commissionator{
         connect(exitAct, &QAction::triggered,
             this, &MainWindow::close);
         
-        newCommissionerAct = new QAction(QIcon(":/CommissionerPlus.png"), tr("&New Commissioner"), this);
+        newCommissionerAct = new QAction(QIcon(":/CommissionerPlus.png"), 
+            tr("&New Commissioner"), this);
         newCommissionerAct->setStatusTip(tr("Create a new commissioner"));
         newCommissionerAct->setEnabled(false);
 
-        newCommissionAct = new QAction(QIcon(":/CommissionPlus.png"), tr("&New Commission"), this);
+        newCommissionAct = new QAction(QIcon(":/CommissionPlus.png"),
+            tr("&New Commission"), this);
         newCommissionAct->setStatusTip(tr("Create a new commission"));
         newCommissionAct->setEnabled(false);
 
-        newProductAct = new QAction(QIcon(":/ProductPlus.png"), tr("&New Product"), this);
+        newProductAct = new QAction(QIcon(":/ProductPlus.png"),
+            tr("&New Product"), this);
         newProductAct->setStatusTip(tr("Create a new product"));
         newProductAct->setEnabled(false);
 
-        newSaleAct = new QAction(QIcon(":/SalePlus.png"), tr("&New Sale"), this);
+        newSaleAct = new QAction(QIcon(":/SalePlus.png"), 
+            tr("&New Sale"), this);
         newSaleAct->setStatusTip(tr("Create a new sale"));
         newSaleAct->setEnabled(false);
 
-        newPaymentAct = new QAction(QIcon(":/PaymentPlus.png"), tr("&New Payment"), this);
+        newPaymentAct = new QAction(QIcon(":/PaymentPlus.png"),
+            tr("&New Payment"), this);
         newPaymentAct->setStatusTip(tr("Create a new payment"));
         newPaymentAct->setEnabled(false);
 
-        manageOptionsAct = new QAction(QIcon(":/Options.png"), tr("&Store Options"), this);
+        manageOptionsAct = new QAction(QIcon(":/Options.png"), 
+            tr("&Store Options"), this);
         manageOptionsAct->setStatusTip(tr("Manage store options"));
         manageOptionsAct->setEnabled(false);
 
-        manageStorefrontAct = new QAction(QIcon(":/Storefront.png"), tr("&Storefront"), this);
+        manageStorefrontAct = new QAction(QIcon(":/Storefront.png"), 
+            tr("&Storefront"), this);
         manageStorefrontAct->setStatusTip(tr("Manage existing products"));
         manageStorefrontAct->setEnabled(false);
 
-        manageCommissionerAct = new QAction(QIcon(":/Commissioner.png"), tr("&Commissioner"), this);
+        manageCommissionerAct = new QAction(QIcon(":/Commissioner.png"), 
+            tr("&Commissioner"), this);
         manageCommissionerAct->setStatusTip(tr("Manage existing commissioners"));
         manageCommissionerAct->setEnabled(false);
 
-        manageCommissionAct = new QAction(QIcon(":/Commission.png"), tr("&Commission"), this);
+        manageCommissionAct = new QAction(QIcon(":/Commission.png"), 
+            tr("&Commission"), this);
         manageCommissionAct->setStatusTip(tr("Manage existing commissions"));
         manageCommissionAct->setEnabled(false);
 
-        managePieceAct = new QAction(QIcon(":/Piece.png"), tr("&Piece"), this);
+        managePieceAct = new QAction(QIcon(":/Piece.png"), 
+            tr("&Piece"), this);
         managePieceAct->setStatusTip(tr("Manage existing pieces"));
         managePieceAct->setEnabled(false);
 
-        helpAct = new QAction(QIcon(":/Help.png"), tr("&Help"), this);
+        helpAct = new QAction(QIcon(":/Help.png"), 
+            tr("&Help"), this);
         helpAct->setStatusTip(tr("Get help about Commissionator"));
         helpAct->setEnabled(false); //not yet implemented
 
         aboutAct = new QAction(tr("&About Commissionator"), this);
-        aboutAct->setStatusTip(tr("View important version and legal information about this program"));
-        aboutAct->setEnabled(false); //not yet implemented   
+        aboutAct->setStatusTip(tr("View important version and legal "
+            "information about this program"));
+        connect(aboutAct, &QAction::triggered,
+            this, &MainWindow::viewAbout);
     }
 
     void MainWindow::createStatusBar() {
@@ -632,5 +645,17 @@ namespace Commissionator{
         manageCommissionerAct->setEnabled(isEnabled);
         manageCommissionAct->setEnabled(isEnabled);
         managePieceAct->setEnabled(isEnabled);
+    }
+
+    void MainWindow::viewAbout() {
+        QMessageBox::about(this, QString("Commissionator Alpha"),
+            QString("Commissionator Alpha version 0.0.0 \n"
+            "Qt version " + QString(qVersion()) + "\n"
+            "SQLite version " + model->getSQLiteVersion() + "\n \n"
+            "Commissionator is a Cross-Platform, Open Source Point-Of-Sale "
+            "system designed for artists and independent contractors. \n"
+            "It is built using Qt and SQLite, and is licensed under the "
+            "MIT License. \n \n"
+            "Created by William Horstkamp 2015"));
     }
 }

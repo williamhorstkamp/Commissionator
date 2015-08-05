@@ -24,7 +24,6 @@ class ComModel;
 class QFrame;
 
 namespace Commissionator {
-
     class MainWindow:public QMainWindow {
 
         Q_OBJECT
@@ -242,6 +241,11 @@ namespace Commissionator {
          *  Product Name, Base Price, Number Produced
          */
         void searchProducts(const QList<QVariant> query);
+
+        /**
+         *  Function displays the about page for the program
+         */
+        void viewAbout();
 
     private:
         /**

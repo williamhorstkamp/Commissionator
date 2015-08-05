@@ -162,6 +162,13 @@ namespace Commissionator {
         return productPiecesModel;
     }
 
+    QString ComModel::getSQLiteVersion() {
+        QSqlQuery query("SELECT sqlite_version();");
+        query.exec();
+        query.first();
+        return query.record().value(0).toString();
+    }
+
     void ComModel::editCommission(const int commission,
         const int commissioner, const QString notes) {
         editCommissionQuery->bindValue(0, commissioner);

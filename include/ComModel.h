@@ -326,6 +326,12 @@ namespace Commissionator {
          */
         //QSqlQueryModel *getSalePiecesSold();
 
+        /**
+         *  Returns the SQLite version used by the model.
+         *
+         *  @return QString - string containing the SQLite version number.
+         */
+        QString getSQLiteVersion();
     signals:
         /**
          *  Signal emitted whenever the currently selected commission is 
