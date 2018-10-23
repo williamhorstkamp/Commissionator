@@ -1,6 +1,6 @@
-#**THIS PROGRAM IS A WORK IN PROGRESS**  
-#**THIS README IS CURRENTLY MORE OF A PROJECT PLAN**  
-#**A README DESIGNED FOR END-USERS WILL REPLACE THIS PAGE EVENTUALLY**  
+# **THIS PROGRAM IS A WORK IN PROGRESS**  
+# **THIS README IS CURRENTLY MORE OF A PROJECT PLAN**  
+# **A README DESIGNED FOR END-USERS WILL REPLACE THIS PAGE EVENTUALLY**  
   
   
 # Commissionator
@@ -28,7 +28,7 @@ V3: First the model for this version will be finished, first by writing the SQL,
   
 V4 and after: First changes to the UI will be made to reflect the new version (if necissary), this UI may then be shown to the client(s), who will request adjustments to be made. After the UI is deemed satisfactory the model will be updated to the new version, finishing that version.  
   
-##Copyright Stuff
+## Copyright Stuff
 Copyright (c) 2015 William Horstkamp  
 william.horstkamp@gmail.com  
 MIT LICENSE  
